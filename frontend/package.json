@@ -29,7 +29,7 @@
     "manifest-editor": "^1.0.2",
     "mirador": "npm:mirador-video@1.0.14",
     "mirador-annotation-editor": "^1.0.65",
-    "mirador-annotation-editor-video": "^0.0.22",
+    "mirador-annotation-editor-video": "^0.0.23",
     "mirador-mltools-plugin-mmu": "^0.0.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
