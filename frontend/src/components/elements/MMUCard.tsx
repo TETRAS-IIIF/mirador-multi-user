@@ -11,8 +11,8 @@ import { ObjectTypes } from "../../features/tag/type.ts";
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import ImageIcon from '@mui/icons-material/Image';
 import { useTranslation } from "react-i18next";
+import placeholder from "../../assets/Placeholder.svg";
 
-const placeholder = `${import.meta.env.VITE_CADDY_URL}/placeholder/Placeholder.svg`
 
 interface IMMUCardProps<T,G,X> {
   id: number;

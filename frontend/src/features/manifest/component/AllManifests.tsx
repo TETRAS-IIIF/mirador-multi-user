@@ -33,8 +33,8 @@ import { updateAccessToManifest } from "../api/updateAccessToManifest.ts";
 import { ObjectTypes } from "../../tag/type.ts";
 import { useTranslation } from "react-i18next";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
+import placeholder from "../../../assets/Placeholder.svg";
 
-const placeholder = `${import.meta.env.VITE_CADDY_URL}/placeholder/Placeholder.svg`
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',

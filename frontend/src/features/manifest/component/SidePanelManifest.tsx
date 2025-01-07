@@ -23,7 +23,7 @@ import { linkManifest } from "../api/linkManifest.ts";
 import { lookingForManifests } from "../api/loonkingForManifests.ts";
 import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
 import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
-const placeholder = `${import.meta.env.VITE_CADDY_URL}/placeholder/Placeholder.svg`
+import placeholder from "../../../assets/Placeholder.svg";
 
 const CustomButton = styled(Button)({
   position: 'absolute',
