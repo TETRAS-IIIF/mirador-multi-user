@@ -1,10 +1,14 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { CreateProjectDto } from "./dto/create-project.dto";
-import { UpdateProjectDto } from "./dto/update-project.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Project } from "./entities/project.entity";
-import { Brackets, DeleteResult, Repository } from "typeorm";
-import { CustomLogger } from "../../utils/Logger/CustomLogger.service";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateProjectDto } from './dto/create-project.dto';
+import { UpdateProjectDto } from './dto/update-project.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Project } from './entities/project.entity';
+import { Brackets, DeleteResult, Repository } from 'typeorm';
+import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 
 @Injectable()
 export class ProjectService {
@@ -28,17 +32,6 @@ export class ProjectService {
         'An error occurred while creating the project',
         error,
       );
-    }
-  }
-
-  async findAll(userId: number): Promise<Project[]> {
-    try {
-      const projects = await this.projectRepository.find({
-        where: { ownerId: userId },
-      });
-      return projects;
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
     }
   }
 
@@ -99,17 +92,6 @@ export class ProjectService {
     }
   }
 
-  async findUsersProject(userId: number) {
-    try {
-    } catch (error) {
-      throw new InternalServerErrorException(
-        `an error occurred while trying to find project for users id : ${userId}`,
-        error,
-      );
-    }
-  }
-
-  //TODO: Check user authorization for deleting project
   async remove(id: number) {
     try {
       const done: DeleteResult = await this.projectRepository.delete(id);
