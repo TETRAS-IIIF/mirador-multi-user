@@ -12,7 +12,7 @@ import {
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
 import { LinkUserGroup, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
-import { Media, MediaGroupRights, MediaTypes } from "../types/types.ts";
+import { Media, MediaGroupRights } from "../types/types.ts";
 import toast from "react-hot-toast";
 import { deleteMedia } from "../api/deleteMedia.ts";
 import { updateMedia } from "../api/updateMedia.ts";
@@ -35,6 +35,7 @@ import { CustomTabPanel } from "../../../components/elements/CustomTabPanel.tsx"
 import { a11yProps } from "../../../components/elements/SideBar/allyProps.tsx";
 import { MediaCard } from "./MediaCard.tsx";
 import { useTranslation } from "react-i18next";
+import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -69,6 +70,8 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [mediaFiltered, setMediaFiltered] = useState<Media[]|undefined>([]);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
   const [tabValue, setTabValue] = useState(0);
+  const [sortField, setSortField] = useState<keyof Media>("title");
+
   const { t } = useTranslation();
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
@@ -79,20 +82,54 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const filteredMedias = useMemo(() => {
-    if (tabValue === 1) {
-      return medias.filter(media => media.mediaTypes === MediaTypes.VIDEO);
-    } else if (tabValue === 2) {
-      return medias.filter(media => media.mediaTypes === MediaTypes.IMAGE);
-    }
-    return medias;
-  }, [tabValue, medias]);
+  const sortedItems = useMemo(() => {
+    return [...medias].sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+      if (sortField === "created_at") {
+        const aDate =
+          aValue instanceof Date
+            ? aValue
+            : typeof aValue === "string"
+              ? new Date(aValue)
+              : null;
+
+        const bDate =
+          bValue instanceof Date
+            ? bValue
+            : typeof bValue === "string"
+              ? new Date(bValue)
+              : null;
+
+        if (aDate && bDate) {
+          return aDate.getTime() - bDate.getTime();
+        }
+        return 0; // Fallback if invalid dates
+      }
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return aValue.localeCompare(bValue);
+      }
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return aValue - bValue;
+      }
+      return 0;
+    });
+  }, [medias, sortField]);
+
+  // const filteredMedias = useMemo(() => {
+  //   if (tabValue === 1) {
+  //     return medias.filter(media => media.mediaTypes === MediaTypes.VIDEO);
+  //   } else if (tabValue === 2) {
+  //     return medias.filter(media => media.mediaTypes === MediaTypes.IMAGE);
+  //   }
+  //   return medias;
+  // }, [tabValue, medias]);
 
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return filteredMedias.slice(start, end);
-  }, [currentPage, filteredMedias]);
+    return sortedItems.slice(start, end);
+  }, [currentPage, itemsPerPage, sortedItems]);
 
   const totalPages = Math.ceil(medias.length / itemsPerPage);
 
@@ -253,7 +290,18 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   return(
     <Box sx={{ padding: 3 }}>
       <Grid item container flexDirection="column" spacing={1}>
-        <Grid item container alignItems="center" justifyContent="space-between"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
+        <Grid
+          container
+          alignItems="center"
+          justifyContent="space-between"
+          sx={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 1000,
+            backgroundColor: '#dcdcdc',
+            paddingBottom: "10px"
+          }}
+        >
           <Grid item>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
@@ -263,6 +311,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
               </Tabs>
             </Box>
           </Grid>
+
           <Grid item>
             <VisuallyHiddenInput
               id="file-upload"
@@ -270,10 +319,28 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
               onChange={handleCreateMedia}
             />
           </Grid>
-          <Grid item>
-            <SearchBar handleFiltered={handleFiltered} setFilter={setMediaFiltered} fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={t('filterMedia')} setSearchedData={handleSetSearchMedia}/>
+          <Grid item container spacing={1} sx={{ width: 'auto', paddingTop: 3  }} alignItems="center" justifyContent="flex-end">
+            <Grid item>
+              <SearchBar
+                handleFiltered={handleFiltered}
+                setFilter={setMediaFiltered}
+                fetchFunction={HandleLookingForMedia}
+                getOptionLabel={getOptionLabelForMediaSearchBar}
+                label={t('filterMedia')}
+                setSearchedData={handleSetSearchMedia}
+              />
+            </Grid>
+            <Grid item>
+              <SortItemSelector<Media>
+                sortField={sortField}
+                setSortField={setSortField}
+                fields={["title", "created_at"]}
+              />
+            </Grid>
           </Grid>
         </Grid>
+
+
         {!medias.length && (
           <Grid
             container

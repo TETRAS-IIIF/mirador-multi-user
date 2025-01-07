@@ -38,6 +38,8 @@ import { isProjectLocked } from "../api/isProjectLocked.ts";
 import { handleLock } from "../api/handleLock.ts";
 import { useTranslation } from "react-i18next";
 import { dublinCoreMetadata } from "../../../utils/dublinCoreMetadata.ts";
+import { Dayjs } from "dayjs";
+import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 interface AllProjectsProps {
   user: User;
   setSelectedProjectId: (id: number) => void;
@@ -60,16 +62,39 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const [projectFiltered, setProjectFiltered] = useState<Project[]|undefined>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [openSidePanel , setOpenSidePanel] = useState(false);
+  const [sortField, setSortField] = useState<keyof Project>("title");
+
   const { t } = useTranslation();
 
   const itemsPerPage = 5;
 
+  const sortedItems = useMemo(() => {
+    return [...userProjects].sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+
+      if (sortField === "created_at") {
+        const aDate = aValue instanceof Date ? aValue : (aValue as Dayjs).toDate();
+        const bDate = bValue instanceof Date ? bValue : (bValue as Dayjs).toDate();
+        return aDate.getTime() - bDate.getTime();
+      }
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return aValue.localeCompare(bValue);
+      }
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return aValue - bValue;
+      }
+      return 0;
+    });
+  }, [userProjects, sortField]);
+
+  const totalPages = Math.ceil(userProjects.length / itemsPerPage);
+
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return userProjects.slice(start, end);
-  }, [currentPage, userProjects]);
-  const totalPages = Math.ceil(userProjects.length / itemsPerPage);
+    return sortedItems.slice(start, end);
+  }, [currentPage, itemsPerPage, sortedItems]);
 
 
   const fetchProjects = async () => {
@@ -280,9 +305,18 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
           <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
             {
               !selectedProjectId &&(
-                <Grid item>
-                  <SearchBar handleFiltered={handleFiltered} label={t('filterProjects')} fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
-                </Grid>
+                <>
+                  <Grid item>
+                    <SortItemSelector<Project>
+                      sortField={sortField}
+                      setSortField={setSortField}
+                      fields={["title", "created_at"]}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <SearchBar handleFiltered={handleFiltered} label={t('filterProjects')} fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
+                  </Grid>
+                </>
               )
             }
           </Grid>
