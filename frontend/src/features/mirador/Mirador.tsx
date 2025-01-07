@@ -54,7 +54,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
         },
         workspace:{
           isWorkspaceAddVisible: true,
-          addCheckBox:true,
           removeResourceButton: true,
         },
         language:language,
