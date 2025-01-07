@@ -79,7 +79,6 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
   const { t } = useTranslation();
-
   const handleRemoveAccessListItem = async ( accessItemId : number) =>{
     if (removeAccessListItemFunction) {
       await removeAccessListItemFunction(item.id, accessItemId);

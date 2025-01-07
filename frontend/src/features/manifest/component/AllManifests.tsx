@@ -331,7 +331,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const handleSetOpenSidePanel=()=>{
     setOpenSidePanel(!openSidePanel)
   }
-
+  console.log('thumbnailUrls',thumbnailUrls)
   return (
     <>
       <SidePanelMedia  open={openSidePanel && !!openModalManifestId} setOpen={handleSetOpenSidePanel} display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>

@@ -326,6 +326,10 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
     await updateManifestJson(newManifest)
   }
 
+  function isValidUrl(string:string) {
+    const pattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
+    return pattern.test(string);
+  }
   return (
     <Grid container sx={{overflow:'scroll', maxHeight:600}}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
@@ -434,7 +438,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
                 label={t("thumbnailUrl")}
                 onChange={handleChangeThumbnailUrl}
                 variant="outlined"
-                defaultValue={thumbnailUrl ? thumbnailUrl : undefined }
+                defaultValue={thumbnailUrl && isValidUrl(thumbnailUrl)? thumbnailUrl : undefined }
                 multiline
                 fullWidth
               />
