@@ -2,6 +2,7 @@ import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } f
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { LoadingButton } from '@mui/lab';
 
 interface IDrawerCreateProjectProps{
   modalCreateProjectIsOpen: boolean
@@ -11,15 +12,23 @@ interface IDrawerCreateProjectProps{
 
 export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCreation,InitializeProject}:IDrawerCreateProjectProps)=>{
   const [projectName, setProjectName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
   const { t } = useTranslation();
 
   const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
     setProjectName(event.target.value);
   },[])
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    InitializeProject(projectName);
+    setIsLoading(true);
+    try {
+      await InitializeProject(projectName);
+    } finally {
+      setIsLoading(false);
+      setProjectName('')
+    }
   };
   return(
     <>
@@ -62,13 +71,14 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
                   />
                 </Grid>
                 <Grid item>
-                  <Button
+                  <LoadingButton
                     size="large"
                     variant="contained"
                     type="submit"
+                    loading={isLoading}
                   >
                     {t('add')}
-                  </Button>
+                  </LoadingButton>
                 </Grid>
               </Grid>
             </form>
