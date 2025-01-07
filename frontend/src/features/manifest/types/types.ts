@@ -15,6 +15,7 @@ export type Manifest = {
   thumbnailUrl?:string,
   metadata: Record<string, string>;
   rights?:ManifestGroupRights
+  url:string
 }
 
 export type updateManifestJsonDto ={
