@@ -205,7 +205,6 @@ export class MediaInterceptor implements NestInterceptor {
             throw new UnsupportedMediaTypeException(
               'media type is not supported',
             );
-            break;
         }
       } catch (error) {
         console.error('error details:', error);
