@@ -147,23 +147,22 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         if (manifest.thumbnailUrl) {
           return manifest.thumbnailUrl;
         }
-
         let manifestUrl = '';
         if (manifest.origin === manifestOrigin.UPLOAD) {
           manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`;
         } else if (manifest.origin === manifestOrigin.LINK) {
           manifestUrl = manifest.path;
         } else {
-          return placeholder; // fallback to placeholder for other origins
+          return placeholder;
         }
-
         try {
           const manifestResponse = await fetch(manifestUrl);
           const manifestFetched = await manifestResponse.json();
-
-          if (manifestFetched.thumbnail?.["@id"]) {
+          if (manifestFetched.thumbnail) {
             return manifestFetched.thumbnail["@id"];
-          } else {
+          } else if(manifestFetched.items[0].thumbnail[0].id){
+            return manifestFetched.items[0].thumbnail[0].id;
+          }else{
             return placeholder;
           }
         } catch (error) {
@@ -333,7 +332,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     setOpenSidePanel(!openSidePanel)
   }
 
-  console.log('manifests',manifests)
   return (
     <>
       <SidePanelMedia  open={openSidePanel && !!openModalManifestId} setOpen={handleSetOpenSidePanel} display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
