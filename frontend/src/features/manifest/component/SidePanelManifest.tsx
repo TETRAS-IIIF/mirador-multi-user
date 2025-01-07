@@ -19,11 +19,11 @@ import { User } from "../../auth/types/types.ts";
 import AddLinkIcon from "@mui/icons-material/AddLink";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
-import placeholder from "../../../assets/Placeholder.svg";
 import { linkManifest } from "../api/linkManifest.ts";
 import { lookingForManifests } from "../api/loonkingForManifests.ts";
 import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
 import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
+const placeholder = `${import.meta.env.VITE_CADDY_URL}/placeholder/Placeholder.svg`
 
 const CustomButton = styled(Button)({
   position: 'absolute',
