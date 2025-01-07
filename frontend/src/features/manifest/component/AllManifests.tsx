@@ -5,7 +5,6 @@ import { User } from "../../auth/types/types.ts";
 import { Manifest, ManifestCreationMedia, ManifestGroupRights, manifestOrigin } from "../types/types.ts";
 import { uploadManifest } from "../api/uploadManifest.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
-import placeholder from "../../../assets/Placeholder.svg";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForManifests } from "../api/loonkingForManifests.ts";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
@@ -34,6 +33,8 @@ import { updateAccessToManifest } from "../api/updateAccessToManifest.ts";
 import { ObjectTypes } from "../../tag/type.ts";
 import { useTranslation } from "react-i18next";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
+
+const placeholder = `${import.meta.env.VITE_CADDY_URL}/placeholder/Placeholder.svg`
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
