@@ -33,6 +33,7 @@ import { ListItem } from "../../../components/types.ts";
 import { updateAccessToManifest } from "../api/updateAccessToManifest.ts";
 import { ObjectTypes } from "../../tag/type.ts";
 import { useTranslation } from "react-i18next";
+import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -74,15 +75,41 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [openSidePanel , setOpenSidePanel] = useState(false);
+  const [sortField, setSortField] = useState<keyof Manifest>("title");
+
   const { t } = useTranslation();
 
   const itemsPerPage = 5;
 
+  const sortedItems = useMemo(() => {
+    return [...manifests].sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+
+      if (sortField === "created_at") {
+        const aDate = typeof aValue === "string" ? new Date(aValue) : aValue;
+        const bDate = typeof bValue === "string" ? new Date(bValue) : bValue;
+
+        return aDate.getTime() - bDate.getTime();
+      }
+
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return aValue.localeCompare(bValue);
+      }
+
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return aValue - bValue;
+      }
+
+      return 0;
+    });
+  }, [manifests, sortField]);
+
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return manifests.slice(start, end);
-  }, [currentPage, manifests]);
+    return sortedItems.slice(start, end);
+  }, [currentPage, itemsPerPage, sortedItems]);
 
   const totalPages = Math.ceil(manifests.length / itemsPerPage);
 
@@ -304,6 +331,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const handleSetOpenSidePanel=()=>{
     setOpenSidePanel(!openSidePanel)
   }
+
+  console.log('manifests',manifests)
   return (
     <>
       <SidePanelMedia  open={openSidePanel && !!openModalManifestId} setOpen={handleSetOpenSidePanel} display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
@@ -311,6 +340,14 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           <Grid item container direction="row-reverse" alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
             {
               !createManifestIsOpen && (
+                <>
+                  <Grid item>
+                    <SortItemSelector<Manifest>
+                      sortField={sortField}
+                      setSortField={setSortField}
+                      fields={["title", "created_at"]}
+                    />
+                  </Grid>
                 <Grid item>
                   <SearchBar
                     fetchFunction={HandleLookingForManifests}
@@ -321,6 +358,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     handleFiltered={handleFiltered}
                   />
                 </Grid>
+                </>
               )
             }
             <Grid item container spacing={2}>

@@ -7,7 +7,7 @@ import { ListItem } from "../types.ts";
 import { ItemsRights } from "../../features/user-group/types/types.ts";
 import { MediaGroupRights, mediaOrigin, MediaTypes } from "../../features/media/types/types.ts";
 import { ManifestGroupRights, manifestOrigin } from "../../features/manifest/types/types.ts";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import { ObjectTypes } from "../../features/tag/type.ts";
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import ImageIcon from '@mui/icons-material/Image';
@@ -124,7 +124,7 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,
 
           {(objectTypes === ObjectTypes.MEDIA && item.mediaTypes === MediaTypes.VIDEO )&& (<Grid item xs={12} sm={1}><OndemandVideoIcon /></Grid>)}
           {(objectTypes === ObjectTypes.MEDIA && item.mediaTypes === MediaTypes.IMAGE )&&( <Grid item xs={12} sm={1}><ImageIcon /></Grid>)}
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={2}>
             <Tooltip title={itemLabel} placement="bottom-start">
               <Typography
                 variant="subtitle1"
@@ -153,6 +153,25 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,
                 {description}
               </Typography>
             </Tooltip>
+          </Grid>
+          <Grid item xs={12} sm={1}>
+            {
+              item.created_at &&(
+                <Tooltip title={item.created_at.toString()}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                      maxWidth: '200px',
+                    }}
+                  >
+                    {dayjs(item.created_at).format('ddd, D MMM')}
+                  </Typography>
+                </Tooltip>
+              )
+            }
           </Grid>
         </Grid>
         <Grid item alignSelf="center">
