@@ -77,7 +77,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
         user: user
       }
       const groupCreated = await createGroup(userGroupToCreate);
-      await fetchGroups()
+      fetchGroups()
       HandleOpenModal(groupCreated.id)
     }catch(error){
       console.error(error)
