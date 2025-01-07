@@ -1,6 +1,7 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { LoadingButton } from '@mui/lab';
 
 
 interface IDrawerCreateManifestProps{
@@ -10,7 +11,7 @@ interface IDrawerCreateManifestProps{
 }
 
 export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManifestIsOpen,linkingManifest}:IDrawerCreateManifestProps) =>{
-
+  const [isLoading, setIsLoading] = useState(false);
   const [manifestLink, setManifestLink] = useState('');
 
   const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
@@ -20,8 +21,13 @@ export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManif
   const handleLinkingManifest = useCallback((event?:FormEvent)=>{
     if (event) event.preventDefault();
     toggleModalManifestCreation();
-    linkingManifest(manifestLink);
-    setManifestLink('');
+    setIsLoading(true);
+    try{
+      linkingManifest(manifestLink);
+    }finally {
+      setIsLoading(false);
+      setManifestLink('');
+    }
   },[linkingManifest, manifestLink, toggleModalManifestCreation])
 
   const handleToggleModalGroupCreation= useCallback(()=>{
@@ -64,13 +70,14 @@ export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManif
                   <TextField onChange={handleNameChange} sx={{ width:'100%'}} ></TextField>
                 </Grid>
                 <Grid item>
-                  <Button
+                  <LoadingButton
                     size="large"
                     variant="contained"
                     onClick={handleLinkingManifest}
+                    loading={isLoading}
                   >
                     ADD
-                  </Button>
+                  </LoadingButton>
                 </Grid>
               </Grid>
             </form>

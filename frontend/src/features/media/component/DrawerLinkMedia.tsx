@@ -2,6 +2,7 @@ import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } f
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { LoadingButton } from '@mui/lab';
 
 interface IDrawerCreateMediaProps{
   modalCreateMediaIsOpen: boolean
@@ -11,6 +12,8 @@ interface IDrawerCreateMediaProps{
 
 export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,CreateMediaWithLink}:IDrawerCreateMediaProps)=>{
   const [mediaLink, setMediaLink] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
   const { t } = useTranslation();
 
   const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
@@ -20,8 +23,13 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
   const handleLinkingMedia = useCallback((event?:FormEvent)=>{
     if (event) event.preventDefault();
     toggleModalMediaCreation();
-    CreateMediaWithLink(mediaLink);
-    setMediaLink('');
+    setIsLoading(true);
+    try{
+      CreateMediaWithLink(mediaLink);
+    }finally{
+      setIsLoading(false);
+      setMediaLink('');
+    }
   },[CreateMediaWithLink, mediaLink, toggleModalMediaCreation])
 
   const handleToggleModalGroupCreation= useCallback(()=>{
@@ -66,13 +74,14 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
                   <TextField onChange={handleNameChange} sx={{ width: "100%" }}></TextField>
                 </Grid>
                 <Grid item>
-                  <Button
+                  <LoadingButton
                     size="large"
                     variant="contained"
                     onClick={handleLinkingMedia}
+                    loading={isLoading}
                   >
                     {t('add')}
-                  </Button>
+                  </LoadingButton>
                 </Grid>
               </Grid>
             </form>
