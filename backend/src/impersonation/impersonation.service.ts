@@ -18,9 +18,9 @@ export class ImpersonationService {
 
   constructor(
     @InjectRepository(Impersonation)
-    private impersonationRepository: Repository<Impersonation>,
+    private readonly impersonationRepository: Repository<Impersonation>,
     private readonly userService: UsersService,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async initiateImpersonation(

@@ -25,8 +25,7 @@ export class TaggingService {
     objectTypes: ObjectTypes,
   ): Promise<Tagging> {
     try {
-      const userPersonalGroup =
-        await this.userGroupService.findUserPersonalGroup(userPersonalGroupId);
+      await this.userGroupService.findUserPersonalGroup(userPersonalGroupId);
       let tag = await this.tagsService.findTagByName(tagTitle);
       if (!tag) {
         tag = await this.tagsService.createTag({ title: tagTitle });

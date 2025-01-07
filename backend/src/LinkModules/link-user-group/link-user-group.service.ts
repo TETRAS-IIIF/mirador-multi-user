@@ -131,7 +131,6 @@ export class LinkUserGroupService {
       if (!Boolean(process.env.SMTP_DOMAIN)) {
         return savedUser;
       }
-      const metadata =
         await this.metadataFormatGroupService.createMetadataFormat({
           title: 'Dublin Core',
           creatorId: savedUser.id,

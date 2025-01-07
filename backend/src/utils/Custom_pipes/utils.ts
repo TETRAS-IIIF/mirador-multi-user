@@ -49,7 +49,7 @@ export async function getPeerTubeThumbnail(
   }
 
   const contentType = thumbnailResponse.headers.get('Content-Type');
-  if (!contentType || !contentType.startsWith('image/')) {
+  if (!contentType?.startsWith('image/')) {
     throw new Error('Fetched data is not a valid image');
   }
 
@@ -120,7 +120,7 @@ export async function getYoutubeJson(
   }
 }
 
-export async function isImage(url: string): Promise<boolean | ArrayBuffer> {
+export async function isImage(url: string): Promise<boolean> {
   try {
     const response = await fetch(`${url}`, { method: 'GET' });
     if (!response.ok) {
@@ -128,10 +128,10 @@ export async function isImage(url: string): Promise<boolean | ArrayBuffer> {
         `HTTP error! status: ${response.status}, message: ${response.statusText}`,
       );
     }
-    const contentType = response.headers.get('Content-Type');
-    return contentType && contentType.startsWith('image');
+    return response.headers.get('Content-Type')?.startsWith('image') || false;
   } catch (error) {
-    console.error(`Error gettingImage: ${error.message}`);
+    console.error(`Error getting image: ${error.message}`);
+    return false;
   }
 }
 
@@ -155,17 +155,14 @@ function iso8601DurationToSeconds(isoDuration: string): number {
 
 export async function getVideoDuration(videoUrl: string): Promise<number> {
   try {
-    // Fetch the YouTube video page
     const response = await fetch(videoUrl);
     const html = await response.text();
 
-    // Extract the ISO 8601 duration from the HTML
-    const match = html.match(/itemprop="duration" content="([^"]+)"/);
-    if (match && match[1]) {
-      return iso8601DurationToSeconds(match[1]);
-    } else {
-      throw new Error('Duration not found in the HTML.');
+    const match = html.match(/itemprop="duration" content="([^"]+)"/)?.[1];
+    if (match) {
+      return iso8601DurationToSeconds(match);
     }
+    throw new Error('Duration not found in the HTML.');
   } catch (error) {
     throw new Error(`Failed to fetch video duration: ${error.message}`);
   }

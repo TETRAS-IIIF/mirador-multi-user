@@ -6,7 +6,6 @@ import {
   HttpStatus,
   Post,
   Request,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -19,7 +18,7 @@ import { ImpersonationService } from '../impersonation/impersonation.service';
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService,
+    private readonly authService: AuthService,
     private readonly impersonationService: ImpersonationService,
   ) {}
 
