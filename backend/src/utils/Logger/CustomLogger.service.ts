@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export class CustomLogger implements LoggerService {
-  private logFile = path.join(__dirname, '..', 'logs', 'app.log');
+  private readonly logFile = path.join(__dirname, '..', 'logs', 'app.log');
 
   constructor() {
     const logDir = path.dirname(this.logFile);

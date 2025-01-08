@@ -18,9 +18,9 @@ export class ImpersonationService {
 
   constructor(
     @InjectRepository(Impersonation)
-    private impersonationRepository: Repository<Impersonation>,
+    private readonly impersonationRepository: Repository<Impersonation>,
     private readonly userService: UsersService,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async initiateImpersonation(
@@ -76,7 +76,7 @@ export class ImpersonationService {
     impersonateDto: ImpersonateDto,
   ): Promise<{ access_token: string }> {
     try {
-      const isTokenValid = this.validateToken(impersonateDto.token);
+      const isTokenValid = await this.validateToken(impersonateDto.token);
       if (!isTokenValid) {
         throw new UnauthorizedException(
           'You are not allowed to impersonate user',

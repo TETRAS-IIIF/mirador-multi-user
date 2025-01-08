@@ -88,7 +88,7 @@ export class LinkMediaGroupService {
         }
 
         const group = await this.groupService.findUserGroupById(userGroupId);
-        const linkMediaGroup = await this.create({
+        await this.create({
           rights: dto.rights ? dto.rights : MediaGroupRights.READER,
           user_group: group,
           media: media,

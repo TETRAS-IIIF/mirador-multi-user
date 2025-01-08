@@ -5,8 +5,8 @@ import { PolicyFactory } from './policy.factory';
 @Injectable()
 export class PoliciesGuard implements CanActivate {
   constructor(
-    private reflector: Reflector,
-    private policyFactory: PolicyFactory,
+    private readonly reflector: Reflector,
+    private readonly policyFactory: PolicyFactory,
   ) {}
 
   canActivate(context: ExecutionContext): boolean {
