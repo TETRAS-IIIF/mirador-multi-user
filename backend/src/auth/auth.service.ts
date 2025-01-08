@@ -15,9 +15,9 @@ import { ImpersonationService } from '../impersonation/impersonation.service';
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
-    private emailService: EmailServerService,
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+    private readonly emailService: EmailServerService,
     private readonly impersonationService: ImpersonationService,
   ) {}
 
@@ -72,7 +72,7 @@ export class AuthService {
 
   async forgotPassword(email: string): Promise<void> {
     const user = await this.usersService.findOneByMail(email);
-    const { resetToken, mail, name } = user;
+    const { mail, name } = user;
     if (!user) {
       throw new NotFoundException(`No user found for email: ${email}`);
     }

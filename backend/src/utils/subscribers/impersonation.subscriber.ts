@@ -27,7 +27,7 @@ export class ImpersonationSubscriber
    * This is used when `markUsed()` is called externally.
    */
   beforeUpdate(event: UpdateEvent<Impersonation>) {
-    if (event.entity && event.entity.used) {
+    if (event.entity?.used) {
       console.log(`Marking Impersonation ID ${event.entity.id} as used.`);
     }
   }

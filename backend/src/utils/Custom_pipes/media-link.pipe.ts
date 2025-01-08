@@ -66,12 +66,13 @@ export class MediaLinkInterceptor implements NestInterceptor {
           request.mediaTypes = mediaTypes.VIDEO;
           break;
 
-        default:
+        default: {
           const imageResponse = await fetch(url);
           if (!imageResponse.ok) throw new Error('Failed to fetch media');
           thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
           request.mediaTypes = mediaTypes.IMAGE;
           break;
+        }
       }
 
       if (thumbnailBuffer) {

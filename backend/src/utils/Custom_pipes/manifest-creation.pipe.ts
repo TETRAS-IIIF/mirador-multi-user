@@ -162,7 +162,7 @@ export class MediaInterceptor implements NestInterceptor {
               });
             }
             break;
-          case await isImage(url):
+          case await isImage(url): {
             const response = await fetch(`${url}`, { method: 'GET' });
             const arrayBuffer = await response.arrayBuffer();
             const mediaBuffer = Buffer.from(arrayBuffer);
@@ -201,11 +201,11 @@ export class MediaInterceptor implements NestInterceptor {
               ],
             });
             break;
+          }
           default:
             throw new UnsupportedMediaTypeException(
               'media type is not supported',
             );
-            break;
         }
       } catch (error) {
         console.error('error details:', error);

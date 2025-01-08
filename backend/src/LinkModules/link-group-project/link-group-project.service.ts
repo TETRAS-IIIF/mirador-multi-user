@@ -55,17 +55,6 @@ export class LinkGroupProjectService {
     }
   }
 
-  async findAll() {
-    try {
-      return await this.linkGroupProjectRepository.find();
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        'An error occurred while finding linkGroupProjects',
-        error,
-      );
-    }
-  }
 
   async findOne(id: number) {
     try {

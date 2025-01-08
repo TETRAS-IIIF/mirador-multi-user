@@ -84,28 +84,6 @@ export class LinkManifestGroupService {
       );
     }
   }
-  //TODO : remove this if really useless
-  async createGroupManifest(createGroupManifestDto: CreateGroupManifestDto) {
-    try {
-      const { idCreator, path, user_group, manifest } = createGroupManifestDto;
-      await this.addManifestToGroup({
-        userGroupId: user_group.id,
-        manifestId: manifest.id,
-        rights: ManifestGroupRights.ADMIN,
-      });
-
-      const toReturn = await this.getManifestForUser(
-        user_group.id,
-        manifest.id,
-      );
-      return toReturn;
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        `An error occurred while creating manifest, ${error.message}`,
-      );
-    }
-  }
 
   async addManifestToGroup(addManifestToGroupDto: AddManifestToGroupDto) {
     const { userGroupId, manifestId } = addManifestToGroupDto;
