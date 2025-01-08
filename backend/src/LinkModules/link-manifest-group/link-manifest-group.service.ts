@@ -204,26 +204,14 @@ export class LinkManifestGroupService {
     }
   }
 
-
   async removeManifest(manifestId: number) {
     try {
       const manifestToRemove = await this.manifestService.findOne(manifestId);
       if (!manifestToRemove) {
         throw new HttpException('Manifest not found', HttpStatus.NOT_FOUND);
       }
-      const filePath = join(
-        __dirname,
-        '..',
-        '..',
-        '..',
-        '..',
-        'upload',
-        manifestToRemove.hash,
-        manifestToRemove.path,
-      );
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-        const dirPath = join(
+      if (manifestToRemove.origin === manifestOrigin.UPLOAD) {
+        const filePath = join(
           __dirname,
           '..',
           '..',
@@ -231,16 +219,29 @@ export class LinkManifestGroupService {
           '..',
           'upload',
           manifestToRemove.hash,
+          manifestToRemove.path,
         );
-        if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
-          fs.rmdirSync(dirPath);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+          const dirPath = join(
+            __dirname,
+            '..',
+            '..',
+            '..',
+            '..',
+            'upload',
+            manifestToRemove.hash,
+          );
+          if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
+            fs.rmdirSync(dirPath);
+          }
         }
-        await this.manifestService.remove(manifestId);
-        return {
-          status: HttpStatus.OK,
-          message: 'File and associated records deleted successfully',
-        };
       }
+      await this.manifestService.remove(manifestId);
+      return {
+        status: HttpStatus.OK,
+        message: 'File and associated records deleted successfully',
+      };
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
