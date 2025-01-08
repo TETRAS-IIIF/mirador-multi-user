@@ -24,3 +24,13 @@ declare module 'mirador-mltools-plugin-mmu/es/index.js' {
   export default ManifestListTools;
 }
 
+//TODO : is currently used in getManifestThumbnail but may be useless
+declare module 'mirador/dist/es/src/lib/ThumbnailFactory.js'{
+  const ThumbnailFactory: any;
+  export default ThumbnailFactory;
+}
+//TODO : is currently used in getManifestThumbnail but may be useless
+declare module 'mirador/dist/es/src/lib/MiradorManifest.js' {
+  const MiradorManifest: any;
+  export default MiradorManifest;
+}
