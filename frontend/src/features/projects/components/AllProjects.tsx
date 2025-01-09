@@ -301,8 +301,8 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   return (
     <>
       <SidePanelMedia open={openSidePanel && !!openModalProjectId} setOpen={handleSetOpenSidePanel} display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
-        <Grid container justifyContent="center" flexDirection="column" spacing={1} sx={{padding:2}}>
-          <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
+        <Grid container justifyContent="center" flexDirection="column">
+          <Grid item container direction="row-reverse" alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"18px"}}>
             {
               !selectedProjectId &&(
                 <>

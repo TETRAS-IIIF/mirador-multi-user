@@ -35,7 +35,6 @@ import { useTranslation } from "react-i18next";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import placeholder from "../../../assets/Placeholder.svg";
 import { IIIFResource, ManifestResource } from "manifesto.js";
-import { getManifestThumbnail } from "../utils/getManifestThumbnail.ts";
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -162,8 +161,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         try {
           const manifestResponse = await fetch(manifestUrl);
           const manifestFetched = await manifestResponse.json();
-          const resource = new ManifestResource(manifestFetched,{defaultLabel:"labeltoto", locale:"localetoto", resource: manifestFetched as unknown as IIIFResource, pessimisticAccessControl:false});
-          const test = getManifestThumbnail(resource);
           if (manifestFetched.thumbnail) {
             return manifestFetched.thumbnail["@id"];
           } else if(manifestFetched.items[0].thumbnail[0].id){
@@ -341,8 +338,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   return (
     <>
       <SidePanelMedia  open={openSidePanel && !!openModalManifestId} setOpen={handleSetOpenSidePanel} display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
-        <Grid item container flexDirection="column" spacing={1} sx={{padding:2}}>
-          <Grid item container direction="row-reverse" alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
+        <Grid item container flexDirection="column" spacing={1} sx={{paddingTop:0}}>
+          <Grid item container direction="row-reverse" alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px", paddingTop:0}}>
             {
               !createManifestIsOpen && (
                 <>
