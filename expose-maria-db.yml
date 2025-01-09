@@ -2,4 +2,4 @@ version: "3.8"
 services:
   db:
     ports:
-      - "127.0.0.1:${DB_PORT}:3306"
+      - "127.0.0.1:${DB_EXPOSE_PORT}:3306"
