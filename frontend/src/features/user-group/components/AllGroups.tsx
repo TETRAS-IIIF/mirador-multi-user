@@ -48,7 +48,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   const [openSidePanel , setOpenSidePanel] = useState(false);
   const { t } = useTranslation();
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
