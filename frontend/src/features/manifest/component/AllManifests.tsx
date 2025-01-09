@@ -34,6 +34,8 @@ import { ObjectTypes } from "../../tag/type.ts";
 import { useTranslation } from "react-i18next";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import placeholder from "../../../assets/Placeholder.svg";
+import { IIIFResource, ManifestResource } from "manifesto.js";
+import { getManifestThumbnail } from "../utils/getManifestThumbnail.ts";
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -152,12 +154,16 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`;
         } else if (manifest.origin === manifestOrigin.LINK) {
           manifestUrl = manifest.path;
-        } else {
+        } else if(manifest.origin === manifestOrigin.CREATE){
+          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.path}`;
+        }else{
           return placeholder;
         }
         try {
           const manifestResponse = await fetch(manifestUrl);
           const manifestFetched = await manifestResponse.json();
+          const resource = new ManifestResource(manifestFetched,{defaultLabel:"labeltoto", locale:"localetoto", resource: manifestFetched as unknown as IIIFResource, pessimisticAccessControl:false});
+          const test = getManifestThumbnail(resource);
           if (manifestFetched.thumbnail) {
             return manifestFetched.thumbnail["@id"];
           } else if(manifestFetched.items[0].thumbnail[0].id){
@@ -214,16 +220,17 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     const response = await fetch(path,{
       method:"GET"
     })
-
     if(response){
       const manifest = await response.json()
+      const resource = new ManifestResource(manifest,{defaultLabel:"mmu-default-label", locale:"mmu-default-label", resource: manifest as unknown as IIIFResource, pessimisticAccessControl:false});
+      const manifestLabel = resource.getLabel()[0]._value as string;
       await linkManifest({
         url: path,
         rights: ManifestGroupRights.ADMIN,
         idCreator: user.id,
         path: path,
-        title: manifest.label.en
-          ? manifest.label.en[0]
+        title: manifestLabel ?
+          manifestLabel
           : "new Manifest",
       });
       fetchManifestForUser()
@@ -331,7 +338,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const handleSetOpenSidePanel=()=>{
     setOpenSidePanel(!openSidePanel)
   }
-  console.log('thumbnailUrls',thumbnailUrls)
   return (
     <>
       <SidePanelMedia  open={openSidePanel && !!openModalManifestId} setOpen={handleSetOpenSidePanel} display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
