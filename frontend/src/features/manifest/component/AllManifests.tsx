@@ -81,7 +81,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
   const { t } = useTranslation();
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   const sortedItems = useMemo(() => {
     return [...manifests].sort((a, b) => {

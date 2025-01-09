@@ -66,7 +66,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
 
   const { t } = useTranslation();
 
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   const sortedItems = useMemo(() => {
     return [...userProjects].sort((a, b) => {
