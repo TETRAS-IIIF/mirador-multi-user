@@ -41,6 +41,7 @@ import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
 import { UpdateManifestJsonDto } from './dto/UpdateManifestJsonDto';
 import { fileFilterManifest } from './utils/fileFilterManifest';
+import { serializeToValidUrl } from "../../utils/serializeToValideUrl";
 @ApiBearerAuth()
 @Controller('link-manifest-group')
 export class LinkManifestGroupController {
@@ -138,6 +139,7 @@ export class LinkManifestGroupController {
     if (!label) {
       throw new BadRequestException('Manifest title is required');
     }
+    const serializeLabel = serializeToValidUrl(label);
 
     const hash = generateAlphanumericSHA1Hash(
       `${label}${Date.now().toString()}`,
@@ -148,17 +150,17 @@ export class LinkManifestGroupController {
     try {
       const manifestData = {
         ...createManifestDto.processedManifest,
-        id: `${uploadPath}/${label}.json`,
+        id: `${uploadPath}/${serializeLabel}.json`,
       };
       const manifestJson = JSON.stringify(manifestData);
-      const filePath = `${uploadPath}/${label}.json`;
+      const filePath = `${uploadPath}/${serializeLabel}.json`;
       await fs.promises.writeFile(filePath, manifestJson);
 
       const manifestToCreate = {
         title: label,
         description: 'your manifest description',
         hash: hash,
-        path: `${label}.json`,
+        path: `${serializeLabel}.json`,
         idCreator: createManifestDto.idCreator,
         rights: ManifestGroupRights.ADMIN,
         origin: manifestOrigin.CREATE,
