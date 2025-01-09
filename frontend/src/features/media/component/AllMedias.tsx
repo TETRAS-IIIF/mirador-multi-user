@@ -12,7 +12,7 @@ import {
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
 import { LinkUserGroup, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
-import { Media, MediaGroupRights } from "../types/types.ts";
+import { Media, MediaGroupRights, MediaTypes } from "../types/types.ts";
 import toast from "react-hot-toast";
 import { deleteMedia } from "../api/deleteMedia.ts";
 import { updateMedia } from "../api/updateMedia.ts";
@@ -75,6 +75,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const { t } = useTranslation();
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
+    console.log(newValue);
     setTabValue(newValue);
     setCurrentPage(1);
   };
@@ -82,57 +83,54 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const sortedItems = useMemo(() => {
-    return [...medias].sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
-      if (sortField === "created_at") {
-        const aDate =
-          aValue instanceof Date
-            ? aValue
-            : typeof aValue === "string"
-              ? new Date(aValue)
-              : null;
-
-        const bDate =
-          bValue instanceof Date
-            ? bValue
-            : typeof bValue === "string"
-              ? new Date(bValue)
-              : null;
-
-        if (aDate && bDate) {
-          return aDate.getTime() - bDate.getTime();
-        }
-        return 0; // Fallback if invalid dates
-      }
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return aValue.localeCompare(bValue);
-      }
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return aValue - bValue;
-      }
-      return 0;
-    });
-  }, [medias, sortField]);
-
-  // const filteredMedias = useMemo(() => {
-  //   if (tabValue === 1) {
-  //     return medias.filter(media => media.mediaTypes === MediaTypes.VIDEO);
-  //   } else if (tabValue === 2) {
-  //     return medias.filter(media => media.mediaTypes === MediaTypes.IMAGE);
-  //   }
-  //   return medias;
-  // }, [tabValue, medias]);
-
   const currentPageData = useMemo(() => {
+    const filteredAndSortedItems = [...medias]
+      .filter(media => {
+        if (tabValue === 1) {
+          return media.mediaTypes === MediaTypes.VIDEO;
+        } else if (tabValue === 2) {
+          return media.mediaTypes === MediaTypes.IMAGE;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        const aValue = a[sortField];
+        const bValue = b[sortField];
+
+        if (sortField === "created_at") {
+          const aDate = new Date(aValue as string);
+          const bDate = new Date(bValue as string);
+
+          if (!isNaN(aDate.getTime()) && !isNaN(bDate.getTime())) {
+            return aDate.getTime() - bDate.getTime();
+          }
+          return 0;
+        }
+
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          return aValue.localeCompare(bValue);
+        }
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          return aValue - bValue;
+        }
+        return 0;
+      });
+    // Paginate the filtered and sorted items
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return sortedItems.slice(start, end);
-  }, [currentPage, itemsPerPage, sortedItems]);
+    return filteredAndSortedItems.slice(start, end);
+  }, [currentPage, itemsPerPage, medias, sortField, tabValue]);
 
-  const totalPages = Math.ceil(medias.length / itemsPerPage);
-
+  const totalPages = Math.ceil(
+    medias.filter(media => {
+      if (tabValue === 1) {
+        return media.mediaTypes === MediaTypes.VIDEO;
+      } else if (tabValue === 2) {
+        return media.mediaTypes === MediaTypes.IMAGE;
+      }
+      return true;
+    }).length / itemsPerPage
+  );
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       await createMedia({
@@ -311,7 +309,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
               </Tabs>
             </Box>
           </Grid>
-
           <Grid item>
             <VisuallyHiddenInput
               id="file-upload"
@@ -339,8 +336,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
             </Grid>
           </Grid>
         </Grid>
-
-
         {!medias.length && (
           <Grid
             container
@@ -381,7 +376,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
               </CustomTabPanel>
               <CustomTabPanel value={tabValue} index={1}>
                 <Grid container spacing={2} direction="column">
-
                   {currentPageData.map(media => (
                     <Grid item key={media.id}>
                       <MediaCard
