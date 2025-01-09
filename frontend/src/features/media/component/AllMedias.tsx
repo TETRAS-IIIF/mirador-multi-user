@@ -288,7 +288,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   }
 
   return(
-    <Box sx={{ padding: 3 }}>
+    <Box sx={{ padding: 2 }}>
       <Grid item container flexDirection="column" spacing={1}>
         <Grid
           container
@@ -319,7 +319,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
               onChange={handleCreateMedia}
             />
           </Grid>
-          <Grid item container spacing={1} sx={{ width: 'auto', paddingTop: 3  }} alignItems="center" justifyContent="flex-end">
+          <Grid item container sx={{ width: 'auto', paddingTop: 1, paddingBottom:1 }} alignItems="center" justifyContent="flex-end">
             <Grid item>
               <SearchBar
                 handleFiltered={handleFiltered}
