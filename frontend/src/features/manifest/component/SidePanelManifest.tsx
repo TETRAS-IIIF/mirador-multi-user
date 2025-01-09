@@ -141,23 +141,24 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
         if (manifest.thumbnailUrl) {
           return manifest.thumbnailUrl;
         }
-
         let manifestUrl = '';
         if (manifest.origin === manifestOrigin.UPLOAD) {
           manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`;
         } else if (manifest.origin === manifestOrigin.LINK) {
           manifestUrl = manifest.path;
-        } else {
+        } else if(manifest.origin === manifestOrigin.CREATE){
+          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.path}`;
+        }else{
           return placeholder;
         }
-
         try {
           const manifestResponse = await fetch(manifestUrl);
           const manifestFetched = await manifestResponse.json();
-
-          if (manifestFetched.thumbnail?.["@id"]) {
+          if (manifestFetched.thumbnail) {
             return manifestFetched.thumbnail["@id"];
-          } else {
+          } else if(manifestFetched.items[0].thumbnail[0].id){
+            return manifestFetched.items[0].thumbnail[0].id;
+          }else{
             return placeholder;
           }
         } catch (error) {
@@ -166,6 +167,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
         }
       })
     );
+
     setThumbnailUrls(urls);
   }, [currentPageData, caddyUrl]);
 
@@ -208,7 +210,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
           </Grid>
           {
             searchedManifest ?(
-              <ImageList sx={{ minWidth: 400, padding: 1, width:400 }} cols={2} rowHeight={164}>
+              <ImageList sx={{ minWidth: 400, padding: 1, width:400 }} cols={2} rowHeight={200}>
                 <StyledImageListItem>
                   <img
                     srcSet={`${searchedManifest.thumbnailUrl}?w=248&fit=crop&auto=format&dpr=2 2x`}
@@ -229,7 +231,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
                 </StyledImageListItem>
               </ImageList>
             ):(
-              <ImageList sx={{ minWidth: 400, padding: 1, width:400 }} cols={2} rowHeight={164}>
+              <ImageList sx={{ minWidth: 400, padding: 1, width:400 }} cols={2} rowHeight={200}>
                 {currentPageData.map((manifest, index) => (
                   <>
                     <StyledImageListItem key={manifest.id}>
@@ -241,6 +243,11 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
                       />
                       <ImageListItemBar
                         title={manifest.title}
+                        sx={{
+                          position: 'absolute',
+                          bottom: 0,
+                          color: 'white',
+                        }}
                       />
                       <CustomButton
                         className="overlayButton"
