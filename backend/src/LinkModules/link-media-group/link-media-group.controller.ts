@@ -68,8 +68,6 @@ export class LinkMediaGroupController {
     @Body() CreateMediaDto,
     @Req() req,
   ) {
-    console.log('process.env.MAX_UPLOAD_SIZE');
-    console.log(parseInt(process.env.MAX_UPLOAD_SIZE, 10) );
     const userGroup = JSON.parse(CreateMediaDto.user_group);
     const mediaToCreate = {
       ...CreateMediaDto,

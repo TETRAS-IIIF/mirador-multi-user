@@ -1,5 +1,6 @@
 import storage from "../../../utils/storage.ts";
 import { UploadAndLinkManifestDto } from "../types/types.ts";
+import toast from "react-hot-toast";
 
 export const uploadManifest= async (createManifestDto:UploadAndLinkManifestDto) => {
   const token = storage.getToken();
@@ -16,6 +17,11 @@ export const uploadManifest= async (createManifestDto:UploadAndLinkManifestDto) 
   });
 
   if (!response.ok) {
+    console.log('response',response);
+    if (response.status === 400) {
+      toast.error("The manifest must be in PDF format.")
+      throw new Error('invalid format')
+    }
     throw new Error(`Error: ${response.statusText}`);
   }
 

@@ -39,7 +39,8 @@ import {
 import { CreateLinkGroupManifestDto } from './dto/CreateLinkGroupManifestDto';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
-import { UpdateManifestJsonDto } from "./dto/UpdateManifestJsonDto";
+import { UpdateManifestJsonDto } from './dto/UpdateManifestJsonDto';
+import { fileFilterManifest } from './utils/fileFilterManifest';
 @ApiBearerAuth()
 @Controller('link-manifest-group')
 export class LinkManifestGroupController {
@@ -86,6 +87,7 @@ export class LinkManifestGroupController {
           cb(null, fileName);
         },
       }),
+      fileFilter: fileFilterManifest,
     }),
   )
   uploadManifest(
@@ -231,7 +233,9 @@ export class LinkManifestGroupController {
       },
     );
   }
-  @ApiOperation({ summary: 'Update the relation between a manifest and a group' })
+  @ApiOperation({
+    summary: 'Update the relation between a manifest and a group',
+  })
   @ApiBody({ type: UpdateManifestGroupRelation })
   @SetMetadata('action', ActionType.UPDATE)
   @HttpCode(204)
