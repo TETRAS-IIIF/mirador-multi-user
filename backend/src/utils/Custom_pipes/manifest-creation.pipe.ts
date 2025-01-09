@@ -18,6 +18,8 @@ import {
   isPeerTubeVideo,
   isYouTubeVideo,
 } from './utils';
+import { generateAlphanumericSHA1Hash } from '../hashGenerator';
+import { serializeToValidUrl } from '../serializeToValideUrl';
 
 @Injectable()
 export class MediaInterceptor implements NestInterceptor {
@@ -26,6 +28,10 @@ export class MediaInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
+    const label = serializeToValidUrl(request.body.title);
+    const hash = generateAlphanumericSHA1Hash(
+      `${label}${Date.now().toString()}`,
+    );
     const { manifestMedias, title, manifestThumbnail } = request.body;
     if (!manifestMedias || !Array.isArray(manifestMedias)) {
       throw new BadRequestException(
@@ -39,7 +45,7 @@ export class MediaInterceptor implements NestInterceptor {
     // Create the initial structure for the manifest
     const manifestToCreate = {
       '@context': 'https://iiif.io/api/presentation/3/context.json',
-      id: '',
+      id: `${process.env.CADDY_URL}/${hash}/${label}.json/`,
       type: 'Manifest',
       label: { en: [title] },
       items: [],
@@ -75,7 +81,7 @@ export class MediaInterceptor implements NestInterceptor {
               const width = youtubeJson.width;
               const duration = videoDuration;
               manifestToCreate.items.push({
-                id: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+                id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
                 type: 'Canvas',
                 height,
                 width,
@@ -83,14 +89,14 @@ export class MediaInterceptor implements NestInterceptor {
                 label: { en: ['Video Item'] },
                 items: [
                   {
-                    id: `https://example.org/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
+                    id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
                     type: 'AnnotationPage',
                     items: [
                       {
-                        id: `https://example.org/${timeStamp}/annotation/${Date.now()}`,
+                        id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/annotation/${Date.now()}`,
                         type: 'Annotation',
                         motivation: 'painting',
-                        target: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+                        target: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
                         body: {
                           id: media.value,
                           type: 'Video',
@@ -124,14 +130,8 @@ export class MediaInterceptor implements NestInterceptor {
                 defaultWidth;
 
               const duration = peertubeVideoJson.duration;
-              console.log('height');
-              console.log(height);
-              console.log('width');
-              console.log(width);
-              console.log('peertubeVideoJson');
-              console.log(peertubeVideoJson);
               manifestToCreate.items.push({
-                id: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+                id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
                 type: 'Canvas',
                 height,
                 width,
@@ -139,14 +139,14 @@ export class MediaInterceptor implements NestInterceptor {
                 label: { en: ['Video Item'] },
                 items: [
                   {
-                    id: `https://example.org/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
+                    id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
                     type: 'AnnotationPage',
                     items: [
                       {
-                        id: `https://example.org/${timeStamp}/annotation/${Date.now()}`,
+                        id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/annotation/${Date.now()}`,
                         type: 'Annotation',
                         motivation: 'painting',
-                        target: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+                        target: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
                         body: {
                           id: media.value,
                           type: 'Video',
@@ -173,21 +173,21 @@ export class MediaInterceptor implements NestInterceptor {
             const timeStamp2 = Date.now();
             const timeStamp3 = Date.now();
             manifestToCreate.items.push({
-              id: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+              id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
               type: 'Canvas',
               height,
               width,
               label: { en: ['Image Item'] },
               items: [
                 {
-                  id: `https://example.org/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
+                  id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
                   type: 'AnnotationPage',
                   items: [
                     {
-                      id: `https://example.org/${timeStamp}/annotation/${Date.now()}`,
+                      id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/annotation/${Date.now()}`,
                       type: 'Annotation',
                       motivation: 'painting',
-                      target: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+                      target: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
                       body: {
                         id: media.value,
                         type: 'Image',
@@ -220,6 +220,7 @@ export class MediaInterceptor implements NestInterceptor {
     );
 
     request.body.processedManifest = manifestToCreate;
+    request.body.hash = hash;
     return next.handle();
   }
 }

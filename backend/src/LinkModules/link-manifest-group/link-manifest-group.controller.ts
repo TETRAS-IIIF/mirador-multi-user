@@ -141,18 +141,12 @@ export class LinkManifestGroupController {
     }
     const serializeLabel = serializeToValidUrl(label);
 
-    const hash = generateAlphanumericSHA1Hash(
-      `${label}${Date.now().toString()}`,
-    );
+    const hash = createManifestDto.hash;
     const uploadPath = `./upload/${hash}`;
     fs.mkdirSync(uploadPath, { recursive: true });
 
     try {
-      const manifestData = {
-        ...createManifestDto.processedManifest,
-        id: `${uploadPath}/${serializeLabel}.json`,
-      };
-      const manifestJson = JSON.stringify(manifestData);
+      const manifestJson = JSON.stringify(createManifestDto.processedManifest);
       const filePath = `${uploadPath}/${serializeLabel}.json`;
       await fs.promises.writeFile(filePath, manifestJson);
 

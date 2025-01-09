@@ -9,4 +9,5 @@ export class manifestCreationDto {
   processedManifest: any;
   @IsString()
   title: string;
+  hash: string;
 }
