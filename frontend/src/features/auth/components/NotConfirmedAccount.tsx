@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Layout } from "./layout.tsx";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 
 
 export const NotConfirmedAccount = () => {
@@ -14,16 +15,24 @@ export const NotConfirmedAccount = () => {
   const [success, setSuccess] = useState(false);
   const { t } = useTranslation();
 
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
   const handleResendConfirmation = async () => {
+    console.log("regex mail",isValidEmail(email));
+    if (!isValidEmail(email)) {
+      toast.error(t('invalidEmail'));
+      return;
+    }
     setIsLoading(true);
     setError(null);
-
     try {
       await ResendConfirmationMail(email,navigator.language.split('-')[0]);
       setSuccess(true);
       setTimeout(() => navigate('/'), 2000);
     } catch (err) {
-      setError('Failed to resend confirmation email. Please try again.');
+      toast.error(t('resendError'))
     } finally {
       setIsLoading(false);
     }
@@ -32,10 +41,6 @@ export const NotConfirmedAccount = () => {
   return (
     <Layout title={t('notConfirmedAccountTitle')}>
       <Grid container direction="column" justifyContent="center" alignItems="center" spacing={2}>
-        <Grid item>
-          <Typography variant="h6">
-          </Typography>
-        </Grid>
         <Grid item>
           <TextField
             label={t('emailAddress')}

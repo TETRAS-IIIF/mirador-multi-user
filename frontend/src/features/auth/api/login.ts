@@ -39,6 +39,4 @@ export const login = async (data: LoginCredentialsDTO): Promise<UserResponse> =>
   } catch (error) {
     throw error;
   }
-
-
 };
