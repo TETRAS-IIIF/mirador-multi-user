@@ -131,11 +131,11 @@ export class LinkUserGroupService {
       if (!Boolean(process.env.SMTP_DOMAIN)) {
         return savedUser;
       }
-        await this.metadataFormatGroupService.createMetadataFormat({
-          title: 'Dublin Core',
-          creatorId: savedUser.id,
-          metadata: dublinCoreSample,
-        });
+      await this.metadataFormatGroupService.createMetadataFormat({
+        title: 'Dublin Core',
+        creatorId: savedUser.id,
+        metadata: dublinCoreSample,
+      });
 
       await this.sendConfirmationLink(
         savedUser.mail,
@@ -399,30 +399,22 @@ export class LinkUserGroupService {
 
   async searchForGroups(partialGroupName: string) {
     try {
-      console.log('-------------partialGroupName-------------');
-      console.log(partialGroupName);
-      return await this.linkUserGroupRepository
+      const query = this.linkUserGroupRepository
         .createQueryBuilder('linkUserGroup')
         .leftJoinAndSelect('linkUserGroup.user_group', 'userGroup')
-        .leftJoinAndSelect('linkUserGroup.user', 'user')
         .select([
           'linkUserGroup.id',
           'linkUserGroup.rights',
           'userGroup.id',
           'userGroup.title',
           'userGroup.type',
-          'user.id',
         ])
-        .where('userGroup.title LIKE :partialString', {
-          partialString: `%${partialGroupName}%`,
+        .where('LOWER(userGroup.title) LIKE LOWER(:partialString)', {
+          partialString: `%${partialGroupName.toLowerCase()}%`,
         })
-        .orWhere('user.name LIKE :partialString', {
-          partialString: `%${partialGroupName}%`,
-        })
-        .orWhere('user.mail LIKE :partialString', {
-          partialString: `%${partialGroupName}%`,
-        })
-        .getMany();
+        .take(3);
+
+      return await query.getMany();
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(

@@ -8,7 +8,9 @@ export const lookingForUserGroups =async (partialUserGroupName:string)=>{
       headers:{
         authorization: `Bearer ${token}`,
       }})
-    return await response.json();
+    const toreturn =  await response.json();
+    console.log('toreturn',toreturn);
+    return toreturn;
   }catch(error){
     console.error(error);
   }

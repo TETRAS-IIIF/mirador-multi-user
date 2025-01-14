@@ -21,14 +21,6 @@ return htmlContent.includes(
 }
 }
 
-export const getYoutubeThumbnail = async (id: string): Promise<Buffer> => {
-  const response = await fetch(
-    `https://img.youtube.com/vi/${id}/default.jpg`,
-  );
-  if (!response.ok) throw new Error('Failed to fetch YouTube thumbnail');
-return Buffer.from(await response.arrayBuffer());
-}
-
 export const getPeerTubeThumbnailUrl = async (url: string, videoId: string): Promise<string> => {
   const baseDomain = new URL(url).origin;
   const apiURL = `${baseDomain}/api/v1/videos/${videoId}`;
@@ -55,14 +47,6 @@ if (!contentType || !contentType.startsWith('image/')) {
 }
 return thumbnailUrl
 }
-
-export const getYouTubeVideoID = (url: string): string | null => {
-  const youtubeRegex =
-    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|.+\?v=)|youtu\.be\/)([^&\n?#]+)/;
-  const match = url.match(youtubeRegex);
-  return match ? match[1] : null;
-}
-
 export const getPeerTubeVideoID = (url: string): string | null => {
   const peerTubeRegex = /(?:videos\/watch|w)\/([a-zA-Z0-9-]+)/;
   const match = url.match(peerTubeRegex);

@@ -32,7 +32,6 @@ export const Selector = ({ selectorItems, value, onChange }: SelectorProps) => {
       onChange(event);
     }
   };
-  console.log('value',value)
   return (
     <FormControl sx={{ width: 120, mb: 1 }} size="small">
       <Select
