@@ -84,6 +84,7 @@ export const SearchBar = <T,>(
     }
   };
 
+  console.log('suggestions',suggestions)
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2}>
