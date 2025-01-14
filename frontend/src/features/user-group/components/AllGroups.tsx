@@ -183,6 +183,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
               <Grid
                 container
                 justifyContent={"center"}
+                sx={{marginTop:'10px'}}
               >
                 <Typography variant="h6" component="h2">{t('noGroupYet')}</Typography>
               </Grid>
