@@ -52,4 +52,8 @@ export class User {
   @Index()
   @Column({ nullable: true })
   preferredLanguage: string;
+
+  @Index()
+  @Column({ nullable: true })
+  lastConnectedAt: Date;
 }

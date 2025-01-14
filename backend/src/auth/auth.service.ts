@@ -49,16 +49,17 @@ export class AuthService {
       };
     }
     const user = await this.usersService.findOneByMail(mail);
-    console.log(user);
     if (!user) {
       throw new ForbiddenException();
     }
     const isMatch = await bcrypt.compare(pass, user.password);
-    console.log(isMatch);
 
     if (!isMatch) {
       throw new UnauthorizedException();
     }
+    await this.usersService.updateUser(user.id, {
+      lastConnectedAt: new Date(),
+    });
     const payload = {
       sub: user.id,
       user: user.name,

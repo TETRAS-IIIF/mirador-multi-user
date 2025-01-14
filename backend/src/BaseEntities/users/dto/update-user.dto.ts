@@ -6,4 +6,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   newPassword?: string;
   confirmPassword?: string;
   resetToken?: string;
+  lastConnectedAt?: Date;
 }
