@@ -156,5 +156,6 @@
     "upload": "Téléverser",
     "create": "Créer"
   },
-  "sort_by": "trier par"
+  "sort_by": "trier par",
+  "no_manifest_yet": "Aucun manifeste pour le moment, cliquez sur \"NOUVEAU MANIFESTE\" pour en ajouter un."
 }

@@ -156,5 +156,6 @@
     "upload": "Subir",
     "create": "Crear"
   },
-  "sort_by": "Ordenar por"
+  "sort_by": "Ordenar por",
+  "no_manifest_yet": "Aún no hay manifiesto, haz clic en \"NUEVO MANIFIESTO\" para agregar uno."
 }

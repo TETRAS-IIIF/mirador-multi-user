@@ -156,5 +156,7 @@
     "upload": "Upload",
     "create": "Create"
   },
-  "sort_by": "Sort By"
+  "sort_by": "Sort By",
+  "no_manifest_yet": "No manifest yet, click \"NEW MANIFEST\" to add one."
+
 }

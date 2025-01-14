@@ -378,12 +378,12 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
               </Grid>
             </Grid>
           </Grid>
-          {!manifests.length && (
+          {!manifests.length && !createManifestIsOpen &&(
             <Grid
               container
               justifyContent={"center"}
             >
-              <Typography variant="h6" component="h2">No manifest yet, click "NEW MANIFEST" to add one.</Typography>
+              <Typography variant="h6" component="h2">{t('no_manifest_yet')}</Typography>
             </Grid>
           )}
           {!searchedManifest && !createManifestIsOpen && manifestFiltered && manifestFiltered.length < 1 &&(
