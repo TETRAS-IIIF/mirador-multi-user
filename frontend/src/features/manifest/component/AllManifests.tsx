@@ -270,19 +270,16 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     }
   };
 
-  const handleFiltered = (partialString:string)=>{
-    if(partialString.length < 1){
-      return setManifestFiltered([])
+  const handleFiltered = (partialString: string) => {
+    if (partialString.length < 1) {
+      setManifestFiltered([]);
+      return;
     }
-    if(partialString.length > 0 ){
-      const manifetsFiltered = manifests.filter((manifest) =>manifest.title.startsWith(partialString))
-      if(manifetsFiltered.length >= 1){
-        setManifestFiltered(manifetsFiltered)
-      }else{
-        setManifestFiltered(undefined)
-      }
-    }
-  }
+    const manifestsFiltered = manifests.filter((manifest) =>
+      manifest.title.toLowerCase().includes(partialString.toLowerCase())
+    );
+    setManifestFiltered(manifestsFiltered.length > 0 ? manifestsFiltered : undefined);
+  };
 
   const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
     try{
