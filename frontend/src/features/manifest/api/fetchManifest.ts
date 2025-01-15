@@ -1,8 +1,6 @@
 export const fetchManifest = async (hash:string,path:string):Promise<Record<string, string> | undefined> => {
   try {
     const caddyUrl = import.meta.env.VITE_CADDY_URL
-    // TODO I don't know why this line is conserved 
-    //const url = `${caddyUrl}/${hash}/${path}?t=${Date.now()}`
     const response = await fetch(`${caddyUrl}/${hash}/${path}`,{
       method: 'GET',
     })

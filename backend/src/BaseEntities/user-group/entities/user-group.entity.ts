@@ -1,11 +1,11 @@
 import {
-  Column,
+  Column, CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+  PrimaryGeneratedColumn
+} from "typeorm";
 import { IsEnum, IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../../LinkModules/link-group-project/entities/link-group-project.entity';
 import { LinkMediaGroup } from '../../../LinkModules/link-media-group/entities/link-media-group.entity';
@@ -66,4 +66,10 @@ export class UserGroup {
   @ManyToOne(() => Tag)
   @JoinColumn({ name: 'tagId' })
   tag: Tag;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  created_at: Date;
 }

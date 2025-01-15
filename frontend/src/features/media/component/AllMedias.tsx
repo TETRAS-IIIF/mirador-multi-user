@@ -1,4 +1,4 @@
-import { Box, Grid, styled, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Divider, Grid, IconButton, styled, Tab, Tabs, Tooltip, Typography } from "@mui/material";
 import {
   ChangeEvent,
   Dispatch,
@@ -36,6 +36,8 @@ import { a11yProps } from "../../../components/elements/SideBar/allyProps.tsx";
 import { MediaCard } from "./MediaCard.tsx";
 import { useTranslation } from "react-i18next";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -71,6 +73,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
   const [tabValue, setTabValue] = useState(0);
   const [sortField, setSortField] = useState<keyof Media>("title");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const { t } = useTranslation();
 
@@ -80,6 +83,9 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     setCurrentPage(1);
   };
 
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
@@ -96,30 +102,29 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
       .sort((a, b) => {
         const aValue = a[sortField];
         const bValue = b[sortField];
+        let comparison = 0;
 
         if (sortField === "created_at") {
           const aDate = new Date(aValue as string);
           const bDate = new Date(bValue as string);
 
           if (!isNaN(aDate.getTime()) && !isNaN(bDate.getTime())) {
-            return aDate.getTime() - bDate.getTime();
+            comparison = aDate.getTime() - bDate.getTime();
           }
-          return 0;
         }
-
         if (typeof aValue === "string" && typeof bValue === "string") {
-          return aValue.localeCompare(bValue);
+          comparison = aValue.localeCompare(bValue);
         }
         if (typeof aValue === "number" && typeof bValue === "number") {
-          return aValue - bValue;
+          comparison = aValue - bValue;
         }
-        return 0;
+        return sortOrder === "asc" ? comparison : -comparison;
       });
     // Paginate the filtered and sorted items
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return filteredAndSortedItems.slice(start, end);
-  }, [currentPage, itemsPerPage, medias, sortField, tabValue]);
+  }, [currentPage, medias, sortField, sortOrder, tabValue]);
 
   const totalPages = Math.ceil(
     medias.filter(media => {
@@ -313,7 +318,20 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
               onChange={handleCreateMedia}
             />
           </Grid>
-          <Grid item container sx={{ width: 'auto', paddingTop: 1, paddingBottom:1 }} alignItems="center" justifyContent="flex-end">
+          <Grid item container spacing={2} sx={{ width: 'auto', paddingTop: 1, paddingBottom:1 }} alignItems="center" justifyContent="flex-end">
+            <Grid item>
+              <SortItemSelector<Media>
+                sortField={sortField}
+                setSortField={setSortField}
+                fields={["title", "created_at"]}
+              />
+            </Grid>
+            <Grid item>
+              <Tooltip title={t(sortOrder === "asc" ? "sortAsc" : "sortDesc")}>
+                <IconButton onClick={toggleSortOrder} >{sortOrder === "asc" ? <ArrowDropUpIcon /> : <ArrowDropDownIcon/>}</IconButton>
+              </Tooltip>
+            </Grid>
+            <Divider orientation="vertical" variant="middle" flexItem />
             <Grid item>
               <SearchBar
                 handleFiltered={handleFiltered}
@@ -322,13 +340,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                 getOptionLabel={getOptionLabelForMediaSearchBar}
                 label={t('filterMedia')}
                 setSearchedData={handleSetSearchMedia}
-              />
-            </Grid>
-            <Grid item>
-              <SortItemSelector<Media>
-                sortField={sortField}
-                setSortField={setSortField}
-                fields={["title", "created_at"]}
               />
             </Grid>
           </Grid>

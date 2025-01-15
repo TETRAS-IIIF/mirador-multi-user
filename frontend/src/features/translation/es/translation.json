@@ -157,5 +157,7 @@
     "create": "Crear"
   },
   "sort_by": "Ordenar por",
-  "no_manifest_yet": "Aún no hay manifiesto, haz clic en \"NUEVO MANIFIESTO\" para agregar uno."
+  "no_manifest_yet": "Aún no hay manifiesto, haz clic en \"NUEVO MANIFIESTO\" para agregar uno.",
+  "sortAsc": "Ordenar de forma ascendente",
+  "sortDesc": "Ordenar de forma descendente"
 }

@@ -1,5 +1,5 @@
 import { User } from "../../auth/types/types.ts";
-import { Grid, Typography } from "@mui/material";
+import { Divider, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 import { CreateGroupDto, LinkUserGroup, ItemsRights, UserGroup } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
@@ -26,6 +26,10 @@ import { PaginationControls } from "../../../components/elements/Pagination.tsx"
 import { ObjectTypes } from "../../tag/type.ts";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import { Dayjs } from "dayjs";
+import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 
 interface allGroupsProps {
@@ -46,15 +50,43 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   const [groupFiltered, setGroupFiltered] = useState<UserGroup[] | undefined>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [openSidePanel , setOpenSidePanel] = useState(false);
+  const [sortField, setSortField] = useState<keyof UserGroup>("title");
+  const [sortOrder, setSortOrder] = useState("asc");
+
   const { t } = useTranslation();
+
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
+
+  const sortedItems = useMemo(() => {
+    return [...groups].sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+      let comparison = 0;
+
+      if (sortField === "created_at") {
+        const aDate = (aValue as Dayjs).toDate();
+        const bDate = (bValue as Dayjs).toDate();
+        comparison = aDate.getTime() - bDate.getTime();
+      } else if (typeof aValue === "string" && typeof bValue === "string") {
+        comparison = aValue.localeCompare(bValue);
+      } else if (typeof aValue === "number" && typeof bValue === "number") {
+        comparison = aValue - bValue;
+      }
+
+      return sortOrder === "asc" ? comparison : -comparison;
+    });
+  }, [groups, sortField, sortOrder]);
+
 
   const itemsPerPage = 10;
 
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return groups.slice(start, end);
-  }, [currentPage, groups]);
+    return sortedItems.slice(start, end);
+  }, [currentPage, groups,sortedItems]);
 
   const totalPages = Math.ceil(groups.length / itemsPerPage);
 
@@ -168,8 +200,21 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   return(
     <>
       <SidePanelMedia  open={openSidePanel && !!openModalGroupId} setOpen={handleSetOpenSidePanel} display={!!openModalGroupId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
-        <Grid item container flexDirection="column" spacing={1}>
-          <Grid item container direction="row-reverse" spacing={2} alignItems="center"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
+        <Grid item container flexDirection="column">
+          <Grid item container justifyContent="flex-end" direction="row" spacing={2} alignItems="center"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"18px"}}>
+            <Grid item>
+              <SortItemSelector<UserGroup>
+                sortField={sortField}
+                setSortField={setSortField}
+                fields={["title", "created_at"]}
+              />
+            </Grid>
+            <Grid item>
+              <Tooltip title={t(sortOrder === "asc" ? "sortAsc" : "sortDesc")}>
+                <IconButton onClick={toggleSortOrder} >{sortOrder === "asc" ? <ArrowDropUpIcon /> : <ArrowDropDownIcon/>}</IconButton>
+              </Tooltip>
+            </Grid>
+            <Divider orientation="vertical" variant="middle" flexItem />
             <Grid item>
               <SearchBar handleFiltered={handleFiltered} label={t('filterGroups')} fetchFunction={handleLookingForGroup} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
             </Grid>
