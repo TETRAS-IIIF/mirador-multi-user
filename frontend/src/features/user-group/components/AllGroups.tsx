@@ -152,19 +152,15 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
     return groups.filter((groups) => groups.title.startsWith(partialString))
   }
 
-  const handleFiltered = (partialString:string)=>{
-    if(partialString.length < 1){
+  const handleFiltered = (partialString: string) => {
+    if (partialString.length < 1) {
       return setGroupFiltered([])
     }
-    if(partialString.length > 0 ){
-      const groupsFiltered = groups.filter((group)=>group.title.startsWith(partialString))
-      if(groupsFiltered.length >= 1){
-        setGroupFiltered(groupsFiltered)
-      }else{
-        setGroupFiltered(undefined)
-      }
-    }
-  }
+    const groupsFiltered = groups.filter((group) =>
+      group.title.toLowerCase().includes(partialString.toLowerCase())
+    );
+    setGroupFiltered(groupsFiltered.length > 0 ? groupsFiltered : undefined);
+  };
 
   const handleSetOpenSidePanel=()=>{
     setOpenSidePanel(!openSidePanel)

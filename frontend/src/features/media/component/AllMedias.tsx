@@ -236,19 +236,16 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     document.getElementById('file-upload')!.click();
   };
 
-  const handleFiltered = (partialString:string)=>{
-    if(partialString.length < 1){
-      return setMediaFiltered([])
+  const handleFiltered = (partialString: string) => {
+    if (partialString.length < 1) {
+      return setMediaFiltered([]);
     }
-    if(partialString.length > 0 ){
-      const filteredMedia = medias.filter((media)=>media.title.startsWith(partialString))
-      if(filteredMedia.length >= 1){
-        setMediaFiltered(filteredMedia)
-      }else{
-        setMediaFiltered(undefined)
-      }
-    }
-  }
+    const mediaFiltered = medias.filter((media) =>
+      media.title.toLowerCase().includes(partialString.toLowerCase())
+    );
+    setMediaFiltered(mediaFiltered.length > 0 ? mediaFiltered : undefined);
+  };
+
 
   const actions = [
     {

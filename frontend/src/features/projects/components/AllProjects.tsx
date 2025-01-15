@@ -261,19 +261,16 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     }
   }
 
-  const handleFiltered = (partialString:string)=>{
-    if(partialString.length < 1){
+  const handleFiltered = (partialString: string) => {
+    if (partialString.length < 1) {
       return setProjectFiltered([])
     }
-    if(partialString.length > 0 ){
-      const filteredProjects = userProjects.filter((project)=>project.title.startsWith(partialString))
-      if(filteredProjects.length >= 1){
-        setProjectFiltered(filteredProjects)
-      }else{
-        setProjectFiltered(undefined)
-      }
-    }
-  }
+    const projectFiltered = userProjects.filter((project) =>
+      project.title.toLowerCase().includes(partialString.toLowerCase())
+    );
+    setProjectFiltered(projectFiltered.length > 0 ? projectFiltered : undefined);
+  };
+
 
   const getGroupByOption=(option:UserGroup):string =>{
     if(option.type === UserGroupTypes.MULTI_USER ){
