@@ -234,11 +234,20 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
                 {currentPageData.map((manifest, index) => (
                   <>
                     <StyledImageListItem key={manifest.id}>
-                      <img
-                        srcSet={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                        src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format`}
+                      <Box
+                        component="img"
+                        src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
                         alt={manifest.title}
                         loading="lazy"
+                        sx={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'cover',
+                          '@media(min-resolution: 2dppx)': {
+                            width: '100%',
+                            height: '100%',
+                          },
+                        }}
                       />
                       <ImageListItemBar
                         title={manifest.title}
