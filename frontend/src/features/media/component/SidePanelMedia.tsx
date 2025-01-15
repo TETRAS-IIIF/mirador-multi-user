@@ -5,7 +5,7 @@ import {
   Grid,
   IconButton,
   ImageList,
-  ImageListItem,
+  ImageListItem, ImageListItemBar,
   styled,
   Tab,
   Tabs,
@@ -344,14 +344,21 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
                     sx={{
                       width: '100%',
                       height: '100%',
-                      objectFit: 'cover', // Ensures cropping behavior
+                      objectFit: 'cover',
                       '@media(min-resolution: 2dppx)': {
                         width: '100%',
                         height: '100%',
                       },
                     }}
                   />
-                  {/* Conditionally render icon in the top-right corner */}
+                  <ImageListItemBar
+                    title={media.title}
+                    sx={{
+                      position: 'absolute',
+                      bottom: 0,
+                      color: 'white',
+                    }}
+                  />
                   <Box
                     sx={{
                       position: 'absolute',
