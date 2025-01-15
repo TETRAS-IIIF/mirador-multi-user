@@ -1,4 +1,4 @@
-import {  Grid,  Typography } from "@mui/material";
+import { Divider, Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
 import { Project, ProjectGroup, ProjectGroupUpdateDto } from "../types/types.ts";
 import IState from "../../mirador/interface/IState.ts";
@@ -40,6 +40,8 @@ import { useTranslation } from "react-i18next";
 import { dublinCoreMetadata } from "../../../utils/dublinCoreMetadata.ts";
 import { Dayjs } from "dayjs";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 interface AllProjectsProps {
   user: User;
   setSelectedProjectId: (id: number) => void;
@@ -63,30 +65,36 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const [currentPage, setCurrentPage] = useState(1);
   const [openSidePanel , setOpenSidePanel] = useState(false);
   const [sortField, setSortField] = useState<keyof Project>("title");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const { t } = useTranslation();
 
   const itemsPerPage = 10;
+
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
 
   const sortedItems = useMemo(() => {
     return [...userProjects].sort((a, b) => {
       const aValue = a[sortField];
       const bValue = b[sortField];
 
+      let comparison = 0;
+
       if (sortField === "created_at") {
         const aDate = aValue instanceof Date ? aValue : (aValue as Dayjs).toDate();
         const bDate = bValue instanceof Date ? bValue : (bValue as Dayjs).toDate();
-        return aDate.getTime() - bDate.getTime();
+        comparison = aDate.getTime() - bDate.getTime();
+      } else if (typeof aValue === "string" && typeof bValue === "string") {
+        comparison = aValue.localeCompare(bValue);
+      } else if (typeof aValue === "number" && typeof bValue === "number") {
+        comparison = aValue - bValue;
       }
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return aValue.localeCompare(bValue);
-      }
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return aValue - bValue;
-      }
-      return 0;
+
+      return sortOrder === "asc" ? comparison : -comparison;
     });
-  }, [userProjects, sortField]);
+  }, [userProjects, sortField, sortOrder]);
 
   const totalPages = Math.ceil(userProjects.length / itemsPerPage);
 
@@ -302,7 +310,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
           <Grid item container direction="row-reverse" alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"18px"}}>
             {
               !selectedProjectId &&(
-                <>
+                <Grid item container justifyContent="flex-end" spacing={2} alignItems="center">
                   <Grid item>
                     <SortItemSelector<Project>
                       sortField={sortField}
@@ -311,9 +319,15 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                     />
                   </Grid>
                   <Grid item>
+                    <Tooltip title={t(sortOrder === "asc" ? "sortAsc" : "sortDesc")}>
+                      <IconButton onClick={toggleSortOrder} >{sortOrder === "asc" ? <ArrowDropUpIcon /> : <ArrowDropDownIcon/>}</IconButton>
+                    </Tooltip>
+                  </Grid>
+                  <Divider orientation="vertical" variant="middle" flexItem />
+                  <Grid item>
                     <SearchBar handleFiltered={handleFiltered} label={t('filterProjects')} fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
                   </Grid>
-                </>
+                </Grid>
               )
             }
           </Grid>

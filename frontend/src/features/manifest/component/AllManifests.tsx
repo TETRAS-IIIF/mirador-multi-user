@@ -1,4 +1,4 @@
-import { Grid, styled, Typography } from "@mui/material";
+import { Divider, Grid, IconButton, styled, Tooltip, Typography } from "@mui/material";
 import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { LinkUserGroup, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
@@ -35,6 +35,8 @@ import { useTranslation } from "react-i18next";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import placeholder from "../../../assets/Placeholder.svg";
 import { IIIFResource, ManifestResource } from "manifesto.js";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -78,34 +80,38 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [openSidePanel , setOpenSidePanel] = useState(false);
   const [sortField, setSortField] = useState<keyof Manifest>("title");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const { t } = useTranslation();
 
   const itemsPerPage = 10;
 
+  const toggleSortOrder = () => {
+    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+  };
+
   const sortedItems = useMemo(() => {
     return [...manifests].sort((a, b) => {
       const aValue = a[sortField];
       const bValue = b[sortField];
+      let comparison = 0;
 
       if (sortField === "created_at") {
         const aDate = typeof aValue === "string" ? new Date(aValue) : aValue;
         const bDate = typeof bValue === "string" ? new Date(bValue) : bValue;
-
-        return aDate.getTime() - bDate.getTime();
+        comparison = aDate.getTime() - bDate.getTime();
       }
 
       if (typeof aValue === "string" && typeof bValue === "string") {
-        return aValue.localeCompare(bValue);
+        comparison = aValue.localeCompare(bValue);
       }
 
       if (typeof aValue === "number" && typeof bValue === "number") {
-        return aValue - bValue;
+        comparison = aValue - bValue;
       }
-
-      return 0;
+      return sortOrder === "asc" ? comparison : -comparison;
     });
-  }, [manifests, sortField]);
+  }, [manifests, sortField, sortOrder]);
 
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -339,7 +345,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           <Grid item container direction="row-reverse" alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px", paddingTop:0}}>
             {
               !createManifestIsOpen && (
-                <>
+                <Grid item container justifyContent="flex-end" spacing={2} alignItems="center">
                   <Grid item>
                     <SortItemSelector<Manifest>
                       sortField={sortField}
@@ -347,17 +353,23 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                       fields={["title", "created_at"]}
                     />
                   </Grid>
-                <Grid item>
-                  <SearchBar
-                    fetchFunction={HandleLookingForManifests}
-                    getOptionLabel={getOptionLabelForManifestSearchBar}
-                    label={t('filterManifest')}
-                    setSearchedData={handleSetSearchManifest}
-                    setFilter={setManifestFiltered}
-                    handleFiltered={handleFiltered}
-                  />
+                  <Grid item>
+                    <Tooltip title={t(sortOrder === "asc" ? "sortAsc" : "sortDesc")}>
+                      <IconButton onClick={toggleSortOrder} >{sortOrder === "asc" ? <ArrowDropUpIcon /> : <ArrowDropDownIcon/>}</IconButton>
+                    </Tooltip>
+                  </Grid>
+                  <Divider orientation="vertical" variant="middle" flexItem />
+                  <Grid item>
+                    <SearchBar
+                      fetchFunction={HandleLookingForManifests}
+                      getOptionLabel={getOptionLabelForManifestSearchBar}
+                      label={t('filterManifest')}
+                      setSearchedData={handleSetSearchManifest}
+                      setFilter={setManifestFiltered}
+                      handleFiltered={handleFiltered}
+                    />
+                  </Grid>
                 </Grid>
-                </>
               )
             }
             <Grid item container spacing={2}>

@@ -157,6 +157,7 @@
     "create": "Create"
   },
   "sort_by": "Sort By",
-  "no_manifest_yet": "No manifest yet, click \"NEW MANIFEST\" to add one."
-
+  "no_manifest_yet": "No manifest yet, click \"NEW MANIFEST\" to add one.",
+  "sortAsc": "Sort in ascending order",
+  "sortDesc": "Sort in descending order"
 }

@@ -157,5 +157,7 @@
     "create": "Créer"
   },
   "sort_by": "trier par",
-  "no_manifest_yet": "Aucun manifeste pour le moment, cliquez sur \"NOUVEAU MANIFESTE\" pour en ajouter un."
+  "no_manifest_yet": "Aucun manifeste pour le moment, cliquez sur \"NOUVEAU MANIFESTE\" pour en ajouter un.",
+  "sortAsc": "Trier par ordre croissant",
+  "sortDesc": "Trier par ordre décroissant"
 }
