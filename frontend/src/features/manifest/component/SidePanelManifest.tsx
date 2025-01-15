@@ -1,14 +1,14 @@
 import {
-  Drawer,
-  IconButton,
   Box,
-  styled,
   Button,
+  Drawer,
+  Grid,
+  IconButton,
   ImageList,
   ImageListItem,
-  Grid,
-  Tooltip,
-  ImageListItemBar
+  ImageListItemBar,
+  styled,
+  Tooltip
 } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -20,7 +20,6 @@ import AddLinkIcon from "@mui/icons-material/AddLink";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
 import { linkManifest } from "../api/linkManifest.ts";
-import { lookingForManifests } from "../api/loonkingForManifests.ts";
 import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
 import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
 import placeholder from "../../../assets/Placeholder.svg";
@@ -79,7 +78,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
-  const itemsPerPage = 9;
+  const itemsPerPage = 6;
 
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -103,9 +102,9 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
   }
 
   const HandleLookingForManifest = async (partialString : string) =>{
-    const userManifests =  await lookingForManifests(partialString, userPersonalGroup.id)
-    return userManifests
+    return manifest.filter((manifest: Manifest) => manifest.title.includes(partialString))
   }
+
 
   const getOptionLabelForManifestSearchBar = (option:Manifest): string => {
     return option.title;
@@ -190,7 +189,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
           open={open}
           anchor="right"
           variant="persistent"
-          sx={{  position: 'relative', zIndex:9998}}
+          sx={{  position: 'relative'}}
           ModalProps={{
             BackdropProps: {
               style: { backgroundColor: 'transparent'},
