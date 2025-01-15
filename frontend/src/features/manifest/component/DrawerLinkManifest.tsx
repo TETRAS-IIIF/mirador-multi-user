@@ -1,6 +1,6 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
 import { LoadingButton } from '@mui/lab';
 
 
@@ -13,6 +13,7 @@ interface IDrawerCreateManifestProps{
 export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManifestIsOpen,linkingManifest}:IDrawerCreateManifestProps) =>{
   const [isLoading, setIsLoading] = useState(false);
   const [manifestLink, setManifestLink] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
     setManifestLink(event.target.value);
@@ -34,10 +35,19 @@ export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManif
     toggleModalManifestCreation();
     setManifestLink('');
   },[toggleModalManifestCreation])
+
+  const handleDrawerTransition = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   return (
     <>
       <div>
-        <Drawer anchor="bottom" open={modalCreateManifestIsOpen} onClose={handleToggleModalGroupCreation}>
+        <Drawer anchor="bottom" open={modalCreateManifestIsOpen} onClose={handleToggleModalGroupCreation} ModalProps={{
+          onAnimationEnd: handleDrawerTransition,
+        }}>
           <Paper
             sx={{
               left: '0',
@@ -67,7 +77,7 @@ export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManif
                   <label>Manifest's link :</label>
                 </Grid>
                 <Grid item sx={{ width:'70%'}}>
-                  <TextField onChange={handleNameChange} sx={{ width:'100%'}} ></TextField>
+                  <TextField inputRef={inputRef} onChange={handleNameChange} sx={{ width:'100%'}} ></TextField>
                 </Grid>
                 <Grid item>
                   <LoadingButton

@@ -1,6 +1,6 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
-import { ChangeEvent, useCallback, useState, KeyboardEvent } from "react";
+import { ChangeEvent, useCallback, useState, KeyboardEvent, useRef } from "react";
 import { useTranslation } from "react-i18next";
 
 interface IDrawerCreateGroupProps{
@@ -12,6 +12,8 @@ interface IDrawerCreateGroupProps{
 export const DrawerCreateGroup = ({modalCreateGroup, toggleModalGroupCreation, handleCreatGroup}: IDrawerCreateGroupProps) => {
   const [userGroupName, setUserGroupName] = useState<string>('');
   const { t } = useTranslation();
+  const inputRef = useRef<HTMLInputElement>(null);
+
 
   const handleNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setUserGroupName(event.target.value);
@@ -32,14 +34,22 @@ export const DrawerCreateGroup = ({modalCreateGroup, toggleModalGroupCreation, h
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && userGroupName.trim()) {
-      event.preventDefault(); // prevent default form submission behavior
+      event.preventDefault();
       handleUserCreation();
+    }
+  };
+
+  const handleDrawerTransition = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
     }
   };
 
   return (
     <div>
-      <Drawer anchor="bottom" open={modalCreateGroup} onClose={handleToggleModalGroupCreation}>
+      <Drawer anchor="bottom" open={modalCreateGroup} onClose={handleToggleModalGroupCreation} ModalProps={{
+        onAnimationEnd: handleDrawerTransition,
+      }}>
         <Paper
           sx={{
             left: '0',
@@ -65,6 +75,7 @@ export const DrawerCreateGroup = ({modalCreateGroup, toggleModalGroupCreation, h
               </Grid>
               <Grid item sx={{ width: '70%' }}>
                 <TextField
+                  inputRef={inputRef}
                   onChange={handleNameChange}
                   onKeyDown={handleKeyDown}
                   sx={{ width: '100%' }}

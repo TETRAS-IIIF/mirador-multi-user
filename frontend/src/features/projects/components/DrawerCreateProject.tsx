@@ -1,6 +1,6 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LoadingButton } from '@mui/lab';
 
@@ -13,6 +13,7 @@ interface IDrawerCreateProjectProps{
 export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCreation,InitializeProject}:IDrawerCreateProjectProps)=>{
   const [projectName, setProjectName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useTranslation();
 
@@ -30,10 +31,19 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
       setProjectName('')
     }
   };
+
+  const handleDrawerTransition = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+
   return(
     <>
       <div>
-        <Drawer anchor="bottom" open={modalCreateProjectIsOpen} onClose={toggleModalProjectCreation}>
+        <Drawer anchor="bottom" open={modalCreateProjectIsOpen} onClose={toggleModalProjectCreation}  ModalProps={{
+          onAnimationEnd: handleDrawerTransition,
+        }}>
           <Paper
             sx={{
               left: '0',
@@ -64,6 +74,7 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
                 </Grid>
                 <Grid item sx={{ width: '70%' }}>
                   <TextField
+                    inputRef={inputRef}
                     onChange={handleNameChange}
                     sx={{ width: '100%' }}
                     placeholder={t('placeholderProject')}

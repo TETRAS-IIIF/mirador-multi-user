@@ -1,6 +1,6 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
-import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LoadingButton } from '@mui/lab';
 
@@ -13,6 +13,7 @@ interface IDrawerCreateMediaProps{
 export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,CreateMediaWithLink}:IDrawerCreateMediaProps)=>{
   const [mediaLink, setMediaLink] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useTranslation();
 
@@ -37,11 +38,17 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
     setMediaLink('');
   },[CreateMediaWithLink])
 
-
+  const handleDrawerTransition = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
   return (
     <>
       <div>
-        <Drawer sx={{zIndex:9999}} anchor="bottom" open={modalCreateMediaIsOpen} onClose={handleToggleModalGroupCreation}>
+        <Drawer sx={{zIndex:9999}} anchor="bottom" open={modalCreateMediaIsOpen} onClose={handleToggleModalGroupCreation} ModalProps={{
+          onAnimationEnd: handleDrawerTransition,
+        }}>
           <Paper
             sx={{
               left: '0',
@@ -71,7 +78,7 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
                   <label>{t('mediaLink')}</label>
                 </Grid>
                 <Grid item sx={{ width: "70%" }}>
-                  <TextField onChange={handleNameChange} sx={{ width: "100%" }}></TextField>
+                  <TextField inputRef={inputRef} onChange={handleNameChange} sx={{ width: "100%" }}></TextField>
                 </Grid>
                 <Grid item>
                   <LoadingButton
