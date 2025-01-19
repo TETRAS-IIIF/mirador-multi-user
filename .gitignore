@@ -4,3 +4,4 @@ frontend/src/config/config.ts
 backend/upload/
 backend/migrations/*
 mariaDB/data/*
+.env
