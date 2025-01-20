@@ -24,8 +24,8 @@ export const ManifestCreationFormThumbnail =
             <Grid item xs={8}>
               <FieldForm
                 name="manifest-thumbnail"
-                placeholder={t("Manifest thumbnail URL")}
-                label="Manifest Thumbnail"
+                placeholder={t("manifestThumbnailUrl")}
+                label={t("manifestThumbnail")}
                 value={manifestThumbnail}
                 onChange={handleManifestThumbnailChange}
               />
@@ -53,16 +53,16 @@ export const ManifestCreationFormThumbnail =
             <Grid item>
               <MMUToolTip>
                 <div>
-                  Media shouldn't weigh more than 1MB.
+                  {t("mediaShouldBeNoMoreThan", 1)}
                   <br />
-                  If the URL comes from your media library, we took care of this for you.
+                  {t("mediaOriginInfo")}
                 </div>
               </MMUToolTip>
             </Grid>
             {isManifestThumbnailBadURL && (
               <Grid item>
                 <Typography variant="subtitle1" color="red">
-                  URL is not valid
+                  {t("urlIsNotValid")}
                 </Typography>
               </Grid>
             )}
