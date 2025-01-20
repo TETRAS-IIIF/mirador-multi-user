@@ -37,6 +37,7 @@
     "react-hook-form": "^7.51.3",
     "react-hot-toast": "^2.4.1",
     "react-i18next": "^15.2.0",
+    "react-player": "^2.16.0",
     "react-query-auth": "^2.3.0",
     "react-router-dom": "^6.23.0",
     "styled-components": "^6.1.8",
