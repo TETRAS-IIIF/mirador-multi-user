@@ -31,7 +31,10 @@ export const ManifestCreationFormCanvases =
       }
 
       try {
-        if (isYouTubeVideo(mediaURL)) {
+        if (mediaURL.match(/\.(mp4|webm|ogg)$/i) !== null) {
+          updatedCanvas[itemIndex].media[0].thumbnailUrl = null;
+          updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
+        } else if (isYouTubeVideo(mediaURL)) {
           youtubeJson = await getYoutubeJson(mediaURL);
           thumbnailUrl = youtubeJson?.thumbnail_url || null;
           updatedCanvas[itemIndex].media[0].thumbnailUrl = thumbnailUrl!;
@@ -43,9 +46,6 @@ export const ManifestCreationFormCanvases =
             updatedCanvas[itemIndex].media[0].thumbnailUrl = thumbnailUrl;
             updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
           }
-        } else if (mediaURL.match(/\.(mp4|webm|ogg)$/i) !== null) {
-          updatedCanvas[itemIndex].media[0].thumbnailUrl = null;
-          updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
         } else if (mediaURL.match(/\.(jpe?g|png|gif|webp)$/i) !== null) {
           // Set as image if not YouTube or PeerTube video or video classic file format
           updatedCanvas[itemIndex].media[0].thumbnailUrl = mediaURL;

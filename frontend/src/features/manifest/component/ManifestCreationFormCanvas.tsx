@@ -2,8 +2,8 @@ import { FieldForm } from "../../../components/elements/FieldForm";
 import { Button, Grid, Paper, Typography } from "@mui/material";
 import { useState } from "react";
 import { MediaTypes } from "../../media/types/types";
-import { MediaVideoThumbnail } from "./MediaVideoThumbnail";
 import { MediaImageThumbnail } from "./MediaImageThumbnail";
+import { MediaVideoThumbnail } from "./MediaVideoThumbnail";
 
 export const ManifestCreationFormCanvas = ({
                                              canvas,
@@ -44,11 +44,11 @@ export const ManifestCreationFormCanvas = ({
               {(media.value && !isMediaLoading) && (
                 <Grid item>
                   {media.type === MediaTypes.VIDEO && (
-                    <MediaVideoThumbnail media={media} />
+                    <MediaVideoThumbnail media={media} t={t} />
                   )
                   }
                   {media.type === MediaTypes.IMAGE && (
-                    <MediaImageThumbnail media={media} />
+                    <MediaImageThumbnail media={media} t={t} />
                   )
                   }
                   {media.type === undefined && (
@@ -59,9 +59,6 @@ export const ManifestCreationFormCanvas = ({
                   }
                 </Grid>
               )}
-              <Grid item>
-
-              </Grid>
             </Grid>
             <Grid item>
               <Button

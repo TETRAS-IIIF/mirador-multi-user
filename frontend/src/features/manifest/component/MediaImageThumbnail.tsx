@@ -1,6 +1,10 @@
 import { Box, Grid, Typography } from "@mui/material";
+import { useState } from "react";
 
-export function MediaImageThumbnail({ media }) {
+export function MediaImageThumbnail({ media, t }) {
+
+
+  console.log("MediaImageThumbnail", media);
 
   const [isMediaValidURL, setIsMediaValidURL] = useState(false);
   return (
