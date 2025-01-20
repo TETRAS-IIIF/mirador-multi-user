@@ -1,25 +1,28 @@
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 import {
   getPeerTubeThumbnailUrl,
   getPeerTubeVideoID,
   getYoutubeJson,
   isPeerTubeVideo,
-  isYouTubeVideo
-} from "../../media/utils/utils";
-import { MediaTypes } from "../../media/types/types";
-import { ManifestCreationFormCanvas } from "./ManifestCreationFormCanvas";
+  isYouTubeVideo,
+} from '../../media/utils/utils';
+import { MediaTypes } from '../../media/types/types';
+import { ManifestCreationFormCanvas } from './ManifestCreationFormCanvas';
 
 export const ManifestCreationFormCanvases =
   ({
      canvases,
      t,
-     setCanvases
+     setCanvases,
    }) => {
 
     const handleMediaURLChange = async (itemIndex: number, mediaURL: string) => {
       const updatedCanvas = [...canvases];
       updatedCanvas[itemIndex].media[0].value = mediaURL;
+      updatedCanvas[itemIndex].media[0].duration = null;
+      updatedCanvas[itemIndex].media[0].height = null;
+      updatedCanvas[itemIndex].media[0].width = null;
 
       let youtubeJson;
       let videoId;
@@ -52,7 +55,7 @@ export const ManifestCreationFormCanvases =
           updatedCanvas[itemIndex].media[0].type = MediaTypes.IMAGE;
         }
       } catch (error) {
-        console.error("Failed to fetch media details:", error);
+        console.error('Failed to fetch media details:', error);
       } finally {
         setCanvases(updatedCanvas);
       }
@@ -71,7 +74,7 @@ export const ManifestCreationFormCanvases =
 
     const handleNewCanvas = () => {
       const newCanvasIndex = canvases.length + 1;
-      setCanvases([...canvases, { media: [{ title: `media-${newCanvasIndex}`, value: "", type: undefined }] }]);
+      setCanvases([...canvases, { media: [{ title: `media-${newCanvasIndex}`, value: '', type: undefined }] }]);
     };
 
     return (
@@ -89,7 +92,7 @@ export const ManifestCreationFormCanvases =
         ))}
         <Grid item>
           <Button variant="contained" color="primary" onClick={handleNewCanvas}>
-            {t("addNewCanvas")}
+            {t('addNewCanvas')}
           </Button>
         </Grid>
       </>
