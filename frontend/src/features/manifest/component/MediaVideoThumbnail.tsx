@@ -1,3 +1,5 @@
-export function MediaVideoThumbnail({ media: any }) {
-  return null;
+export function MediaVideoThumbnail({ media }) {
+  return (
+    <h1>Video Thumbnail</h1>
+  );
 }

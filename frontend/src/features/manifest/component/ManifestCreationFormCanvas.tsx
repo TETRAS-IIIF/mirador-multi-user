@@ -1,7 +1,6 @@
 import { FieldForm } from "../../../components/elements/FieldForm";
-import { Button, Grid, Paper } from "@mui/material";
+import { Button, Grid, Paper, Typography } from "@mui/material";
 import { useState } from "react";
-import { BigSpinner } from "../../../components/elements/spinner";
 import { MediaTypes } from "../../media/types/types";
 import { MediaVideoThumbnail } from "./MediaVideoThumbnail";
 import { MediaImageThumbnail } from "./MediaImageThumbnail";
@@ -41,7 +40,8 @@ export const ManifestCreationFormCanvas = ({
                   onChange={onMediaChange}
                 />
               </Grid>
-              {media.value && (
+              {isMediaLoading && <h2>Loading ...</h2>}
+              {(media.value && !isMediaLoading) && (
                 <Grid item>
                   {media.type === MediaTypes.VIDEO && (
                     <MediaVideoThumbnail media={media} />
@@ -51,10 +51,16 @@ export const ManifestCreationFormCanvas = ({
                     <MediaImageThumbnail media={media} />
                   )
                   }
+                  {media.type === undefined && (
+                    <Typography variant="subtitle1" color="red">
+                      {t("urlIsNotValid")}
+                    </Typography>
+                  )
+                  }
                 </Grid>
               )}
               <Grid item>
-                {isMediaLoading && <BigSpinner />}
+
               </Grid>
             </Grid>
             <Grid item>
