@@ -7,14 +7,13 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IMiradorState from './interface/IState.ts';
-import IState from './interface/IState.ts';
 import './style/mirador.css';
 import { Project } from '../projects/types/types.ts';
 import MMUAdapter from './adapter/MMUAdapter';
 import ManifestListTools from 'mirador-mltools-plugin-mmu/es/index.js';
 
 interface MiradorViewerHandle {
-  setViewer: () => IState;
+  setViewer: () => IMiradorState;
   saveProject: () => void;
 }
 
@@ -22,7 +21,7 @@ interface MiradorViewerProps {
   miradorState: IMiradorState,
   saveMiradorState: (state: IMiradorState, title: string) => void,
   project: Project
-  setMiradorState: (state: IState) => void
+  setMiradorState: (state: IMiradorState) => void
   setViewer: Dispatch<any>
   viewer: any
   HandleSetIsRunning: () => void
@@ -38,7 +37,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
       console.log(miradorViewer.store.getState());
     },
     setViewer: () => {
-      const viewer: IState = miradorViewer.store.getState();
+      const viewer: IMiradorState = miradorViewer.store.getState();
       setViewer(viewer);
       return viewer;
     }
