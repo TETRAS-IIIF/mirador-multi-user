@@ -1,8 +1,10 @@
 import { FieldForm } from "../../../components/elements/FieldForm";
-import { Box, Button, Grid, Paper } from "@mui/material";
+import { Button, Grid, Paper } from "@mui/material";
 import { useState } from "react";
 import { BigSpinner } from "../../../components/elements/spinner";
-import placeholder from "../../../assets/Placeholder.svg";
+import { MediaTypes } from "../../media/types/types";
+import { MediaVideoThumbnail } from "./MediaVideoThumbnail";
+import { MediaImageThumbnail } from "./MediaImageThumbnail";
 
 export const ManifestCreationFormCanvas = ({
                                              canvas,
@@ -23,8 +25,7 @@ export const ManifestCreationFormCanvas = ({
         setIsMediaLoading(false);
       }
     };
-
-    console.log(canvas.media[0]);
+    const media = canvas.media[0];
 
     return (
       <Grid item key={canvasIndex}>
@@ -33,45 +34,23 @@ export const ManifestCreationFormCanvas = ({
             <Grid item container spacing={2} alignItems="center">
               <Grid item xs>
                 <FieldForm
-                  name={canvas.media[0].title}
+                  name={media.title}
                   placeholder={t("mediaLink")}
                   label={t("mediaLink")}
-                  value={canvas.media[0].value}
+                  value={media.value}
                   onChange={onMediaChange}
                 />
               </Grid>
-              {canvas.media[0].value && (
+              {media.value && (
                 <Grid item>
-                  {!canvas.media[0].thumbnailUrl && (
-                    <Box
-                      component="img"
-                      src={placeholder}
-                      loading="lazy"
-                      sx={{
-                        width: 50,
-                        height: 50,
-                        objectFit: "cover",
-                        "@media(min-resolution: 2dppx)": {
-                          width: 100,
-                          height: 100
-                        }
-                      }}
-                    />)
+                  {media.type === MediaTypes.VIDEO && (
+                    <MediaVideoThumbnail media={media} />
+                  )
                   }
-                  <Box
-                    component="img"
-                    src={canvas.media[0].thumbnailUrl}
-                    loading="lazy"
-                    sx={{
-                      width: 50,
-                      height: 50,
-                      objectFit: "cover",
-                      "@media(min-resolution: 2dppx)": {
-                        width: 100,
-                        height: 100
-                      }
-                    }}
-                  />
+                  {media.type === MediaTypes.IMAGE && (
+                    <MediaImageThumbnail media={media} />
+                  )
+                  }
                 </Grid>
               )}
               <Grid item>
