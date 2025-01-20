@@ -4,6 +4,10 @@ export function isYouTubeVideo(url: string): boolean {
   return youtubeRegex.test(url);
 }
 
+export function isRawVideo(url: string): boolean {
+  return /\.(mp4|webm|ogg|mov|avi|flv|wmv|mkv|3gp)$/i.test(url);
+}
+
 export async function isPeerTubeVideo(url: string): Promise<boolean> {
   try {
     const response = await fetch(url);
