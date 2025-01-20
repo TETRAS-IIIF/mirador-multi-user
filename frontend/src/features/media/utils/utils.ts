@@ -1,10 +1,17 @@
 import { YoutubeVideoJson } from '../types/types.ts';
 
+/*************************************************************
+ * IMPORTANT: The functions need to be the same as their clones in backend    *
+ * src/utils/Custom_pipes/utils.ts
+ **********************************************************
+ */
+
 export const isYouTubeVideo = (url: string): boolean => {
   const youtubeRegex =
     /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|embed\/|v\/|.+\?v=)?([^&\n?#]+)/;
   return youtubeRegex.test(url);
 }
+
 
 export function isRawVideo(url: string): boolean {
   return /\.(mp4|webm|ogg|mov|avi|flv|wmv|mkv|3gp)$/i.test(url);
