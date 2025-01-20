@@ -50,15 +50,20 @@ export class MediaInterceptor implements NestInterceptor {
       type: 'Manifest',
       label: { en: [title] },
       items: [],
-      thumbnail: {
+    };
+
+    console.log(manifestThumbnail);
+
+    if (manifestThumbnail.length > 0) {
+      manifestToCreate.thumbnail = {
         ['@id']: manifestThumbnail,
         service: {
           ['@context']: manifestThumbnail,
           ['@id']: manifestThumbnail,
           profile: manifestThumbnail,
         },
-      },
-    };
+      };
+    }
 
     const fetchMediaForItem = async (media) => {
       try {
