@@ -9,17 +9,18 @@ export const ManifestCreationFormCanvas = ({
                                              canvas,
                                              canvasIndex,
                                              t,
-                                             handleMediaChange,
-                                             handleRemoveCanvas
+                                             handleMediaURLChange,
+                                             handleRemoveCanvas,
+                                             setMedia
                                            }) => {
 
     const [isMediaLoading, setIsMediaLoading] = useState(false);
 
-    const onMediaChange = async (e) => {
+    const onMediaURLChange = async (e) => {
       const mediaURL = e.target.value;
       setIsMediaLoading(true);
       try {
-        await handleMediaChange(canvasIndex, mediaURL);
+        await handleMediaURLChange(canvasIndex, mediaURL);
       } finally {
         setIsMediaLoading(false);
       }
@@ -37,14 +38,14 @@ export const ManifestCreationFormCanvas = ({
                   placeholder={t("mediaLink")}
                   label={t("mediaLink")}
                   value={media.value}
-                  onChange={onMediaChange}
+                  onChange={onMediaURLChange}
                 />
               </Grid>
               {isMediaLoading && <h2>Loading ...</h2>}
               {(media.value && !isMediaLoading) && (
                 <Grid item>
                   {media.type === MediaTypes.VIDEO && (
-                    <MediaVideoThumbnail media={media} t={t} />
+                    <MediaVideoThumbnail media={media} setMedia={(media) => setMedia(media, canvasIndex)} t={t} />
                   )
                   }
                   {media.type === MediaTypes.IMAGE && (
@@ -53,6 +54,11 @@ export const ManifestCreationFormCanvas = ({
                   }
                 </Grid>
               )}
+            </Grid>
+            <Grid container direction="column" spacing={2}>
+              <span>Duration : {media.duration}</span>
+              <span>Height : {media.height}</span>
+              <span>Width : {media.width}</span>
             </Grid>
             <Grid item>
               <Button

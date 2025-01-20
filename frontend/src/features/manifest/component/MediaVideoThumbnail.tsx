@@ -1,14 +1,18 @@
 import { Box, Grid } from "@mui/material";
 import React, { useRef } from "react";
 
-export function MediaVideoThumbnail({ media }) {
+export function MediaVideoThumbnail({ media, setMedia, t }) {
 
   const handleLoadedMetadata = () => {
     const video = videoEl.current;
     if (!video) return;
-    console.log(`The video is ${video.duration} seconds long.`);
-    console.log(`The video is ${video.videoHeight} height.`);
-    console.log(`The video is ${video.videoWidth} width.`);
+    setMedia({
+      ...media,
+      duration: video.duration,
+      height: video.videoHeight,
+      width: video.videoWidth
+    });
+
 
   };
 

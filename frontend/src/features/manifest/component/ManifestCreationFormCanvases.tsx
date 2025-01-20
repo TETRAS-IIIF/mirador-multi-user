@@ -17,7 +17,7 @@ export const ManifestCreationFormCanvases =
      setCanvases
    }) => {
 
-    const handleMediaChange = async (itemIndex: number, mediaURL: string) => {
+    const handleMediaURLChange = async (itemIndex: number, mediaURL: string) => {
       const updatedCanvas = [...canvases];
       updatedCanvas[itemIndex].media[0].value = mediaURL;
 
@@ -55,8 +55,13 @@ export const ManifestCreationFormCanvases =
         console.error("Failed to fetch media details:", error);
       } finally {
         setCanvases(updatedCanvas);
-        console.log(updatedCanvas);
       }
+    };
+
+    const setMedia = (media, canvasIndex) => {
+      const updatedCanvas = [...canvases];
+      updatedCanvas[canvasIndex].media[0] = media;
+      setCanvases([...updatedCanvas]);
     };
 
     const handleRemoveCanvas = (itemIndex: number) => {
@@ -77,7 +82,8 @@ export const ManifestCreationFormCanvases =
             canvas={canvas}
             canvasIndex={canvasIndex}
             t={t}
-            handleMediaChange={handleMediaChange}
+            setMedia={setMedia}
+            handleMediaURLChange={handleMediaURLChange}
             handleRemoveCanvas={handleRemoveCanvas}
           />
         ))}
