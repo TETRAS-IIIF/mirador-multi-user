@@ -1,5 +1,5 @@
 import { FieldForm } from "../../../components/elements/FieldForm";
-import { Button, Grid, Paper, Typography } from "@mui/material";
+import { Button, Grid, Paper } from "@mui/material";
 import { useState } from "react";
 import { MediaTypes } from "../../media/types/types";
 import { MediaImageThumbnail } from "./MediaImageThumbnail";
@@ -49,12 +49,6 @@ export const ManifestCreationFormCanvas = ({
                   }
                   {media.type === MediaTypes.IMAGE && (
                     <MediaImageThumbnail media={media} t={t} />
-                  )
-                  }
-                  {media.type === undefined && (
-                    <Typography variant="subtitle1" color="red">
-                      {t("urlIsNotValid")}
-                    </Typography>
                   )
                   }
                 </Grid>

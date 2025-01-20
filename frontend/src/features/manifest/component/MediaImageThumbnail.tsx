@@ -24,6 +24,9 @@ export function MediaImageThumbnail({ media, t }) {
           loading="lazy"
           onError={() => setIsMediaValidURL(true)}
           onLoad={() => setIsMediaValidURL(false)}
+          // callFunction when image is loaded
+          onLoad={() => setIsMediaValidURL(true)}
+          onError={() => setIsMediaValidURL(false)}
           sx={{
             width: 50,
             height: 50,
