@@ -19,7 +19,7 @@ interface iIIFCanvases {
 }
 
 interface IManifestCreationFormProps {
-  handleSubmit: (manifestThumbnail: string, manifestTitle: string, items: any) => void;
+  handleSubmit: (manifestThumbnail: string, manifestTitle: string, manifestCanvases: iIIFCanvases[]) => void;
 }
 
 export const ManifestCreationForm = ({ handleSubmit, t }: IManifestCreationFormProps) => {
