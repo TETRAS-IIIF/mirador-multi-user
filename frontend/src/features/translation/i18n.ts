@@ -1,7 +1,8 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import en from "./en/translation.json"
+import en from './en/translation.json';
+
 i18n
   .use(initReactI18next)
   .init({
@@ -9,8 +10,8 @@ i18n
     lng: localStorage.getItem('i18nextLng') || navigator.language.split('-')[0] || 'en',
     interpolation: { escapeValue: false },
     resources: {
-      en: { translation: en },
-    },
+      en: { translation: en }
+    }
   });
 
 const loadLanguage = async (lng: string): Promise<void> => {
@@ -31,7 +32,7 @@ loadLanguage(detectedLng);
 export const availableLanguages = [
   { code: 'en', label: 'English' },
   { code: 'fr', label: 'Français' },
-  { code: 'es', label: 'Español'}
+  { code: 'es', label: 'Español' }
 ];
 
 export { loadLanguage };

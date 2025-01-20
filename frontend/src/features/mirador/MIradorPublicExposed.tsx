@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import './style/mirador.css'
-import { Grid} from "@mui/material";
-import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
-import Mirador from "mirador";
+import './style/mirador.css';
+import { Grid } from '@mui/material';
+import LocalStorageAdapter from 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js';
+import Mirador from 'mirador';
 
 
 export const MiradorPublicExposed = () => {
@@ -16,7 +16,7 @@ export const MiradorPublicExposed = () => {
   useEffect(() => {
     const fetchAndSetupMirador = async () => {
       const url = window.location.href;
-      let updatedUrl = ''
+      let updatedUrl = '';
       const miradorIndex = url.indexOf('/mirador/');
       if (miradorIndex !== -1) {
         const newPath = url.substring(miradorIndex + 8);
@@ -30,8 +30,8 @@ export const MiradorPublicExposed = () => {
             id: viewerRef.current.id,
             annotation: {
               adapter: (canvasId: any) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
-              exportLocalStorageAnnotations: false, // display annotation JSON export button
-            },
+              exportLocalStorageAnnotations: false // display annotation JSON export button
+            }
           };
 
           let loadingMiradorViewer;
@@ -40,11 +40,11 @@ export const MiradorPublicExposed = () => {
             loadingMiradorViewer = Mirador.viewer(config, []);
           }
 
-        if (loadingMiradorViewer && miradorWorkspace) {
-          // Load state only if it is not empty
-          loadingMiradorViewer.store.dispatch(
-            Mirador.actions.importMiradorState(miradorWorkspace.workspace)
-          );
+          if (loadingMiradorViewer && miradorWorkspace) {
+            // Load state only if it is not empty
+            loadingMiradorViewer.store.dispatch(
+              Mirador.actions.importMiradorState(miradorWorkspace.workspace)
+            );
           }
           setViewer(loadingMiradorViewer);
         }
@@ -56,9 +56,9 @@ export const MiradorPublicExposed = () => {
     fetchAndSetupMirador();
   }, []);
 
-  return(
-      <Grid item>
-        <div ref={viewerRef} id="mirador"></div>
-      </Grid>
-  )
-}
+  return (
+    <Grid item>
+      <div ref={viewerRef} id="mirador"></div>
+    </Grid>
+  );
+};

@@ -1,21 +1,28 @@
 import {
-  Box, CircularProgress, Divider, FormControl,
-  Grid, InputLabel, MenuItem,
-  Paper, Select, SelectChangeEvent
-} from "@mui/material";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import MetadataField from "./metadataField.tsx";
+  Box,
+  CircularProgress,
+  Divider,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  SelectChangeEvent
+} from '@mui/material';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import MetadataField from './metadataField.tsx';
 
 
 interface MetadataFormProps<T> {
   handleSetMetadataFormData: (data: any) => void;
-  item:T
-  metadataFormats:MetadataFormat[]
-  loading: boolean
-  selectedMetadataFormat:MetadataFormat | undefined;
-  setSelectedMetadataFormat:(newFormat: MetadataFormat | undefined)=>void;
-  selectedMetadataData:MetadataFields | undefined;
-  handleFileChange:(event: ChangeEvent<HTMLInputElement>) => void;
+  item: T;
+  metadataFormats: MetadataFormat[];
+  loading: boolean;
+  selectedMetadataFormat: MetadataFormat | undefined;
+  setSelectedMetadataFormat: (newFormat: MetadataFormat | undefined) => void;
+  selectedMetadataData: MetadataFields | undefined;
+  handleFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 type MetadataFields = {
@@ -38,7 +45,16 @@ type MetadataFormatField = {
   comment?: string;
 };
 
-export const MetadataForm = <T extends { id:number },>({handleFileChange,selectedMetadataData,setSelectedMetadataFormat,selectedMetadataFormat,loading,metadataFormats, handleSetMetadataFormData, item }: MetadataFormProps<T>) => {
+export const MetadataForm = <T extends { id: number }, >({
+                                                           handleFileChange,
+                                                           selectedMetadataData,
+                                                           setSelectedMetadataFormat,
+                                                           selectedMetadataFormat,
+                                                           loading,
+                                                           metadataFormats,
+                                                           handleSetMetadataFormData,
+                                                           item
+                                                         }: MetadataFormProps<T>) => {
   const [generatingFields, setGeneratingFields] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -46,8 +62,8 @@ export const MetadataForm = <T extends { id:number },>({handleFileChange,selecte
     const newValue = value ?? '';
     handleSetMetadataFormData({
       ...selectedMetadataData,
-      [term]: newValue,
-    })
+      [term]: newValue
+    });
   }, [selectedMetadataData]);
 
   const doesItemContainMetadataField = (fieldTerm: string): boolean => {
@@ -57,7 +73,7 @@ export const MetadataForm = <T extends { id:number },>({handleFileChange,selecte
   const handleFormatChange = async (event: SelectChangeEvent) => {
     setGeneratingFields(true);
     const selectedFormatTitle = event.target.value;
-    if (selectedFormatTitle === "upload") {
+    if (selectedFormatTitle === 'upload') {
       if (fileInputRef.current) {
         fileInputRef.current.click();
       }
@@ -70,26 +86,27 @@ export const MetadataForm = <T extends { id:number },>({handleFileChange,selecte
     }, 300);
   };
 
-  const shouldDisplayField = (field:any): boolean => {
+  const shouldDisplayField = (field: any): boolean => {
     if (field.term.toLowerCase() === 'date' && 'created_at' in item) return false;
     if (field.term.toLowerCase() === 'creator' && 'ownerId' in item) return false;
     return !doesItemContainMetadataField(field.term);
   };
 
-  const handleExampleMetadata = ()=>{
-    const fileUrl = "/exampleMetadata.json"
-    const link = document.createElement("a");
+  const handleExampleMetadata = () => {
+    const fileUrl = '/exampleMetadata.json';
+    const link = document.createElement('a');
     link.href = fileUrl;
-    link.download = "exampleMetadata.json";
+    link.download = 'exampleMetadata.json';
     link.click();
-  }
+  };
 
-  useEffect(() => {},[selectedMetadataFormat])
+  useEffect(() => {
+  }, [selectedMetadataFormat]);
   return (
     <>
       {loading ? (
-        <Grid container alignItems='center' justifyContent="center">
-          <CircularProgress/>
+        <Grid container alignItems="center" justifyContent="center">
+          <CircularProgress />
         </Grid>
       ) : (
         <Paper
@@ -98,15 +115,15 @@ export const MetadataForm = <T extends { id:number },>({handleFileChange,selecte
             minHeight: '55px',
             height: '400px',
             overflowY: 'auto',
-            width: '100%',
+            width: '100%'
           }}
         >
           <Box sx={{ minWidth: 120, paddingTop: 2, paddingBottom: 2 }}>
-            <FormControl sx={{ width: "90%" }}>
+            <FormControl sx={{ width: '90%' }}>
               <InputLabel id="metadata-format-label">Format</InputLabel>
               <Select
                 labelId="metadata-format-label"
-                value={selectedMetadataFormat ? selectedMetadataFormat.title : ""}
+                value={selectedMetadataFormat ? selectedMetadataFormat.title : ''}
                 label="Format"
                 onChange={handleFormatChange}
               >
@@ -136,8 +153,8 @@ export const MetadataForm = <T extends { id:number },>({handleFileChange,selecte
             <Divider sx={{ paddingBottom: 2 }} />
           </Box>
           {
-            selectedMetadataData && selectedMetadataFormat ?(
-              <form style={{ width: "100%" }}>
+            selectedMetadataData && selectedMetadataFormat ? (
+              <form style={{ width: '100%' }}>
                 <>
                   {generatingFields ? (
                     <Grid container alignItems="center" justifyContent="center">
@@ -152,7 +169,7 @@ export const MetadataForm = <T extends { id:number },>({handleFileChange,selecte
                             <MetadataField
                               key={field.term}
                               field={field}
-                              value={selectedMetadataData[field.term] as unknown as string|| ""}
+                              value={selectedMetadataData[field.term] as unknown as string || ''}
                               handleInputChange={handleInputChange}
                             />
                           ))}
@@ -164,11 +181,11 @@ export const MetadataForm = <T extends { id:number },>({handleFileChange,selecte
                   container
                   justifyContent="flex-end"
                   spacing={2}
-                  style={{ marginTop: "16px" }}
+                  style={{ marginTop: '16px' }}
                 >
                 </Grid>
               </form>
-            ): null
+            ) : null
           }
         </Paper>
       )}

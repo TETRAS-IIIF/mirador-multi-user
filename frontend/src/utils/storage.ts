@@ -1,37 +1,37 @@
-const storagePrefix = 'Mirador-multi-user-'
+const storagePrefix = 'Mirador-multi-user-';
 const storage = {
 
-  getToken:() =>{
+  getToken: () => {
     return JSON.parse(localStorage.getItem(`${storagePrefix}token`) as string);
   },
   setToken: (token: string) => {
-    if(token == undefined){
+    if (token == undefined) {
       console.error('token is undefined');
-      return
+      return;
     }
     window.localStorage.setItem(`${storagePrefix}token`, JSON.stringify(token));
   },
-  clearToken:() => {
+  clearToken: () => {
     window.localStorage.removeItem(`${storagePrefix}token`);
   },
-  GetImpersonateUserData: (): string | null =>{
+  GetImpersonateUserData: (): string | null => {
     return localStorage.getItem(`${storagePrefix}impersonate-user`);
   },
-  SetImpersonateUserId:(mail:string)=>{
+  SetImpersonateUserId: (mail: string) => {
     window.localStorage.setItem(`${storagePrefix}impersonate-user`, `${mail}`);
   },
-  setAdminToken:(token:string)=>{
-    if(token == null){
+  setAdminToken: (token: string) => {
+    if (token == null) {
       return;
     }
     window.localStorage.setItem(`${storagePrefix}admintoken`, token);
   },
-  getAdminToken:()=>{
+  getAdminToken: () => {
     return window.localStorage.getItem(`${storagePrefix}admintoken`);
   },
-  clearAdminToken:()=>{
+  clearAdminToken: () => {
     window.localStorage.removeItem(`${storagePrefix}admintoken`);
   }
-}
+};
 
 export default storage;

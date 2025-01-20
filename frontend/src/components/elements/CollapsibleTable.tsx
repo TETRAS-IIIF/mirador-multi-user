@@ -7,11 +7,13 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TableSortLabel, TextField
-} from "@mui/material";
-import { Row } from "./Row.tsx";
-import { ReactNode, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+  TableSortLabel,
+  TextField
+} from '@mui/material';
+import { Row } from './Row.tsx';
+import { ReactNode, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+
 interface RowData {
   value: ReactNode;
   align?: 'right' | 'left' | 'center';
@@ -40,7 +42,7 @@ export default function CollapsibleTable(
     columns,
     rows,
     renderExpandableContent,
-    onActionClick,
+    onActionClick
   }: CollapsibleTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');

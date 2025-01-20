@@ -1,12 +1,12 @@
-import { ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-import { ReactNode } from "react";
+import { ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { ReactNode } from 'react';
 
 interface IItemButton {
-  open:boolean,
-  action:()=>void
-  icon:ReactNode
-  text:string
-  selected:boolean
+  open: boolean,
+  action: () => void
+  icon: ReactNode
+  text: string
+  selected: boolean
 }
 
 export const ItemButton = ({ open, action, icon, text, selected }: IItemButton) => {
@@ -15,15 +15,15 @@ export const ItemButton = ({ open, action, icon, text, selected }: IItemButton) 
       key={text}
       disablePadding
       sx={{
-        display: "block",
-        backgroundColor: selected ? "#dcdcdc" : "inherit",
+        display: 'block',
+        backgroundColor: selected ? '#dcdcdc' : 'inherit'
       }}
     >
       <ListItemButton
         sx={{
           minHeight: 48,
           justifyContent: open ? 'initial' : 'center',
-          px: 2.5,
+          px: 2.5
         }}
         onClick={action}
       >
@@ -31,7 +31,7 @@ export const ItemButton = ({ open, action, icon, text, selected }: IItemButton) 
           sx={{
             minWidth: 0,
             mr: open ? 3 : 'auto',
-            justifyContent: 'center',
+            justifyContent: 'center'
           }}
         >
           {icon}
@@ -42,7 +42,7 @@ export const ItemButton = ({ open, action, icon, text, selected }: IItemButton) 
             opacity: open ? 1 : 0,
             textOverflow: 'ellipsis',
             overflow: 'hidden',
-            whiteSpace: 'nowrap',
+            whiteSpace: 'nowrap'
           }}
         />
       </ListItemButton>

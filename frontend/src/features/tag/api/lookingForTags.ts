@@ -1,4 +1,4 @@
-import storage from "../../../utils/storage.ts";
+import storage from '../../../utils/storage.ts';
 
 export const lookingForTags = async (partialString: string) => {
   try {
@@ -6,12 +6,12 @@ export const lookingForTags = async (partialString: string) => {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/tag/looking-for-tag/${partialString}`, {
       method: 'POST',
       headers: {
-        "Authorization": `Bearer ${token}`,
-      },
-    })
+        'Authorization': `Bearer ${token}`
+      }
+    });
     const toreturn = await response.json();
-    return toreturn
+    return toreturn;
   } catch (error) {
-    console.error(error)
+    console.error(error);
   }
-}
+};

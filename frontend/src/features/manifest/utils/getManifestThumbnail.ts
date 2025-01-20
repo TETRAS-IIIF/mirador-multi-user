@@ -1,4 +1,4 @@
-import ThumbnailFactory from 'mirador/dist/es/src/lib/ThumbnailFactory.js'
+import ThumbnailFactory from 'mirador/dist/es/src/lib/ThumbnailFactory.js';
 import MiradorManifest from 'mirador/dist/es/src/lib/MiradorManifest.js';
 
 export const getManifestThumbnail = (resource: any): any | undefined => {
@@ -18,9 +18,9 @@ export const getManifestThumbnail = (resource: any): any | undefined => {
 
   if (resource.isManifest()) {
     const miradorManifest = new MiradorManifest(resource.__jsonld);
-   const canvases = miradorManifest.manifest.items; // Canvases or sequences are here
+    const canvases = miradorManifest.manifest.items; // Canvases or sequences are here
 
-    if (canvases){
+    if (canvases) {
       const image = ThumbnailFactory.getPreferredImage(canvases[0]);
       if (image) return getManifestThumbnail(image);
     }

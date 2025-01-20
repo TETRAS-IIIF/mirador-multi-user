@@ -1,58 +1,62 @@
-import storage from "./storage.ts";
-import { getUser } from "../features/auth/api/getUser.ts";
+import storage from './storage.ts';
+import { getUser } from '../features/auth/api/getUser.ts';
 import {
   login,
   LoginCredentialsDTO,
-  UserResponse,
   register,
   RegisterCredentialsDTO,
-  User
-} from "../features/auth/export.ts";
-import { configureAuth } from "react-query-auth";
-import { CircularProgress, Grid } from "@mui/material";
+  User,
+  UserResponse
+} from '../features/auth/export.ts';
+import { configureAuth } from 'react-query-auth';
+import { CircularProgress, Grid } from '@mui/material';
 
-export async function handleTokenResponse(data:UserResponse){
-  const {access_token, user } = data;
+export async function handleTokenResponse(data: UserResponse) {
+  const { access_token, user } = data;
   storage.setToken(access_token);
   return user;
 }
 
-async function loadUser(): Promise<User|null>{
-  if(storage.getToken()){
+async function loadUser(): Promise<User | null> {
+  if (storage.getToken()) {
     const data = await getUser();
     return data;
   }
-  return null
+  return null;
 }
 
-async function loginFn(data: LoginCredentialsDTO){
+async function loginFn(data: LoginCredentialsDTO) {
   const response = await login(data);
   return await handleTokenResponse(response);
 }
 
-async function registerFn(data: RegisterCredentialsDTO){
+async function registerFn(data: RegisterCredentialsDTO) {
   const response = await register(data);
-  const user = await handleTokenResponse(response)
+  const user = await handleTokenResponse(response);
   return user;
 }
 
-async function logoutFn()
-{
+async function logoutFn() {
   storage.clearToken();
 }
 
-const authConfig= {
-  userFn : loadUser,
+const authConfig = {
+  userFn: loadUser,
   loginFn,
   registerFn,
   logoutFn,
-  LoaderComponent(){
-    return(
+  LoaderComponent() {
+    return (
       <Grid>
-        <CircularProgress/>
+        <CircularProgress />
       </Grid>
-    )
-  },
+    );
+  }
 };
 
-export const { useUser, useLogin, useRegister, useLogout } = configureAuth< User | null, unknown, LoginCredentialsDTO, RegisterCredentialsDTO>(authConfig);
+export const {
+  useUser,
+  useLogin,
+  useRegister,
+  useLogout
+} = configureAuth<User | null, unknown, LoginCredentialsDTO, RegisterCredentialsDTO>(authConfig);

@@ -1,25 +1,29 @@
-import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
-import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { ChangeEvent, FormEvent, useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LoadingButton } from '@mui/lab';
 
-interface IDrawerCreateProjectProps{
-  modalCreateProjectIsOpen: boolean
-  toggleModalProjectCreation:()=>void
-  InitializeProject:(projectName:string) => void
+interface IDrawerCreateProjectProps {
+  modalCreateProjectIsOpen: boolean;
+  toggleModalProjectCreation: () => void;
+  InitializeProject: (projectName: string) => void;
 }
 
-export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCreation,InitializeProject}:IDrawerCreateProjectProps)=>{
+export const DrawerCreateProject = ({
+                                      modalCreateProjectIsOpen,
+                                      toggleModalProjectCreation,
+                                      InitializeProject
+                                    }: IDrawerCreateProjectProps) => {
   const [projectName, setProjectName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useTranslation();
 
-  const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
+  const handleNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setProjectName(event.target.value);
-  },[])
+  }, []);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,7 +32,7 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
       await InitializeProject(projectName);
     } finally {
       setIsLoading(false);
-      setProjectName('')
+      setProjectName('');
     }
   };
 
@@ -38,11 +42,11 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
     }
   };
 
-  return(
+  return (
     <>
       <div>
-        <Drawer anchor="bottom" open={modalCreateProjectIsOpen} onClose={toggleModalProjectCreation}  ModalProps={{
-          onAnimationEnd: handleDrawerTransition,
+        <Drawer anchor="bottom" open={modalCreateProjectIsOpen} onClose={toggleModalProjectCreation} ModalProps={{
+          onAnimationEnd: handleDrawerTransition
         }}>
           <Paper
             sx={{
@@ -52,7 +56,7 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
               paddingLeft: { sm: 3, xs: 2 },
               paddingRight: { sm: 3, xs: 2 },
               paddingTop: 2,
-              right: '0',
+              right: '0'
             }}
           >
 
@@ -97,5 +101,5 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
         </Drawer>
       </div>
     </>
-  )
-}
+  );
+};

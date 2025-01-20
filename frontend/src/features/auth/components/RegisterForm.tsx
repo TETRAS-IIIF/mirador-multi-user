@@ -1,14 +1,14 @@
-import { useForm } from "react-hook-form";
-import { Button, Grid, Snackbar } from "@mui/material";
-import FormField from "components/elements/FormField.tsx";
-import { RegisterFormData, UserSchema } from "../types/types.ts";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRegister } from "../../../utils/auth.tsx";
-import { RegisterCredentialsDTO } from "../api/register.ts";
-import { useNavigate } from "react-router-dom";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import toast from "react-hot-toast";
+import { useForm } from 'react-hook-form';
+import { Button, Grid, Snackbar } from '@mui/material';
+import FormField from 'components/elements/FormField.tsx';
+import { RegisterFormData, UserSchema } from '../types/types.ts';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRegister } from '../../../utils/auth.tsx';
+import { RegisterCredentialsDTO } from '../api/register.ts';
+import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 export const RegisterForm = () => {
   const navigate = useNavigate(); // Use hooks at the top level
@@ -25,18 +25,18 @@ export const RegisterForm = () => {
   });
 
   const [open, setOpen] = React.useState(false);
-  const [message, setMessage] = React.useState("");
+  const [message, setMessage] = React.useState('');
 
   const onSubmit = async (data: RegisterCredentialsDTO) => {
     try {
       await createUser(data, {
         onSuccess: () => {
-          toast.success(t('accountCreated'))
-          navigate("/");
+          toast.success(t('accountCreated'));
+          navigate('/');
         }
       });
-    } catch (error : any) {
-      console.error("error", error);
+    } catch (error: any) {
+      console.error('error', error);
       setOpen(true);
       setMessage(error.toString());
     }
@@ -50,7 +50,7 @@ export const RegisterForm = () => {
         direction="column"
         justifyContent="center"
         spacing={2}
-        maxWidth={"1000px"}
+        maxWidth={'1000px'}
       >
         <Grid item>
           <FormField

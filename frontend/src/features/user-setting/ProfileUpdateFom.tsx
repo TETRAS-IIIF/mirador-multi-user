@@ -1,16 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import {
-  TextField,
-  Button,
-  IconButton,
-  InputAdornment,
-  Typography,
-  Box,
-} from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { updateUser } from "../auth/api/updateUser.tsx";
-import toast from "react-hot-toast";
-import { useTranslation } from "react-i18next";
+import { updateUser } from '../auth/api/updateUser.tsx';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 interface UserProfile {
   name: string;
@@ -28,19 +21,19 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
     mail: '',
     oldPassword: '',
     newPassword: '',
-    confirmPassword: '',
+    confirmPassword: ''
   });
   const [showPassword, setShowPassword] = useState({
     oldPassword: false,
     newPassword: false,
-    confirmPassword: false,
+    confirmPassword: false
   });
   const [errors, setErrors] = useState({
     name: '',
     mail: '',
     oldPassword: '',
     newPassword: '',
-    confirmPassword: '',
+    confirmPassword: ''
   });
 
   useEffect(() => {
@@ -79,13 +72,13 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
-      const updatedUser =await updateUser({
+      const updatedUser = await updateUser({
         ...formValues
-      })
-      if(updatedUser){
-        toast.success(t('userSuccessfullyUpdated'))
-      }else{
-        toast.error(t('toastErrorUpdateUser'))
+      });
+      if (updatedUser) {
+        toast.success(t('userSuccessfullyUpdated'));
+      } else {
+        toast.error(t('toastErrorUpdateUser'));
       }
     }
   };
@@ -103,7 +96,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
         display: 'flex',
         flexDirection: 'column',
         width: '40%',
-        maxWidth:'400px'
+        maxWidth: '400px'
       }}
     >
       <Typography variant="h5" sx={{ mb: 3 }}>
@@ -150,7 +143,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
                 {showPassword.oldPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
-          ),
+          )
         }}
       />
 
@@ -171,7 +164,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
                 {showPassword.newPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
-          ),
+          )
         }}
       />
 
@@ -192,7 +185,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
                 {showPassword.confirmPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
-          ),
+          )
         }}
       />
 

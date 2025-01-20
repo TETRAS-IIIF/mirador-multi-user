@@ -1,5 +1,5 @@
-import { defineConfig, transformWithEsbuild, loadEnv } from "vite";
-import react from '@vitejs/plugin-react'
+import { defineConfig, transformWithEsbuild } from 'vite';
+import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 
@@ -9,34 +9,34 @@ export default defineConfig({
     {
       name: 'treat-js-files-as-jsx',
       async transform(code, id) {
-        if (!id.match(/src\/.*\.js$/))  return null
+        if (!id.match(/src\/.*\.js$/)) return null;
 
         // Use the exposed transform from vite, instead of directly
         // transforming with esbuild
         return transformWithEsbuild(code, id, {
           loader: 'jsx',
-          jsx: 'automatic',
-        })
-      },
+          jsx: 'automatic'
+        });
+      }
     },
     tsconfigPaths(),
-    react(),
+    react()
   ],
   build: {
-    commonjsOptions: { transformMixedEsModules: true },
+    commonjsOptions: { transformMixedEsModules: true }
   },
   optimizeDeps: {
     esbuildOptions: {
       loader: {
-        '.js': 'jsx',
-      },
-    },
+        '.js': 'jsx'
+      }
+    }
   },
-  server:{
-    host:true,
-    port:4000,
+  server: {
+    host: true,
+    port: 4000,
     watch: {
-      usePolling: true,
+      usePolling: true
     }
   },
   resolve: {
@@ -46,4 +46,4 @@ export default defineConfig({
     }
 
   }
-})
+});

@@ -1,15 +1,15 @@
-import storage from "../../../utils/storage.ts";
-import { manifestCreationDto } from "../types/types.ts";
-import toast from "react-hot-toast";
+import storage from '../../../utils/storage.ts';
+import { manifestCreationDto } from '../types/types.ts';
+import toast from 'react-hot-toast';
 
-export const createManifest = async (createManifestDto:manifestCreationDto) => {
+export const createManifest = async (createManifestDto: manifestCreationDto) => {
   const token = storage.getToken();
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/creation`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(createManifestDto)
     });
@@ -17,12 +17,12 @@ export const createManifest = async (createManifestDto:manifestCreationDto) => {
     if (!response.ok) {
       if (response.status === 400) {
         toast.error(manifest.message);
-        throw new Error('invalid format')
+        throw new Error('invalid format');
       }
       throw new Error(`Error: ${response.statusText}`);
     }
-    return manifest
+    return manifest;
   } catch (error) {
     throw error;
   }
-}
+};

@@ -9,7 +9,7 @@ export default class LocalStorageAdapter {
     const emptyAnnoPage = {
       id: this.annotationPageId,
       items: [],
-      type: 'AnnotationPage',
+      type: "AnnotationPage"
     };
     const annotationPage = await this.all() || emptyAnnoPage;
     annotationPage.items.push(annotation);

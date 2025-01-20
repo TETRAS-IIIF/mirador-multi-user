@@ -1,23 +1,23 @@
-import { MediaGroupRights } from "../types/types.ts";
-import storage from "../../../utils/storage.ts";
+import { MediaGroupRights } from '../types/types.ts';
+import storage from '../../../utils/storage.ts';
 
 export const updateAccessToMedia = async (mediaId: number, userGroupId: number, rights: MediaGroupRights) => {
   const token = storage.getToken();
   try {
-    const response =  await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-media-group/relation`, {
-      method: "PATCH",
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-media-group/relation`, {
+      method: 'PATCH',
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         manifestId: mediaId,
         userGroupId: userGroupId,
-        rights:rights
+        rights: rights
       })
     });
-    const toReturn =  await response.json();
-    return toReturn
+    const toReturn = await response.json();
+    return toReturn;
   } catch (error) {
     throw error;
   }

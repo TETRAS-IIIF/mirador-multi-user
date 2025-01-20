@@ -1,6 +1,6 @@
-import React from "react";
-import { FieldError, UseFormRegister } from "react-hook-form";
-import { FormLabel, Grid, TextField } from "@mui/material";
+import React from 'react';
+import { FieldError, UseFormRegister } from 'react-hook-form';
+import { FormLabel, Grid, TextField } from '@mui/material';
 
 // Define the interface for the FormField props
 interface FormFieldProps {
@@ -8,7 +8,7 @@ interface FormFieldProps {
   placeholder: string;
   name: string;
   register: UseFormRegister<any>;
-  required:boolean;
+  required: boolean;
   error?: FieldError | undefined;
   valueAsNumber?: boolean;
 }
@@ -20,29 +20,29 @@ const FormField: React.FC<FormFieldProps> = (
     name,
     register,
     error,
-    valueAsNumber,
+    valueAsNumber
   }
-) =>{
+) => {
 
   return (
-  <Grid container alignItems="center" spacing={2} justifyContent="space-between">
-    <Grid item>
-    <TextField
+    <Grid container alignItems="center" spacing={2} justifyContent="space-between">
+      <Grid item>
+        <TextField
           type={type}
           label={placeholder}
           variant="outlined"
           {...register(name, { valueAsNumber })}
           error={!!error}
         />
+      </Grid>
+      {
+        error && (
+          <Grid item width={200}>
+            <FormLabel error={true}>{error.message}</FormLabel>
+          </Grid>
+        )
+      }
     </Grid>
-    {
-      error && (
-        <Grid item width={200}>
-    <FormLabel error={true}>{error.message}</FormLabel>
-        </Grid>
-      )
-    }
-  </Grid>
-);
-}
+  );
+};
 export default FormField;

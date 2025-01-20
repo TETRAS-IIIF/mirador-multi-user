@@ -1,16 +1,16 @@
-import storage from "../../../utils/storage.ts";
+import storage from '../../../utils/storage.ts';
 
-export const deleteGroup = async(groupId: number)=> {
+export const deleteGroup = async (groupId: number) => {
   const token = storage.getToken();
-  try{
+  try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/group/${groupId}`, {
-      method: "DELETE",
+      method: 'DELETE',
       headers: {
-        "Authorization": `Bearer ${token}`
+        'Authorization': `Bearer ${token}`
       }
     });
-  return await response.json();
-  }catch(error){
-    throw error
+    return await response.json();
+  } catch (error) {
+    throw error;
   }
-}
+};

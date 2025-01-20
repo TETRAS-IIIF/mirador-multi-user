@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export interface SelectorItem {
   id: string;
@@ -23,7 +23,8 @@ export const Selector = ({ selectorItems, value, onChange }: SelectorProps) => {
   useEffect(() => {
     setLocalValue(
       selectorItems.find((item) => item.id.toUpperCase() === value?.toUpperCase())?.id || selectorItems[0]?.id
-    );  }, [value]);
+    );
+  }, [value]);
 
   const handleLocalChange = (event: SelectChangeEvent<string>) => {
     const newValue = event.target.value;
@@ -37,7 +38,7 @@ export const Selector = ({ selectorItems, value, onChange }: SelectorProps) => {
       <Select
         value={localValue}
         onChange={handleLocalChange}
-        renderValue={(selected) => t(selectorItems.find((item) => item.id === selected)?.name || "")}
+        renderValue={(selected) => t(selectorItems.find((item) => item.id === selected)?.name || '')}
       >
         {selectorItems.map((item) => (
           <MenuItem key={item.id} value={item.id}>

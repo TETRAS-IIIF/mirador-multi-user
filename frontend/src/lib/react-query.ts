@@ -1,11 +1,11 @@
 import { PromiseValue } from 'type-fest';
-import { DefaultOptions, QueryClient, UseMutationOptions, UseQueryOptions } from "@tanstack/react-query";
+import { DefaultOptions, QueryClient, UseMutationOptions, UseQueryOptions } from '@tanstack/react-query';
 
 const queryConfig: DefaultOptions = {
   queries: {
     refetchOnWindowFocus: false,
-    retry: false,
-  },
+    retry: false
+  }
 };
 
 export const queryClient = new QueryClient({ defaultOptions: queryConfig });

@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { Box, TextField, Button, Typography, Alert, Container, Grid } from "@mui/material";
-import { Layout } from "./layout.tsx";
-import { resetPassword } from "../api/resetPassword.ts";
-import { NavLink } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useEffect, useState } from 'react';
+import { Alert, Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
+import { Layout } from './layout.tsx';
+import { resetPassword } from '../api/resetPassword.ts';
+import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const ResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -28,7 +28,7 @@ export const ResetPassword = () => {
     setSuccess('');
 
     if (password !== confirmPassword) {
-      setError(t('passwordMismatch'))
+      setError(t('passwordMismatch'));
       return;
     }
     if (!token) {
@@ -42,54 +42,54 @@ export const ResetPassword = () => {
         setSuccess(t('passwordResetError'));
       }
     }
-  }
-    return (
-      <Layout title={t('reset-password-title')}rightButton={
-        <Grid>
+  };
+  return (
+    <Layout title={t('reset-password-title')} rightButton={
+      <Grid>
         <NavLink to="/auth/login">
           <Typography variant="button">
             {t('login')}
           </Typography>
         </NavLink>
       </Grid>
-      }>
-        <Container maxWidth="sm">
-          <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3 }}>
-            <Typography variant="h5" align="center" gutterBottom>
-              {t('reset-password')}
-            </Typography>
-            <TextField
-              label={t('new-password')}
-              type="password"
-              fullWidth
-              margin="normal"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <TextField
-              label="Confirm New Password"
-              type={t('password')}
-              fullWidth
-              margin="normal"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-            {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
-            {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              sx={{ mt: 3 }}
-              onClick={handlePasswordReset}
-            >
-              {t('reset-password')}
-            </Button>
-          </Box>
-        </Container>
-      </Layout>
-    );
-  };
+    }>
+      <Container maxWidth="sm">
+        <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3 }}>
+          <Typography variant="h5" align="center" gutterBottom>
+            {t('reset-password')}
+          </Typography>
+          <TextField
+            label={t('new-password')}
+            type="password"
+            fullWidth
+            margin="normal"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <TextField
+            label="Confirm New Password"
+            type={t('password')}
+            fullWidth
+            margin="normal"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          {error && <Alert severity="error" sx={{ mt: 2 }}>{error}</Alert>}
+          {success && <Alert severity="success" sx={{ mt: 2 }}>{success}</Alert>}
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            sx={{ mt: 3 }}
+            onClick={handlePasswordReset}
+          >
+            {t('reset-password')}
+          </Button>
+        </Box>
+      </Container>
+    </Layout>
+  );
+};
 

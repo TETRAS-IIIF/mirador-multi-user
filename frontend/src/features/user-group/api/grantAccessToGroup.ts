@@ -1,8 +1,8 @@
-import storage from "../../../utils/storage.ts";
-import { UserGroup } from "../types/types.ts";
-import { User } from "../../auth/types/types.ts";
+import storage from '../../../utils/storage.ts';
+import { UserGroup } from '../types/types.ts';
+import { User } from '../../auth/types/types.ts';
 
-export const grantAccessToGroup = async (user : User, user_group : UserGroup) => {
+export const grantAccessToGroup = async (user: User, user_group: UserGroup) => {
   const token = storage.getToken();
   try {
     const payload = {
@@ -14,12 +14,12 @@ export const grantAccessToGroup = async (user : User, user_group : UserGroup) =>
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        "Authorization": `Bearer ${token}`
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(payload)
-      })
-    return await response.json()
+    });
+    return await response.json();
   } catch (error) {
     console.error(error);
   }
-}
+};

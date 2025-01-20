@@ -1,7 +1,7 @@
 export type Tag = {
-  title:string
-  id:number
-  objectsTaggedId?:number[]
+  title: string
+  id: number
+  objectsTaggedId?: number[]
 }
 
 export enum ObjectTypes {
@@ -11,10 +11,10 @@ export enum ObjectTypes {
   PROJECT = 'project',
 }
 
-export type Tagging ={
-  id:number,
-  objectId:number,
-  objectTypes:ObjectTypes,
-  tag:Tag,
-  tagId:number,
+export type Tagging = {
+  id: number,
+  objectId: number,
+  objectTypes: ObjectTypes,
+  tag: Tag,
+  tagId: number,
 }

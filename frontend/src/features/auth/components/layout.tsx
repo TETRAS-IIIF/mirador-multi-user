@@ -1,15 +1,16 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { NavLink } from "react-router-dom";
-import { ReactNode } from "react";
+import { NavLink } from 'react-router-dom';
+import { ReactNode } from 'react';
+
 type LayoutProps = {
   children: ReactNode;
   rightButton?: ReactNode;
   title: string;
 };
 
-export const  Layout = ({ children, title, rightButton }: LayoutProps) => {
-  return(
+export const Layout = ({ children, title, rightButton }: LayoutProps) => {
+  return (
     <Grid
       container
       direction="column"
@@ -17,7 +18,7 @@ export const  Layout = ({ children, title, rightButton }: LayoutProps) => {
       alignItems="center"
       min-height="100vh"
       sx={{
-        height:'100%'
+        height: '100%'
       }}
     >
       <Grid
@@ -40,11 +41,11 @@ export const  Layout = ({ children, title, rightButton }: LayoutProps) => {
             {title}
           </Typography>
         </Grid>
-        { rightButton ? (
+        {rightButton ? (
           rightButton
-        ):(
-        <Grid>
-        </Grid>
+        ) : (
+          <Grid>
+          </Grid>
         )
         }
       </Grid>
@@ -57,5 +58,5 @@ export const  Layout = ({ children, title, rightButton }: LayoutProps) => {
         {children}
       </Grid>
     </Grid>
-  )
-}
+  );
+};

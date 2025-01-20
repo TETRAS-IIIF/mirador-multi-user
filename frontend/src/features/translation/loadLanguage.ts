@@ -1,4 +1,4 @@
-import i18n from "i18next";
+import i18n from 'i18next';
 
 export const loadLanguage = async (lng: string): Promise<void> => {
   if (!i18n.hasResourceBundle(lng, 'translation')) {

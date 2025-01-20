@@ -1,13 +1,15 @@
-import { Button, Grid, Typography } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { Button, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import LogoutIcon from '@mui/icons-material/Logout';
-interface IConfirmDisconnect{
-  handleDisconnect:()=>void;
+
+interface IConfirmDisconnect {
+  handleDisconnect: () => void;
 }
-export const ConfirmDisconnect = ({handleDisconnect}:IConfirmDisconnect) => {
+
+export const ConfirmDisconnect = ({ handleDisconnect }: IConfirmDisconnect) => {
   const { t } = useTranslation();
 
-  return(
+  return (
     <Grid item container>
       <Grid item container spacing={1} justifyContent="center">
         <Grid item>
@@ -26,5 +28,5 @@ export const ConfirmDisconnect = ({handleDisconnect}:IConfirmDisconnect) => {
         </Grid>
       </Grid>
     </Grid>
-  )
-}
+  );
+};

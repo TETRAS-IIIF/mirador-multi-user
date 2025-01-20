@@ -1,23 +1,23 @@
-import { ManifestGroupRights } from "../types/types.ts";
-import storage from "../../../utils/storage.ts";
+import { ManifestGroupRights } from '../types/types.ts';
+import storage from '../../../utils/storage.ts';
 
 export const updateAccessToManifest = async (manifestId: number, userGroupId: number, rights: ManifestGroupRights) => {
   const token = storage.getToken();
   try {
-    const response =  await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/relation`, {
-      method: "PATCH",
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/relation`, {
+      method: 'PATCH',
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         manifestId: manifestId,
         userGroupId: userGroupId,
-        rights:rights
+        rights: rights
       })
     });
-    const toReturn =  await response.json();
-    return toReturn
+    const toReturn = await response.json();
+    return toReturn;
   } catch (error) {
     throw error;
   }

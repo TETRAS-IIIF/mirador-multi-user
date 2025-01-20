@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  TableCell,
-  TableRow,
-  IconButton,
-  Collapse,
-  Box, Button
-} from "@mui/material";
+import { Box, Button, Collapse, IconButton, TableCell, TableRow } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 
 interface RowData {

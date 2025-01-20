@@ -1,16 +1,16 @@
-import storage from "../../../utils/storage.ts";
+import storage from '../../../utils/storage.ts';
 
-export const updatePreferredLanguage = async (userId:number, preferredLanguage:string)=> {
-  try{
+export const updatePreferredLanguage = async (userId: number, preferredLanguage: string) => {
+  try {
     const token = storage.getToken();
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/updateLanguage/${userId}`, {
-        method: "PATCH",
+        method: 'PATCH',
         headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         },
-        body:JSON.stringify({ preferredLanguage })
+        body: JSON.stringify({ preferredLanguage })
       });
 
       return await response.json();
@@ -18,8 +18,8 @@ export const updatePreferredLanguage = async (userId:number, preferredLanguage:s
       storage.clearToken();
       throw error;
     }
-  }catch(error:any){
+  } catch (error: any) {
     console.error(error.message);
-    throw new error
+    throw new error;
   }
-}
+};

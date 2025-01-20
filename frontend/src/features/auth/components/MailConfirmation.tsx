@@ -1,9 +1,9 @@
-import { Button, Grid } from "@mui/material";
-import { confirmationMail } from "../api/confirmationMail.ts";
-import { useLocation, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import { Layout } from "./layout.tsx";
-import { useTranslation } from "react-i18next";
+import { Button, Grid } from '@mui/material';
+import { confirmationMail } from '../api/confirmationMail.ts';
+import { useLocation, useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { Layout } from './layout.tsx';
+import { useTranslation } from 'react-i18next';
 
 export const MailConfirmation = () => {
   const location = useLocation();
@@ -21,27 +21,27 @@ export const MailConfirmation = () => {
 
     if (token) {
       const returnData = await confirmationMail(token);
-      if(returnData.status === 201){
+      if (returnData.status === 201) {
         toast.success(returnData.message);
-        navigate("/");
-      }else{
-        toast.error('an error occurred')
+        navigate('/');
+      } else {
+        toast.error('an error occurred');
       }
     } else {
-      console.error("Token not found in the URL");
+      console.error('Token not found in the URL');
     }
   };
 
   return (
     <Layout title={t('mail-confirmation-title')}>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleConfirmMail}>
-            {t('confirm-mail')}
-          </Button>
-        </Grid>
+      <Grid item>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleConfirmMail}>
+          {t('confirm-mail')}
+        </Button>
+      </Grid>
     </Layout>
   );
-}
+};

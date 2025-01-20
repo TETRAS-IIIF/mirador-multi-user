@@ -1,18 +1,18 @@
-import { ChangeEvent, useState } from "react";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
-import { FieldForm } from "../../../components/elements/FieldForm.tsx";
-import { Box, Typography } from "@mui/material";
-import { MMUToolTip } from "../../../components/elements/MMUTootlTip.tsx";
-import { MediaTypes } from "../../media/types/types.ts";
+import { ChangeEvent, useState } from 'react';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
+import { FieldForm } from '../../../components/elements/FieldForm.tsx';
+import { Box, Typography } from '@mui/material';
+import { MMUToolTip } from '../../../components/elements/MMUTootlTip.tsx';
+import { MediaTypes } from '../../media/types/types.ts';
 import {
   getPeerTubeThumbnailUrl,
   getPeerTubeVideoID,
   getYoutubeJson,
   isPeerTubeVideo,
   isYouTubeVideo
-} from "../../media/utils/utils.ts";
+} from '../../media/utils/utils.ts';
 
 interface MediaField {
   title: string;
@@ -30,14 +30,14 @@ interface IManifestCreationFormProps {
 }
 
 export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProps) => {
-  const [manifestTitle, setManifestTitle] = useState<string>("");
-  const [manifestThumbnail, setManifestThumbnail] = useState<string>("");
+  const [manifestTitle, setManifestTitle] = useState<string>('');
+  const [manifestThumbnail, setManifestThumbnail] = useState<string>('');
   const [items, setItems] = useState<ItemGroup[]>([]);
   const [warningWrongUrl, setWarningWrongUrl] = useState(false);
 
   const handleNewItemGroup = () => {
     const newCanvasIndex = items.length + 1;
-    setItems([...items, { media: [{ title: `media-${newCanvasIndex}`, value: "", type: undefined }] }]);
+    setItems([...items, { media: [{ title: `media-${newCanvasIndex}`, value: '', type: undefined }] }]);
   };
 
   const handleManifestTitleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -75,7 +75,7 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
         updatedItems[itemIndex].media[0].type = MediaTypes.IMAGE;
       }
     } catch (error) {
-      console.error("Failed to fetch media details:", error);
+      console.error('Failed to fetch media details:', error);
     } finally {
       setItems(updatedItems);
     }
@@ -126,8 +126,8 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
                     objectFit: 'cover',
                     '@media(min-resolution: 2dppx)': {
                       width: 100,
-                      height: 100,
-                    },
+                      height: 100
+                    }
                   }}
                 />
               )}
@@ -177,8 +177,8 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
                         objectFit: 'cover',
                         '@media(min-resolution: 2dppx)': {
                           width: 100,
-                          height: 100,
-                        },
+                          height: 100
+                        }
                       }}
                     />
                   </Grid>

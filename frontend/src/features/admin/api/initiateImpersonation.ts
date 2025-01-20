@@ -1,4 +1,4 @@
-import storage from "../../../utils/storage.ts";
+import storage from '../../../utils/storage.ts';
 
 export const initiateImpersonation = async (userId: number) => {
   const token = storage.getToken();
@@ -7,9 +7,9 @@ export const initiateImpersonation = async (userId: number) => {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/impersonation/${userId}/impersonate`, {
       method: 'POST',
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
     });
 
     if (!response.ok) {
@@ -25,4 +25,4 @@ export const initiateImpersonation = async (userId: number) => {
   } catch (error) {
     console.error('Failed to initiate impersonation', error);
   }
-}
+};

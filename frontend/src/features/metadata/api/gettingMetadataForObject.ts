@@ -1,13 +1,13 @@
-import storage from "../../../utils/storage.ts";
-import { ObjectTypes } from "../../tag/type.ts";
+import storage from '../../../utils/storage.ts';
+import { ObjectTypes } from '../../tag/type.ts';
 
-export const gettingMetadataForObject = async (objectId: number, objectType:ObjectTypes) => {
+export const gettingMetadataForObject = async (objectId: number, objectType: ObjectTypes) => {
   const token = storage.getToken();
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/metadata/${objectType}/${objectId}`, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Authorization": `Bearer ${token}`
+        'Authorization': `Bearer ${token}`
       }
     });
     if (!response.ok) {
@@ -17,7 +17,7 @@ export const gettingMetadataForObject = async (objectId: number, objectType:Obje
     const metadata = await response.json();
     return metadata;
   } catch (error) {
-    console.error("Error getting metadata:", error);
+    console.error('Error getting metadata:', error);
     return [];
   }
-}
+};

@@ -1,21 +1,22 @@
-import { Button, Grid, TextField, Typography } from "@mui/material";
-import storage from "../../utils/storage.ts";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { ModalButton } from "../../components/elements/ModalButton.tsx";
-import toast from "react-hot-toast";
-import { User } from "../auth/types/types.ts";
-import { ProfileUpdateForm } from "./ProfileUpdateFom.tsx";
-import { deleteAccount } from "../auth/api/deleteAccount.ts";
-import { useState } from "react";
-import { ModalConfirmDelete } from "../projects/components/ModalConfirmDelete.tsx";
-import { MMUModal } from "../../components/elements/modal.tsx";
-import { useTranslation } from "react-i18next";
-import LanguageSelector from "../translation/LanguageSelector.tsx";
+import { Button, Grid, TextField, Typography } from '@mui/material';
+import storage from '../../utils/storage.ts';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { ModalButton } from '../../components/elements/ModalButton.tsx';
+import toast from 'react-hot-toast';
+import { User } from '../auth/types/types.ts';
+import { ProfileUpdateForm } from './ProfileUpdateFom.tsx';
+import { deleteAccount } from '../auth/api/deleteAccount.ts';
+import { useState } from 'react';
+import { ModalConfirmDelete } from '../projects/components/ModalConfirmDelete.tsx';
+import { MMUModal } from '../../components/elements/modal.tsx';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../translation/LanguageSelector.tsx';
 
 interface IUserSettingsProps {
-  user:User
+  user: User;
 }
-export const UserSettings = ({user}:IUserSettingsProps) => {
+
+export const UserSettings = ({ user }: IUserSettingsProps) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { t } = useTranslation();
 
@@ -24,23 +25,23 @@ export const UserSettings = ({user}:IUserSettingsProps) => {
   const HandleCopyToClipBoard = async () => {
     await navigator.clipboard.writeText(token);
     toast.success(t('tokenCopiedToast'));
-  }
+  };
 
-  const handleDeleteAccount= async ()=>{
-    const responseDelete = await deleteAccount(user.id)
-    if(responseDelete){
+  const handleDeleteAccount = async () => {
+    const responseDelete = await deleteAccount(user.id);
+    if (responseDelete) {
       window.location.reload();
     }
-  }
+  };
 
-  const handleConfirmDeleteItemModal =() => {
+  const handleConfirmDeleteItemModal = () => {
     setOpenDeleteModal(!openDeleteModal);
-  }
+  };
 
 
   return (
-    <Grid container spacing={2} sx={{ padding:2}}>
-      <Grid container item flexDirection="row" alignItems="center" spacing={2} sx={{ width: '100%'}}>
+    <Grid container spacing={2} sx={{ padding: 2 }}>
+      <Grid container item flexDirection="row" alignItems="center" spacing={2} sx={{ width: '100%' }}>
         <Grid item xs={10}>
           <TextField
             label={t('labelApiToken')}
@@ -51,7 +52,8 @@ export const UserSettings = ({user}:IUserSettingsProps) => {
           />
         </Grid>
         <Grid item xs={2}>
-          <ModalButton tooltipButton={t('tooltipButtonToken')} onClickFunction={HandleCopyToClipBoard} disabled={false} icon={<ContentCopyIcon />} />
+          <ModalButton tooltipButton={t('tooltipButtonToken')} onClickFunction={HandleCopyToClipBoard} disabled={false}
+                       icon={<ContentCopyIcon />} />
         </Grid>
       </Grid>
       <Grid container item flexDirection="column" spacing={1}>
@@ -59,7 +61,7 @@ export const UserSettings = ({user}:IUserSettingsProps) => {
           <Typography variant="h5">{t('changeLanguage')}</Typography>
         </Grid>
         <Grid item>
-          <LanguageSelector userId={user.id}/>
+          <LanguageSelector userId={user.id} />
         </Grid>
       </Grid>
 
@@ -83,5 +85,5 @@ export const UserSettings = ({user}:IUserSettingsProps) => {
         />
       </MMUModal>
     </Grid>
-  )
-}
+  );
+};

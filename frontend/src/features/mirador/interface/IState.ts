@@ -4,15 +4,15 @@ export default interface IState {
   store?: {
     getState: () => any;
   };
-  catalog:any[],
-  companionWindows:{},
-  config:{
-    annotation:{},
+  catalog: any[],
+  companionWindows: {},
+  config: {
+    annotation: {},
   },
-  elasticLayout:{},
-  layers:{},
-  manifests:{},
-  viewers:{},
-  windows:{},
-  workspace:{},
+  elasticLayout: {},
+  layers: {},
+  manifests: {},
+  viewers: {},
+  windows: {},
+  workspace: {},
 }

@@ -1,26 +1,26 @@
-import { Button, Grid } from "@mui/material";
-import FormField from "components/elements/FormField.tsx";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { LoginFormData, LoginSchema } from "../types/types.ts";
-import { useLogin } from "../../../utils/auth.tsx";
-import { LoginCredentialsDTO } from "../api/login.ts";
-import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { Button, Grid } from '@mui/material';
+import FormField from 'components/elements/FormField.tsx';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LoginFormData, LoginSchema } from '../types/types.ts';
+import { useLogin } from '../../../utils/auth.tsx';
+import { LoginCredentialsDTO } from '../api/login.ts';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 
-export const LoginForm = ()=>{
+export const LoginForm = () => {
   const navigate = useNavigate(); // Use hooks at the top level
   const { t } = useTranslation();
 
-  const { mutateAsync:loginUser } = useLogin();
+  const { mutateAsync: loginUser } = useLogin();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors }
   } = useForm<LoginFormData>({
-    resolver: zodResolver(LoginSchema), // Apply the zodResolver
+    resolver: zodResolver(LoginSchema) // Apply the zodResolver
   });
 
   const onSubmit = async (data: LoginCredentialsDTO) => {
@@ -50,7 +50,7 @@ export const LoginForm = ()=>{
             error={errors.mail}
           />
         </Grid>
-        <Grid item container alignItems='center' spacing={2}>
+        <Grid item container alignItems="center" spacing={2}>
           <Grid item>
             <FormField
               type="password"
@@ -83,5 +83,5 @@ export const LoginForm = ()=>{
         </Grid>
       </Grid>
     </form>
-  )
-}
+  );
+};

@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Box, TextField, Button, Typography, Alert, Container, Grid } from "@mui/material";
-import { Layout } from "./layout.tsx";
-import { forgotPassword } from "../api/forgotPassword.ts";
-import { NavLink } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { Alert, Box, Button, Container, Grid, TextField, Typography } from '@mui/material';
+import { Layout } from './layout.tsx';
+import { forgotPassword } from '../api/forgotPassword.ts';
+import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -19,13 +19,13 @@ const ForgotPassword = () => {
       setError(t('errorMail'));
       return;
     }
-    const response = await forgotPassword(email)
+    const response = await forgotPassword(email);
     if (response) {
       setSuccess(t('successResetPassword'));
     } else {
       setError(t('errorResetPassword'));
     }
-  }
+  };
 
   return (
     <Layout title={t('titleForgotPassword')} rightButton={

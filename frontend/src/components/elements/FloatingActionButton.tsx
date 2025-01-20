@@ -1,10 +1,10 @@
-import { Fab } from "@mui/material";
-import { ReactNode } from "react";
+import { Fab } from '@mui/material';
+import { ReactNode } from 'react';
 
 interface IFloatingActionButtonProps {
-  content:string
-  Icon:ReactNode
-  onClick:()=>void
+  content: string;
+  Icon: ReactNode;
+  onClick: () => void;
 }
 
 const FabStyle = {
@@ -13,22 +13,22 @@ const FabStyle = {
   right: 30,
   bottom: 30,
   left: 'auto',
-  position: 'fixed',
+  position: 'fixed'
 };
 
-export const FloatingActionButton = ({content, Icon, onClick}:IFloatingActionButtonProps)=>{
+export const FloatingActionButton = ({ content, Icon, onClick }: IFloatingActionButtonProps) => {
 
-  return(
+  return (
     <>
       <Fab
         variant="extended"
         color="primary"
-        sx={ FabStyle }
+        sx={FabStyle}
         onClick={onClick}
       >
         {Icon}
         {content}
       </Fab>
     </>
-  )
-}
+  );
+};

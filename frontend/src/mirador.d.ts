@@ -14,7 +14,7 @@ declare module 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdap
   export default LocalStorageAdapter;
 }
 
-declare module 'mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin'{
+declare module 'mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin' {
   const miradorAnnotationEditorVideo: any;
   export default miradorAnnotationEditorVideo;
 }
@@ -25,7 +25,7 @@ declare module 'mirador-mltools-plugin-mmu/es/index.js' {
 }
 
 //TODO : is currently used in getManifestThumbnail but may be useless
-declare module 'mirador/dist/es/src/lib/ThumbnailFactory.js'{
+declare module 'mirador/dist/es/src/lib/ThumbnailFactory.js' {
   const ThumbnailFactory: any;
   export default ThumbnailFactory;
 }

@@ -1,15 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useEffect, useState } from "react";
-import { loadLanguage } from "./loadLanguage.ts";
-import { SelectChangeEvent } from "@mui/material";
-import { availableLanguages } from "./i18n.ts";
-import { updatePreferredLanguage } from "./api/updatePreferredLanguage.ts";
+import { useEffect, useState } from 'react';
+import { loadLanguage } from './loadLanguage.ts';
+import { SelectChangeEvent } from '@mui/material';
+import { availableLanguages } from './i18n.ts';
+import { updatePreferredLanguage } from './api/updatePreferredLanguage.ts';
+
 interface LanguageSelectorProps {
-  userId:number
+  userId: number;
 }
-const LanguageSelector = ({userId}:LanguageSelectorProps) => {
+
+const LanguageSelector = ({ userId }: LanguageSelectorProps) => {
   const { i18n } = useTranslation();
   const [language, setLanguage] = useState(i18n.language);
 

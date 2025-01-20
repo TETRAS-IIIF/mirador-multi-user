@@ -1,4 +1,4 @@
-import storage from "../../../utils/storage.ts";
+import storage from '../../../utils/storage.ts';
 
 export const deleteManifest = async (manifestId: number) => {
   const token = storage.getToken();
@@ -6,8 +6,8 @@ export const deleteManifest = async (manifestId: number) => {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/${manifestId}`, {
       method: 'DELETE',
       headers: {
-        "Authorization": `Bearer ${token}`,
-      },
+        'Authorization': `Bearer ${token}`
+      }
     });
 
     if (!response.ok) {

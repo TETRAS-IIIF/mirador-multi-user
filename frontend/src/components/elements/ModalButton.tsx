@@ -1,15 +1,16 @@
-import { Button, Tooltip } from "@mui/material";
-import { ReactElement } from "react";
+import { Button, Tooltip } from '@mui/material';
+import { ReactElement } from 'react';
 
 interface IModalButtonProps {
-  onClickFunction:()=>void,
-  disabled:boolean,
-  icon:  ReactElement
-  tooltipButton:string
+  onClickFunction: () => void,
+  disabled: boolean,
+  icon: ReactElement
+  tooltipButton: string
 }
-export const ModalButton = ({tooltipButton, onClickFunction, disabled,icon}:IModalButtonProps )=>{
 
-  return(
+export const ModalButton = ({ tooltipButton, onClickFunction, disabled, icon }: IModalButtonProps) => {
+
+  return (
     <>
       <Tooltip title={tooltipButton}>
         <Button
@@ -21,5 +22,5 @@ export const ModalButton = ({tooltipButton, onClickFunction, disabled,icon}:IMod
         </Button>
       </Tooltip>
     </>
-  )
-}
+  );
+};

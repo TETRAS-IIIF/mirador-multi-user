@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { ReactNode } from 'react';
 import Box from '@mui/material/Box';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
-import { ReactNode } from "react";
-import { Backdrop } from "@mui/material";
+import { Backdrop } from '@mui/material';
 
 type Action = {
   icon: ReactNode,
@@ -14,28 +14,28 @@ type Action = {
 
 
 interface ISpeedDialTooltipOpen {
-  actions:Action[],
+  actions: Action[],
 }
 
-export default function SpeedDialTooltipOpen({actions}:ISpeedDialTooltipOpen) {
+export default function SpeedDialTooltipOpen({ actions }: ISpeedDialTooltipOpen) {
   const [open, setOpen] = React.useState(false);
 
   const handleToggle = () => setOpen((prevOpen) => !prevOpen);
 
   return (
-    <Box sx={{ height: 330, transform: 'translateZ(0px)', flexGrow: 1}}>
+    <Box sx={{ height: 330, transform: 'translateZ(0px)', flexGrow: 1 }}>
       <Backdrop open={open} />
       <SpeedDial
         ariaLabel="SpeedDial tooltip"
         sx={{
           position: 'absolute',
           bottom: 16,
-          right: 16,
+          right: 16
         }}
         icon={<SpeedDialIcon />}
         onClick={handleToggle}
         open={open}
-        direction={"left"}
+        direction={'left'}
       >
         {actions.map((action) => (
           <SpeedDialAction
