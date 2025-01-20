@@ -5,6 +5,7 @@ import {
   getPeerTubeVideoID,
   getYoutubeJson,
   isPeerTubeVideo,
+  isRawVideo,
   isYouTubeVideo,
 } from '../../media/utils/utils';
 import { MediaTypes } from '../../media/types/types';
@@ -34,7 +35,7 @@ export const ManifestCreationFormCanvases =
       }
 
       try {
-        if (mediaURL.match(/\.(mp4|webm|ogg)$/i) !== null) {
+        if (isRawVideo(mediaURL)) {
           updatedCanvas[itemIndex].media[0].thumbnailUrl = null;
           updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
         } else if (isYouTubeVideo(mediaURL)) {

@@ -1,4 +1,4 @@
-import { YoutubeVideoJson } from "../types/types.ts";
+import { YoutubeVideoJson } from '../types/types.ts';
 
 export const isYouTubeVideo = (url: string): boolean => {
   const youtubeRegex =
@@ -6,19 +6,23 @@ export const isYouTubeVideo = (url: string): boolean => {
   return youtubeRegex.test(url);
 }
 
-export const isPeerTubeVideo= async (url: string): Promise<boolean> => {
+export function isRawVideo(url: string): boolean {
+  return /\.(mp4|webm|ogg|mov|avi|flv|wmv|mkv|3gp)$/i.test(url);
+}
+
+export const isPeerTubeVideo = async (url: string): Promise<boolean> => {
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error('Failed to fetch the URL');
 
-const htmlContent = await response.text();
-return htmlContent.includes(
-  '<meta property="og:platform" content="PeerTube">',
-);
-} catch (error : any) {
-  console.error(`Error checking PeerTube meta tag: ${error.message}`);
-  return false;
-}
+    const htmlContent = await response.text();
+    return htmlContent.includes(
+      '<meta property="og:platform" content="PeerTube">',
+    );
+  } catch (error: any) {
+    console.error(`Error checking PeerTube meta tag: ${error.message}`);
+    return false;
+  }
 }
 
 export const getPeerTubeThumbnailUrl = async (url: string, videoId: string): Promise<string> => {
@@ -27,25 +31,25 @@ export const getPeerTubeThumbnailUrl = async (url: string, videoId: string): Pro
   const response = await fetch(apiURL);
 
   if (!response.ok) {
-  throw new Error('Failed to fetch PeerTube video details');
-}
+    throw new Error('Failed to fetch PeerTube video details');
+  }
 
-const data = await response.json();
-let thumbnailUrl = data.thumbnailPath;
-if (!thumbnailUrl.startsWith('http')) {
-  thumbnailUrl = `${baseDomain}${thumbnailUrl}`;
-}
+  const data = await response.json();
+  let thumbnailUrl = data.thumbnailPath;
+  if (!thumbnailUrl.startsWith('http')) {
+    thumbnailUrl = `${baseDomain}${thumbnailUrl}`;
+  }
 
-const thumbnailResponse = await fetch(thumbnailUrl);
-if (!thumbnailResponse.ok) {
-  throw new Error('Failed to fetch PeerTube thumbnail');
-}
+  const thumbnailResponse = await fetch(thumbnailUrl);
+  if (!thumbnailResponse.ok) {
+    throw new Error('Failed to fetch PeerTube thumbnail');
+  }
 
-const contentType = thumbnailResponse.headers.get('Content-Type');
-if (!contentType || !contentType.startsWith('image/')) {
-  throw new Error('Fetched data is not a valid image');
-}
-return thumbnailUrl
+  const contentType = thumbnailResponse.headers.get('Content-Type');
+  if (!contentType || !contentType.startsWith('image/')) {
+    throw new Error('Fetched data is not a valid image');
+  }
+  return thumbnailUrl
 }
 export const getPeerTubeVideoID = (url: string): string | null => {
   const peerTubeRegex = /(?:videos\/watch|w)\/([a-zA-Z0-9-]+)/;
