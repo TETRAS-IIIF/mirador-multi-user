@@ -1,7 +1,4 @@
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import { FieldForm } from "../../../components/elements/FieldForm";
-import { Box } from "@mui/material";
 import Button from "@mui/material/Button";
 import {
   getPeerTubeThumbnailUrl,
@@ -11,6 +8,7 @@ import {
   isYouTubeVideo
 } from "../../media/utils/utils";
 import { MediaTypes } from "../../media/types/types";
+import { ManifestCreationFormCanvas } from "./ManifestCreationFormCanvas";
 
 export const ManifestCreationFormCanvases =
   ({
@@ -27,6 +25,11 @@ export const ManifestCreationFormCanvases =
       let videoId;
       let thumbnailUrl: string | null = null;
 
+      if (!mediaURL) {
+        setCanvases(updatedCanvas);
+        return;
+      }
+
       try {
         if (isYouTubeVideo(mediaURL)) {
           youtubeJson = await getYoutubeJson(mediaURL);
@@ -40,8 +43,11 @@ export const ManifestCreationFormCanvases =
             updatedCanvas[itemIndex].media[0].thumbnailUrl = thumbnailUrl;
             updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
           }
+        } else if (mediaURL.match(/\.(mp4|webm|ogg)$/i) !== null) {
+          // updatedCanvas[itemIndex].media[0].thumbnailUrl = mediaURL;
+          updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
         } else {
-          // Set as image if not YouTube or PeerTube video
+          // Set as image if not YouTube or PeerTube video or video classic file format
           updatedCanvas[itemIndex].media[0].thumbnailUrl = mediaURL;
           updatedCanvas[itemIndex].media[0].type = MediaTypes.IMAGE;
         }
@@ -49,6 +55,7 @@ export const ManifestCreationFormCanvases =
         console.error("Failed to fetch media details:", error);
       } finally {
         setCanvases(updatedCanvas);
+        console.log(updatedCanvas);
       }
     };
 
@@ -64,51 +71,15 @@ export const ManifestCreationFormCanvases =
 
     return (
       <>
-        {canvases.map((item, itemIndex) => (
-          <Grid item key={itemIndex}>
-            <Paper elevation={3} style={{ padding: "20px", width: "100%" }}>
-              <Grid container direction="column" spacing={2}>
-                <Grid item container spacing={2} alignItems="center">
-                  <Grid item xs>
-                    <FieldForm
-                      name={item.media[0].title}
-                      placeholder={t("mediaLink")}
-                      label={t("mediaLink")}
-                      value={item.media[0].value}
-                      onChange={(e) => handleMediaChange(itemIndex, e.target.value)}
-                    />
-                  </Grid>
-                  {item.media[0].value && (
-                    <Grid item>
-                      <Box
-                        component="img"
-                        src={item.media[0].thumbnailUrl}
-                        loading="lazy"
-                        sx={{
-                          width: 50,
-                          height: 50,
-                          objectFit: "cover",
-                          "@media(min-resolution: 2dppx)": {
-                            width: 100,
-                            height: 100
-                          }
-                        }}
-                      />
-                    </Grid>
-                  )}
-                </Grid>
-                <Grid item>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => handleRemoveCanvas(itemIndex)}
-                  >
-                    {t("canvasRemoving", { index: itemIndex + 1 })}
-                  </Button>
-                </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
+        {canvases.map((canvas, canvasIndex) => (
+          <ManifestCreationFormCanvas
+            key={canvasIndex}
+            canvas={canvas}
+            canvasIndex={canvasIndex}
+            t={t}
+            handleMediaChange={handleMediaChange}
+            handleRemoveCanvas={handleRemoveCanvas}
+          />
         ))}
         <Grid item>
           <Button variant="contained" color="primary" onClick={handleNewCanvas}>
