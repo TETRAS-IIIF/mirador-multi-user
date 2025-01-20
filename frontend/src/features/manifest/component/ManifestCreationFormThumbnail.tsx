@@ -53,7 +53,7 @@ export const ManifestCreationFormThumbnail =
             <Grid item>
               <MMUToolTip>
                 <div>
-                  {t("mediaShouldBeNoMoreThan", 1)}
+                  {t("mediaShouldBeNoMoreThan", { size: 1 })}
                   <br />
                   {t("mediaOriginInfo")}
                 </div>

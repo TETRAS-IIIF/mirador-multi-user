@@ -12,18 +12,12 @@ import {
 } from "../../media/utils/utils";
 import { MediaTypes } from "../../media/types/types";
 
-interface IManifestCreationFormCanvases {
-  canvases: any[];
-  t: (key: string) => string;
-  setCanvases: (canvases: any[]) => void;
-}
-
 export const ManifestCreationFormCanvases =
   ({
      canvases,
      t,
      setCanvases
-   }: IManifestCreationFormCanvases) => {
+   }) => {
 
     const handleMediaChange = async (itemIndex: number, mediaURL: string) => {
       const updatedCanvas = [...canvases];
@@ -78,8 +72,8 @@ export const ManifestCreationFormCanvases =
                   <Grid item xs>
                     <FieldForm
                       name={item.media[0].title}
-                      placeholder="Media URL"
-                      label="Media URL"
+                      placeholder={t("mediaLink")}
+                      label={t("mediaLink")}
                       value={item.media[0].value}
                       onChange={(e) => handleMediaChange(itemIndex, e.target.value)}
                     />
@@ -109,7 +103,7 @@ export const ManifestCreationFormCanvases =
                     color="error"
                     onClick={() => handleRemoveCanvas(itemIndex)}
                   >
-                    Remove Canvas {itemIndex + 1}
+                    {t("canvasRemoving", { index: itemIndex + 1 })}
                   </Button>
                 </Grid>
               </Grid>
@@ -118,7 +112,7 @@ export const ManifestCreationFormCanvases =
         ))}
         <Grid item>
           <Button variant="contained" color="primary" onClick={handleNewCanvas}>
-            {t("add_new_canvas")}
+            {t("addNewCanvas")}
           </Button>
         </Grid>
       </>
