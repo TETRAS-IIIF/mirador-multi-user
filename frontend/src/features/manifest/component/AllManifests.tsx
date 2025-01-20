@@ -37,6 +37,7 @@ import placeholder from '../../../assets/Placeholder.svg';
 import { IIIFResource, ManifestResource } from 'manifesto.js';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -433,9 +434,16 @@ export const AllManifests = ({
                   <MMUCard
                     objectTypes={ObjectTypes.MANIFEST}
                     AddAccessListItemFunction={handleGrantAccess}
-                    DefaultButton={<ModalButton tooltipButton={t('tooltipButtonCopy')}
-                                                onClickFunction={manifest.hash ? () => HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : () => HandleCopyToClipBoard(manifest.path)}
-                                                disabled={false} icon={<ContentCopyIcon />} />}
+                    DefaultButton={<>
+                      <ModalButton tooltipButton={t('tooltipButtonCopy')}
+                                   onClickFunction={manifest.hash ? () => HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : () => HandleCopyToClipBoard(manifest.path)}
+                                   disabled={false} icon={<ContentCopyIcon />} />
+                      <ModalButton tooltipButton={t('open in Mirador')}
+                                   onClickFunction={() => window.open(`${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`, '_blank')}
+                                   disabled={false} icon={<OpenInNewIcon />} />
+                    </>
+                    }
+                    ReaderButton={<a href="http://tetras-libre.fr" />}
                     EditorButton={<ModalButton tooltipButton={t('tooltipButtonEdit')}
                                                onClickFunction={() => HandleOpenModal(manifest.id)}
                                                icon={<ModeEditIcon />} disabled={false} />}
