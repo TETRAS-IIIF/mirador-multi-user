@@ -5,7 +5,6 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import './style/mirador.css'
 import { Grid } from '@mui/material';
-import LocalStorageAdapter from 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js';
 import Mirador from 'mirador';
 
 
@@ -17,17 +16,12 @@ export const MiradorManifestExposed = () => {
     if (viewerRef.current) {
       const config = {
         id: viewerRef.current.id,
-        annotation: {
-          adapter: (canvasId: any) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
-          exportLocalStorageAnnotations: false, // display annotation JSON export button
-        },
         catalog: [{
           manifestId: manifestURL,
-          provider: 'manifest',
         }],
-        window: {
+        windows: [{
           manifestId: manifestURL,
-        },
+        }],
       };
       let loadingMiradorViewer;
 
@@ -41,28 +35,16 @@ export const MiradorManifestExposed = () => {
   }
 
   useEffect(() => {
-    /*const fetchAndSetupMirador = async () => {
-      const url = window.location.href;
-      let updatedUrl = ''
-      const miradorIndex = url.indexOf('/manifest/');
-      if (miradorIndex !== -1) {
-        const newPath = url.substring(miradorIndex + 8);
-        updatedUrl = `${import.meta.env.VITE_CADDY_URL}/${newPath}`;
-      }
-      try {
-        const response = await fetch(updatedUrl, { method: 'GET' });
-        const miradorWorkspaceOrManifest = await response.json();
+    console.log('MiradorManifestExposed');
+    const url = window.location.href;
+    const miradorIndex = url.indexOf('/manifest/');
+    if (miradorIndex !== -1) {
+      const newPath = url.substring(miradorIndex + 10); // 10 is the length of '/manifest/'
+      const manifestURL = `${import.meta.env.VITE_CADDY_URL}/${newPath}`;
+      console.log(manifestURL);
+      loadMirador(manifestURL);
+    }
 
-        loadMirador(miradorWorkspaceOrManifest);
-
-      } catch (error) {
-        console.error('Error fetching mirador workspace:', error);
-      }
-    };
-
-    fetchAndSetupMirador();*/
-    const manifestURL = 'https://iiif.harvardartmuseums.org/manifests/object/299843';
-    loadMirador(manifestURL);
   }, []);
 
   return (

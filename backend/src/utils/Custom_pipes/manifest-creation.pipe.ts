@@ -44,23 +44,31 @@ export class MediaInterceptor implements NestInterceptor {
       throw new BadRequestException('Manifest title is required.');
     }
     // Create the initial structure for the manifest
-    const manifestToCreate = {
+    let manifestToCreate = {
       '@context': 'https://iiif.io/api/presentation/3/context.json',
       id: `${process.env.CADDY_URL}/${hash}/${label}.json/`,
       type: 'Manifest',
       label: { en: [title] },
       items: [],
+      thumbnail: {},
     };
+
+    console.log('manifest creation');
+    console.log(manifestToCreate);
 
     console.log(manifestThumbnail);
 
     if (manifestThumbnail.length > 0) {
-      manifestToCreate.thumbnail = {
-        ['@id']: manifestThumbnail,
-        service: {
-          ['@context']: manifestThumbnail,
+      console.log('Manifest thumbnail:', manifestThumbnail);
+      manifestToCreate = {
+        ...manifestToCreate,
+        thumbnail: {
           ['@id']: manifestThumbnail,
-          profile: manifestThumbnail,
+          service: {
+            ['@context']: manifestThumbnail,
+            ['@id']: manifestThumbnail,
+            profile: manifestThumbnail,
+          },
         },
       };
     }
