@@ -12,12 +12,18 @@ import {
 } from "../../media/utils/utils";
 import { MediaTypes } from "../../media/types/types";
 
+interface IManifestCreationFormCanvases {
+  canvases: any[];
+  t: (key: string) => string;
+  setCanvases: (canvases: any[]) => void;
+}
+
 export const ManifestCreationFormCanvases =
   ({
      canvases,
      t,
      setCanvases
-   }) => {
+   }: IManifestCreationFormCanvases) => {
 
     const handleMediaChange = async (itemIndex: number, mediaURL: string) => {
       const updatedCanvas = [...canvases];
