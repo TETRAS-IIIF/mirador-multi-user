@@ -509,7 +509,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
             createManifestIsOpen &&(
               <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '100%'}}>
                 <SidePanelMedia display={true} medias={medias} userPersonalGroup={userPersonalGroup} fetchMediaForUser={fetchMediaForUser} user={user} open={openSidePanel} setOpen={handleSetOpenSidePanel}>
-                  <ManifestCreationForm handleSubmit={handleSubmitManifestCreationForm}/>
+                  <ManifestCreationForm handleSubmit={handleSubmitManifestCreationForm} t={t}/>
                 </SidePanelMedia>
               </Grid>
             )
