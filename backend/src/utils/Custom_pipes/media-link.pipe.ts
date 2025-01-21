@@ -1,14 +1,14 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { join } from 'path';
 import * as fs from 'fs';
-import * as sharp from 'sharp';
 import { createWriteStream } from 'fs';
+import * as sharp from 'sharp';
 import fetch from 'node-fetch';
 import { generateAlphanumericSHA1Hash } from '../hashGenerator';
 import { mediaTypes } from '../../enum/mediaTypes';
@@ -18,6 +18,7 @@ import {
   getYoutubeThumbnail,
   getYouTubeVideoID,
   isPeerTubeVideo,
+  isRawVideo,
   isYouTubeVideo,
 } from './utils';
 
@@ -43,7 +44,13 @@ export class MediaLinkInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<any>> {
+    // TODO On large file this working can be a problem
+    // Before to get a resource you need to check file size with HEAD request
+    console.log('MediaLinkInterceptor');
+    console.time('MediaLinkInterceptor');
     const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest();
+    console.timeEnd('MediaLinkInterceptor');
     const url = request.body.url;
     try {
       let thumbnailBuffer: Buffer | null = null;
@@ -65,6 +72,9 @@ export class MediaLinkInterceptor implements NestInterceptor {
           }
           request.mediaTypes = mediaTypes.VIDEO;
           break;
+        case isRawVideo(url):
+          request.mediaTypes = mediaTypes.VIDEO;
+          break;
 
         default: {
           const imageResponse = await fetch(url);
@@ -79,7 +89,7 @@ export class MediaLinkInterceptor implements NestInterceptor {
         const hash = generateAlphanumericSHA1Hash(
           `${Date.now().toString()}${Math.random().toString(36)}`,
         );
-        const uploadBasePath = './upload';
+        const uploadBasePath = './upload'; // TODO this path should be in a config file
         const uploadPath = join(uploadBasePath, hash);
 
         if (!fs.existsSync(uploadBasePath)) {

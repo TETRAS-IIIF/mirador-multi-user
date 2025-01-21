@@ -10,7 +10,6 @@ import {
 } from '../../media/utils/utils';
 import { MediaTypes } from '../../media/types/types';
 import { ManifestCreationFormCanvas } from './ManifestCreationFormCanvas';
-import { uuid } from 'uuidv4';
 
 export const ManifestCreationFormCanvases =
   ({
