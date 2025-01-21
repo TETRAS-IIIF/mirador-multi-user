@@ -44,48 +44,48 @@ export class MediaLinkInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<any>> {
-    // TODO On large file this working can be a problem
-    // Before to get a resource you need to check file size with HEAD request
     console.log('MediaLinkInterceptor');
     console.time('MediaLinkInterceptor');
     const request = context.switchToHttp().getRequest();
-    const request = context.switchToHttp().getRequest();
     console.timeEnd('MediaLinkInterceptor');
     const url = request.body.url;
+    console.time('intercept');
     try {
       let thumbnailBuffer: Buffer | null = null;
       let videoId: string | null = null;
 
-      switch (true) {
-        case isYouTubeVideo(url):
+      if(isYouTubeVideo(url)) {
           videoId = getYouTubeVideoID(url);
           if (videoId) {
             thumbnailBuffer = await getYoutubeThumbnail(videoId);
           }
           request.mediaTypes = mediaTypes.VIDEO;
-          break;
-
-        case await isPeerTubeVideo(url):
-          videoId = getPeerTubeVideoID(url);
-          if (videoId) {
-            thumbnailBuffer = await getPeerTubeThumbnail(url, videoId);
-          }
-          request.mediaTypes = mediaTypes.VIDEO;
-          break;
-        case isRawVideo(url):
-          request.mediaTypes = mediaTypes.VIDEO;
-          break;
-
+      } else if (await isPeerTubeVideo(url)) {
+        videoId = getPeerTubeVideoID(url);
+        if (videoId) {
+          thumbnailBuffer = await getPeerTubeThumbnail(url, videoId);
+        }
+        request.mediaTypes = mediaTypes.VIDEO;
+      } else if (isRawVideo(url)) {
+        request.mediaTypes = mediaTypes.VIDEO;
+      } else {
         default: {
+          // TODO On large file this working can be a problem
+          // Before to get a resource you need to check file size with HEAD request
+          console.log('default');
+          console.time('fetch');
           const imageResponse = await fetch(url);
           if (!imageResponse.ok) throw new Error('Failed to fetch media');
           thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
           request.mediaTypes = mediaTypes.IMAGE;
+          console.timeEnd('fetch');
           break;
         }
       }
+      console.timeEnd('intercept');
 
       if (thumbnailBuffer) {
+        console.log('thumbnailBuffer');
         const hash = generateAlphanumericSHA1Hash(
           `${Date.now().toString()}${Math.random().toString(36)}`,
         );
