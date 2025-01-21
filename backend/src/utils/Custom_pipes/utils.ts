@@ -126,7 +126,7 @@ export async function getYoutubeJson(
 
 export async function isImage(url: string): Promise<boolean> {
   try {
-    const response = await fetch(`${url}`, { method: 'GET' });
+    const response = await fetch(`${url}`, { method: 'HEAD' });
     if (!response.ok) {
       throw new Error(
         `HTTP error! status: ${response.status}, message: ${response.statusText}`,
