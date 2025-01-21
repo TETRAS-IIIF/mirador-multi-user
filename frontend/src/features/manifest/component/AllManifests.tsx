@@ -81,11 +81,11 @@ export const AllManifests = ({
   const [searchedManifest, setSearchedManifest] = useState<Manifest | null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
   const [searchedManifestIndex, setSearchedManifestIndex] = useState<number | null>(null);
-  const [modalLinkManifestIsOpen, setModalLinkManifestSIsOpen] = useState(false);
+  const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false);
   const [manifestFiltered, setManifestFiltered] = useState<Manifest[] | undefined>([]);
   const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
+  const [userGroupSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [openSidePanel, setOpenSidePanel] = useState(false);
@@ -160,7 +160,7 @@ export const AllManifests = ({
     {
       icon: <AddLinkIcon /> as ReactNode,
       name: t('actionsDial.link'),
-      onClick: () => setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen),
+      onClick: () => setModalLinkManifestIsOpen(!modalLinkManifestIsOpen),
     },
   ];
 
@@ -258,7 +258,7 @@ export const AllManifests = ({
           : 'new Manifest',
       });
       fetchManifestForUser();
-      setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen);
+      setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
       return toast.success('manifest created');
     }
     return toast.error('manifest could not be created');
@@ -330,7 +330,7 @@ export const AllManifests = ({
     if (userToAdd == null) {
       toast.error('select an item in the list');
     }
-    const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup) => linkUserGroup.user_group.id === userToAdd!.id);
+    const linkUserGroupToAdd = userGroupSearch.find((linkUserGroup) => linkUserGroup.user_group.id === userToAdd!.id);
     await grantAccessToManifest({ manifestId: manifestId, userGroupId: linkUserGroupToAdd!.user_group.id });
   };
 
@@ -364,7 +364,7 @@ export const AllManifests = ({
     <>
       <SidePanelMedia open={openSidePanel && !!openModalManifestId} setOpen={handleSetOpenSidePanel}
                       display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user}
-                      userPersonalGroup={userPersonalGroup!}>
+                      userPersonalGroup={userPersonalGroup}>
         <Grid item container flexDirection="column" spacing={1} sx={{ paddingTop: 0 }}>
           <Grid item container direction="row-reverse" alignItems="center" sx={{
             position: 'sticky',
@@ -570,7 +570,7 @@ export const AllManifests = ({
             <DrawerLinkManifest
               linkingManifest={handleLinkManifest}
               modalCreateManifestIsOpen={modalLinkManifestIsOpen}
-              toggleModalManifestCreation={() => setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)} />
+              toggleModalManifestCreation={() => setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)} />
           </Grid>
           {!createManifestIsOpen && (
             <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />

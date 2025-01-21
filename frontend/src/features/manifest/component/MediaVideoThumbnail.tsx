@@ -1,5 +1,5 @@
-import { Box, Grid } from "@mui/material";
-import React, { useRef } from "react";
+import { Box, Grid } from '@mui/material';
+import React, { useRef } from 'react';
 
 export function MediaVideoThumbnail({ media, setMedia, t }) {
 
@@ -10,10 +10,8 @@ export function MediaVideoThumbnail({ media, setMedia, t }) {
       ...media,
       duration: video.duration,
       height: video.videoHeight,
-      width: video.videoWidth
+      width: video.videoWidth,
     });
-
-
   };
 
   const videoEl = useRef(null);
@@ -28,26 +26,22 @@ export function MediaVideoThumbnail({ media, setMedia, t }) {
           sx={{
             width: 200,
             height: 50,
-            objectFit: "cover",
-            "@media(min-resolution: 2dppx)": {
+            objectFit: 'cover',
+            '@media(min-resolution: 2dppx)': {
               width: 100,
-              height: 100
-            }
+              height: 100,
+            },
           }}
         />)
       }
       {!media.thumbnailUrl && (
-        <>
-          <video
-            width="200"
-            ref={videoEl}
-            src={media.value}
-            controls
-            onLoadedMetadata={handleLoadedMetadata}
-
-          />
-
-        </>
+        <video
+          width="200"
+          ref={videoEl}
+          src={media.value}
+          controls
+          onLoadedMetadata={handleLoadedMetadata}
+        />
       )}
     </Grid>
   );
