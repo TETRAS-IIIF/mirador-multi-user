@@ -133,12 +133,17 @@ export const AllManifests = ({
 
   const handleCreateManifest = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      await uploadManifest({
-        idCreator: user.id,
-        file: event.target.files[0],
-      });
-      fetchManifestForUser();
-      setCreateManifestIsOpen(false);
+      const maxUploadSize = import.meta.env.VITE_MAX_UPLOAD_SIZE;
+      if (event.target.files[0].size > maxUploadSize) {
+        toast.error('File is too big');
+      } else {
+        await uploadManifest({
+          idCreator: user.id,
+          file: event.target.files[0],
+        });
+        fetchManifestForUser();
+        setCreateManifestIsOpen(false);
+      }
     }
   }, [fetchManifestForUser, manifests]);
 
