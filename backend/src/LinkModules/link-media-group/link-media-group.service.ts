@@ -34,6 +34,7 @@ export class LinkMediaGroupService {
     @Inject(forwardRef(() => MediaService))
     private readonly mediaService: MediaService,
   ) {}
+
   async create(createLinkMediaGroupDto: CreateLinkMediaGroupDto) {
     try {
       const linkMediaGroup: LinkMediaGroup =
@@ -54,8 +55,6 @@ export class LinkMediaGroupService {
     try {
       const { idCreator, path, user_group } = mediaDto;
       const media = await this.mediaService.create(mediaDto);
-      console.log('mediaDto')
-      console.log(mediaDto)
       await this.addMediaToGroup({
         userGroupId: user_group.id,
         mediasId: [media.id],
@@ -190,7 +189,7 @@ export class LinkMediaGroupService {
           }
         }
       }
-      if(mediaToRemove.origin === mediaOrigin.LINK) {
+      if (mediaToRemove.origin === mediaOrigin.LINK) {
         const thumbnailPath = join(
           __dirname,
           '..',

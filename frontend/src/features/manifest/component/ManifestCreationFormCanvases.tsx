@@ -78,7 +78,6 @@ export const ManifestCreationFormCanvases =
       setCanvases([...canvases, {
         media: [{
           title: `media-${newCanvasIndex}`, value: '', type: undefined,
-          uid: uuid(),
         }],
       }]);
     };
@@ -87,7 +86,7 @@ export const ManifestCreationFormCanvases =
       <>
         {canvases.map((canvas, canvasIndex) => (
           <ManifestCreationFormCanvas
-            key={canvas.uid}
+            key={canvasIndex}
             canvas={canvas}
             canvasIndex={canvasIndex}
             t={t}

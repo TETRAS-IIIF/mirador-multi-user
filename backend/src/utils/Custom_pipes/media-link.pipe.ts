@@ -47,7 +47,6 @@ export class MediaLinkInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
     const url = request.body.url;
-    console.time('intercept');
     try {
       let thumbnailBuffer: Buffer | null = null;
       let videoId: string | null = null;
@@ -55,13 +54,10 @@ export class MediaLinkInterceptor implements NestInterceptor {
       if (await isImage(url)) {
         // TODO On large file this working can be a problem
         // Before to get a resource you need to check file size with HEAD request
-        console.log('default');
-        console.time('fetch');
         const imageResponse = await fetch(url);
         if (!imageResponse.ok) throw new Error('Failed to fetch media');
         thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
         request.mediaTypes = mediaTypes.IMAGE;
-        console.timeEnd('fetch');
       } else if (isVideo(url)) {
         request.mediaTypes = mediaTypes.VIDEO;
       } else if (isYouTubeVideo(url)) {
@@ -80,10 +76,7 @@ export class MediaLinkInterceptor implements NestInterceptor {
         throw new Error('Unsupported media type');
       }
 
-      console.timeEnd('intercept');
-
       if (thumbnailBuffer) {
-        console.log('thumbnailBuffer');
         const hash = generateAlphanumericSHA1Hash(
           `${Date.now().toString()}${Math.random().toString(36)}`,
         );
