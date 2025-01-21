@@ -40,7 +40,7 @@ export const ManifestCreationFormCanvases =
           updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
         } else if (isYouTubeVideo(mediaURL)) {
           youtubeJson = await getYoutubeJson(mediaURL);
-          thumbnailUrl = youtubeJson?.thumbnail_url || null;
+          thumbnailUrl = youtubeJson?.thumbnail_url ?? null;
           updatedCanvas[itemIndex].media[0].thumbnailUrl = thumbnailUrl!;
           updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
         } else if (await isPeerTubeVideo(mediaURL)) {

@@ -434,16 +434,15 @@ export const AllManifests = ({
                   <MMUCard
                     objectTypes={ObjectTypes.MANIFEST}
                     AddAccessListItemFunction={handleGrantAccess}
-                    DefaultButton={<>
+                    DefaultButton={<Grid container direction={'row'}>
                       <ModalButton tooltipButton={t('tooltipButtonCopy')}
                                    onClickFunction={manifest.hash ? () => HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : () => HandleCopyToClipBoard(manifest.path)}
                                    disabled={false} icon={<ContentCopyIcon />} />
                       <ModalButton tooltipButton={t('open in Mirador')}
                                    onClickFunction={() => window.open(`${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`, '_blank')}
                                    disabled={false} icon={<OpenInNewIcon />} />
-                    </>
+                    </Grid>
                     }
-                    ReaderButton={<a href="http://tetras-libre.fr" />}
                     EditorButton={<ModalButton tooltipButton={t('tooltipButtonEdit')}
                                                onClickFunction={() => HandleOpenModal(manifest.id)}
                                                icon={<ModeEditIcon />} disabled={false} />}

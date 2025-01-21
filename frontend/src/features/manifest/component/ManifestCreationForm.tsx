@@ -1,11 +1,11 @@
-import { ChangeEvent, useState } from "react";
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
-import { FieldForm } from "../../../components/elements/FieldForm.tsx";
-import { MediaTypes } from "../../media/types/types.ts";
-import { ManifestCreationFormCanvases } from "./ManifestCreationFormCanvases.tsx";
-import { ManifestCreationFormThumbnail } from "./ManifestCreationFormThumbnail.tsx";
+import { ChangeEvent, useState } from 'react';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Paper from '@mui/material/Paper';
+import { FieldForm } from '../../../components/elements/FieldForm.tsx';
+import { MediaTypes } from '../../media/types/types.ts';
+import { ManifestCreationFormCanvases } from './ManifestCreationFormCanvases.tsx';
+import { ManifestCreationFormThumbnail } from './ManifestCreationFormThumbnail.tsx';
 
 interface MediaField {
   title: string;
@@ -14,18 +14,18 @@ interface MediaField {
   thumbnailUrl?: string;
 }
 
-interface iIIFCanvases {
+interface IIIFCanvases {
   media: MediaField[];
 }
 
 interface IManifestCreationFormProps {
-  handleSubmit: (manifestThumbnail: string, manifestTitle: string, manifestCanvases: iIIFCanvases[]) => void;
+  handleSubmit: (manifestThumbnail: string, manifestTitle: string, manifestCanvases: IIIFCanvases[]) => void;
 }
 
 export const ManifestCreationForm = ({ handleSubmit, t }: IManifestCreationFormProps) => {
-  const [manifestTitle, setManifestTitle] = useState<string>("");
-  const [manifestThumbnail, setManifestThumbnail] = useState<string>("");
-  const [manifestCanvases, setManifestCanvases] = useState<iIIFCanvases[]>([]);
+  const [manifestTitle, setManifestTitle] = useState<string>('');
+  const [manifestThumbnail, setManifestThumbnail] = useState<string>('');
+  const [manifestCanvases, setManifestCanvases] = useState<IIIFCanvases[]>([]);
 
   const handleManifestTitleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setManifestTitle(e.target.value);
@@ -34,12 +34,12 @@ export const ManifestCreationForm = ({ handleSubmit, t }: IManifestCreationFormP
   return (
     <Grid container direction="column" spacing={4}>
       <Grid item container>
-        <Paper elevation={3} style={{ padding: "20px", width: "100%" }}>
+        <Paper elevation={3} style={{ padding: '20px', width: '100%' }}>
           <Grid item>
             <FieldForm
               name="manifest-title"
-              placeholder={t("manifestTitle")}
-              label={t("manifestTitle")}
+              placeholder={t('manifestTitle')}
+              label={t('manifestTitle')}
               value={manifestTitle}
               onChange={handleManifestTitleChange}
             />
@@ -63,7 +63,7 @@ export const ManifestCreationForm = ({ handleSubmit, t }: IManifestCreationFormP
           onClick={() => handleSubmit(manifestThumbnail, manifestTitle, manifestCanvases)}
           disabled={manifestCanvases.length < 1}
         >
-          {t("actionsDial.create")}
+          {t('actionsDial.create')}
         </Button>
       </Grid>
     </Grid>

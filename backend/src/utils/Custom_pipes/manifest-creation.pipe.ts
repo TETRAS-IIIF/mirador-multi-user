@@ -84,14 +84,12 @@ export class MediaInterceptor implements NestInterceptor {
         let peertubeVideoJson = null;
         console.log('Media value:', media);
         switch (true) {
-          case isRawVideo(url):
-            // TODO this must be improved, secured and tested
-            // TODO We dont want timestamp but unique id
+          case isRawVideo(url): {
             const timeStamp = Date.now();
             const timeStamp2 = Date.now();
             const timeStamp3 = Date.now();
-            const height = media.height;
             const width = media.width;
+            const height = media.height;
             const duration = Math.round(media.duration);
             const mediaFormat = media.value.split('.').pop();
             manifestToCreate.items.push({
@@ -125,12 +123,12 @@ export class MediaInterceptor implements NestInterceptor {
               ],
             });
             break;
-          case isYouTubeVideo(url):
+          }
+          case isYouTubeVideo(url): {
             videoId = getYouTubeVideoID(url);
             if (videoId) {
               youtubeJson = await getYoutubeJson(url);
               const videoDuration = await getVideoDuration(url);
-              // TODO We dont want timestamp but unique id
               const timeStamp = Date.now();
               const timeStamp2 = Date.now();
               const timeStamp3 = Date.now();
@@ -169,7 +167,8 @@ export class MediaInterceptor implements NestInterceptor {
               });
             }
             break;
-          case await isPeerTubeVideo(url):
+          }
+          case await isPeerTubeVideo(url): {
             videoId = getPeerTubeVideoID(url);
             if (videoId) {
               peertubeVideoJson = await getPeerTubeVideoDetails(url, videoId);
@@ -219,6 +218,7 @@ export class MediaInterceptor implements NestInterceptor {
               });
             }
             break;
+          }
           case await isImage(url): {
             const response = await fetch(`${url}`, { method: 'GET' });
             const arrayBuffer = await response.arrayBuffer();
