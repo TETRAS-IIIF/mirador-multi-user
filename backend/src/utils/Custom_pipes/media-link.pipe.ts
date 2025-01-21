@@ -17,8 +17,9 @@ import {
   getPeerTubeVideoID,
   getYoutubeThumbnail,
   getYouTubeVideoID,
+  isImage,
   isPeerTubeVideo,
-  isRawVideo,
+  isVideo,
   isYouTubeVideo,
 } from './utils';
 
@@ -44,44 +45,41 @@ export class MediaLinkInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<any>> {
-    console.log('MediaLinkInterceptor');
-    console.time('MediaLinkInterceptor');
     const request = context.switchToHttp().getRequest();
-    console.timeEnd('MediaLinkInterceptor');
     const url = request.body.url;
     console.time('intercept');
     try {
       let thumbnailBuffer: Buffer | null = null;
       let videoId: string | null = null;
 
-      if(isYouTubeVideo(url)) {
-          videoId = getYouTubeVideoID(url);
-          if (videoId) {
-            thumbnailBuffer = await getYoutubeThumbnail(videoId);
-          }
-          request.mediaTypes = mediaTypes.VIDEO;
+      if (await isImage(url)) {
+        // TODO On large file this working can be a problem
+        // Before to get a resource you need to check file size with HEAD request
+        console.log('default');
+        console.time('fetch');
+        const imageResponse = await fetch(url);
+        if (!imageResponse.ok) throw new Error('Failed to fetch media');
+        thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
+        request.mediaTypes = mediaTypes.IMAGE;
+        console.timeEnd('fetch');
+      } else if (isVideo(url)) {
+        request.mediaTypes = mediaTypes.VIDEO;
+      } else if (isYouTubeVideo(url)) {
+        videoId = getYouTubeVideoID(url);
+        if (videoId) {
+          thumbnailBuffer = await getYoutubeThumbnail(videoId);
+        }
+        request.mediaTypes = mediaTypes.VIDEO;
       } else if (await isPeerTubeVideo(url)) {
         videoId = getPeerTubeVideoID(url);
         if (videoId) {
           thumbnailBuffer = await getPeerTubeThumbnail(url, videoId);
         }
         request.mediaTypes = mediaTypes.VIDEO;
-      } else if (isRawVideo(url)) {
-        request.mediaTypes = mediaTypes.VIDEO;
       } else {
-        default: {
-          // TODO On large file this working can be a problem
-          // Before to get a resource you need to check file size with HEAD request
-          console.log('default');
-          console.time('fetch');
-          const imageResponse = await fetch(url);
-          if (!imageResponse.ok) throw new Error('Failed to fetch media');
-          thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
-          request.mediaTypes = mediaTypes.IMAGE;
-          console.timeEnd('fetch');
-          break;
-        }
+        throw new Error('Unsupported media type');
       }
+
       console.timeEnd('intercept');
 
       if (thumbnailBuffer) {

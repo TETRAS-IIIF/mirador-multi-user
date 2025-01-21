@@ -16,7 +16,7 @@ import {
   getYouTubeVideoID,
   isImage,
   isPeerTubeVideo,
-  isRawVideo,
+  isVideo,
   isYouTubeVideo,
 } from './utils';
 import { generateAlphanumericSHA1Hash } from '../hashGenerator';
@@ -84,7 +84,7 @@ export class MediaInterceptor implements NestInterceptor {
         let peertubeVideoJson = null;
         console.log('Media value:', media);
         switch (true) {
-          case isRawVideo(url): {
+          case isVideo(url): {
             const timeStamp = Date.now();
             const timeStamp2 = Date.now();
             const timeStamp3 = Date.now();

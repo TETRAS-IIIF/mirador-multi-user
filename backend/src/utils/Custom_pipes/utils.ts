@@ -4,8 +4,9 @@ export function isYouTubeVideo(url: string): boolean {
   return youtubeRegex.test(url);
 }
 
-export function isRawVideo(url: string): boolean {
+export function isVideo(url: string): boolean {
   return /\.(mp4|webm|ogg|mov|avi|flv|wmv|mkv|3gp)$/i.test(url);
+  // TODO Can be like isImage
 }
 
 export async function isPeerTubeVideo(url: string): Promise<boolean> {
