@@ -434,7 +434,7 @@ export const SideDrawer = ({
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: '100vh' }}>
         {selectedProjectId && projectSelected && (
-          <SidePanelManifest manifest={manifests} userPersonalGroup={userPersonalGroup} user={user}
+          <SidePanelManifest manifest={manifests} userPersonalGroup={userPersonalGroup!} user={user}
                              fetchManifestForUser={fetchManifestForUser} display={true}>
             <Grid sx={{ paddingRight: 5 }}>
               <MiradorViewer

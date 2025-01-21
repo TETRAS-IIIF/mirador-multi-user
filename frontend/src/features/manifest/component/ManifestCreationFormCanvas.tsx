@@ -1,9 +1,19 @@
-import { FieldForm } from "../../../components/elements/FieldForm";
-import { Button, Grid, Paper } from "@mui/material";
-import { useState } from "react";
-import { MediaTypes } from "../../media/types/types";
-import { MediaImageThumbnail } from "./MediaImageThumbnail";
-import { MediaVideoThumbnail } from "./MediaVideoThumbnail";
+import { FieldForm } from '../../../components/elements/FieldForm';
+import { Button, Grid, Paper } from '@mui/material';
+import { ChangeEvent, useState } from 'react';
+import { MediaTypes } from '../../media/types/types';
+import { MediaImageThumbnail } from './MediaImageThumbnail';
+import { MediaVideoThumbnail } from './MediaVideoThumbnail';
+import { IIIFCanvases, MediaField } from './ManifestCreationForm';
+
+interface ManifestCreationFormCanvasProps {
+  canvas: IIIFCanvases;
+  canvasIndex: number;
+  t: ((key: string) => string) | ((key: string, params: Record<string, string>) => string);
+  handleMediaURLChange: (canvasIndex: number, mediaURL: string) => void;
+  handleRemoveCanvas: (canvasIndex: number) => void;
+  setMedia: (media: MediaField, canvasIndex: number) => void;
+}
 
 export const ManifestCreationFormCanvas = ({
                                              canvas,
@@ -11,12 +21,12 @@ export const ManifestCreationFormCanvas = ({
                                              t,
                                              handleMediaURLChange,
                                              handleRemoveCanvas,
-                                             setMedia
-                                           }) => {
+                                             setMedia,
+                                           }: ManifestCreationFormCanvasProps) => {
 
     const [isMediaLoading, setIsMediaLoading] = useState(false);
 
-    const onMediaURLChange = async (e) => {
+    const onMediaURLChange = async (e: ChangeEvent<HTMLInputElement>) => {
       const mediaURL = e.target.value;
       setIsMediaLoading(true);
       try {
@@ -29,14 +39,14 @@ export const ManifestCreationFormCanvas = ({
 
     return (
       <Grid item key={canvasIndex}>
-        <Paper elevation={3} sx={{ padding: 2, width: "100%" }}>
+        <Paper elevation={3} sx={{ padding: 2, width: '100%' }}>
           <Grid container direction="column" spacing={2}>
             <Grid item container spacing={2} alignItems="center">
               <Grid item xs>
                 <FieldForm
                   name={media.title}
-                  placeholder={t("mediaLink")}
-                  label={t("mediaLink")}
+                  placeholder={t('mediaLink')}
+                  label={t('mediaLink')}
                   value={media.value}
                   onChange={onMediaURLChange}
                 />
@@ -45,7 +55,7 @@ export const ManifestCreationFormCanvas = ({
               {(media.value && !isMediaLoading) && (
                 <Grid item>
                   {media.type === MediaTypes.VIDEO && (
-                    <MediaVideoThumbnail media={media} setMedia={(media) => setMedia(media, canvasIndex)} t={t} />
+                    <MediaVideoThumbnail media={media} setMedia={(media) => setMedia(media, canvasIndex)} />
                   )
                   }
                   {media.type === MediaTypes.IMAGE && (
@@ -66,7 +76,7 @@ export const ManifestCreationFormCanvas = ({
                 color="error"
                 onClick={() => handleRemoveCanvas(canvasIndex)}
               >
-                {t("canvasRemoving", { index: canvasIndex + 1 })}
+                {t('canvasRemoving', { index: canvasIndex + 1 })}
               </Button>
             </Grid>
           </Grid>

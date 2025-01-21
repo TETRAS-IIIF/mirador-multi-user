@@ -1,7 +1,7 @@
 import { Box, Grid } from '@mui/material';
 import React, { useRef } from 'react';
 
-export function MediaVideoThumbnail({ media, setMedia, t }) {
+export function MediaVideoThumbnail({ media, setMedia }) {
 
   const handleLoadedMetadata = () => {
     const video = videoEl.current;

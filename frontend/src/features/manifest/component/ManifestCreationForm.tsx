@@ -7,20 +7,20 @@ import { MediaTypes } from '../../media/types/types.ts';
 import { ManifestCreationFormCanvases } from './ManifestCreationFormCanvases.tsx';
 import { ManifestCreationFormThumbnail } from './ManifestCreationFormThumbnail.tsx';
 
-interface MediaField {
+export interface MediaField {
   title: string;
   value: string;
   type: MediaTypes | undefined;
   thumbnailUrl?: string;
 }
 
-interface IIIFCanvases {
-  uid: string;
+export interface IIIFCanvases {
   media: MediaField[];
 }
 
 interface IManifestCreationFormProps {
   handleSubmit: (manifestThumbnail: string, manifestTitle: string, manifestCanvases: IIIFCanvases[]) => void;
+  t: (key: string) => string;
 }
 
 export const ManifestCreationForm = ({ handleSubmit, t }: IManifestCreationFormProps) => {
