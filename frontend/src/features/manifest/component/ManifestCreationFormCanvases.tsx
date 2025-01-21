@@ -10,6 +10,7 @@ import {
 } from '../../media/utils/utils';
 import { MediaTypes } from '../../media/types/types';
 import { ManifestCreationFormCanvas } from './ManifestCreationFormCanvas';
+import { uuid } from 'uuidv4';
 
 export const ManifestCreationFormCanvases =
   ({
@@ -75,14 +76,19 @@ export const ManifestCreationFormCanvases =
 
     const handleNewCanvas = () => {
       const newCanvasIndex = canvases.length + 1;
-      setCanvases([...canvases, { media: [{ title: `media-${newCanvasIndex}`, value: '', type: undefined }] }]);
+      setCanvases([...canvases, {
+        media: [{
+          title: `media-${newCanvasIndex}`, value: '', type: undefined,
+          uid: uuid(),
+        }],
+      }]);
     };
 
     return (
       <>
         {canvases.map((canvas, canvasIndex) => (
           <ManifestCreationFormCanvas
-            key={canvasIndex}
+            key={canvas.uid}
             canvas={canvas}
             canvasIndex={canvasIndex}
             t={t}

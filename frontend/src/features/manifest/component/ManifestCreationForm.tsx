@@ -15,6 +15,7 @@ interface MediaField {
 }
 
 interface IIIFCanvases {
+  uid: string;
   media: MediaField[];
 }
 
