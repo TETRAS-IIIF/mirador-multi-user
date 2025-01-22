@@ -524,6 +524,10 @@ export const AllMedias = ({ user, userPersonalGroup, medias, fetchMediaForUser, 
           <SpeedDialTooltipOpen actions={actions} />
         </Grid>
       </Grid>
+      <Grid item width={'100%'} height={'100%'}>
+        <iframe src="./../../public/customAssets/media-footer.html"
+                style={{ border: 'none' }}></iframe>
+      </Grid>
     </Box>
   )
 }
