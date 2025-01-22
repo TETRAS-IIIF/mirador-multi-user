@@ -55,6 +55,7 @@
   "errorResetPassword": "Une erreur est survenue. Veuillez réessayer plus tard.",
   "errorToken": "Jeton de réinitialisation invalide ou manquant",
   "explanationPasswordReset": "Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.",
+  "fileTooLarge": "Le fichier est trop volumineux, max {{maxSize}}MB",
   "filter": "Filtrer",
   "filterGroups": "Filtrer les groupes",
   "filterManifest": "Filtrer le manifest",

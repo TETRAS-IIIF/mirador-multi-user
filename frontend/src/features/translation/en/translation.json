@@ -55,6 +55,7 @@
   "errorResetPassword": "An error occurred. Please try again later.",
   "errorToken": "Invalid or missing reset token",
   "explanationPasswordReset": "Enter your email address to receive a password reset link.",
+  "fileTooLarge": "Le fichier est trop volumineux, max {{maxSize}}MB",
   "filter": "filter",
   "filterGroups": "Filter groups",
   "filterManifest": "Filter Manifest",
