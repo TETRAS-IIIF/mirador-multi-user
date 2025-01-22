@@ -445,7 +445,8 @@ export const AllManifests = ({
                                      onClickFunction={manifest.hash ? () => HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : () => HandleCopyToClipBoard(manifest.path)}
                                      disabled={false} icon={<ContentCopyIcon />} />
                         <ModalButton tooltipButton={t('OpenInMirador')}
-                                     onClickFunction={() => window.open(`${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`, '_blank')}
+                                     onClickFunction={manifest.hash ? () => window.open(`${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`, '_blank') :
+                                       () => window.open(`${window.location.origin}/manifest/${encodeURI(manifest.path)}`, '_blank')}
                                      disabled={false} icon={<OpenInNewIcon />} />
                       </Grid>
                     }

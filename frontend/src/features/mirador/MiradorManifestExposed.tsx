@@ -38,11 +38,19 @@ export const MiradorManifestExposed = () => {
     const url = window.location.href;
     const miradorIndex = url.indexOf('/manifest/');
     if (miradorIndex !== -1) {
-      const newPath = url.substring(miradorIndex + 10); // 10 is the length of '/manifest/'
-      const manifestURL = `${import.meta.env.VITE_CADDY_URL}/${newPath}`;
-      loadMirador(manifestURL);
-    }
+      const urlSuffix = url.substring(miradorIndex + 10); // 10 is the length of '/manifest/'
 
+      // TODO This code is a temporary solution
+      // This code must be improved also than AllManifests.tsx
+      if (urlSuffix.startsWith('https')) {
+        // In this case it's a manifest linked to MMU
+        loadMirador(urlSuffix);
+      } else {
+        // In this case it's a manifest hosted on MMU (created or uplaoded)
+        const manifestURL = `${import.meta.env.VITE_CADDY_URL}/${urlSuffix}`;
+        loadMirador(manifestURL);
+      }
+    }
   }, []);
 
   return (
