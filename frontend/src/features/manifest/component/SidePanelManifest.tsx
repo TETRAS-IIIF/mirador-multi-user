@@ -8,28 +8,29 @@ import {
   ImageListItem,
   ImageListItemBar,
   styled,
-  Tooltip
-} from "@mui/material";
-import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import toast from "react-hot-toast";
-import { Manifest, ManifestGroupRights, manifestOrigin } from "../types/types.ts";
-import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { UserGroup } from "../../user-group/types/types.ts";
-import { User } from "../../auth/types/types.ts";
-import AddLinkIcon from "@mui/icons-material/AddLink";
-import { PaginationControls } from "../../../components/elements/Pagination.tsx";
-import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
-import { linkManifest } from "../api/linkManifest.ts";
-import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
-import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
-import placeholder from "../../../assets/Placeholder.svg";
+  Tooltip,
+} from '@mui/material';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
+import { Manifest, ManifestGroupRights, manifestOrigin } from '../types/types.ts';
+import { SearchBar } from '../../../components/elements/SearchBar.tsx';
+import { UserGroup } from '../../user-group/types/types.ts';
+import { User } from '../../auth/types/types.ts';
+import AddLinkIcon from '@mui/icons-material/AddLink';
+import { PaginationControls } from '../../../components/elements/Pagination.tsx';
+import { DrawerLinkManifest } from './DrawerLinkManifest.tsx';
+import { linkManifest } from '../api/linkManifest.ts';
+import { CloseButton } from '../../../components/elements/SideBar/CloseButton.tsx';
+import { OpenButton } from '../../../components/elements/SideBar/OpenButton.tsx';
+import placeholder from '../../../assets/Placeholder.svg';
+import { useTranslation } from 'react-i18next';
 
 const CustomButton = styled(Button)({
   position: 'absolute',
-  top: "40%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  textAlign: "center",
+  top: '40%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  textAlign: 'center',
   opacity: 0,
   transition: 'opacity 0.3s ease',
 });
@@ -52,33 +53,34 @@ const StyledImageListItem = styled(ImageListItem)({
   },
 });
 
-const handleCopyToClipBoard = async (path: string) => {
-  try {
-    await navigator.clipboard.writeText(path);
-    toast.success('Path copied to clipboard');
-  } catch (error) {
-    toast.error('Failed to copy path');
-  }
-};
 
 interface PopUpManifestProps {
   manifest: Manifest[];
   children: ReactNode;
-  userPersonalGroup:UserGroup
-  user:User
-  fetchManifestForUser:()=>void
-  display:boolean
+  userPersonalGroup: UserGroup
+  user: User
+  fetchManifestForUser: () => void
+  display: boolean
 }
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL
 
-export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup, user,fetchManifestForUser}: PopUpManifestProps) => {
+export const SidePanelManifest = ({
+                                    display,
+                                    manifest,
+                                    children,
+                                    userPersonalGroup,
+                                    user,
+                                    fetchManifestForUser,
+                                  }: PopUpManifestProps) => {
   const [open, setOpen] = useState(false);
-  const [searchedManifest, setsearchedManifest] = useState<Manifest|null>(null);
+  const [searchedManifest, setsearchedManifest] = useState<Manifest | null>(null);
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
   const itemsPerPage = 6;
+
+  const { t } = useTranslation();
 
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -92,29 +94,49 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
     setOpen((prevOpen) => !prevOpen);
   };
 
-  const handleSetSearchManifest = (mediaQuery:Manifest)=>{
-    if(mediaQuery){
-      const  searchedMedia = manifest.find(media => media.id === mediaQuery.id)
+  const handleSetSearchManifest = (mediaQuery: Manifest) => {
+    if (mediaQuery) {
+      const searchedMedia = manifest.find(media => media.id === mediaQuery.id)
       setsearchedManifest(searchedMedia!)
-    }else{
+    } else {
       setsearchedManifest(null);
     }
   }
 
-  const HandleLookingForManifest = async (partialString : string) =>{
+  const HandleLookingForManifest = async (partialString: string) => {
     return manifest.filter((manifest: Manifest) => manifest.title.includes(partialString))
   }
 
+  const getManifestURL = (manifest: Manifest) => {
+    if (manifest.hash) {
+      // Hosted on MMU
+      return `${caddyUrl}/${manifest.hash}/${manifest.path}`;
+    } else {
+      // Linked to MMU
+      return manifest.path;
+    }
+  }
 
-  const getOptionLabelForManifestSearchBar = (option:Manifest): string => {
+  const handleCopyToClipBoard = async (manifest: Manifest) => {
+    const manifestURL = getManifestURL(manifest);
+
+    try {
+      await navigator.clipboard.writeText(manifestURL);
+      toast.success(t('pathCopiedToClipboard'));
+    } catch (error) {
+      toast.error(t('pathNotCopiedToClipboard'));
+    }
+  };
+
+  const getOptionLabelForManifestSearchBar = (option: Manifest): string => {
     return option.title;
   };
 
-  const handleLinkManifest = useCallback (async (path: string) => {
-    const response = await fetch(path,{
-      method:"GET"
+  const handleLinkManifest = useCallback(async (path: string) => {
+    const response = await fetch(path, {
+      method: 'GET',
     })
-    if(response){
+    if (response) {
       const manifest = await response.json()
       await linkManifest({
         url: path,
@@ -124,15 +146,15 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
         path: path,
         title: manifest.label.en
           ? manifest.label.en[0]
-          : "new Manifest",
+          : t('newManifest'),
       });
       fetchManifestForUser()
       setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)
-      return toast.success('manifest created')
+      return toast.success(t('manifestLinked'));
     }
-    return toast.error('manifest could not be created')
+    return toast.error(t('manifestLinkingFailed'));
 
-  },[fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
+  }, [fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
 
   const fetchThumbnails = useCallback(async () => {
     const urls: string[] = await Promise.all(
@@ -140,31 +162,32 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
         if (manifest.thumbnailUrl) {
           return manifest.thumbnailUrl;
         }
+
         let manifestUrl = '';
         if (manifest.origin === manifestOrigin.UPLOAD) {
-          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`;
+          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`; // TODO This must be tested
         } else if (manifest.origin === manifestOrigin.LINK) {
           manifestUrl = manifest.path;
-        } else if(manifest.origin === manifestOrigin.CREATE){
+        } else if (manifest.origin === manifestOrigin.CREATE) {
           manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.path}`;
-        }else{
+        } else {
           return placeholder;
         }
         try {
           const manifestResponse = await fetch(manifestUrl);
           const manifestFetched = await manifestResponse.json();
           if (manifestFetched.thumbnail) {
-            return manifestFetched.thumbnail["@id"];
-          } else if(manifestFetched.items[0].thumbnail[0].id){
+            return manifestFetched.thumbnail['@id'];
+          } else if (manifestFetched.items[0].thumbnail[0].id) {
             return manifestFetched.items[0].thumbnail[0].id;
-          }else{
+          } else {
             return placeholder;
           }
         } catch (error) {
-          console.error("Error fetching manifest:", error);
+          console.error('Error fetching manifest:', error);
           return placeholder;
         }
-      })
+      }),
     );
 
     setThumbnailUrls(urls);
@@ -179,7 +202,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
       {display && (
         <ToggleButton
           open={open} onClick={toggleDrawer}>
-          {open ? <CloseButton text="Manifests"/> : <OpenButton text="Manifests"/>}
+          {open ? <CloseButton text={t('manifests')} /> : <OpenButton text={t('manifests')} />}
         </ToggleButton>
       )
 
@@ -189,27 +212,28 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
           open={open}
           anchor="right"
           variant="persistent"
-          sx={{  position: 'relative'}}
+          sx={{ position: 'relative' }}
           ModalProps={{
             BackdropProps: {
-              style: { backgroundColor: 'transparent'},
+              style: { backgroundColor: 'transparent' },
             },
           }}>
-          <Grid item container spacing={1} sx={{padding:'10px'}} alignItems="center">
+          <Grid item container spacing={1} sx={{ padding: '10px' }} alignItems="center">
             <Grid item>
-              <SearchBar fetchFunction={HandleLookingForManifest} getOptionLabel={getOptionLabelForManifestSearchBar} label={"Search Manifest"} setSearchedData={handleSetSearchManifest}/>
+              <SearchBar fetchFunction={HandleLookingForManifest} getOptionLabel={getOptionLabelForManifestSearchBar}
+                         label={t('search')} setSearchedData={handleSetSearchManifest} />
             </Grid>
             <Grid item>
-              <Tooltip title="Link Manifest">
-                <Button variant="contained" onClick={()=>setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)}>
+              <Tooltip title={t('linkManifest')}>
+                <Button variant="contained" onClick={() => setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)}>
                   <AddLinkIcon />
                 </Button>
               </Tooltip>
             </Grid>
           </Grid>
           {
-            searchedManifest ?(
-              <ImageList sx={{ minWidth: 400, padding: 1, width:400 }} cols={2} rowHeight={200}>
+            searchedManifest ? (
+              <ImageList sx={{ minWidth: 400, padding: 1, width: 400 }} cols={2} rowHeight={200}>
                 <StyledImageListItem>
                   <img
                     srcSet={`${searchedManifest.thumbnailUrl}?w=248&fit=crop&auto=format&dpr=2 2x`}
@@ -223,14 +247,14 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
                   <CustomButton
                     className="overlayButton"
                     disableRipple
-                    onClick={searchedManifest.path ? () => handleCopyToClipBoard(`${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`) :() => handleCopyToClipBoard(`${searchedManifest.path}`) }
+                    onClick={handleCopyToClipBoard(searchedManifest)}
                   >
-                    Copy path to clipboard
+                    {t('copyPathToClipboard')}
                   </CustomButton>
                 </StyledImageListItem>
               </ImageList>
-            ):(
-              <ImageList sx={{ minWidth: 400, padding: 1, width:400 }} cols={2} rowHeight={200}>
+            ) : (
+              <ImageList sx={{ minWidth: 400, padding: 1, width: 400 }} cols={2} rowHeight={200}>
                 {currentPageData.map((manifest, index) => (
                   <>
                     <StyledImageListItem key={manifest.id}>
@@ -260,9 +284,9 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
                       <CustomButton
                         className="overlayButton"
                         disableRipple
-                        onClick={manifest.path ? () => handleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) :() => handleCopyToClipBoard(`${manifest.path}`) }
+                        onClick={() => manifest && handleCopyToClipBoard(manifest)}
                       >
-                        Copy path to clipboard
+                        {t('copyPathToClipboard')}
                       </CustomButton>
                     </StyledImageListItem>
                   </>
@@ -270,7 +294,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
               </ImageList>
             )
           }
-          <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
+          <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </Drawer>
       )
       }
@@ -287,7 +311,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
       <Grid>
         <DrawerLinkManifest
           modalCreateManifestIsOpen={modalLinkManifestIsOpen}
-          toggleModalManifestCreation={()=>setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)}
+          toggleModalManifestCreation={() => setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)}
           linkingManifest={handleLinkManifest}
         />
       </Grid>

@@ -77,9 +77,9 @@ const ToggleButton = styled(IconButton)(({ open }: { open: boolean }) => ({
 const handleCopyToClipBoard = async (path: string) => {
   try {
     await navigator.clipboard.writeText(path);
-    toast.success('Path copied to clipboard');
+    toast.success(t('pathCopiedToClipboard'));
   } catch (error) {
-    toast.error('Failed to copy path');
+    toast.error(t('pathNotCopiedToClipboard'));
   }
 };
 

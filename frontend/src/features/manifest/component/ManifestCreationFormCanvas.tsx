@@ -69,11 +69,6 @@ export const ManifestCreationFormCanvas = ({
                 </Grid>
               )}
             </Grid>
-            <Grid container direction="column" spacing={2}>
-              <span>Duration : {media.duration}</span>
-              <span>Height : {media.height}</span>
-              <span>Width : {media.width}</span>
-            </Grid>
             <Grid item>
               <Button
                 variant="contained"

@@ -237,7 +237,7 @@ export const AllManifests = ({
 
   const HandleCopyToClipBoard = async (path: string) => {
     await navigator.clipboard.writeText(path);
-    toast.success('path copied to clipboard');
+    toast.success(t('pathCopiedToClipboard'));
   };
 
   const handleLinkManifest = useCallback(async (path: string) => {
@@ -264,9 +264,9 @@ export const AllManifests = ({
       });
       fetchManifestForUser();
       setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
-      return toast.success('manifest created');
+      return toast.success(t('manifestCreated'));
     }
-    return toast.error('manifest could not be created');
+    return toast.error(t('manifestCreationFailed'));
 
   }, [fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup]);
 
@@ -283,7 +283,7 @@ export const AllManifests = ({
       fetchManifestForUser();
       setCreateManifestIsOpen(false);
     } catch (error) {
-      console.error('Error processing media', error);
+      toast.error('Error processing media', error);
     }
   };
 
@@ -439,14 +439,16 @@ export const AllManifests = ({
                   <MMUCard
                     objectTypes={ObjectTypes.MANIFEST}
                     AddAccessListItemFunction={handleGrantAccess}
-                    DefaultButton={<Grid container direction={'row'}>
-                      <ModalButton tooltipButton={t('tooltipButtonCopy')}
-                                   onClickFunction={manifest.hash ? () => HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : () => HandleCopyToClipBoard(manifest.path)}
-                                   disabled={false} icon={<ContentCopyIcon />} />
-                      <ModalButton tooltipButton={t('open in Mirador')}
-                                   onClickFunction={() => window.open(`${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`, '_blank')}
-                                   disabled={false} icon={<OpenInNewIcon />} />
-                    </Grid>
+                    DefaultButton={
+                      <Grid container direction={'column'} gap={1}>
+                        <ModalButton tooltipButton={t('tooltipButtonCopy')}
+                                     onClickFunction={manifest.hash ? () => HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : () => HandleCopyToClipBoard(manifest.path)}
+                                     disabled={false} icon={<ContentCopyIcon />} />
+                        <ModalButton tooltipButton={t('OpenInMirador')}
+                                     onClickFunction={manifest.hash ? () => window.open(`${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`, '_blank') :
+                                       () => window.open(`${window.location.origin}/manifest/${encodeURI(manifest.path)}`, '_blank')}
+                                     disabled={false} icon={<OpenInNewIcon />} />
+                      </Grid>
                     }
                     EditorButton={<ModalButton tooltipButton={t('tooltipButtonEdit')}
                                                onClickFunction={() => HandleOpenModal(manifest.id)}
