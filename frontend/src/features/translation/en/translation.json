@@ -112,6 +112,7 @@
   "openGroupTooltip": "Open group",
   "openProject": "Open Project",
   "openProjectTooltip": "Open Project",
+  "OpenInMirador": "Open manifest",
   "password": "password",
   "passwordMismatch": "Passwords don't match",
   "passwordResetError": "An error occurred while resetting the password",

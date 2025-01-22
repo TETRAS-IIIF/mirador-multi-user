@@ -180,13 +180,13 @@ const MMUCard = <T extends { id: number, created_at: Dayjs, snapShotHash?: strin
           <CardActions sx={{ padding: 1 }}>
             <Grid container flexDirection="row" wrap="nowrap" spacing={2}>
               {id && (
-                <Grid item>
+                <Grid item alignContent={'center'}>
                   {rights === ItemsRights.READER ? ReaderButton : EditorButton}
                 </Grid>
               )}
               {DefaultButton && (
                 <Grid item>
-                  <Tooltip title={t('openProject')}>
+                  <Tooltip>
                     {DefaultButton}
                   </Tooltip>
                 </Grid>
