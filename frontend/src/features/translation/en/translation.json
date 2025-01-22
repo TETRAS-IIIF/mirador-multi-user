@@ -146,6 +146,7 @@
   "submit": "Submit",
   "successCopy": "path copied to clipboard",
   "successResetPassword": "A password reset link has been sent to your email.",
+  "thumbnailMissing": "Thumbnail is missing",
   "thumbnailUrl": "Thumbnail Url",
   "title": "title",
   "titleAdmin": "Admin overview",

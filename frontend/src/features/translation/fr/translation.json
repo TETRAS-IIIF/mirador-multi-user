@@ -146,6 +146,7 @@
   "submit": "Envoyer",
   "successCopy": "Chemin copié dans le presse-papier",
   "successResetPassword": "Un lien de réinitialisation du mot de passe a été envoyé à votre e-mail.",
+  "thumbnailMissing": "Aperçu manquant",
   "thumbnailUrl": "URL de l'aperçu",
   "title": "titre",
   "titleAdmin": "Vue d'ensemble de l'administration",
