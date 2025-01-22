@@ -1,10 +1,10 @@
-import { Button, CircularProgress, Grid, TextField, Typography } from "@mui/material";
-import { ResendConfirmationMail } from "../api/resendConfirmationMail.ts";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { Layout } from "./layout.tsx";
-import { useTranslation } from "react-i18next";
-import toast from "react-hot-toast";
+import { Button, CircularProgress, Grid, TextField, Typography } from '@mui/material';
+import { ResendConfirmationMail } from '../api/resendConfirmationMail.ts';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Layout } from './layout.tsx';
+import { useTranslation } from 'react-i18next';
+import toast from 'react-hot-toast';
 
 
 export const NotConfirmedAccount = () => {
@@ -20,7 +20,6 @@ export const NotConfirmedAccount = () => {
     return emailRegex.test(email);
   };
   const handleResendConfirmation = async () => {
-    console.log("regex mail",isValidEmail(email));
     if (!isValidEmail(email)) {
       toast.error(t('invalidEmail'));
       return;
@@ -28,7 +27,7 @@ export const NotConfirmedAccount = () => {
     setIsLoading(true);
     setError(null);
     try {
-      await ResendConfirmationMail(email,navigator.language.split('-')[0]);
+      await ResendConfirmationMail(email, navigator.language.split('-')[0]);
       setSuccess(true);
       setTimeout(() => navigate('/'), 2000);
     } catch (err) {

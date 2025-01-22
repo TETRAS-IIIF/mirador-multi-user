@@ -35,13 +35,11 @@ export const MiradorManifestExposed = () => {
   }
 
   useEffect(() => {
-    console.log('MiradorManifestExposed');
     const url = window.location.href;
     const miradorIndex = url.indexOf('/manifest/');
     if (miradorIndex !== -1) {
       const newPath = url.substring(miradorIndex + 10); // 10 is the length of '/manifest/'
       const manifestURL = `${import.meta.env.VITE_CADDY_URL}/${newPath}`;
-      console.log(manifestURL);
       loadMirador(manifestURL);
     }
 

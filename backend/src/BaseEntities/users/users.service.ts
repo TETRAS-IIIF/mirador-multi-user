@@ -27,7 +27,6 @@ export class UsersService {
       if ('_isAdmin' in updateUserDto || 'admin' in updateUserDto) {
         throw new UnauthorizedException('Admin field cannot be updated.');
       }
-      console.log('updateUser', updateUserDto);
       const { oldPassword, confirmPassword, newPassword, ...newDto } =
         updateUserDto;
       let dto = newDto;
@@ -60,6 +59,7 @@ export class UsersService {
       );
     }
   }
+
   async create(dto: CreateUserDto): Promise<User> {
     try {
       if ('_isAdmin' in dto || 'admin' in dto) {
@@ -101,6 +101,7 @@ export class UsersService {
       throw new NotFoundException(`User no found ${mail}`);
     }
   }
+
   async findOne(id: number): Promise<User> {
     try {
       return await this.userRepository.findOne({
@@ -125,6 +126,7 @@ export class UsersService {
       throw new NotFoundException(`User no found ${mail}`);
     }
   }
+
   async getByEmail(mail: string) {
     try {
       return await this.userRepository.findOne({ where: { mail: mail } });

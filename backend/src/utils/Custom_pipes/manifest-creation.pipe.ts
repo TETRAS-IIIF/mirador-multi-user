@@ -53,13 +53,7 @@ export class MediaInterceptor implements NestInterceptor {
       thumbnail: {},
     };
 
-    console.log('manifest creation');
-    console.log(manifestToCreate);
-
-    console.log(manifestThumbnail);
-
     if (manifestThumbnail.length > 0) {
-      console.log('Manifest thumbnail:', manifestThumbnail);
       manifestToCreate = {
         ...manifestToCreate,
         thumbnail: {
