@@ -237,7 +237,7 @@ export const AllManifests = ({
 
   const HandleCopyToClipBoard = async (path: string) => {
     await navigator.clipboard.writeText(path);
-    toast.success('path copied to clipboard');
+    toast.success(t('pathCopiedToClipboard'));
   };
 
   const handleLinkManifest = useCallback(async (path: string) => {
@@ -264,9 +264,9 @@ export const AllManifests = ({
       });
       fetchManifestForUser();
       setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
-      return toast.success('manifest created');
+      return toast.success(t('manifestCreated'));
     }
-    return toast.error('manifest could not be created');
+    return toast.error(t('manifestCreationFailed'));
 
   }, [fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup]);
 
@@ -283,7 +283,7 @@ export const AllManifests = ({
       fetchManifestForUser();
       setCreateManifestIsOpen(false);
     } catch (error) {
-      console.error('Error processing media', error);
+      toast.error('Error processing media', error);
     }
   };
 

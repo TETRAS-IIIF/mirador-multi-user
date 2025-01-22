@@ -170,5 +170,11 @@
   "users": "Utilisateurs",
   "welcome": "Bienvenue sur {{instanceName}}",
   "yes": "Oui",
-  "yourAccount": "Votre compte"
+  "yourAccount": "Votre compte",
+  "manifestCreated": "Manifeste créé avec succès",
+  "manifestCreationFailed": "Échec de la création du manifeste",
+  "copyPathToClipboard": "Copier le lien dans le presse-papier",
+  "pathCopiedToClipboard": "Lien copié dans le presse-papier",
+  "pathNotCopiedToClipboard": "Le lien n'a pas pu être copié dans le presse-papier",
+  "newManifest": "Nouveau manifeste"
 }

@@ -277,7 +277,7 @@ export const SideDrawer = ({
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { rights, ...projectWithoutRights } = projectToUpdate;
         await updateProject({ project: projectWithoutRights });
-        toast.success(`Project ${projectWithoutRights.title} saved`);
+        toast.success(`Project ${projectWithoutRights.title} saved`); // TODO Trad
       }
     } else {
       const project: CreateProjectDto = {
