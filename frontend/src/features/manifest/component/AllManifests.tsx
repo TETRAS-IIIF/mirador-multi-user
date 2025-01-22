@@ -133,7 +133,7 @@ export const AllManifests = ({
 
   const handleCreateManifest = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      const maxUploadSize = import.meta.env.VITE_MAX_UPLOAD_SIZE;
+      const maxUploadSize = import.meta.env.VITE_MAX_UPLOAD_SIZE * 1024 * 1024;
       if (event.target.files[0].size > maxUploadSize) {
         toast.error('File is too big');
       } else {
