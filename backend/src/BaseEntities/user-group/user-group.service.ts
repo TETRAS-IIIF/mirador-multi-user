@@ -72,7 +72,6 @@ export class UserGroupService {
 
   async updateGroup(updateData: UpdateUserGroupDto) {
     try {
-      console.log(updateData);
       const { rights, ...data } = updateData;
       if (rights === User_UserGroupRights.ADMIN) {
         await this.userGroupRepository.update(updateData.id, {

@@ -61,7 +61,6 @@ export class ImpersonationService {
   }
 
   async validateToken(token: string): Promise<Impersonation> {
-    console.log(token);
     const impersonation = await this.impersonationRepository.findOne({
       where: { token, used: false },
       relations: ['user'],

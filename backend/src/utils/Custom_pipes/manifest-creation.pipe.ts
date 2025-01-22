@@ -53,13 +53,7 @@ export class MediaInterceptor implements NestInterceptor {
       thumbnail: {},
     };
 
-    console.log('manifest creation');
-    console.log(manifestToCreate);
-
-    console.log(manifestThumbnail);
-
     if (manifestThumbnail.length > 0) {
-      console.log('Manifest thumbnail:', manifestThumbnail);
       manifestToCreate = {
         ...manifestToCreate,
         thumbnail: {
@@ -82,7 +76,6 @@ export class MediaInterceptor implements NestInterceptor {
         let videoId: string | null = null;
         let youtubeJson = null;
         let peertubeVideoJson = null;
-        console.log('Media value:', media);
         switch (true) {
           case isVideo(url): {
             const timeStamp = Date.now();

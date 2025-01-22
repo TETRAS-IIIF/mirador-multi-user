@@ -28,6 +28,7 @@ import { dublinCoreSample } from '../../utils/metadataSample/dublinCoreSample';
 @Injectable()
 export class LinkUserGroupService {
   private readonly logger = new CustomLogger();
+
   constructor(
     @InjectRepository(LinkUserGroup)
     private readonly linkUserGroupRepository: Repository<LinkUserGroup>,
@@ -80,11 +81,7 @@ export class LinkUserGroupService {
 
   async getUserNameWithId(userId: number) {
     try {
-      console.log('userId');
-      console.log(userId);
       const user = await this.userService.findOne(userId);
-      console.log('------------------user------------------');
-      console.log(user);
       return user.name;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -287,7 +284,6 @@ export class LinkUserGroupService {
       });
 
       // Return the updated linkGroup
-      console.log(linkGroup);
       return linkGroup;
     } catch (error) {
       console.error(
@@ -385,8 +381,6 @@ export class LinkUserGroupService {
         .limit(3)
         .getMany();
 
-      console.log('search for userGroup toReturn');
-      console.log(toReturn);
       return toReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -423,6 +417,7 @@ export class LinkUserGroupService {
       );
     }
   }
+
   async findUserPersonalGroup(userId: number): Promise<UserGroup> {
     try {
       const personnalLinkUserGroup = await this.linkUserGroupRepository

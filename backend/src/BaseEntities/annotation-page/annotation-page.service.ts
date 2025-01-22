@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateAnnotationPageDto } from './dto/create-annotation-page.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnnotationPage } from './entities/annotation-page.entity';
@@ -74,7 +78,6 @@ export class AnnotationPageService {
         projectId,
       });
       if (result.affected === 0) {
-        console.log('not found')
         return new NotFoundException(
           `AnnotationPage with ID "${annotationPageId}" in project "${projectId}" not found.`,
         );

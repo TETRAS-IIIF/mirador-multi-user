@@ -149,8 +149,6 @@ export class LinkMediaGroupService {
       if (!mediaToRemove) {
         throw new HttpException('Media not found', HttpStatus.NOT_FOUND);
       }
-      console.log('mediaToRemove');
-      console.log(mediaToRemove);
       if (mediaToRemove.origin === mediaOrigin.UPLOAD) {
         const filePath = join(
           __dirname,
@@ -235,9 +233,6 @@ export class LinkMediaGroupService {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { rights, ...mediaUpdateData } = updateGroupMediaDto;
 
-      console.log('updateGroupMediaDto');
-      console.log(updateGroupMediaDto);
-
       return await this.mediaService.update(
         updateGroupMediaDto.id,
         mediaUpdateData,
@@ -253,7 +248,6 @@ export class LinkMediaGroupService {
 
   async removeAccesToMedia(mediaId: number, userGroupId: number) {
     try {
-      console.log('media', mediaId, 'group', userGroupId);
       const userGroupMedias = await this.findAllMediaByUserGroupId(userGroupId);
       const mediaToRemove = userGroupMedias.find(
         (userGroupMedia) => userGroupMedia.id == mediaId,
@@ -274,7 +268,6 @@ export class LinkMediaGroupService {
 
   async findAllMediaByUserGroupId(id: number) {
     try {
-      console.log(id);
       const request = await this.linkMediaGroupRepository.find({
         where: { user_group: { id } },
         relations: ['user_group'],
@@ -344,7 +337,6 @@ export class LinkMediaGroupService {
           conflictPaths: ['rights', 'media', 'user_group'],
         },
       );
-      console.log(toReturn);
       return toReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);

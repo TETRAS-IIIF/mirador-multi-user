@@ -19,12 +19,9 @@ export class EmailConfirmationService {
 
   public async decodeConfirmationToken(token: string) {
     try {
-      console.log(token)
       const payload = await this.jwtService.verify(token, {
         secret: process.env.JWT_EMAIL_VERIFICATION_TOKEN_SECRET,
       });
-      console.log('payload')
-      console.log(payload)
       if (typeof payload === 'object' && 'email' in payload) {
         return payload.email;
       }
@@ -36,6 +33,4 @@ export class EmailConfirmationService {
       throw new BadRequestException('Bad confirmation token');
     }
   }
-
-
 }

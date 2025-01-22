@@ -78,7 +78,6 @@ export const AllMedias = ({ user, userPersonalGroup, medias, fetchMediaForUser, 
   const { t } = useTranslation();
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
-    console.log(newValue);
     setTabValue(newValue);
     setCurrentPage(1);
   };

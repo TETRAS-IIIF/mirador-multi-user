@@ -116,8 +116,6 @@ export async function getYoutubeJson(
     const videoResponse = await fetch(
       `https://www.youtube.com/oembed?url=https://${normalizedUrl}&format=json`,
     );
-    console.log('videoResponse');
-    console.log(videoResponse);
     const toreturn = await videoResponse.json();
     return toreturn;
   } catch (error: any) {

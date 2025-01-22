@@ -38,9 +38,6 @@ export class LinkUserGroupController {
   @UseGuards(AuthGuard)
   @Get('/users/:groupId')
   async getAllUsersForGroup(@Param('groupId') groupId: number, @Req() request) {
-    console.log('enter getAllUsersForGroup');
-    console.log('request.metadata');
-    console.log(request.metadata);
     return await this.linkUserGroupService.checkPolicies(
       request.metadata.action,
       request.user.sub,
@@ -137,7 +134,6 @@ export class LinkUserGroupController {
     @Param('email') email: string,
     @Param('language') language: string,
   ) {
-    console.log('resending mail controller');
     await this.linkUserGroupService.sendConfirmationLink(email, language);
   }
 

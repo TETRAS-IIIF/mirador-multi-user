@@ -114,8 +114,6 @@ export class LinkGroupProjectController {
     @Body() addProjectToGroupDto: AddProjectToGroupDto,
     @Req() request,
   ) {
-    console.log('typeof addProjectToGroupDto.groupId');
-    console.log(typeof addProjectToGroupDto.groupId);
     return await this.linkGroupProjectService.checkPolicies(
       request.metadata.action,
       request.user.sub,
@@ -155,7 +153,6 @@ export class LinkGroupProjectController {
   @UseGuards(AuthGuard)
   @Delete('/delete/project/:projectId')
   async deleteProject(@Param('projectId') project_id: number, @Req() request) {
-    console.log(request.user);
     return await this.linkGroupProjectService.checkPolicies(
       request.metadata.action,
       request.user.sub,
@@ -189,6 +186,7 @@ export class LinkGroupProjectController {
       },
     );
   }
+
   //TODO: Check if this routes is usefull
   // @UseGuards(AuthGuard)
   // @Get('/project/:projectId/:userGroupId')
@@ -221,6 +219,7 @@ export class LinkGroupProjectController {
       userId,
     );
   }
+
   @ApiOperation({ summary: 'Project creation' })
   @ApiBody({ type: CreateProjectDto })
   @UseGuards(AuthGuard)
@@ -248,6 +247,7 @@ export class LinkGroupProjectController {
       );
     }
   }
+
   @ApiOperation({ summary: 'Duplicate a project' })
   @ApiOkResponse({
     description: 'Duplicate a project',
