@@ -284,7 +284,6 @@ export class LinkUserGroupService {
       });
 
       // Return the updated linkGroup
-      console.log(linkGroup);
       return linkGroup;
     } catch (error) {
       console.error(
@@ -382,8 +381,6 @@ export class LinkUserGroupService {
         .limit(3)
         .getMany();
 
-      console.log('search for userGroup toReturn');
-      console.log(toReturn);
       return toReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);

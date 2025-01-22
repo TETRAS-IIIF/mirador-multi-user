@@ -76,7 +76,6 @@ export class MediaInterceptor implements NestInterceptor {
         let videoId: string | null = null;
         let youtubeJson = null;
         let peertubeVideoJson = null;
-        console.log('Media value:', media);
         switch (true) {
           case isVideo(url): {
             const timeStamp = Date.now();
