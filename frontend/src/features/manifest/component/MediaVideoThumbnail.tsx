@@ -1,5 +1,5 @@
 import { Box, Grid } from '@mui/material';
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { MediaField } from './ManifestCreationForm';
 
 interface MediaVideoThumbnailProps {
@@ -14,13 +14,13 @@ export function MediaVideoThumbnail({ media, setMedia }: MediaVideoThumbnailProp
     if (!video) return;
     setMedia({
       ...media,
-      duration: video.duration,
-      height: video.videoHeight,
-      width: video.videoWidth,
+      duration: video.duration!,
+      height: video.videoHeight!,
+      width: video.videoWidth!,
     });
   };
 
-  const videoEl = useRef(null);
+  const videoEl = useRef<HTMLVideoElement | null>(null);
 
   return (
     <Grid>

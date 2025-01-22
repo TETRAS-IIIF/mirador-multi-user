@@ -12,7 +12,7 @@ export const MiradorManifestExposed = () => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [viewer, setViewer] = useState<any>(undefined);
 
-  const loadMirador = (manifestURL) => {
+  const loadMirador = (manifestURL: string) => {
     if (viewerRef.current) {
       const config = {
         id: viewerRef.current.id,

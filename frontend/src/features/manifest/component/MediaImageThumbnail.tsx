@@ -1,7 +1,16 @@
-import { Box, Grid, Typography } from "@mui/material";
-import { useState } from "react";
+import { Box, Grid, Typography } from '@mui/material';
+import { useState } from 'react';
+import { MediaField } from './ManifestCreationForm';
 
-export function MediaImageThumbnail({ media, t }) {
+interface MediaImageThumbnailProps {
+  media: MediaField;
+  t: {
+    (key: string): string;
+    (key: string, options?: Record<string, number>): string;
+  };
+}
+
+export function MediaImageThumbnail({ media, t }: MediaImageThumbnailProps) {
 
   const [isMediaValidURL, setIsMediaValidURL] = useState(false);
   return (
@@ -9,7 +18,7 @@ export function MediaImageThumbnail({ media, t }) {
       {!isMediaValidURL && (
         <Grid item>
           <Typography variant="subtitle1" color="red">
-            {t("urlIsNotValid")}
+            {t('urlIsNotValid')}
           </Typography>
         </Grid>
       )
@@ -24,11 +33,11 @@ export function MediaImageThumbnail({ media, t }) {
           sx={{
             width: 50,
             height: 50,
-            objectFit: "cover",
-            "@media(min-resolution: 2dppx)": {
+            objectFit: 'cover',
+            '@media(min-resolution: 2dppx)': {
               width: 100,
-              height: 100
-            }
+              height: 100,
+            },
           }}
         />)
       }
