@@ -108,10 +108,12 @@ export const SidePanelManifest = ({
   }
 
   const getManifestURL = (manifest: Manifest) => {
-    if (manifest.path.startsWith('https')) {
-      return manifest.path;
-    } else {
+    if (manifest.hash) {
+      // Hosted on MMU
       return `${caddyUrl}/${manifest.hash}/${manifest.path}`;
+    } else {
+      // Linked to MMU
+      return manifest.path;
     }
   }
 
