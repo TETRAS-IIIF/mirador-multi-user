@@ -1,46 +1,53 @@
-import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
-import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
+import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
+import { ChangeEvent, FormEvent, useCallback, useRef, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
+import { useTranslation } from 'react-i18next';
 
 
-interface IDrawerCreateManifestProps{
+interface IDrawerCreateManifestProps {
   modalCreateManifestIsOpen: boolean
-  toggleModalManifestCreation:()=>void
-  linkingManifest:(link:string)=>Promise<string>
+  toggleModalManifestCreation: () => void
+  linkingManifest: (link: string) => Promise<string>
 }
 
-export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManifestIsOpen,linkingManifest}:IDrawerCreateManifestProps) =>{
+export const DrawerLinkManifest = ({
+                                     toggleModalManifestCreation,
+                                     modalCreateManifestIsOpen,
+                                     linkingManifest,
+                                   }: IDrawerCreateManifestProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [manifestLink, setManifestLink] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
+  const handleNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setManifestLink(event.target.value);
-  },[])
+  }, [])
 
-  const handleLinkingManifest = useCallback((event?:FormEvent)=>{
+  const handleLinkingManifest = useCallback((event?: FormEvent) => {
     if (event) event.preventDefault();
     toggleModalManifestCreation();
     setIsLoading(true);
-    try{
+    try {
       linkingManifest(manifestLink);
-    }finally {
+    } finally {
       setIsLoading(false);
       setManifestLink('');
     }
-  },[linkingManifest, manifestLink, toggleModalManifestCreation])
+  }, [linkingManifest, manifestLink, toggleModalManifestCreation])
 
-  const handleToggleModalGroupCreation= useCallback(()=>{
+  const handleToggleModalGroupCreation = useCallback(() => {
     toggleModalManifestCreation();
     setManifestLink('');
-  },[toggleModalManifestCreation])
+  }, [toggleModalManifestCreation])
 
   const handleDrawerTransition = () => {
     if (inputRef.current) {
       inputRef.current.focus();
     }
   };
+
+  const { t } = useTranslation();
 
   return (
     <>
@@ -60,7 +67,7 @@ export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManif
             }}
           >
 
-            <AppBar position="absolute" color="primary" enableColorOnDark >
+            <AppBar position="absolute" color="primary" enableColorOnDark>
               <Toolbar variant="dense">
                 <Button
                   color="inherit"
@@ -68,16 +75,16 @@ export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManif
                 >
                   <ExpandMoreIcon />
                 </Button>
-                <Typography>LINK MANIFEST</Typography>
+                <Typography>{t('linkManifest')}</Typography>
               </Toolbar>
             </AppBar>
             <form onSubmit={handleLinkingManifest}>
               <Grid container alignItems="center" spacing={2}>
                 <Grid item>
-                  <label>Manifest's link :</label>
+                  <label>{t('manifestLink')} :</label>
                 </Grid>
-                <Grid item sx={{ width:'70%'}}>
-                  <TextField inputRef={inputRef} onChange={handleNameChange} sx={{ width:'100%'}} ></TextField>
+                <Grid item sx={{ width: '70%' }}>
+                  <TextField inputRef={inputRef} onChange={handleNameChange} sx={{ width: '100%' }}></TextField>
                 </Grid>
                 <Grid item>
                   <LoadingButton
@@ -86,7 +93,7 @@ export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManif
                     onClick={handleLinkingManifest}
                     loading={isLoading}
                   >
-                    ADD
+                    {t('linkManifest')}
                   </LoadingButton>
                 </Grid>
               </Grid>

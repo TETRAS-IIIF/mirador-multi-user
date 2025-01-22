@@ -150,9 +150,9 @@ export const SidePanelManifest = ({
       });
       fetchManifestForUser()
       setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)
-      return toast.success('manifest created')
+      return toast.success(t('manifestLinked'));
     }
-    return toast.error('manifest could not be created')
+    return toast.error(t('manifestLinkingFailed'));
 
   }, [fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
 
@@ -202,7 +202,7 @@ export const SidePanelManifest = ({
       {display && (
         <ToggleButton
           open={open} onClick={toggleDrawer}>
-          {open ? <CloseButton text="Manifests" /> : <OpenButton text="Manifests" />}
+          {open ? <CloseButton text={t('manifests')} /> : <OpenButton text={t('manifests')} />}
         </ToggleButton>
       )
 
@@ -224,7 +224,7 @@ export const SidePanelManifest = ({
                          label={t('search')} setSearchedData={handleSetSearchManifest} />
             </Grid>
             <Grid item>
-              <Tooltip title="Link Manifest">
+              <Tooltip title={t('linkManifest')}>
                 <Button variant="contained" onClick={() => setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)}>
                   <AddLinkIcon />
                 </Button>

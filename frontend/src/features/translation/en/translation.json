@@ -74,6 +74,7 @@
   "invalidToken": "Invalid or missing reset token",
   "labelApiToken": "API Token",
   "labelProjectTitle": "Project's title:",
+  "linkManifest": "Link manifest",
   "linkMedia": "LINK MEDIA",
   "loadingImpersonate": "Loading impersonation...",
   "login": "Login",
@@ -84,9 +85,13 @@
   "manifest": "Manifest",
   "manifestCreated": "Manifest created",
   "manifestCreationFailed": "Manifest creation failed",
+  "manifestLinked": "Manifest linked",
+  "manifestLinked": "Manifest link",
+  "manifestLinkingFailed": "Manifest linking failed",
   "manifestThumbnail": "Manifest thumbnail",
   "manifestThumbnailUrl": "Manifest thumbnail URL",
   "manifestTitle": "Manifest title",
+  "manifests": "Manifests",
   "manifests": "Manifests",
   "media": "Médias",
   "mediaLink": "Lien du média",
@@ -176,5 +181,5 @@
   "users": "Users",
   "welcome": "Welcome to {{instanceName}}",
   "yes": "Yes",
-  "yourAccount": "your account"
+  "yourAccount": "Your account"
 }
