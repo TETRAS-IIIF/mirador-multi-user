@@ -1,12 +1,12 @@
-import {
-  Controller,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { ProjectService } from './project.service';
-import { ApiBearerAuth } from "@nestjs/swagger";
+import { ApiBearerAuth } from '@nestjs/swagger';
+
 @ApiBearerAuth()
 @Controller('project')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
+
   //this routes shouldn't be exposed
   // @Post()
   // @UseGuards(AuthGuard)
@@ -59,7 +59,6 @@ export class ProjectController {
   // @UsePipes(new ValidationPipe({ transform: true }))
   // @CheckPolicies((ability) => ability.can(Action.Delete, Project))
   // remove(@Param() params: DeleteParams) {
-  //   console.log('DELETE CONTROLLER');
   //   return this.projectService.remove(params.id);
   // }
 }

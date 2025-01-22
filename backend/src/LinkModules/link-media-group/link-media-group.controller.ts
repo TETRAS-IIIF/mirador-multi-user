@@ -71,7 +71,6 @@ export class LinkMediaGroupController {
     @Body() CreateMediaDto,
     @Req() req,
   ) {
-    console.log('upload media');
     const userGroup = JSON.parse(CreateMediaDto.user_group);
     // TODO TRAD 'your media description'
     const mediaToCreate = {
@@ -93,7 +92,6 @@ export class LinkMediaGroupController {
   @UseInterceptors(MediaLinkInterceptor)
   @HttpCode(201)
   async linkMedia(@Body() createMediaDto, @Req() req) {
-    console.log('link media');
     const mediaToCreate = {
       ...createMediaDto,
       title: `${req.body.url}`,
@@ -131,8 +129,6 @@ export class LinkMediaGroupController {
   @UseGuards(AuthGuard)
   @Delete('/media/:mediaId')
   async deleteMedia(@Param('mediaId') mediaId: number, @Req() request) {
-    console.log('request.metadata.action');
-    console.log(request.metadata.action);
     return await this.linkMediaGroupService.checkPolicies(
       request.metadata.action,
       request.user.sub,
