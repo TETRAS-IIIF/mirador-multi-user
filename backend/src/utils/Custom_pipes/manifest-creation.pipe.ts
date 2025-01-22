@@ -1,9 +1,9 @@
 import {
+  BadRequestException,
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
-  BadRequestException,
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -16,6 +16,7 @@ import {
   getYouTubeVideoID,
   isImage,
   isPeerTubeVideo,
+  isVideo,
   isYouTubeVideo,
 } from './utils';
 import { generateAlphanumericSHA1Hash } from '../hashGenerator';
@@ -43,21 +44,34 @@ export class MediaInterceptor implements NestInterceptor {
       throw new BadRequestException('Manifest title is required.');
     }
     // Create the initial structure for the manifest
-    const manifestToCreate = {
+    let manifestToCreate = {
       '@context': 'https://iiif.io/api/presentation/3/context.json',
       id: `${process.env.CADDY_URL}/${hash}/${label}.json/`,
       type: 'Manifest',
       label: { en: [title] },
       items: [],
-      thumbnail: {
-        ['@id']: manifestThumbnail,
-        service: {
-          ['@context']: manifestThumbnail,
-          ['@id']: manifestThumbnail,
-          profile: manifestThumbnail,
-        },
-      },
+      thumbnail: {},
     };
+
+    console.log('manifest creation');
+    console.log(manifestToCreate);
+
+    console.log(manifestThumbnail);
+
+    if (manifestThumbnail.length > 0) {
+      console.log('Manifest thumbnail:', manifestThumbnail);
+      manifestToCreate = {
+        ...manifestToCreate,
+        thumbnail: {
+          ['@id']: manifestThumbnail,
+          service: {
+            ['@context']: manifestThumbnail,
+            ['@id']: manifestThumbnail,
+            profile: manifestThumbnail,
+          },
+        },
+      };
+    }
 
     const fetchMediaForItem = async (media) => {
       try {
@@ -68,8 +82,49 @@ export class MediaInterceptor implements NestInterceptor {
         let videoId: string | null = null;
         let youtubeJson = null;
         let peertubeVideoJson = null;
+        console.log('Media value:', media);
         switch (true) {
-          case isYouTubeVideo(url):
+          case isVideo(url): {
+            const timeStamp = Date.now();
+            const timeStamp2 = Date.now();
+            const timeStamp3 = Date.now();
+            const width = media.width;
+            const height = media.height;
+            const duration = Math.round(media.duration);
+            const mediaFormat = media.value.split('.').pop();
+            manifestToCreate.items.push({
+              id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
+              type: 'Canvas',
+              height,
+              width,
+              duration,
+              label: { en: ['Raw Item'] },
+              items: [
+                {
+                  id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
+                  type: 'AnnotationPage',
+                  items: [
+                    {
+                      id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/annotation/${Date.now()}`,
+                      type: 'Annotation',
+                      motivation: 'painting',
+                      target: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
+                      body: {
+                        id: media.value,
+                        type: 'Video',
+                        format: `Video/${mediaFormat}`,
+                        height,
+                        width,
+                        duration,
+                      },
+                    },
+                  ],
+                },
+              ],
+            });
+            break;
+          }
+          case isYouTubeVideo(url): {
             videoId = getYouTubeVideoID(url);
             if (videoId) {
               youtubeJson = await getYoutubeJson(url);
@@ -86,7 +141,7 @@ export class MediaInterceptor implements NestInterceptor {
                 height,
                 width,
                 duration,
-                label: { en: ['Video Item'] },
+                label: { en: ['Youtube Item'] },
                 items: [
                   {
                     id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
@@ -112,7 +167,8 @@ export class MediaInterceptor implements NestInterceptor {
               });
             }
             break;
-          case await isPeerTubeVideo(url):
+          }
+          case await isPeerTubeVideo(url): {
             videoId = getPeerTubeVideoID(url);
             if (videoId) {
               peertubeVideoJson = await getPeerTubeVideoDetails(url, videoId);
@@ -136,7 +192,7 @@ export class MediaInterceptor implements NestInterceptor {
                 height,
                 width,
                 duration,
-                label: { en: ['Video Item'] },
+                label: { en: ['Peertube Item'] },
                 items: [
                   {
                     id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
@@ -162,6 +218,7 @@ export class MediaInterceptor implements NestInterceptor {
               });
             }
             break;
+          }
           case await isImage(url): {
             const response = await fetch(`${url}`, { method: 'GET' });
             const arrayBuffer = await response.arrayBuffer();

@@ -1,14 +1,14 @@
 import {
+  CallHandler,
+  ExecutionContext,
   Injectable,
   NestInterceptor,
-  ExecutionContext,
-  CallHandler,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { join } from 'path';
 import * as fs from 'fs';
-import * as sharp from 'sharp';
 import { createWriteStream } from 'fs';
+import * as sharp from 'sharp';
 import fetch from 'node-fetch';
 import { generateAlphanumericSHA1Hash } from '../hashGenerator';
 import { mediaTypes } from '../../enum/mediaTypes';
@@ -17,7 +17,9 @@ import {
   getPeerTubeVideoID,
   getYoutubeThumbnail,
   getYouTubeVideoID,
+  isImage,
   isPeerTubeVideo,
+  isVideo,
   isYouTubeVideo,
 } from './utils';
 
@@ -49,37 +51,36 @@ export class MediaLinkInterceptor implements NestInterceptor {
       let thumbnailBuffer: Buffer | null = null;
       let videoId: string | null = null;
 
-      switch (true) {
-        case isYouTubeVideo(url):
-          videoId = getYouTubeVideoID(url);
-          if (videoId) {
-            thumbnailBuffer = await getYoutubeThumbnail(videoId);
-          }
-          request.mediaTypes = mediaTypes.VIDEO;
-          break;
-
-        case await isPeerTubeVideo(url):
-          videoId = getPeerTubeVideoID(url);
-          if (videoId) {
-            thumbnailBuffer = await getPeerTubeThumbnail(url, videoId);
-          }
-          request.mediaTypes = mediaTypes.VIDEO;
-          break;
-
-        default: {
-          const imageResponse = await fetch(url);
-          if (!imageResponse.ok) throw new Error('Failed to fetch media');
-          thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
-          request.mediaTypes = mediaTypes.IMAGE;
-          break;
+      if (await isImage(url)) {
+        // TODO On large file this working can be a problem
+        // Before to get a resource you need to check file size with HEAD request
+        const imageResponse = await fetch(url);
+        if (!imageResponse.ok) throw new Error('Failed to fetch media');
+        thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
+        request.mediaTypes = mediaTypes.IMAGE;
+      } else if (isVideo(url)) {
+        request.mediaTypes = mediaTypes.VIDEO;
+      } else if (isYouTubeVideo(url)) {
+        videoId = getYouTubeVideoID(url);
+        if (videoId) {
+          thumbnailBuffer = await getYoutubeThumbnail(videoId);
         }
+        request.mediaTypes = mediaTypes.VIDEO;
+      } else if (await isPeerTubeVideo(url)) {
+        videoId = getPeerTubeVideoID(url);
+        if (videoId) {
+          thumbnailBuffer = await getPeerTubeThumbnail(url, videoId);
+        }
+        request.mediaTypes = mediaTypes.VIDEO;
+      } else {
+        throw new Error('Unsupported media type');
       }
 
       if (thumbnailBuffer) {
         const hash = generateAlphanumericSHA1Hash(
           `${Date.now().toString()}${Math.random().toString(36)}`,
         );
-        const uploadBasePath = './upload';
+        const uploadBasePath = './upload'; // TODO this path should be in a config file
         const uploadPath = join(uploadBasePath, hash);
 
         if (!fs.existsSync(uploadBasePath)) {

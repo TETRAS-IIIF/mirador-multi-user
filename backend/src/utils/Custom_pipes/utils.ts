@@ -4,6 +4,11 @@ export function isYouTubeVideo(url: string): boolean {
   return youtubeRegex.test(url);
 }
 
+export function isVideo(url: string): boolean {
+  return /\.(mp4|webm|ogg|mov|avi|flv|wmv|mkv|3gp)$/i.test(url);
+  // TODO Can be like isImage
+}
+
 export async function isPeerTubeVideo(url: string): Promise<boolean> {
   try {
     const response = await fetch(url);
@@ -122,7 +127,7 @@ export async function getYoutubeJson(
 
 export async function isImage(url: string): Promise<boolean> {
   try {
-    const response = await fetch(`${url}`, { method: 'GET' });
+    const response = await fetch(`${url}`, { method: 'HEAD' });
     if (!response.ok) {
       throw new Error(
         `HTTP error! status: ${response.status}, message: ${response.statusText}`,

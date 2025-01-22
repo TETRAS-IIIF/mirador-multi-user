@@ -1,42 +1,46 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
 import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { LoadingButton } from '@mui/lab';
+import { LoadingButton } from "@mui/lab";
 
-interface IDrawerCreateMediaProps{
-  modalCreateMediaIsOpen: boolean
-  toggleModalMediaCreation:()=>void
-  CreateMediaWithLink:(link:string)=>void
+interface IDrawerCreateMediaProps {
+  modalCreateMediaIsOpen: boolean;
+  toggleModalMediaCreation: () => void;
+  CreateMediaWithLink: (link: string) => void;
 }
 
-export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,CreateMediaWithLink}:IDrawerCreateMediaProps)=>{
-  const [mediaLink, setMediaLink] = useState('');
+export const DrawerLinkMedia = ({
+                                  modalCreateMediaIsOpen,
+                                  toggleModalMediaCreation,
+                                  CreateMediaWithLink
+                                }: IDrawerCreateMediaProps) => {
+  const [mediaLink, setMediaLink] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useTranslation();
 
-  const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
+  const handleNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setMediaLink(event.target.value);
-  },[])
+  }, []);
 
-  const handleLinkingMedia = useCallback((event?:FormEvent)=>{
+  const handleLinkingMedia = useCallback((event?: FormEvent) => {
     if (event) event.preventDefault();
     toggleModalMediaCreation();
     setIsLoading(true);
-    try{
+    try {
       CreateMediaWithLink(mediaLink);
-    }finally{
+    } finally {
       setIsLoading(false);
-      setMediaLink('');
+      setMediaLink("");
     }
-  },[CreateMediaWithLink, mediaLink, toggleModalMediaCreation])
+  }, [CreateMediaWithLink, mediaLink, toggleModalMediaCreation]);
 
-  const handleToggleModalGroupCreation= useCallback(()=>{
+  const handleToggleModalGroupCreation = useCallback(() => {
     toggleModalMediaCreation();
-    setMediaLink('');
-  },[CreateMediaWithLink])
+    setMediaLink("");
+  }, [CreateMediaWithLink]);
 
   const handleDrawerTransition = () => {
     if (inputRef.current) {
@@ -46,22 +50,23 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
   return (
     <>
       <div>
-        <Drawer sx={{zIndex:9999}} anchor="bottom" open={modalCreateMediaIsOpen} onClose={handleToggleModalGroupCreation} ModalProps={{
-          onAnimationEnd: handleDrawerTransition,
+        <Drawer sx={{ zIndex: 9999 }} anchor="bottom" open={modalCreateMediaIsOpen}
+                onClose={handleToggleModalGroupCreation} ModalProps={{
+          onAnimationEnd: handleDrawerTransition
         }}>
           <Paper
             sx={{
-              left: '0',
+              left: "0",
               marginTop: 6,
               paddingBottom: 2,
               paddingLeft: { sm: 3, xs: 2 },
               paddingRight: { sm: 3, xs: 2 },
               paddingTop: 2,
-              right: '0',
-              zIndex:9999
+              right: "0",
+              zIndex: 9999
             }}
           >
-            <AppBar position="absolute" color="primary" enableColorOnDark >
+            <AppBar position="absolute" color="primary" enableColorOnDark>
               <Toolbar variant="dense">
                 <Button
                   color="inherit"
@@ -69,13 +74,13 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
                 >
                   <ExpandMoreIcon />
                 </Button>
-                <Typography>{t('linkMedia')}</Typography>
+                <Typography>{t("linkMedia")}</Typography>
               </Toolbar>
             </AppBar>
             <form onSubmit={handleLinkingMedia}>
               <Grid container alignItems="center" spacing={2}>
                 <Grid item>
-                  <label>{t('mediaLink')}</label>
+                  <label>{t("mediaLink")}:</label>
                 </Grid>
                 <Grid item sx={{ width: "70%" }}>
                   <TextField inputRef={inputRef} onChange={handleNameChange} sx={{ width: "100%" }}></TextField>
@@ -87,7 +92,7 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
                     onClick={handleLinkingMedia}
                     loading={isLoading}
                   >
-                    {t('add')}
+                    {t("add")}
                   </LoadingButton>
                 </Grid>
               </Grid>
@@ -96,5 +101,5 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
         </Drawer>
       </div>
     </>
-  )
-}
+  );
+};

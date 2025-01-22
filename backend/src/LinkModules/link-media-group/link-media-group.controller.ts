@@ -31,21 +31,24 @@ import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Media } from '../../BaseEntities/media/entities/media.entity';
 import { mediaTypes } from '../../enum/mediaTypes';
+
 @ApiBearerAuth()
 @Controller('link-media-group')
 export class LinkMediaGroupController {
   constructor(private readonly linkMediaGroupService: LinkMediaGroupService) {}
+
   @ApiOperation({ summary: 'Upload a media' })
   @UseGuards(AuthGuard)
   @Post('/media/upload')
   @UseInterceptors(
     FileInterceptor('file', {
+      //  TODO an mp4 file cause problem with this interceptor
       storage: diskStorage({
         destination: (req, file, callback) => {
           const hash = generateAlphanumericSHA1Hash(
             `${file.originalname}${Date.now().toString()}`,
           );
-          const uploadPath = `./upload/${hash}`;
+          const uploadPath = `./upload/${hash}`; // TODO this path should be in a config file
           fs.mkdirSync(uploadPath, { recursive: true });
           (req as any).generatedHash = hash;
           callback(null, uploadPath);
@@ -68,7 +71,9 @@ export class LinkMediaGroupController {
     @Body() CreateMediaDto,
     @Req() req,
   ) {
+    console.log('upload media');
     const userGroup = JSON.parse(CreateMediaDto.user_group);
+    // TODO TRAD 'your media description'
     const mediaToCreate = {
       ...CreateMediaDto,
       title: file.originalname,
@@ -137,6 +142,7 @@ export class LinkMediaGroupController {
       },
     );
   }
+
   @ApiOperation({ summary: 'Update a media' })
   @ApiOkResponse({
     description: 'The media updated',
@@ -183,6 +189,7 @@ export class LinkMediaGroupController {
       },
     );
   }
+
   @ApiOperation({ summary: 'Grant access to media' })
   @ApiOkResponse({
     description: 'The media updated',

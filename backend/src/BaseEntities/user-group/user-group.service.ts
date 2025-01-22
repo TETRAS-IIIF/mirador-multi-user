@@ -15,6 +15,7 @@ import { UserGroupTypes } from '../../enum/user-group-types';
 @Injectable()
 export class UserGroupService {
   private readonly logger = new CustomLogger();
+
   //Importing function from LinkTable there cause circular dependencies error, this is described into the wiki there : https://github.com/SCENE-CE/mirador-multi-user/wiki/Backend
   constructor(
     @InjectRepository(UserGroup)
@@ -105,8 +106,6 @@ export class UserGroupService {
       const toreturn = await this.userGroupRepository.findOne({
         where: { ownerId: userId, type: UserGroupTypes.PERSONAL },
       });
-      console.log('toreturn');
-      console.log(toreturn);
       return toreturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -124,6 +123,4 @@ export class UserGroupService {
       throw new InternalServerErrorException(error);
     }
   }
-
-
 }
