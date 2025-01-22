@@ -12,6 +12,9 @@ export interface MediaField {
   value: string;
   type: MediaTypes | undefined;
   thumbnailUrl?: string;
+  duration?: number
+  height?: number;
+  width?: number;
 }
 
 export interface IIIFCanvases {

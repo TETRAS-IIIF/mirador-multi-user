@@ -10,20 +10,31 @@ import {
 } from '../../media/utils/utils';
 import { MediaTypes } from '../../media/types/types';
 import { ManifestCreationFormCanvas } from './ManifestCreationFormCanvas';
+import { IIIFCanvases, MediaField } from './ManifestCreationForm';
+
+
+interface ManifestCreationFormCanvasesProps {
+  canvases: IIIFCanvases[];
+  t: {
+    (key: string): string;
+    (key: string, options?: Record<string, number>): string;
+  };
+  setCanvases: (canvases: IIIFCanvases[]) => void;
+}
 
 export const ManifestCreationFormCanvases =
   ({
      canvases,
      t,
      setCanvases,
-   }) => {
+   }: ManifestCreationFormCanvasesProps) => {
 
     const handleMediaURLChange = async (itemIndex: number, mediaURL: string) => {
       const updatedCanvas = [...canvases];
       updatedCanvas[itemIndex].media[0].value = mediaURL;
-      updatedCanvas[itemIndex].media[0].duration = null;
-      updatedCanvas[itemIndex].media[0].height = null;
-      updatedCanvas[itemIndex].media[0].width = null;
+      updatedCanvas[itemIndex].media[0].duration = undefined;
+      updatedCanvas[itemIndex].media[0].height = undefined;
+      updatedCanvas[itemIndex].media[0].width = undefined;
 
       let youtubeJson;
       let videoId;
@@ -36,7 +47,7 @@ export const ManifestCreationFormCanvases =
 
       try {
         if (isRawVideo(mediaURL)) {
-          updatedCanvas[itemIndex].media[0].thumbnailUrl = null;
+          updatedCanvas[itemIndex].media[0].thumbnailUrl = undefined;
           updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
         } else if (isYouTubeVideo(mediaURL)) {
           youtubeJson = await getYoutubeJson(mediaURL);
@@ -62,7 +73,7 @@ export const ManifestCreationFormCanvases =
       }
     };
 
-    const setMedia = (media, canvasIndex) => {
+    const setMedia = (media: MediaField, canvasIndex: number) => {
       const updatedCanvas = [...canvases];
       updatedCanvas[canvasIndex].media[0] = media;
       setCanvases([...updatedCanvas]);

@@ -1,16 +1,25 @@
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import { FieldForm } from "../../../components/elements/FieldForm";
-import { Box, Typography } from "@mui/material";
-import { MMUToolTip } from "../../../components/elements/MMUTootlTip";
-import { ChangeEvent, useState } from "react";
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import { FieldForm } from '../../../components/elements/FieldForm';
+import { Box, Typography } from '@mui/material';
+import { MMUToolTip } from '../../../components/elements/MMUTootlTip';
+import { ChangeEvent, useState } from 'react';
+
+interface ManifestCreationFormThumbnailProps {
+  manifestThumbnail: string;
+  setManifestThumbnail: (manifestThumbnail: string) => void;
+  t: {
+    (key: string): string;
+    (key: string, options?: Record<string, number>): string;
+  };
+}
 
 export const ManifestCreationFormThumbnail =
   ({
      manifestThumbnail,
      setManifestThumbnail,
-     t
-   }) => {
+     t,
+   }: ManifestCreationFormThumbnailProps) => {
     const [isManifestThumbnailBadURL, setIsManifestThumbnailBadURL] = useState(false);
 
     const handleManifestThumbnailChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -19,13 +28,13 @@ export const ManifestCreationFormThumbnail =
 
     return (
       <Grid item container>
-        <Paper elevation={3} style={{ padding: "20px", width: "100%" }}>
+        <Paper elevation={3} style={{ padding: '20px', width: '100%' }}>
           <Grid item container spacing={4} alignItems="center">
             <Grid item xs={8}>
               <FieldForm
                 name="manifest-thumbnail"
-                placeholder={t("manifestThumbnailUrl")}
-                label={t("manifestThumbnail")}
+                placeholder={t('manifestThumbnailUrl')}
+                label={t('manifestThumbnail')}
                 value={manifestThumbnail}
                 onChange={handleManifestThumbnailChange}
               />
@@ -41,11 +50,11 @@ export const ManifestCreationFormThumbnail =
                   sx={{
                     width: 50,
                     height: 50,
-                    objectFit: "cover",
-                    "@media(min-resolution: 2dppx)": {
+                    objectFit: 'cover',
+                    '@media(min-resolution: 2dppx)': {
                       width: 100,
-                      height: 100
-                    }
+                      height: 100,
+                    },
                   }}
                 />
               )}
@@ -53,16 +62,16 @@ export const ManifestCreationFormThumbnail =
             <Grid item>
               <MMUToolTip>
                 <div>
-                  {t("mediaShouldBeNoMoreThan", { size: 1 })}
+                  {t('mediaShouldBeNoMoreThan', { size: 1 })}
                   <br />
-                  {t("mediaOriginInfo")}
+                  {t('mediaOriginInfo')}
                 </div>
               </MMUToolTip>
             </Grid>
             {isManifestThumbnailBadURL && (
               <Grid item>
                 <Typography variant="subtitle1" color="red">
-                  {t("urlIsNotValid")}
+                  {t('urlIsNotValid')}
                 </Typography>
               </Grid>
             )}

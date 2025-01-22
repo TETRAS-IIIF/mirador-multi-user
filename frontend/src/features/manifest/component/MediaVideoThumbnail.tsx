@@ -1,7 +1,13 @@
 import { Box, Grid } from '@mui/material';
 import React, { useRef } from 'react';
+import { MediaField } from './ManifestCreationForm';
 
-export function MediaVideoThumbnail({ media, setMedia }) {
+interface MediaVideoThumbnailProps {
+  media: MediaField;
+  setMedia: (media: MediaField) => void;
+}
+
+export function MediaVideoThumbnail({ media, setMedia }: MediaVideoThumbnailProps) {
 
   const handleLoadedMetadata = () => {
     const video = videoEl.current;

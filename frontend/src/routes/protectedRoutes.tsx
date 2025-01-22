@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom';
 import { MainContent } from '../features/miscellaneous/MainContent.tsx';
 import { MiradorPublicExposed } from '../features/mirador/MIradorPublicExposed.tsx';
 import { Impersonate } from '../features/admin/components/Impersonate.tsx';
-import { MiradorManifestExposed } from '../features/mirador/MIradorManifestExposed';
+import { MiradorManifestExposed } from '../features/mirador/MiradorManifestExposed';
 
 export const protectedRoutes = [
   {

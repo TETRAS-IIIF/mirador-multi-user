@@ -9,7 +9,11 @@ import { IIIFCanvases, MediaField } from './ManifestCreationForm';
 interface ManifestCreationFormCanvasProps {
   canvas: IIIFCanvases;
   canvasIndex: number;
-  t: ((key: string) => string) | ((key: string, params: Record<string, string>) => string);
+  t: {
+    (key: string): string;
+    (key: string, options?: Record<string, number>): string;
+  };
+
   handleMediaURLChange: (canvasIndex: number, mediaURL: string) => void;
   handleRemoveCanvas: (canvasIndex: number) => void;
   setMedia: (media: MediaField, canvasIndex: number) => void;
@@ -55,7 +59,7 @@ export const ManifestCreationFormCanvas = ({
               {(media.value && !isMediaLoading) && (
                 <Grid item>
                   {media.type === MediaTypes.VIDEO && (
-                    <MediaVideoThumbnail media={media} setMedia={(media) => setMedia(media, canvasIndex)} />
+                    <MediaVideoThumbnail media={media} setMedia={(media: MediaField) => setMedia(media, canvasIndex)} />
                   )
                   }
                   {media.type === MediaTypes.IMAGE && (
