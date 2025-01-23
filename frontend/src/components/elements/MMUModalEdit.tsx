@@ -30,7 +30,6 @@ import { updateManifestJson } from '../../features/manifest/api/updateManifestJs
 import { Selector } from '../Selector.tsx';
 import { useTranslation } from 'react-i18next';
 
-
 interface ModalItemProps<T, G> {
   item: T,
   itemLabel: string,
@@ -361,7 +360,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
     <Grid container sx={{ overflow: 'scroll', maxHeight: 600 }}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
         <Tab label={t('general')}{...a11yProps(0)} />
-        <Tab label={t('share')} {...a11yProps(2)} />
+        <Tab label={objectTypes != ObjectTypes.GROUP ? t('share') : t('members')} {...a11yProps(2)} />
         {
           objectTypes !== ObjectTypes.GROUP && (
             <Tab label={t('metadata')} {...a11yProps(1)} />

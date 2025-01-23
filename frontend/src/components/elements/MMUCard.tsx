@@ -186,9 +186,7 @@ const MMUCard = <T extends { id: number, created_at: Dayjs, snapShotHash?: strin
               )}
               {DefaultButton && (
                 <Grid item>
-                  <Tooltip>
-                    {DefaultButton}
-                  </Tooltip>
+                  {DefaultButton}
                 </Grid>
               )}
             </Grid>

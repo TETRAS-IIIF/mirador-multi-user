@@ -98,6 +98,7 @@
   "mediaOriginInfo": "Si le média vient de votre bibliothèque de média, l'application le téléversera automatiquement.",
   "mediaShouldBeNoMoreThan": "Le média ne doit pas dépasser {{size}} MB",
   "mediaTitle": "Media",
+  "members": "Members",
   "messageConfirmationLink": "Confirmation link has been resent. You will be redirected shortly.",
   "messageDisconnect": "Are you sure you want to disconnect?",
   "messageNoProject": "No projects yet,click \"NEW PROJECT\" to add one.",
