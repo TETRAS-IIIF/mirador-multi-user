@@ -238,7 +238,6 @@ export const AllMedias = ({ user, userPersonalGroup, medias, fetchMediaForUser, 
     await removeAccessToMedia(mediaId, userGroupId);
   }
   const handleChangeRights = async (group: ListItem, eventValue: string, mediaId: number) => {
-    console.log(eventValue);
     await updateAccessToMedia(mediaId, group.id, eventValue.toLowerCase() as MediaGroupRights)
   };
 
