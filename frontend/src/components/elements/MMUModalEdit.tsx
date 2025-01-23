@@ -329,7 +329,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
 
 
   const handleUpdateAdvancedEditMetadata = async (data: any) => {
-    // We can edit manifest or project userworkscape
+    // We can edit manifest or project userworkspace
 
     if (objectTypes === ObjectTypes.MANIFEST) {
       const newManifest = {
@@ -343,11 +343,9 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
     }
     if (objectTypes === ObjectTypes.PROJECT && item.userWorkspace) {
       // Update project userworkspace
-      const { rights, ...projectWithoutRights } = item;
-
       if (updateItem) {
         updateItem({
-          ...projectWithoutRights,
+          ...item,
           userWorkspace: data.newData,
         }!);
       }
