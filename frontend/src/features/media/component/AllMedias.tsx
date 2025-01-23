@@ -246,7 +246,6 @@ export const AllMedias = ({ user, userPersonalGroup, medias, fetchMediaForUser, 
   };
 
   const handleFiltered = (partialString: string) => {
-    console.log('partialString',partialString);
     if (partialString.length < 1) {
       return setMediaFiltered([]);
     }
