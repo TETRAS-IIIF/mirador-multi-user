@@ -247,7 +247,7 @@ export const SidePanelManifest = ({
                   <CustomButton
                     className="overlayButton"
                     disableRipple
-                    onClick={handleCopyToClipBoard(searchedManifest)}
+                    onClick={() => handleCopyToClipBoard(searchedManifest!)}
                   >
                     {t('copyPathToClipboard')}
                   </CustomButton>
@@ -284,7 +284,7 @@ export const SidePanelManifest = ({
                       <CustomButton
                         className="overlayButton"
                         disableRipple
-                        onClick={() => manifest && handleCopyToClipBoard(manifest)}
+                        onClick={() => handleCopyToClipBoard(manifest!)}
                       >
                         {t('copyPathToClipboard')}
                       </CustomButton>

@@ -283,7 +283,7 @@ export const AllManifests = ({
       fetchManifestForUser();
       setCreateManifestIsOpen(false);
     } catch (error) {
-      toast.error('Error processing media', error);
+      toast.error('Error processing media: ' + error);
     }
   };
 

@@ -30,6 +30,7 @@ import { OpenButton } from '../../../components/elements/SideBar/OpenButton.tsx'
 import { a11yProps } from '../../../components/elements/SideBar/allyProps.tsx';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import ImageIcon from '@mui/icons-material/Image';
+import { useTranslation } from 'react-i18next';
 
 const CustomImageItem = styled(ImageListItem)({
   position: 'relative',
@@ -74,15 +75,6 @@ const ToggleButton = styled(IconButton)(({ open }: { open: boolean }) => ({
   },
 }));
 
-const handleCopyToClipBoard = async (path: string) => {
-  try {
-    await navigator.clipboard.writeText(path);
-    toast.success(t('pathCopiedToClipboard'));
-  } catch (error) {
-    toast.error(t('pathNotCopiedToClipboard'));
-  }
-};
-
 
 interface PopUpMediaProps {
   medias: Media[];
@@ -115,6 +107,17 @@ export const SidePanelMedia = ({
   // const [tagFilter ,setTagFilter] = useState<Tag|null>(null);
   // const [showAllTags, setShowAllTags] = useState(false);
   const itemsPerPage = 9;
+
+  const { t } = useTranslation();
+
+  const handleCopyToClipBoard = async (path: string) => {
+    try {
+      await navigator.clipboard.writeText(path);
+      toast.success(t('pathCopiedToClipboard'));
+    } catch (error) {
+      toast.error(t('pathNotCopiedToClipboard'));
+    }
+  };
 
 
   // const handleShowAllTags = () => {
