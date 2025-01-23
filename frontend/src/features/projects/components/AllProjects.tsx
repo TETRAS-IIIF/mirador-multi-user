@@ -234,7 +234,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     await updateAccessToProject(
       projectId,
       group.id,
-      eventValue.toLowerCase() as ItemsRights,
+      eventValue as ItemsRights,
     );
 
   };

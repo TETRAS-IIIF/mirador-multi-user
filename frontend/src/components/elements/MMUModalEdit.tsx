@@ -256,17 +256,6 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
     }
   }, []);
 
-  const SelectorItemsRights = {
-    ADMIN: 'rights.ADMIN',
-    EDITOR: 'rights.EDITOR',
-    READER: 'rights.READER',
-  } as const;
-
-  const selectorItems = Object.entries(SelectorItemsRights).map(([id, name]) => ({
-    id,
-    name,
-  }));
-
   const handleGetOtpionLabel = (option: G) => {
     return getOptionLabel ? getOptionLabel(option, searchInput) : ''
   }
@@ -478,7 +467,6 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
               >
                 {(accessListItem) => (
                   <Selector
-                    selectorItems={selectorItems}
                     value={accessListItem.rights!}
                     onChange={handleSelectorChange(accessListItem)}
                   />

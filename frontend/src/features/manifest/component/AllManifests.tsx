@@ -360,7 +360,7 @@ export const AllManifests = ({
   }, [groupList]);
 
   const handleChangeRights = async (group: ListItem, eventValue: string, manifestId: number) => {
-    await updateAccessToManifest(manifestId, group.id, eventValue.toLowerCase() as ManifestGroupRights);
+    await updateAccessToManifest(manifestId, group.id, eventValue as ManifestGroupRights);
   };
   const handleSetOpenSidePanel = () => {
     setOpenSidePanel(!openSidePanel);

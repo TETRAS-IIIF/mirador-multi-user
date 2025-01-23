@@ -238,7 +238,7 @@ export const AllMedias = ({ user, userPersonalGroup, medias, fetchMediaForUser, 
     await removeAccessToMedia(mediaId, userGroupId);
   }
   const handleChangeRights = async (group: ListItem, eventValue: string, mediaId: number) => {
-    await updateAccessToMedia(mediaId, group.id, eventValue.toLowerCase() as MediaGroupRights)
+    await updateAccessToMedia(mediaId, group.id, eventValue as MediaGroupRights)
   };
 
   const handleButtonClick = () => {

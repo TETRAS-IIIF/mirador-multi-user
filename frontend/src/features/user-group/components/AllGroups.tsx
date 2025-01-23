@@ -141,7 +141,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
     const userToUpdate = userPersonalGroupList.find((user)=>user.user.id=== group.id)
     await  ChangeAccessToGroup(groupId, {
       groupId: group.id,
-      rights: eventValue.toLowerCase() as ItemsRights,
+      rights: eventValue as ItemsRights,
       userId: userToUpdate!.user.id,
     });
   }

@@ -92,7 +92,6 @@
   "manifestThumbnailUrl": "URL de l'aperçu du manifest",
   "manifestTitle": "Titre du manifeste",
   "manifests": "Manifestes",
-  "manifests": "Manifestes",
   "media": "Médias",
   "mediaLink": "Lien du média",
   "mediaOriginInfo": "Si le média vient de votre bibliothèque de média, l'application le téléversera automatiquement.",
@@ -136,11 +135,8 @@
   "resendConfirmationLink": "Renvoyer le lien de confirmation",
   "reset-password": "Réinitialiser le mot de passe",
   "reset-password-title": "Réinitialiser le mot de passe",
-  "rights": {
-    "ADMIN": "Administrateur",
-    "EDITOR": "Éditeur",
-    "READER": "Lecteur"
-  },
+  "editor": "Éditeur",
+  "reader": "Lecteur",
   "save": "Enregistrer",
   "saveChanges": "Enregistrer les modifications",
   "saveMAJ": "ENREGISTRER",
