@@ -1,5 +1,5 @@
-import storage from "../../../utils/storage.ts";
-import { Media } from "../types/types.ts";
+import storage from '../../../utils/storage.ts';
+import { Media } from '../types/types.ts';
 
 export const lookingForMedias = async (partialString:string, userGroupId:number) :Promise<Media[]>=> {
   const token = storage.getToken();
@@ -9,8 +9,10 @@ export const lookingForMedias = async (partialString:string, userGroupId:number)
       headers:{
         authorization: `Bearer ${token}`,
       }})
-    const toReturn = await response.json();
-    return toReturn;
+    if(response.status === 404){
+      return []
+    }
+    return await response.json();
   }catch(error){
     throw error;
   }

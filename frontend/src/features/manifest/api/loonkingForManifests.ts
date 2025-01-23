@@ -1,5 +1,5 @@
-import { Manifest } from "../types/types.ts";
-import storage from "../../../utils/storage.ts";
+import { Manifest } from '../types/types.ts';
+import storage from '../../../utils/storage.ts';
 
 export const lookingForManifests = async (partialString:string, userGroupId:number) :Promise<Manifest[]>=> {
   const token = storage.getToken();
@@ -9,8 +9,10 @@ export const lookingForManifests = async (partialString:string, userGroupId:numb
       headers:{
         authorization: `Bearer ${token}`,
       }})
-    const toReturn = await response.json();
-    return toReturn;
+    if(response.status === 404){
+      return []
+    }
+    return await response.json();
   }catch(error){
     throw error;
   }
