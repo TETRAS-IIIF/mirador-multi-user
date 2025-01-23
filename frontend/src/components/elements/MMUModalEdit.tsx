@@ -29,7 +29,6 @@ import { fetchManifest } from '../../features/manifest/api/fetchManifest.ts';
 import { updateManifestJson } from '../../features/manifest/api/updateManifestJson.ts';
 import { Selector } from '../Selector.tsx';
 import { useTranslation } from 'react-i18next';
-import { updateProject } from '../../features/projects/api/updateProject';
 
 
 interface ModalItemProps<T, G> {
@@ -342,19 +341,16 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
       }
       await updateManifestJson(newManifest)
     }
-    if (objectTypes === ObjectTypes.PROJECT) {
-      debugger;
+    if (objectTypes === ObjectTypes.PROJECT && item.userWorkspace) {
       // Update project userworkspace
-      await updateProject({
-        project: {
-          ...item,
-          project: {
-            ...item.project,
-            userWorkspace: data.newData,
-          },
-        },
-      });
+      const { rights, ...projectWithoutRights } = item;
 
+      if (updateItem) {
+        updateItem({
+          ...projectWithoutRights,
+          userWorkspace: data.newData,
+        }!);
+      }
     }
   }
 
