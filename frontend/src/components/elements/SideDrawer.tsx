@@ -254,18 +254,14 @@ export const SideDrawer = ({
     const userManifests = await getUserGroupManifests(personalGroup!.id);
     allManifests.push(...userManifests);
 
-    console.log('groups into fetch manifest', groups)
     for (const group of groups) {
-      console.log('group',group)
       const manifestsGroup = await getUserGroupManifests(group!.id);
       allManifests.push(...manifestsGroup);
     }
-  console.log('allManifests',allManifests);
     const uniqueManifests = Array.from(
       new Map(allManifests.map((manifest) => [manifest.id, manifest])).values()
     );
 
-    console.log('uniqueManifests',uniqueManifests);
 
     const updatedManifests = await Promise.all(
       uniqueManifests.map(async (manifest) => {
@@ -278,10 +274,8 @@ export const SideDrawer = ({
   };
 
   const fetchGroups = async () => {
-    console.log('FETCH GROUPS')
     let groups = await getAllUserGroups(user.id);
     groups = groups.filter((group: UserGroup) => group.type == UserGroupTypes.MULTI_USER);
-    console.log('groups',groups);
     setGroups(groups);
   };
 
