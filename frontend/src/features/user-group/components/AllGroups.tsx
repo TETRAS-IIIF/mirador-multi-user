@@ -139,7 +139,11 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
 
   const handleChangeRights = async(group: ListItem,eventValue:string, groupId:number) =>{
     const userToUpdate = userPersonalGroupList.find((user)=>user.user.id=== group.id)
-    await  ChangeAccessToGroup(groupId, {userId: userToUpdate!.user.id, groupId: group.id, rights: eventValue as ItemsRights} );
+    await  ChangeAccessToGroup(groupId, {
+      groupId: group.id,
+      rights: eventValue.toLowerCase() as ItemsRights,
+      userId: userToUpdate!.user.id,
+    });
   }
 
   const HandleOpenModal =useCallback ((groupId: number)=>{

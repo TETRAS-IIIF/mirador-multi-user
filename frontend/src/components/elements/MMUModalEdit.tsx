@@ -55,7 +55,6 @@ interface ModalItemProps<T, G> {
   isGroups?:boolean
   objectTypes?:ObjectTypes
   getGroupByOption?:(option:any)=>string
-
 }
 
 type MetadataFormat = {
