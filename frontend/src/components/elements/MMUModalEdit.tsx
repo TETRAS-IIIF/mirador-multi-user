@@ -30,6 +30,7 @@ import { updateManifestJson } from '../../features/manifest/api/updateManifestJs
 import { Selector } from '../Selector.tsx';
 import { useTranslation } from 'react-i18next';
 
+
 interface ModalItemProps<T, G> {
   item: T,
   itemLabel: string,
@@ -79,7 +80,7 @@ type MetadataFields = {
 
 type MetadataArray = MetadataFormat[];
 
-export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | mediaOrigin, created_at: Dayjs, snapShotHash?: string, hash?: string, path?: string }, G>(
+export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | mediaOrigin, created_at: Dayjs, snapShotHash?: string, hash?: string, path?: string, userWorkspace?: Record<string, string> }, G>(
   {
     itemLabel,
     setItemToAdd,
@@ -119,7 +120,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
   const [metadataFormats, setMetadataFormats] = useState<MetadataFormat[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<MetadataFormat | undefined>();
-  const [manifestJson, setManifestJson] = useState<Record<string, string> | undefined>();
+  const [jsonElementToEditInAdvancedEditor, setJsonElementToEditInAdvancedEditor] = useState<Record<string, string> | undefined>();
   const user = useUser()
   const { t } = useTranslation();
 
@@ -242,7 +243,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
   const handleFetchManifest = async () => {
     try {
       const manifest = await fetchManifest(item.hash!, item.path!)
-      setManifestJson(manifest)
+      setJsonElementToEditInAdvancedEditor(manifest)
     } catch (error) {
       console.error(error)
     }
@@ -253,7 +254,13 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
     fetchMetadataFormat();
     handleFetchMetadataForObject()
     if (objectTypes === ObjectTypes.MANIFEST) {
-      handleFetchManifest()
+      handleFetchManifest();
+    }
+    if (objectTypes === ObjectTypes.PROJECT) {
+      if (item.userWorkspace) {
+        setJsonElementToEditInAdvancedEditor(item.userWorkspace);
+      }
+
     }
   }, []);
 
@@ -322,14 +329,21 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
 
 
   const handleUpdateAdvancedEditMetadata = async (data: any) => {
-    const newManifest = {
-      manifestId: item.id,
-      json: data.newData,
-      origin: item.origin! as manifestOrigin,
-      path: item.path!,
-      hash: item.hash!,
+    // We can edit manifest or project userworkscape
+
+    if (objectTypes === ObjectTypes.MANIFEST) {
+      const newManifest = {
+        manifestId: item.id,
+        json: data.newData,
+        origin: item.origin! as manifestOrigin,
+        path: item.path!,
+        hash: item.hash!,
+      }
+      await updateManifestJson(newManifest)
+    } else {
+      // Update project userworkspace
+
     }
-    await updateManifestJson(newManifest)
   }
 
   function isValidUrl(string: string) {
@@ -511,9 +525,9 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             </CustomTabPanel>
           )
         }
-        {(manifestJson && item.origin !== manifestOrigin.LINK) && (
+        {(jsonElementToEditInAdvancedEditor && item.origin !== manifestOrigin.LINK) && (
           <CustomTabPanel value={tabValue} index={3}>
-            <JsonEditor data={manifestJson} onUpdate={handleUpdateAdvancedEditMetadata} />
+            <JsonEditor data={jsonElementToEditInAdvancedEditor} onUpdate={handleUpdateAdvancedEditMetadata} />
           </CustomTabPanel>
         )
         }
