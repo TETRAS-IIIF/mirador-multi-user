@@ -244,14 +244,26 @@ export const SideDrawer = ({
   };
 
   const fetchManifestForUser = async () => {
-    const personnalGroup = await fetchUserPersonalGroup();
-    const userManifests = await getUserGroupManifests(personnalGroup!.id);
+    const allManifests: Manifest[] = [];
+    const personalGroup = await fetchUserPersonalGroup();
+
+    const userManifests = await getUserGroupManifests(personalGroup!.id);
+    allManifests.push(...userManifests);
+
+    for (const group of groups) {
+      const manifestsGroup = await getUserGroupManifests(group!.id);
+      allManifests.push(...manifestsGroup);
+    }
+
+    const uniqueManifests = Array.from(
+      new Map(allManifests.map((manifest) => [manifest.id, manifest])).values()
+    );
+
     const updatedManifests = await Promise.all(
-      userManifests.map(async (manifest) => {
-        const manifestUrl = manifest.path;
-        const manifestJson = await getManifestFromUrl(manifestUrl);
+      uniqueManifests.map(async (manifest) => {
+        const manifestJson = await getManifestFromUrl(manifest.path);
         return { ...manifest, json: manifestJson };
-      }),
+      })
     );
 
     setManifests(updatedManifests);
