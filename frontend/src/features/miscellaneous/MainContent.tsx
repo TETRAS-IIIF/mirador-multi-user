@@ -1,9 +1,9 @@
-import { useLogout, useUser } from "../../utils/auth.tsx";
-import { Grid } from "@mui/material";
-import { SideDrawer } from "../../components/elements/SideDrawer.tsx";
-import { Loading } from "../../components/elements/Loading.tsx";
-import { useState } from "react";
-import { NotConfirmedAccount } from "../auth/components/NotConfirmedAccount.tsx";
+import { useLogout, useUser } from '../../utils/auth.tsx';
+import { Grid } from '@mui/material';
+import { SideDrawer } from '../../components/elements/SideDrawer.tsx';
+import { Loading } from '../../components/elements/Loading.tsx';
+import { useState } from 'react';
+import { NotConfirmedAccount } from '../auth/components/NotConfirmedAccount.tsx';
 
 export const MainContent = () => {
   const user = useUser();
@@ -15,7 +15,7 @@ export const MainContent = () => {
   }
 
   if (!user.data.id) {
-    return <NotConfirmedAccount/>;
+    return <NotConfirmedAccount />;
   }
 
   const handleDisconnect = () => {
@@ -28,11 +28,12 @@ export const MainContent = () => {
   return (
     <Grid container direction="row" sx={{ padding: 0 }}
     >
+      {/*TODO Why viewer state et selecttProjectId are here ?*/}
       <SideDrawer
         user={user.data}
+        handleDisconnect={handleDisconnect}
         viewer={viewer}
         setViewer={setViewer}
-        handleDisconnect={handleDisconnect}
         selectedProjectId={selectedProjectId}
         setSelectedProjectId={setSelectedProjectId}
       />

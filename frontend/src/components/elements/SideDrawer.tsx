@@ -52,7 +52,6 @@ export const SideDrawer = ({
                              setViewer,
                              viewer,
                            }: ISideDrawerProps) => {
-
   const [selectedContent, setSelectedContent] = useState(MENU_ELEMENT.PROJECTS);
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
@@ -63,13 +62,13 @@ export const SideDrawer = ({
   const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
   const [groups, setGroups] = useState<UserGroup[]>([]);
   const [isMiradorRunning, setIsMiradorRunning] = useState(false);
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const miradorViewerRef = useRef<MiradorViewerHandle>(null);
+
   const { t } = useTranslation();
 
-  const loadPreferredLanguage = async () => {
-    await loadLanguage(user.preferredLanguage);
-  };
+
   useEffect(() => {
     if (miradorViewerRef.current !== null) {
       if (!intervalRef.current) {
@@ -101,6 +100,10 @@ export const SideDrawer = ({
 
   const HandleSetIsRunning = () => {
     setIsMiradorRunning(!isMiradorRunning);
+  };
+
+  const loadPreferredLanguage = async () => {
+    await loadLanguage(user.preferredLanguage);
   };
 
 
@@ -289,7 +292,7 @@ export const SideDrawer = ({
 
   const handleDisonnectUser = () => {
     handleDisconnect();
-    handleSetDisconnectModalOpen();
+    setShowSignOutModal(false);
   };
 
 
@@ -329,11 +332,10 @@ export const SideDrawer = ({
   return (
     <>
       <MMUDrawer
+        selectedContent={selectedContent}
         handleChangeContent={handleChangeContent}
         projectSelected={projectSelected}
         saveProject={saveProject}
-        selectedContent={selectedContent}
-        selectedProjectId={selectedProjectId}
         setShowSignOutModal={setShowSignOutModal}
         user={user}
       />
