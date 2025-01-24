@@ -2,28 +2,17 @@ import { useTranslation } from 'react-i18next';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useEffect, useState } from "react";
-
-export interface SelectorItem {
-  id: string;
-  name: string;
-}
+import { useState } from "react";
+import { ItemsRights } from '../features/user-group/types/types.ts';
 
 export interface SelectorProps {
-  selectorItems: SelectorItem[];
   value: string;
   onChange?: (event: SelectChangeEvent) => void;
 }
 
-export const Selector = ({ selectorItems, value, onChange }: SelectorProps) => {
+export const Selector = ({ value = ItemsRights.READER, onChange }: SelectorProps) => {
   const { t } = useTranslation();
-  const [localValue, setLocalValue] = useState(
-    selectorItems.find((item) => item.id.toUpperCase() === value?.toUpperCase())?.id || selectorItems[0]?.id
-  );
-  useEffect(() => {
-    setLocalValue(
-      selectorItems.find((item) => item.id.toUpperCase() === value?.toUpperCase())?.id || selectorItems[0]?.id
-    );  }, [value]);
+  const [localValue, setLocalValue] = useState(value);
 
   const handleLocalChange = (event: SelectChangeEvent<string>) => {
     const newValue = event.target.value;
@@ -37,11 +26,11 @@ export const Selector = ({ selectorItems, value, onChange }: SelectorProps) => {
       <Select
         value={localValue}
         onChange={handleLocalChange}
-        renderValue={(selected) => t(selectorItems.find((item) => item.id === selected)?.name || "")}
+        renderValue={()=>t(localValue)}
       >
-        {selectorItems.map((item) => (
-          <MenuItem key={item.id} value={item.id}>
-            {t(item.name)}
+        { Object.values(ItemsRights).map((item) => (
+          <MenuItem key={item} value={item}>
+            {t(item)}
           </MenuItem>
         ))}
       </Select>

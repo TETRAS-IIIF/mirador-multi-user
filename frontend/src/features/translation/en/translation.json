@@ -137,11 +137,8 @@
   "resendConfirmationLink": "Resend Confirmation Link",
   "reset-password": "Reset Password",
   "reset-password-title": "Reset password",
-  "rights": {
-    "ADMIN": "Admin",
-    "EDITOR": "Editor",
-    "READER": "Reader"
-  },
+  "editor": "Editor",
+  "reader": "Reader",
   "save": "Save",
   "saveChanges": "Save Changes",
   "saveMAJ": "SAVE",
