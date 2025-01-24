@@ -5,7 +5,8 @@ import {
   ReactNode,
   SetStateAction,
   SyntheticEvent,
-  useCallback, useEffect,
+  useCallback,
+  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -218,7 +219,7 @@ export const AllMedias = ({ user, userPersonalGroup, medias, fetchMediaForUser, 
       id: projectGroup.user_group.id,
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
-      type: projectGroup.user_group.type
+      type: projectGroup.user_group.type,
     }));
   }, [groupList]);
 
@@ -530,7 +531,7 @@ export const AllMedias = ({ user, userPersonalGroup, medias, fetchMediaForUser, 
         </Grid>
       </Grid>
       <Grid item width={'100%'} height={'100%'}>
-        <iframe src="./../../public/customAssets/media-footer.html" title="Media footer information"
+        <iframe src="./../../customAssets/media-footer.html" title="Media footer information"
                 style={{ border: 'none' }}></iframe>
       </Grid>
     </Box>
