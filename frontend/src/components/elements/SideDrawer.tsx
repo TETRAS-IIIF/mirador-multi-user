@@ -7,7 +7,6 @@ import { createProject } from '../../features/projects/api/createProject.ts';
 import toast from 'react-hot-toast';
 import { User } from '../../features/auth/types/types.ts';
 import { Media, MediaGroupRights } from '../../features/media/types/types.ts';
-import { getUserGroupMedias } from '../../features/media/api/getUserGroupMedias.ts';
 import { getUserPersonalGroup } from '../../features/projects/api/getUserPersonalGroup.ts';
 import { UserGroup, UserGroupTypes } from '../../features/user-group/types/types.ts';
 import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
@@ -16,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { loadLanguage } from '../../features/translation/i18n.ts';
 import { Content } from './SideDrawer/Content';
 import { MMUDrawer } from './SideDrawer/MMUDrawer';
+import { getUserGroupMedias } from '../../features/media/api/getUserGroupMedias';
 
 
 interface ISideDrawerProps {
@@ -148,44 +148,6 @@ export const SideDrawer = ({
     }
   };
 
-  const fetchMediaForUser = async () => {
-    const allMedias: Media[] = [];
-    const personalGroup = await fetchUserPersonalGroup();
-
-    const personalGroupMedias = await getUserGroupMedias(personalGroup!.id);
-    allMedias.push(...personalGroupMedias);
-
-    for (const group of groups) {
-      const groupMedias = await getUserGroupMedias(group.id);
-      allMedias.push(...groupMedias);
-    }
-
-    const rightsPriority = {
-      [MediaGroupRights.ADMIN]: 3,
-      [MediaGroupRights.EDITOR]: 2,
-      [MediaGroupRights.READER]: 1,
-    };
-
-    const uniqueMediasMap = new Map<number, Media>();
-
-    allMedias.forEach((media) => {
-      const existing = uniqueMediasMap.get(media.id);
-
-      if (
-        !existing ||
-        (media.rights &&
-          rightsPriority[media.rights] >
-          (existing.rights ? rightsPriority[existing.rights] : 0))
-      ) {
-        uniqueMediasMap.set(media.id, media);
-      }
-    });
-
-    const uniqueMedias = Array.from(uniqueMediasMap.values());
-
-    setMedias(uniqueMedias);
-  };
-
 
   const fetchGroups = async () => {
     let groups = await getAllUserGroups(user.id);
@@ -257,7 +219,45 @@ export const SideDrawer = ({
     }
   };
 
+  const fetchMediaForUser = async () => {
+    const allMedias: Media[] = [];
+
+    const personalGroupMedias = await getUserGroupMedias(userPersonalGroup!.id);
+    allMedias.push(...personalGroupMedias);
+
+    for (const group of groups) {
+      const groupMedias = await getUserGroupMedias(group.id);
+      allMedias.push(...groupMedias);
+    }
+
+    const rightsPriority = {
+      [MediaGroupRights.ADMIN]: 3,
+      [MediaGroupRights.EDITOR]: 2,
+      [MediaGroupRights.READER]: 1,
+    };
+
+    const uniqueMediasMap = new Map<number, Media>();
+
+    allMedias.forEach((media) => {
+      const existing = uniqueMediasMap.get(media.id);
+
+      if (
+        !existing ||
+        (media.rights &&
+          rightsPriority[media.rights] >
+          (existing.rights ? rightsPriority[existing.rights] : 0))
+      ) {
+        uniqueMediasMap.set(media.id, media);
+      }
+    });
+
+    const uniqueMedias = Array.from(uniqueMediasMap.values());
+
+    setMedias(uniqueMedias);
+  };
+
   const initializedWorkspace = async () => {
+    await fetchUserPersonalGroup()
     await fetchGroups()
     await fetchProjects();
     await fetchMediaForUser();

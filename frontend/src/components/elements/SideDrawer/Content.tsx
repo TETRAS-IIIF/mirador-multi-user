@@ -17,6 +17,7 @@ export function Content({
                           createManifestIsOpen,
                           fetchManifestForUser,
                           fetchMediaForUser,
+                          fetchGroups,
                           groups,
                           handleDisonnectUser,
                           handleSetCreateManifestIsOpen,
@@ -40,6 +41,8 @@ export function Content({
                           userProjects,
                           viewer,
                         }) {
+
+
   return (
     <Box component="main" sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: '100vh' }}>
       {selectedProjectId && projectSelected && (
@@ -96,6 +99,7 @@ export function Content({
             medias={medias}
             user={user}
             setMedias={setMedias}
+            fetchGroups={fetchGroups}
           />
         )
       }
