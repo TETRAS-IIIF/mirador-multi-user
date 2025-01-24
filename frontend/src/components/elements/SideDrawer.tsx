@@ -1,9 +1,4 @@
-import { CSSObject, Divider, List, ListItem, styled, Theme, Tooltip } from '@mui/material';
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import MuiDrawer from '@mui/material/Drawer';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { ItemButton } from './SideBar/ItemButton.tsx';
 import { updateProject } from '../../features/projects/api/updateProject.ts';
 import { CreateProjectDto, Project } from '../../features/projects/types/types.ts';
 import IState from '../../features/mirador/interface/IState.ts';
@@ -21,51 +16,9 @@ import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups
 import { handleLock } from '../../features/projects/api/handleLock.ts';
 import { useTranslation } from 'react-i18next';
 import { loadLanguage } from '../../features/translation/i18n.ts';
-import { DrawerElementSaveProject } from './SideDrawer/Drawer/DrawerElementSaveProject';
-import { DrawerHeader } from './SideDrawer/Drawer/DrawerHeader';
-import { DrawerElementContentMenu } from './SideDrawer/Drawer/DrawerElementContentMenu';
 import { Content } from './SideDrawer/Content';
-import { DrawerElementAdmin } from './SideDrawer/Drawer/DrawerElementAdmin';
+import { MMUDrawer } from './SideDrawer/MMUDrawer';
 
-const drawerWidth = 240;
-const openedMixin = (theme: Theme): CSSObject => ({
-  width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-});
-
-const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-
-
-const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    ...(open && {
-      ...openedMixin(theme),
-      '& .MuiDrawer-paper': openedMixin(theme),
-    }),
-    ...(!open && {
-      ...closedMixin(theme),
-      '& .MuiDrawer-paper': closedMixin(theme),
-    }),
-  }),
-);
 
 interface ISideDrawerProps {
   user: User,
@@ -385,52 +338,19 @@ export const SideDrawer = ({
 
   return (
     <>
-      <StyledDrawer variant="permanent" open={isSideDrawerExpanded} sx={{ maxHeight: '100vh' }}
-      >
-        <DrawerHeader isSideDrawerExpanded={isSideDrawerExpanded} handleDrawerClose={handleDrawerClose}
-                      handleDrawerOpen={handleDrawerOpen} />
-        <Divider />
-        <DrawerElementContentMenu
-          open={isSideDrawerExpanded}
-          selectedContent={selectedContent}
-          handleChangeContent={handleChangeContent}
-        />
-        <Divider />
-        {
-          selectedProjectId && (
-            <>
-              <DrawerElementSaveProject
-                open={isSideDrawerExpanded}
-                projectSelected={projectSelected}
-                saveProject={saveProject} />
-              <Divider />
-            </>
-          )
-        }
-        <List>
-          {
-            user._isAdmin && (
-              <DrawerElementAdmin
-                title={t('titleAdmin')}
-                open={isSideDrawerExpanded}
-                text={t('admin')}
-                action={() => handleChangeContent(MENU_ELEMENT.ADMIN)} />
-            )
-          }
-          <Tooltip title={t('titleSettings')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={isSideDrawerExpanded} selected={false} icon={<SettingsIcon />} text={t('settings')}
-                          action={() => handleChangeContent(MENU_ELEMENT.SETTING)} />
-            </ListItem>
-          </Tooltip>
-          <Tooltip title={t('titleDisconnect')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={isSideDrawerExpanded} selected={false} icon={<LogoutIcon />} text={t('disconnect')}
-                          action={handleSetDisconnectModalOpen} />
-            </ListItem>
-          </Tooltip>
-        </List>
-      </StyledDrawer>
+      <MMUDrawer
+        handleChangeContent={handleChangeContent}
+        handleDrawerClose={handleDrawerClose}
+        handleDrawerOpen={handleDrawerOpen}
+        handleSetDisconnectModalOpen={handleSetDisconnectModalOpen}
+        isSideDrawerExpanded={isSideDrawerExpanded}
+        projectSelected={projectSelected}
+        saveProject={saveProject}
+        selectedContent={selectedContent}
+        selectedProjectId={selectedProjectId}
+        t={t}
+        user={user}
+      />
       <Content
         HandleSetIsRunning={HandleSetIsRunning}
         HandleSetUserProjects={HandleSetUserProjects}
