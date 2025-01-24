@@ -19,13 +19,13 @@ import { getUserGroupManifests } from '../../features/manifest/api/getUserGroupM
 import { Manifest, ManifestGroupRights } from '../../features/manifest/types/types.ts';
 import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
 import { handleLock } from '../../features/projects/api/handleLock.ts';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useTranslation } from 'react-i18next';
 import { loadLanguage } from '../../features/translation/i18n.ts';
-import { SaveProject } from './SideDrawer/SaveProject';
-import { SideDrawerHeader } from './SideDrawer/SideDrawerHeader';
-import { SideDrawerContentMenu } from './SideDrawer/SideDrawerContentMenu';
+import { DrawerElementSaveProject } from './SideDrawer/Drawer/DrawerElementSaveProject';
+import { DrawerHeader } from './SideDrawer/Drawer/DrawerHeader';
+import { DrawerElementContentMenu } from './SideDrawer/Drawer/DrawerElementContentMenu';
 import { Content } from './SideDrawer/Content';
+import { DrawerElementAdmin } from './SideDrawer/Drawer/DrawerElementAdmin';
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -50,7 +50,7 @@ const closedMixin = (theme: Theme): CSSObject => ({
 });
 
 
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
+const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     width: drawerWidth,
     flexShrink: 0,
@@ -90,7 +90,6 @@ export const MENU_ELEMENT = {
   SETTING: 'SETTING',
   ADMIN: 'ADMIN',
 };
-
 
 export const SideDrawer = ({
                              user,
@@ -386,12 +385,12 @@ export const SideDrawer = ({
 
   return (
     <>
-      <Drawer variant="permanent" open={isSideDrawerExpanded} sx={{ maxHeight: '100vh' }}
+      <StyledDrawer variant="permanent" open={isSideDrawerExpanded} sx={{ maxHeight: '100vh' }}
       >
-        <SideDrawerHeader isSideDrawerExpanded={isSideDrawerExpanded} handleDrawerClose={handleDrawerClose}
-                          handleDrawerOpen={handleDrawerOpen} />
+        <DrawerHeader isSideDrawerExpanded={isSideDrawerExpanded} handleDrawerClose={handleDrawerClose}
+                      handleDrawerOpen={handleDrawerOpen} />
         <Divider />
-        <SideDrawerContentMenu
+        <DrawerElementContentMenu
           open={isSideDrawerExpanded}
           selectedContent={selectedContent}
           handleChangeContent={handleChangeContent}
@@ -400,7 +399,7 @@ export const SideDrawer = ({
         {
           selectedProjectId && (
             <>
-              <SaveProject
+              <DrawerElementSaveProject
                 open={isSideDrawerExpanded}
                 projectSelected={projectSelected}
                 saveProject={saveProject} />
@@ -411,13 +410,11 @@ export const SideDrawer = ({
         <List>
           {
             user._isAdmin && (
-              <Tooltip title={t('titleAdmin')} placement="right">
-                <ListItem sx={{ padding: 0 }}>
-                  <ItemButton open={isSideDrawerExpanded} selected={false} icon={<AdminPanelSettingsIcon />}
-                              text={t('admin')}
-                              action={() => handleChangeContent(MENU_ELEMENT.ADMIN)} />
-                </ListItem>
-              </Tooltip>
+              <DrawerElementAdmin
+                title={t('titleAdmin')}
+                open={isSideDrawerExpanded}
+                text={t('admin')}
+                action={() => handleChangeContent(MENU_ELEMENT.ADMIN)} />
             )
           }
           <Tooltip title={t('titleSettings')} placement="right">
@@ -433,7 +430,7 @@ export const SideDrawer = ({
             </ListItem>
           </Tooltip>
         </List>
-      </Drawer>
+      </StyledDrawer>
       <Content
         HandleSetIsRunning={HandleSetIsRunning}
         HandleSetUserProjects={HandleSetUserProjects}

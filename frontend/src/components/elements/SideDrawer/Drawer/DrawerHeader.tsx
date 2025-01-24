@@ -2,13 +2,13 @@ import { IconButton, styled } from '@mui/material';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 
-interface SideDrawerHeaderProps {
+interface DrawerHeaderProps {
   isSideDrawerExpanded: boolean;
   handleDrawerClose: () => void;
   handleDrawerOpen: () => void;
 }
 
-const DrawerHeader = styled('div')(({ theme }) => ({
+const StyledDrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-end',
@@ -24,16 +24,16 @@ const DrawerHeader = styled('div')(({ theme }) => ({
  * @param handleDrawerOpen
  * @constructor
  */
-export function SideDrawerHeader({
-                                   isSideDrawerExpanded,
-                                   handleDrawerClose,
-                                   handleDrawerOpen
-                                 }: SideDrawerHeaderProps) {
-  return <DrawerHeader>
+export function DrawerHeader({
+                               isSideDrawerExpanded,
+                               handleDrawerClose,
+                               handleDrawerOpen,
+                             }: DrawerHeaderProps) {
+  return <StyledDrawerHeader>
     <IconButton
       onClick={isSideDrawerExpanded ? handleDrawerClose : handleDrawerOpen}
     >
       {!isSideDrawerExpanded ? <ChevronRightIcon /> : <ChevronLeftIcon />}
     </IconButton>
-  </DrawerHeader>;
+  </StyledDrawerHeader>;
 }

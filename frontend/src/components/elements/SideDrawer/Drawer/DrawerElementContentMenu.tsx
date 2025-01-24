@@ -1,14 +1,14 @@
 import { List, ListItem, Tooltip } from '@mui/material';
-import { ItemButton } from '../SideBar/ItemButton';
+import { ItemButton } from '../../SideBar/ItemButton';
 import WorkIcon from '@mui/icons-material/Work';
 import ArticleIcon from '@mui/icons-material/Article';
 import PermMediaIcon from '@mui/icons-material/PermMedia';
 import GroupsIcon from '@mui/icons-material/Groups';
-import { MENU_ELEMENT } from '../SideDrawer';
+import { MENU_ELEMENT } from '../../SideDrawer';
 import { useTranslation } from 'react-i18next';
 
 
-interface SideDrawerContentMenuProps {
+interface DrawerElementContentMenuProps {
   open: boolean;
   selectedContent: string;
   handleChangeContent: (content: string) => void;
@@ -23,11 +23,11 @@ interface SideDrawerContentMenuProps {
  * @param handleChangeContent
  * @constructor
  */
-export function SideDrawerContentMenu({
-                                        open,
-                                        selectedContent,
-                                        handleChangeContent,
-                                      }: SideDrawerContentMenuProps) {
+export function DrawerElementContentMenu({
+                                           open,
+                                           selectedContent,
+                                           handleChangeContent,
+                                         }: DrawerElementContentMenuProps) {
   const { t } = useTranslation();
 
   return (

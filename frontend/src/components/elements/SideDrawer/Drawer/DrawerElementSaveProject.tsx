@@ -1,14 +1,13 @@
 import { Divider, List, ListItem, Tooltip } from '@mui/material';
-import { ItemButton } from '../SideBar/ItemButton';
+import { ItemButton } from '../../SideBar/ItemButton';
 import WorkIcon from '@mui/icons-material/Work';
 import SaveIcon from '@mui/icons-material/Save';
 import { useTranslation } from 'react-i18next';
 
-interface SaveProjectProps {
+interface DrawerElementSaveProjectProps {
   open: boolean;
   projectSelected: any;
   saveProject: () => void;
-
 }
 
 /**
@@ -19,11 +18,11 @@ interface SaveProjectProps {
  * @param saveProject
  * @constructor
  */
-export function SaveProject({
-                              open,
-                              projectSelected,
-                              saveProject,
-                            }: SaveProjectProps) {
+export function DrawerElementSaveProject({
+                                           open,
+                                           projectSelected,
+                                           saveProject,
+                                         }: DrawerElementSaveProjectProps) {
 
   const { t } = useTranslation();
 
