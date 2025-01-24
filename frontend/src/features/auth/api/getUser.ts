@@ -17,6 +17,7 @@ export const getUser = async (): Promise<User> => {
     return user;
   } catch (error) {
     storage.clearToken();
+    window.location.reload();
     throw error;
   }
 };
