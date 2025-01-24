@@ -27,7 +27,7 @@ export function Content({
                           medias,
                           miradorState,
                           showSignOutModal,
-                          myRef,
+                          miradorViewerRef,
                           projectSelected,
                           saveMiradorState,
                           selectedContent,
@@ -51,11 +51,11 @@ export function Content({
           fetchManifestForUser={fetchManifestForUser}
           handleSetMiradorState={handleSetMiradorState}
           miradorState={miradorState!}
-          myRef={myRef}
+          myRef={miradorViewerRef}
           projectSelected={projectSelected}
           saveMiradorState={saveMiradorState}
           user={user}
-          userPersonalGroup={userPersonalGroup!}
+          userPersonalGroup={userPersonalGroup}
           viewer={viewer}
           setViewer={setViewer}
           manifests={manifests}
@@ -83,7 +83,7 @@ export function Content({
         user && user.id && !selectedProjectId && selectedContent === MENU_ELEMENT.MEDIA && (
           <AllMedias
             user={user}
-            userPersonalGroup={userPersonalGroup!}
+            userPersonalGroup={userPersonalGroup}
             medias={medias}
             fetchMediaForUser={fetchMediaForUser}
             setMedias={setMedias}
@@ -95,7 +95,7 @@ export function Content({
           <AllGroups
             setGroups={setGroups}
             groups={groups}
-            userPersonalGroup={userPersonalGroup!}
+            userPersonalGroup={userPersonalGroup}
             medias={medias}
             user={user}
             setMedias={setMedias}
@@ -104,7 +104,7 @@ export function Content({
         )
       }
       {
-        user && user.id && selectedContent === MENU_ELEMENT.MANIFEST && userPersonalGroup && (
+        user && user.id && selectedContent === MENU_ELEMENT.MANIFEST && (
           <AllManifests
             fetchMediaForUser={fetchMediaForUser}
             createManifestIsOpen={createManifestIsOpen}
