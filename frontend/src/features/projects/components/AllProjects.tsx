@@ -56,8 +56,9 @@ import { useTranslation } from "react-i18next";
 import { dublinCoreMetadata } from "../../../utils/dublinCoreMetadata.ts";
 import { Dayjs } from "dayjs";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { removeProjectFromList } from '../api/removeProjectFromList.ts';
 
 interface AllProjectsProps {
   handleSetMiradorState: (state: IState | undefined) => void;
@@ -368,6 +369,9 @@ export const AllProjects = ({
     setOpenSidePanel(!openSidePanel);
   };
 
+  const handleRemoveProjectFromList= async (projectId: number)=>{
+    await removeProjectFromList(projectId)
+  }
   return (
     <>
       <SidePanelMedia
