@@ -105,9 +105,9 @@ export const ItemList = <G,T extends { id: number,snapShotHash?:string}>(
                   <Grid item>
                     {
                       item.type === UserGroupTypes.PERSONAL ? (
-                        <PersonIcon/>
+                          <GroupsIcon/>
                       ):(
-                        <GroupsIcon/>
+                        <PersonIcon/>
                       )
                     }
                   </Grid>
