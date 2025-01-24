@@ -22,14 +22,14 @@ import { createProject } from '../../features/projects/api/createProject.ts';
 import toast from 'react-hot-toast';
 import { AllMedias } from '../../features/media/component/AllMedias.tsx';
 import { User } from '../../features/auth/types/types.ts';
-import { Media } from '../../features/media/types/types.ts';
+import { Media, MediaGroupRights } from '../../features/media/types/types.ts';
 import { getUserGroupMedias } from '../../features/media/api/getUserGroupMedias.ts';
 import { getUserPersonalGroup } from '../../features/projects/api/getUserPersonalGroup.ts';
 import { UserGroup, UserGroupTypes } from '../../features/user-group/types/types.ts';
 import { AllManifests } from '../../features/manifest/component/AllManifests.tsx';
 import ArticleIcon from '@mui/icons-material/Article';
 import { getUserGroupManifests } from '../../features/manifest/api/getUserGroupManifests.ts';
-import { Manifest } from '../../features/manifest/types/types.ts';
+import { Manifest, ManifestGroupRights } from '../../features/manifest/types/types.ts';
 import PermMediaIcon from '@mui/icons-material/PermMedia';
 import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
 import { UserSettings } from '../../features/user-setting/UserSettings.tsx';
@@ -231,9 +231,28 @@ export const SideDrawer = ({
       allMedias.push(...groupMedias);
     }
 
-    const uniqueMedias = Array.from(
-      new Map(allMedias.map((media) => [media.id, media])).values()
-    );
+    const rightsPriority = {
+      [MediaGroupRights.ADMIN]: 3,
+      [MediaGroupRights.EDITOR]: 2,
+      [MediaGroupRights.READER]: 1,
+    };
+
+    const uniqueMediasMap = new Map<number, Media>();
+
+    allMedias.forEach((media) => {
+      const existing = uniqueMediasMap.get(media.id);
+
+      if (
+        !existing ||
+        (media.rights &&
+          rightsPriority[media.rights] >
+          (existing.rights ? rightsPriority[existing.rights] : 0))
+      ) {
+        uniqueMediasMap.set(media.id, media);
+      }
+    });
+
+    const uniqueMedias = Array.from(uniqueMediasMap.values());
 
     setMedias(uniqueMedias);
   };
@@ -258,10 +277,26 @@ export const SideDrawer = ({
       const manifestsGroup = await getUserGroupManifests(group!.id);
       allManifests.push(...manifestsGroup);
     }
-    const uniqueManifests = Array.from(
-      new Map(allManifests.map((manifest) => [manifest.id, manifest])).values()
-    );
 
+    const rightsPriority = {
+      [ManifestGroupRights.ADMIN]: 3,
+      [ManifestGroupRights.EDITOR]: 2,
+      [ManifestGroupRights.READER]: 1,
+    };
+
+    const uniqueManifestsMap = new Map<number, Manifest>();
+
+    allManifests.forEach((manifest) => {
+      const existing = uniqueManifestsMap.get(manifest.id);
+
+      if (!existing ||
+        (manifest.rights &&
+          rightsPriority[manifest.rights] > (existing.rights ? rightsPriority[existing.rights] : 0))) {
+        uniqueManifestsMap.set(manifest.id, manifest);
+      }
+    });
+
+    const uniqueManifests = Array.from(uniqueManifestsMap.values());
 
     const updatedManifests = await Promise.all(
       uniqueManifests.map(async (manifest) => {
@@ -269,9 +304,9 @@ export const SideDrawer = ({
         return { ...manifest, json: manifestJson };
       })
     );
-
     setManifests(updatedManifests);
   };
+
 
   const fetchGroups = async () => {
     let groups = await getAllUserGroups(user.id);
