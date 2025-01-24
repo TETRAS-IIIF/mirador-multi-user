@@ -1,16 +1,11 @@
-import { Box, CSSObject, Divider, Grid, IconButton, List, ListItem, styled, Theme, Tooltip } from '@mui/material';
+import { Box, CSSObject, Divider, Grid, List, ListItem, styled, Theme, Tooltip } from '@mui/material';
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MuiDrawer from '@mui/material/Drawer';
-import WorkIcon from '@mui/icons-material/Work';
-import GroupsIcon from '@mui/icons-material/Groups';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { ItemButton } from './SideBar/ItemButton.tsx';
 import { AllProjects } from '../../features/projects/components/AllProjects.tsx';
 import { AllGroups } from '../../features/user-group/components/AllGroups.tsx';
-import SaveIcon from '@mui/icons-material/Save';
 import { updateProject } from '../../features/projects/api/updateProject.ts';
 import { CreateProjectDto, Project } from '../../features/projects/types/types.ts';
 import IState from '../../features/mirador/interface/IState.ts';
@@ -27,10 +22,8 @@ import { getUserGroupMedias } from '../../features/media/api/getUserGroupMedias.
 import { getUserPersonalGroup } from '../../features/projects/api/getUserPersonalGroup.ts';
 import { UserGroup, UserGroupTypes } from '../../features/user-group/types/types.ts';
 import { AllManifests } from '../../features/manifest/component/AllManifests.tsx';
-import ArticleIcon from '@mui/icons-material/Article';
 import { getUserGroupManifests } from '../../features/manifest/api/getUserGroupManifests.ts';
 import { Manifest, ManifestGroupRights } from '../../features/manifest/types/types.ts';
-import PermMediaIcon from '@mui/icons-material/PermMedia';
 import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
 import { UserSettings } from '../../features/user-setting/UserSettings.tsx';
 import { SidePanelManifest } from '../../features/manifest/component/SidePanelManifest.tsx';
@@ -39,6 +32,9 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { AdminPanel } from '../../features/admin/components/adminPanel.tsx';
 import { useTranslation } from 'react-i18next';
 import { loadLanguage } from '../../features/translation/i18n.ts';
+import { SaveProject } from './SideDrawer/SaveProject';
+import { SideDrawerHeader } from './SideDrawer/SideDrawerHeaderHeader';
+import { SideDrawerContentMenu } from './SideDrawer/SideDrawerContentMenu';
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -62,13 +58,6 @@ const closedMixin = (theme: Theme): CSSObject => ({
   },
 });
 
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-}));
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -102,7 +91,7 @@ interface MiradorViewerHandle {
 }
 
 
-const CONTENT = {
+export const MENU_ELEMENT = {
   PROJECTS: 'PROJECT',
   GROUPS: 'GROUPS',
   MEDIA: 'MEDIA',
@@ -110,6 +99,8 @@ const CONTENT = {
   SETTING: 'SETTING',
   ADMIN: 'ADMIN',
 };
+
+
 export const SideDrawer = ({
                              user,
                              handleDisconnect,
@@ -118,8 +109,8 @@ export const SideDrawer = ({
                              setViewer,
                              viewer,
                            }: ISideDrawerProps) => {
-  const [open, setOpen] = useState(true);
-  const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS);
+  const [isSideDrawerExpanded, setIsSideDrawerExpanded] = useState(true);
+  const [selectedContent, setSelectedContent] = useState(MENU_ELEMENT.PROJECTS);
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [modalDisconectIsOpen, setModalDisconectIsOpen] = useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
@@ -170,7 +161,7 @@ export const SideDrawer = ({
   };
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    setIsSideDrawerExpanded(true);
   };
 
   const handleSaveProject = useCallback((newProject: Project) => {
@@ -179,7 +170,7 @@ export const SideDrawer = ({
   }, [setUserProjects]);
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    setIsSideDrawerExpanded(false);
   };
 
   const handleChangeContent = (content: string) => {
@@ -302,7 +293,7 @@ export const SideDrawer = ({
       uniqueManifests.map(async (manifest) => {
         const manifestJson = await getManifestFromUrl(manifest.path);
         return { ...manifest, json: manifestJson };
-      })
+      }),
     );
     setManifests(updatedManifests);
   };
@@ -384,7 +375,7 @@ export const SideDrawer = ({
     }
   };
 
-  const initializedWorkspace = async ()=> {
+  const initializedWorkspace = async () => {
     await fetchGroups()
     await fetchProjects();
     await fetchMediaForUser();
@@ -406,59 +397,24 @@ export const SideDrawer = ({
 
   return (
     <>
-      <Drawer variant="permanent" open={open} sx={{ maxHeight: '100vh' }}
+      <Drawer variant="permanent" open={isSideDrawerExpanded} sx={{ maxHeight: '100vh' }}
       >
-        <DrawerHeader>
-          <IconButton onClick={open ? handleDrawerClose : handleDrawerOpen}>
-            {!open ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
+        <SideDrawerHeader isSideDrawerExpanded={isSideDrawerExpanded} handleDrawerClose={handleDrawerClose}
+                          handleDrawerOpen={handleDrawerOpen} />
         <Divider />
-        <List sx={{ minHeight: '70vh', flexGrow: 1 }}>
-          <Tooltip title={t('projectTitle')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton selected={CONTENT.PROJECTS === selectedContent} open={open} icon={<WorkIcon />}
-                          text={t('project')} action={() => handleChangeContent(CONTENT.PROJECTS)} />
-            </ListItem>
-          </Tooltip>
-          <Tooltip title={t('manifestTitle')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={open} selected={CONTENT.MANIFEST === selectedContent} icon={<ArticleIcon />}
-                          text={t('manifests')} action={() => handleChangeContent(CONTENT.MANIFEST)} />
-            </ListItem>
-          </Tooltip>
-          <Tooltip title={t('mediaTitle')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<PermMediaIcon />}
-                          text={t('media')} action={() => handleChangeContent(CONTENT.MEDIA)} />
-            </ListItem>
-          </Tooltip>
-          <Tooltip title={t('groupTitle')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />}
-                          text={t('group')} action={() => handleChangeContent(CONTENT.GROUPS)} />
-            </ListItem>
-          </Tooltip>
-        </List>
+        <SideDrawerContentMenu
+          open={isSideDrawerExpanded}
+          selectedContent={selectedContent}
+          handleChangeContent={handleChangeContent}
+        />
         <Divider />
         {
           selectedProjectId && (
             <>
-              <List>
-                <Tooltip title={projectSelected!.title} placement="left">
-                  <ListItem sx={{ padding: 0 }}>
-                    <ItemButton icon={<WorkIcon />} text={projectSelected!.title} open={open} selected={false}
-                                action={() => console.log('')} />
-                  </ListItem>
-                </Tooltip>
-                <Divider />
-                <Tooltip title={t('save')} placement="left">
-                  <ListItem sx={{ padding: 0 }}>
-                    <ItemButton open={open} selected={false} icon={<SaveIcon />} text={t('saveProject')}
-                                action={saveProject} />
-                  </ListItem>
-                </Tooltip>
-              </List>
+              <SaveProject
+                open={isSideDrawerExpanded}
+                projectSelected={projectSelected}
+                saveProject={saveProject} />
               <Divider />
             </>
           )
@@ -468,21 +424,22 @@ export const SideDrawer = ({
             user._isAdmin && (
               <Tooltip title={t('titleAdmin')} placement="right">
                 <ListItem sx={{ padding: 0 }}>
-                  <ItemButton open={open} selected={false} icon={<AdminPanelSettingsIcon />} text={t('admin')}
-                              action={() => handleChangeContent(CONTENT.ADMIN)} />
+                  <ItemButton open={isSideDrawerExpanded} selected={false} icon={<AdminPanelSettingsIcon />}
+                              text={t('admin')}
+                              action={() => handleChangeContent(MENU_ELEMENT.ADMIN)} />
                 </ListItem>
               </Tooltip>
             )
           }
           <Tooltip title={t('titleSettings')} placement="right">
             <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={open} selected={false} icon={<SettingsIcon />} text={t('settings')}
-                          action={() => handleChangeContent(CONTENT.SETTING)} />
+              <ItemButton open={isSideDrawerExpanded} selected={false} icon={<SettingsIcon />} text={t('settings')}
+                          action={() => handleChangeContent(MENU_ELEMENT.SETTING)} />
             </ListItem>
           </Tooltip>
           <Tooltip title={t('titleDisconnect')} placement="right">
             <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={open} selected={false} icon={<LogoutIcon />} text={t('disconnect')}
+              <ItemButton open={isSideDrawerExpanded} selected={false} icon={<LogoutIcon />} text={t('disconnect')}
                           action={handleSetDisconnectModalOpen} />
             </ListItem>
           </Tooltip>
@@ -509,11 +466,11 @@ export const SideDrawer = ({
         )
         }
         {
-          user && user.id && user._isAdmin && selectedContent === CONTENT.ADMIN && (
+          user && user.id && user._isAdmin && selectedContent === MENU_ELEMENT.ADMIN && (
             <AdminPanel />
           )
         }
-        {user && user.id && selectedContent === CONTENT.PROJECTS && !selectedProjectId && (
+        {user && user.id && selectedContent === MENU_ELEMENT.PROJECTS && !selectedProjectId && (
           <AllProjects
             selectedProjectId={selectedProjectId}
             setSelectedProjectId={setSelectedProjectId}
@@ -526,7 +483,7 @@ export const SideDrawer = ({
           />
         )}
         {
-          user && user.id && !selectedProjectId && selectedContent === CONTENT.MEDIA && (
+          user && user.id && !selectedProjectId && selectedContent === MENU_ELEMENT.MEDIA && (
             <AllMedias
               user={user}
               userPersonalGroup={userPersonalGroup!}
@@ -537,7 +494,7 @@ export const SideDrawer = ({
           )
         }
         {
-          user && user.id && selectedContent === CONTENT.GROUPS && (
+          user && user.id && selectedContent === MENU_ELEMENT.GROUPS && (
             <AllGroups
               setGroups={setGroups}
               groups={groups}
@@ -550,14 +507,14 @@ export const SideDrawer = ({
           )
         }
         {
-          user && user.id && selectedContent === CONTENT.MANIFEST && userPersonalGroup && (
+          user && user.id && selectedContent === MENU_ELEMENT.MANIFEST && userPersonalGroup && (
             <AllManifests fetchMediaForUser={fetchMediaForUser} createManifestIsOpen={createManifestIsOpen}
                           setCreateManifestIsOpen={handleSetCreateManifestIsOpen} medias={medias} manifests={manifests}
                           fetchManifestForUser={fetchManifestForUser} user={user} userPersonalGroup={userPersonalGroup} />
           )
         }
         {
-          user && user.id && selectedContent === CONTENT.SETTING && (
+          user && user.id && selectedContent === MENU_ELEMENT.SETTING && (
             <UserSettings user={user} />
           )
         }
