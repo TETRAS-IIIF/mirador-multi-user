@@ -54,7 +54,8 @@ export const SideDrawer = ({
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
-  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>();
+
+  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>(null);
   const [medias, setMedias] = useState<Media[]>([]);
 
   const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
@@ -65,7 +66,6 @@ export const SideDrawer = ({
   const miradorViewerRef = useRef<MiradorViewerHandle>(null);
 
   const { t } = useTranslation();
-
 
   useEffect(() => {
     if (miradorViewerRef.current !== null) {
@@ -90,6 +90,7 @@ export const SideDrawer = ({
   }, [miradorViewerRef.current, isMiradorRunning]);
 
   useEffect(() => {
+    fetchUserPersonalGroup();
     loadPreferredLanguage();
   }, [user]);
   const handleSetCreateManifestIsOpen = (boolean: boolean) => {
@@ -142,7 +143,6 @@ export const SideDrawer = ({
     try {
       const personalGroup = await getUserPersonalGroup(user.id);
       setUserPersonalGroup(personalGroup);
-      return personalGroup;
     } catch (error) {
       console.error(error);
     }
@@ -257,7 +257,7 @@ export const SideDrawer = ({
   };
 
   const initializedWorkspace = async () => {
-    await fetchUserPersonalGroup()
+
     await fetchGroups()
     await fetchProjects();
     await fetchMediaForUser();
