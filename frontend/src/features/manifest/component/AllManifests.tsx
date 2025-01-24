@@ -356,6 +356,7 @@ export const AllManifests = ({
       id: projectGroup.user_group.id,
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
+      type: projectGroup.user_group.type,
     }));
   }, [groupList]);
 
