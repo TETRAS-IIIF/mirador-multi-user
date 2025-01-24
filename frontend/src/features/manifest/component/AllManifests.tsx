@@ -38,6 +38,7 @@ import { IIIFResource, ManifestResource } from 'manifesto.js';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { getUserGroupManifests } from '../api/getUserGroupManifests';
 
 
 const VisuallyHiddenInput = styled('input')({
@@ -70,14 +71,65 @@ const caddyUrl = import.meta.env.VITE_CADDY_URL
 
 export const AllManifests = ({
                                userPersonalGroup,
+                               groups,
                                user,
-                               fetchManifestForUser,
-                               manifests,
                                medias,
                                setCreateManifestIsOpen,
                                createManifestIsOpen,
                                fetchMediaForUser,
                              }: IAllManifests) => {
+  const [manifests, setManifests] = useState<Manifest[]>([]);
+
+  const getManifestFromUrl = async (manifestUrl: string) => {
+    try {
+      const response = await fetch(manifestUrl);
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchManifestForUser = async () => {
+    const allManifests: Manifest[] = [];
+
+    const userManifests = await getUserGroupManifests(userPersonalGroup!.id);
+    allManifests.push(...userManifests);
+
+    for (const group of groups) {
+      const manifestsGroup = await getUserGroupManifests(group!.id);
+      allManifests.push(...manifestsGroup);
+    }
+
+    const rightsPriority = {
+      [ManifestGroupRights.ADMIN]: 3,
+      [ManifestGroupRights.EDITOR]: 2,
+      [ManifestGroupRights.READER]: 1,
+    };
+
+    const uniqueManifestsMap = new Map<number, Manifest>();
+
+    allManifests.forEach((manifest) => {
+      const existing = uniqueManifestsMap.get(manifest.id);
+
+      if (!existing ||
+        (manifest.rights &&
+          rightsPriority[manifest.rights] > (existing.rights ? rightsPriority[existing.rights] : 0))) {
+        uniqueManifestsMap.set(manifest.id, manifest);
+      }
+    });
+
+    const uniqueManifests = Array.from(uniqueManifestsMap.values());
+
+    const updatedManifests = await Promise.all(
+      uniqueManifests.map(async (manifest) => {
+        const manifestJson = await getManifestFromUrl(manifest.path);
+        return { ...manifest, json: manifestJson };
+      }),
+    );
+    setManifests(updatedManifests);
+  };
+
+
   const [searchedManifest, setSearchedManifest] = useState<Manifest | null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
   const [searchedManifestIndex, setSearchedManifestIndex] = useState<number | null>(null);

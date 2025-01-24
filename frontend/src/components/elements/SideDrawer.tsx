@@ -10,8 +10,6 @@ import { Media, MediaGroupRights } from '../../features/media/types/types.ts';
 import { getUserGroupMedias } from '../../features/media/api/getUserGroupMedias.ts';
 import { getUserPersonalGroup } from '../../features/projects/api/getUserPersonalGroup.ts';
 import { UserGroup, UserGroupTypes } from '../../features/user-group/types/types.ts';
-import { getUserGroupManifests } from '../../features/manifest/api/getUserGroupManifests.ts';
-import { Manifest, ManifestGroupRights } from '../../features/manifest/types/types.ts';
 import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
 import { handleLock } from '../../features/projects/api/handleLock.ts';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +56,7 @@ export const SideDrawer = ({
   const [miradorState, setMiradorState] = useState<IState | undefined>();
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>();
   const [medias, setMedias] = useState<Media[]>([]);
-  const [manifests, setManifests] = useState<Manifest[]>([]);
+
   const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
   const [groups, setGroups] = useState<UserGroup[]>([]);
   const [isMiradorRunning, setIsMiradorRunning] = useState(false);
@@ -188,56 +186,6 @@ export const SideDrawer = ({
     setMedias(uniqueMedias);
   };
 
-  const getManifestFromUrl = async (manifestUrl: string) => {
-    try {
-      const response = await fetch(manifestUrl);
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchManifestForUser = async () => {
-    const allManifests: Manifest[] = [];
-    const personalGroup = await fetchUserPersonalGroup();
-
-    const userManifests = await getUserGroupManifests(personalGroup!.id);
-    allManifests.push(...userManifests);
-
-    for (const group of groups) {
-      const manifestsGroup = await getUserGroupManifests(group!.id);
-      allManifests.push(...manifestsGroup);
-    }
-
-    const rightsPriority = {
-      [ManifestGroupRights.ADMIN]: 3,
-      [ManifestGroupRights.EDITOR]: 2,
-      [ManifestGroupRights.READER]: 1,
-    };
-
-    const uniqueManifestsMap = new Map<number, Manifest>();
-
-    allManifests.forEach((manifest) => {
-      const existing = uniqueManifestsMap.get(manifest.id);
-
-      if (!existing ||
-        (manifest.rights &&
-          rightsPriority[manifest.rights] > (existing.rights ? rightsPriority[existing.rights] : 0))) {
-        uniqueManifestsMap.set(manifest.id, manifest);
-      }
-    });
-
-    const uniqueManifests = Array.from(uniqueManifestsMap.values());
-
-    const updatedManifests = await Promise.all(
-      uniqueManifests.map(async (manifest) => {
-        const manifestJson = await getManifestFromUrl(manifest.path);
-        return { ...manifest, json: manifestJson };
-      }),
-    );
-    setManifests(updatedManifests);
-  };
-
 
   const fetchGroups = async () => {
     let groups = await getAllUserGroups(user.id);
@@ -313,7 +261,6 @@ export const SideDrawer = ({
     await fetchGroups()
     await fetchProjects();
     await fetchMediaForUser();
-    await fetchManifestForUser();
   }
 
   useEffect(() => {
@@ -344,14 +291,12 @@ export const SideDrawer = ({
         HandleSetUserProjects={HandleSetUserProjects}
         createManifestIsOpen={createManifestIsOpen}
         fetchGroups={fetchGroups}
-        fetchManifestForUser={fetchManifestForUser}
         fetchMediaForUser={fetchMediaForUser}
         groups={groups}
         handleDisonnectUser={handleDisonnectUser}
         handleSetCreateManifestIsOpen={handleSetCreateManifestIsOpen}
         setShowSignOutModal={setShowSignOutModal}
         handleSetMiradorState={handleSetMiradorState}
-        manifests={manifests}
         medias={medias}
         miradorState={miradorState}
         showSignOutModal={showSignOutModal}

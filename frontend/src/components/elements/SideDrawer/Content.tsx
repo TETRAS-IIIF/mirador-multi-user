@@ -15,7 +15,6 @@ export function Content({
                           HandleSetIsRunning,
                           HandleSetUserProjects,
                           createManifestIsOpen,
-                          fetchGroups,
                           fetchManifestForUser,
                           fetchMediaForUser,
                           groups,
@@ -93,7 +92,6 @@ export function Content({
           <AllGroups
             setGroups={setGroups}
             groups={groups}
-            fetchGroups={fetchGroups}
             userPersonalGroup={userPersonalGroup!}
             medias={medias}
             user={user}
@@ -103,9 +101,17 @@ export function Content({
       }
       {
         user && user.id && selectedContent === MENU_ELEMENT.MANIFEST && userPersonalGroup && (
-          <AllManifests fetchMediaForUser={fetchMediaForUser} createManifestIsOpen={createManifestIsOpen}
-                        setCreateManifestIsOpen={handleSetCreateManifestIsOpen} medias={medias} manifests={manifests}
-                        fetchManifestForUser={fetchManifestForUser} user={user} userPersonalGroup={userPersonalGroup} />
+          <AllManifests
+            fetchMediaForUser={fetchMediaForUser}
+            createManifestIsOpen={createManifestIsOpen}
+            setCreateManifestIsOpen={handleSetCreateManifestIsOpen}
+            medias={medias}
+            manifests={manifests}
+            fetchManifestForUser={fetchManifestForUser}
+            user={user}
+            groups={groups}
+            userPersonalGroup={userPersonalGroup}
+          />
         )
       }
       {
