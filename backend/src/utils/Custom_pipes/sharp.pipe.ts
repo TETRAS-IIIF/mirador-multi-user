@@ -7,9 +7,10 @@ import {
 import * as sharp from 'sharp';
 import { Observable } from 'rxjs';
 import * as fs from 'fs';
-import { join } from 'path';
 import { createWriteStream } from 'fs';
+import { join } from 'path';
 import { generateAlphanumericSHA1Hash } from '../hashGenerator';
+import { THUMBNAIL_FILE_SUFFIX, UPLOAD_FOLDER } from '../constants';
 
 @Injectable()
 export class SharpPipeInterceptor implements NestInterceptor {
@@ -49,13 +50,16 @@ export class SharpPipeInterceptor implements NestInterceptor {
       const hash = generateAlphanumericSHA1Hash(
         `${Date.now().toString()}${Math.random().toString(36)}`,
       );
-      const uploadPath = `./upload/${hash}`;
+      const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 
       fs.mkdirSync(uploadPath, { recursive: true });
 
       const fileName =
         request.body.fileName || `uploaded_file.${fileExtension}`;
-      const processedFilePath = join(uploadPath, `${fileName}_thumbnail.webp`);
+      const processedFilePath = join(
+        uploadPath,
+        `${fileName}${THUMBNAIL_FILE_SUFFIX}`,
+      );
       request.generatedHash = hash;
       return sharp(fileBuffer)
         .resize(200, 200)
