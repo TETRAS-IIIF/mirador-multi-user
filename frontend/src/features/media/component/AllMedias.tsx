@@ -5,7 +5,7 @@ import {
   ReactNode,
   SetStateAction,
   SyntheticEvent,
-  useCallback,
+  useCallback, useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -76,6 +76,10 @@ export const AllMedias = ({ user, userPersonalGroup, medias, fetchMediaForUser, 
   const [sortOrder, setSortOrder] = useState('asc');
 
   const { t } = useTranslation();
+
+  useEffect(() => {
+    fetchMediaForUser()
+  }, []);
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -214,6 +218,7 @@ export const AllMedias = ({ user, userPersonalGroup, medias, fetchMediaForUser, 
       id: projectGroup.user_group.id,
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
+      type: projectGroup.user_group.type
     }));
   }, [groupList]);
 

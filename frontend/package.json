@@ -31,7 +31,7 @@
     "mirador": "npm:mirador-video@1.0.14",
     "mirador-annotation-editor": "^1.0.74",
     "mirador-annotation-editor-video": "^0.0.45",
-    "mirador-mltools-plugin-mmu": "^0.0.13",
+    "mirador-mltools-plugin-mmu": "^0.0.14",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.3",

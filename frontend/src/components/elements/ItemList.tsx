@@ -49,7 +49,6 @@ export const ItemList = <G,T extends { id: number,snapShotHash?:string}>(
     objectTypes
   }: IProjectUserGroup<G,T>): JSX.Element => {
   const { t } = useTranslation();
-
   return (
     <Paper
       elevation={1}

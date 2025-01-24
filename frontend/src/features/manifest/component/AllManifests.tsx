@@ -205,10 +205,12 @@ export const AllManifests = ({
     setThumbnailUrls(urls);
   }, [currentPageData, caddyUrl]);
 
-// Fetch thumbnails whenever the current page data changes
+
   useEffect(() => {
     fetchThumbnails();
-  }, [fetchThumbnails]);
+    fetchManifestForUser();
+  }, []);
+
   const HandleLookingForManifests = async (partialString: string) => {
     const userManifests = await lookingForManifests(partialString, userPersonalGroup.id);
     return userManifests;
@@ -356,6 +358,7 @@ export const AllManifests = ({
       id: projectGroup.user_group.id,
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
+      type: projectGroup.user_group.type,
     }));
   }, [groupList]);
 
