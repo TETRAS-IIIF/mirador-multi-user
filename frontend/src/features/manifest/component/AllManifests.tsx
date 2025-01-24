@@ -205,10 +205,12 @@ export const AllManifests = ({
     setThumbnailUrls(urls);
   }, [currentPageData, caddyUrl]);
 
-// Fetch thumbnails whenever the current page data changes
+
   useEffect(() => {
     fetchThumbnails();
-  }, [fetchThumbnails]);
+    fetchManifestForUser();
+  }, []);
+
   const HandleLookingForManifests = async (partialString: string) => {
     const userManifests = await lookingForManifests(partialString, userPersonalGroup.id);
     return userManifests;

@@ -220,18 +220,22 @@ export const SideDrawer = ({
   };
 
   const fetchMediaForUser = async () => {
+    const allMedias: Media[] = [];
     const personalGroup = await fetchUserPersonalGroup();
-    let medias = await getUserGroupMedias(personalGroup!.id);
+
+    const personalGroupMedias = await getUserGroupMedias(personalGroup!.id);
+    allMedias.push(...personalGroupMedias);
+
     for (const group of groups) {
       const groupMedias = await getUserGroupMedias(group.id);
-
-      const groupMediasFiltered = groupMedias.filter(
-        (media) => !medias.find((existingMedia) => existingMedia.id === media.id),
-      );
-
-      medias = [...medias, ...groupMediasFiltered];
+      allMedias.push(...groupMedias);
     }
-    setMedias(medias);
+
+    const uniqueMedias = Array.from(
+      new Map(allMedias.map((media) => [media.id, media])).values()
+    );
+
+    setMedias(uniqueMedias);
   };
 
   const getManifestFromUrl = async (manifestUrl: string) => {
@@ -244,14 +248,26 @@ export const SideDrawer = ({
   };
 
   const fetchManifestForUser = async () => {
-    const personnalGroup = await fetchUserPersonalGroup();
-    const userManifests = await getUserGroupManifests(personnalGroup!.id);
+    const allManifests: Manifest[] = [];
+    const personalGroup = await fetchUserPersonalGroup();
+
+    const userManifests = await getUserGroupManifests(personalGroup!.id);
+    allManifests.push(...userManifests);
+
+    for (const group of groups) {
+      const manifestsGroup = await getUserGroupManifests(group!.id);
+      allManifests.push(...manifestsGroup);
+    }
+    const uniqueManifests = Array.from(
+      new Map(allManifests.map((manifest) => [manifest.id, manifest])).values()
+    );
+
+
     const updatedManifests = await Promise.all(
-      userManifests.map(async (manifest) => {
-        const manifestUrl = manifest.path;
-        const manifestJson = await getManifestFromUrl(manifestUrl);
+      uniqueManifests.map(async (manifest) => {
+        const manifestJson = await getManifestFromUrl(manifest.path);
         return { ...manifest, json: manifestJson };
-      }),
+      })
     );
 
     setManifests(updatedManifests);
@@ -333,10 +349,15 @@ export const SideDrawer = ({
     }
   };
 
+  const initializedWorkspace = async ()=> {
+    await fetchGroups()
+    await fetchProjects();
+    await fetchMediaForUser();
+    await fetchManifestForUser();
+  }
+
   useEffect(() => {
-    fetchProjects();
-    fetchMediaForUser();
-    fetchManifestForUser();
+    initializedWorkspace()
   }, [selectedProjectId]);
 
 

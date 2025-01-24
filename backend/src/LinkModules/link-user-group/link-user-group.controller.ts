@@ -214,6 +214,7 @@ export class LinkUserGroupController {
     isArray: false,
   })
   @SetMetadata('action', ActionType.DELETE)
+  @UseGuards(AuthGuard)
   @Delete('/remove-access/:groupId/:userId')
   async removeAccess(
     @Param('groupId') groupId: number,
