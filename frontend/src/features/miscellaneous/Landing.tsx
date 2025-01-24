@@ -47,7 +47,7 @@ export const Landing = () => {
         </Grid>
       </Grid>
       <Grid item width={'100%'}>
-        <iframe src="./../../public/customAssets/landing-footer.html" width={'100%'} height={100}
+        <iframe src="./../../customAssets/landing-footer.html" width={'100%'} height={100}
                 style={{ border: 'none' }}></iframe>
       </Grid>
     </Grid>
