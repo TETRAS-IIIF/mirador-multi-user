@@ -1,40 +1,31 @@
-import { Box, CSSObject, Divider, Grid, List, ListItem, styled, Theme, Tooltip } from '@mui/material';
+import { CSSObject, Divider, List, ListItem, styled, Theme, Tooltip } from '@mui/material';
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import MuiDrawer from '@mui/material/Drawer';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { ItemButton } from './SideBar/ItemButton.tsx';
-import { AllProjects } from '../../features/projects/components/AllProjects.tsx';
-import { AllGroups } from '../../features/user-group/components/AllGroups.tsx';
 import { updateProject } from '../../features/projects/api/updateProject.ts';
 import { CreateProjectDto, Project } from '../../features/projects/types/types.ts';
 import IState from '../../features/mirador/interface/IState.ts';
-import { MMUModal } from './modal.tsx';
-import { ConfirmDisconnect } from '../../features/auth/components/confirmDisconect.tsx';
-import MiradorViewer from '../../features/mirador/Mirador.tsx';
 import { getUserAllProjects } from '../../features/projects/api/getUserAllProjects.ts';
 import { createProject } from '../../features/projects/api/createProject.ts';
 import toast from 'react-hot-toast';
-import { AllMedias } from '../../features/media/component/AllMedias.tsx';
 import { User } from '../../features/auth/types/types.ts';
 import { Media, MediaGroupRights } from '../../features/media/types/types.ts';
 import { getUserGroupMedias } from '../../features/media/api/getUserGroupMedias.ts';
 import { getUserPersonalGroup } from '../../features/projects/api/getUserPersonalGroup.ts';
 import { UserGroup, UserGroupTypes } from '../../features/user-group/types/types.ts';
-import { AllManifests } from '../../features/manifest/component/AllManifests.tsx';
 import { getUserGroupManifests } from '../../features/manifest/api/getUserGroupManifests.ts';
 import { Manifest, ManifestGroupRights } from '../../features/manifest/types/types.ts';
 import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
-import { UserSettings } from '../../features/user-setting/UserSettings.tsx';
-import { SidePanelManifest } from '../../features/manifest/component/SidePanelManifest.tsx';
 import { handleLock } from '../../features/projects/api/handleLock.ts';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import { AdminPanel } from '../../features/admin/components/adminPanel.tsx';
 import { useTranslation } from 'react-i18next';
 import { loadLanguage } from '../../features/translation/i18n.ts';
 import { SaveProject } from './SideDrawer/SaveProject';
 import { SideDrawerHeader } from './SideDrawer/SideDrawerHeader';
 import { SideDrawerContentMenu } from './SideDrawer/SideDrawerContentMenu';
+import { Content } from './SideDrawer/Content';
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -119,7 +110,7 @@ export const SideDrawer = ({
   const [manifests, setManifests] = useState<Manifest[]>([]);
   const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
   const [groups, setGroups] = useState<UserGroup[]>([]);
-  const [isRunning, setIsRunning] = useState(false);
+  const [isMiradorRunning, setIsMiradorRunning] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const myRef = useRef<MiradorViewerHandle>(null);
   const { t } = useTranslation();
@@ -147,7 +138,7 @@ export const SideDrawer = ({
         intervalRef.current = null;
       }
     };
-  }, [myRef.current, isRunning]);
+  }, [myRef.current, isMiradorRunning]);
 
   useEffect(() => {
     loadPreferredLanguage();
@@ -157,7 +148,7 @@ export const SideDrawer = ({
   };
 
   const HandleSetIsRunning = () => {
-    setIsRunning(!isRunning);
+    setIsMiradorRunning(!isMiradorRunning);
   };
 
   const handleDrawerOpen = () => {
@@ -445,85 +436,36 @@ export const SideDrawer = ({
           </Tooltip>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: '100vh' }}>
-        {selectedProjectId && projectSelected && (
-          <SidePanelManifest manifest={manifests} userPersonalGroup={userPersonalGroup!} user={user}
-                             fetchManifestForUser={fetchManifestForUser} display={true}>
-            <Grid sx={{ paddingRight: 5 }}>
-              <MiradorViewer
-                language={user.preferredLanguage ? user.preferredLanguage : navigator.language.split('-')[0]}
-                miradorState={miradorState!}
-                setMiradorState={handleSetMiradorState}
-                project={projectSelected}
-                saveMiradorState={saveMiradorState}
-                viewer={viewer}
-                setViewer={setViewer}
-                ref={myRef}
-                HandleSetIsRunning={HandleSetIsRunning}
-              />
-            </Grid>
-          </SidePanelManifest>
-        )
-        }
-        {
-          user && user.id && user._isAdmin && selectedContent === MENU_ELEMENT.ADMIN && (
-            <AdminPanel />
-          )
-        }
-        {user && user.id && selectedContent === MENU_ELEMENT.PROJECTS && !selectedProjectId && (
-          <AllProjects
-            selectedProjectId={selectedProjectId}
-            setSelectedProjectId={setSelectedProjectId}
-            user={user}
-            userProjects={userProjects}
-            setUserProjects={HandleSetUserProjects}
-            handleSetMiradorState={HandleSetMiradorState}
-            medias={medias}
-            setMedias={setMedias}
-          />
-        )}
-        {
-          user && user.id && !selectedProjectId && selectedContent === MENU_ELEMENT.MEDIA && (
-            <AllMedias
-              user={user}
-              userPersonalGroup={userPersonalGroup!}
-              medias={medias}
-              fetchMediaForUser={fetchMediaForUser}
-              setMedias={setMedias}
-            />
-          )
-        }
-        {
-          user && user.id && selectedContent === MENU_ELEMENT.GROUPS && (
-            <AllGroups
-              setGroups={setGroups}
-              groups={groups}
-              fetchGroups={fetchGroups}
-              userPersonalGroup={userPersonalGroup!}
-              medias={medias}
-              user={user}
-              setMedias={setMedias}
-            />
-          )
-        }
-        {
-          user && user.id && selectedContent === MENU_ELEMENT.MANIFEST && userPersonalGroup && (
-            <AllManifests fetchMediaForUser={fetchMediaForUser} createManifestIsOpen={createManifestIsOpen}
-                          setCreateManifestIsOpen={handleSetCreateManifestIsOpen} medias={medias} manifests={manifests}
-                          fetchManifestForUser={fetchManifestForUser} user={user} userPersonalGroup={userPersonalGroup} />
-          )
-        }
-        {
-          user && user.id && selectedContent === MENU_ELEMENT.SETTING && (
-            <UserSettings user={user} />
-          )
-        }
-        {modalDisconectIsOpen && (
-          <MMUModal openModal={modalDisconectIsOpen} setOpenModal={handleSetDisconnectModalOpen} width={400}
-                    children={<ConfirmDisconnect handleDisconnect={handleDisonnectUser} />} />
-        )
-        }
-      </Box>
+      <Content
+        HandleSetIsRunning={HandleSetIsRunning}
+        HandleSetUserProjects={HandleSetUserProjects}
+        createManifestIsOpen={createManifestIsOpen}
+        fetchGroups={fetchGroups}
+        fetchManifestForUser={fetchManifestForUser}
+        fetchMediaForUser={fetchMediaForUser}
+        groups={groups}
+        handleDisonnectUser={handleDisonnectUser}
+        handleSetCreateManifestIsOpen={handleSetCreateManifestIsOpen}
+        handleSetDisconnectModalOpen={handleSetDisconnectModalOpen}
+        handleSetMiradorState={handleSetMiradorState}
+        manifests={manifests}
+        medias={medias}
+        miradorState={miradorState}
+        modalDisconectIsOpen={modalDisconectIsOpen}
+        myRef={myRef}
+        projectSelected={projectSelected}
+        saveMiradorState={saveMiradorState}
+        selectedContent={selectedContent}
+        selectedProjectId={selectedProjectId}
+        setGroups={setGroups}
+        setMedias={setMedias}
+        setSelectedProjectId={setSelectedProjectId}
+        setViewer={setViewer}
+        user={user}
+        userPersonalGroup={userPersonalGroup}
+        userProjects={userProjects}
+        viewer={viewer}
+      />
     </>
   );
 };
