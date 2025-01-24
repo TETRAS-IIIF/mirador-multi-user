@@ -44,7 +44,6 @@ export const ItemList = <G,T extends { id: number,snapShotHash?:string}>(
     objectTypes
   }: IProjectUserGroup<G,T>): JSX.Element => {
 
-  console.log(item)
   const { t } = useTranslation();
   return (
     <Paper
