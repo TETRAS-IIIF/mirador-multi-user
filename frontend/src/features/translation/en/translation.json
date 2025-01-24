@@ -74,6 +74,7 @@
   "invalidToken": "Invalid or missing reset token",
   "labelApiToken": "API Token",
   "labelProjectTitle": "Project's title:",
+  "leaveGroupTooltip": "Leave the group",
   "linkManifest": "Link manifest",
   "linkMedia": "LINK MEDIA",
   "loadingImpersonate": "Loading impersonation...",
