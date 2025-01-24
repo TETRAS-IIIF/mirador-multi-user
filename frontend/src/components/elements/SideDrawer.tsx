@@ -200,7 +200,7 @@ export const SideDrawer = ({
     await saveMiradorState();
   };
 
-  const handleDisonnectUser = () => {
+  const handleDisconnectUser = () => {
     handleDisconnect();
     setShowSignOutModal(false);
   };
@@ -293,7 +293,7 @@ export const SideDrawer = ({
         fetchGroups={fetchGroups}
         fetchMediaForUser={fetchMediaForUser}
         groups={groups}
-        handleDisonnectUser={handleDisonnectUser}
+        handleDisconnectUser={handleDisconnectUser}
         handleSetCreateManifestIsOpen={handleSetCreateManifestIsOpen}
         setShowSignOutModal={setShowSignOutModal}
         handleSetMiradorState={handleSetMiradorState}

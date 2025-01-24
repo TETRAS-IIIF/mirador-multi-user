@@ -19,7 +19,7 @@ export function Content({
                           fetchMediaForUser,
                           fetchGroups,
                           groups,
-                          handleDisonnectUser,
+                          handleDisconnectUser,
                           handleSetCreateManifestIsOpen,
                           setShowSignOutModal,
                           handleSetMiradorState,
@@ -125,7 +125,7 @@ export function Content({
       }
       {showSignOutModal && (
         <MMUModal openModal={showSignOutModal} setOpenModal={setShowSignOutModal} width={400}
-                  children={<ConfirmDisconnect handleDisconnect={handleDisonnectUser} />} />
+                  children={<ConfirmDisconnect handleDisconnect={handleDisconnectUser} />} />
       )
       }
     </Box>
