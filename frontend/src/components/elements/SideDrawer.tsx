@@ -112,14 +112,14 @@ export const SideDrawer = ({
   const [groups, setGroups] = useState<UserGroup[]>([]);
   const [isMiradorRunning, setIsMiradorRunning] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const myRef = useRef<MiradorViewerHandle>(null);
+  const miradorViewerRef = useRef<MiradorViewerHandle>(null);
   const { t } = useTranslation();
 
   const loadPreferredLanguage = async () => {
     await loadLanguage(user.preferredLanguage);
   };
   useEffect(() => {
-    if (myRef.current !== null) {
+    if (miradorViewerRef.current !== null) {
       if (!intervalRef.current) {
         intervalRef.current = setInterval(() => {
           saveProject();
@@ -138,7 +138,7 @@ export const SideDrawer = ({
         intervalRef.current = null;
       }
     };
-  }, [myRef.current, isMiradorRunning]);
+  }, [miradorViewerRef.current, isMiradorRunning]);
 
   useEffect(() => {
     loadPreferredLanguage();
@@ -187,7 +187,7 @@ export const SideDrawer = ({
     setUserProjects(sortedProjects);
   };
 
-  const HandleSetMiradorState = (state: IState | undefined) => {
+  const handleSetMiradorState = (state: IState) => {
     setMiradorState(state);
   };
 
@@ -298,7 +298,7 @@ export const SideDrawer = ({
 
 
   const saveMiradorState = useCallback(async () => {
-    const miradorViewer = myRef.current?.setViewer();
+    const miradorViewer = miradorViewerRef.current?.setViewer();
     if (selectedProjectId) {
       let projectToUpdate: Project = userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
@@ -349,9 +349,7 @@ export const SideDrawer = ({
     handleDisconnect();
     handleSetDisconnectModalOpen();
   };
-  const handleSetMiradorState = (state: IState) => {
-    setMiradorState(state);
-  };
+
 
   const fetchProjects = async () => {
     try {
@@ -452,7 +450,7 @@ export const SideDrawer = ({
         medias={medias}
         miradorState={miradorState}
         modalDisconectIsOpen={modalDisconectIsOpen}
-        myRef={myRef}
+        myRef={miradorViewerRef}
         projectSelected={projectSelected}
         saveMiradorState={saveMiradorState}
         selectedContent={selectedContent}

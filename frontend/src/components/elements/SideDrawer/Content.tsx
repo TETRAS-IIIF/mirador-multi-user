@@ -1,6 +1,4 @@
-import { SidePanelManifest } from '../../../features/manifest/component/SidePanelManifest';
-import { Box, Grid } from '@mui/material';
-import MiradorViewer from '../../../features/mirador/Mirador';
+import { Box } from '@mui/material';
 import { AdminPanel } from '../../../features/admin/components/adminPanel';
 import { AllProjects } from '../../../features/projects/components/AllProjects';
 import { AllMedias } from '../../../features/media/component/AllMedias';
@@ -10,6 +8,7 @@ import { UserSettings } from '../../../features/user-setting/UserSettings';
 import { MMUModal } from '../modal';
 import { ConfirmDisconnect } from '../../../features/auth/components/confirmDisconect';
 import { MENU_ELEMENT } from '../SideDrawer';
+import { ProjectWorkspace } from './ProjectWorkspace';
 
 
 export function Content({
@@ -45,22 +44,20 @@ export function Content({
   return (
     <Box component="main" sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: '100vh' }}>
       {selectedProjectId && projectSelected && (
-        <SidePanelManifest manifest={manifests} userPersonalGroup={userPersonalGroup!} user={user}
-                           fetchManifestForUser={fetchManifestForUser} display={true}>
-          <Grid sx={{ paddingRight: 5 }}>
-            <MiradorViewer
-              language={user.preferredLanguage ? user.preferredLanguage : navigator.language.split('-')[0]}
-              miradorState={miradorState!}
-              setMiradorState={handleSetMiradorState}
-              project={projectSelected}
-              saveMiradorState={saveMiradorState}
-              viewer={viewer}
-              setViewer={setViewer}
-              ref={myRef}
-              HandleSetIsRunning={HandleSetIsRunning}
-            />
-          </Grid>
-        </SidePanelManifest>
+        <ProjectWorkspace
+          HandleSetIsRunning={HandleSetIsRunning}
+          fetchManifestForUser={fetchManifestForUser}
+          handleSetMiradorState={handleSetMiradorState}
+          miradorState={miradorState!}
+          myRef={myRef}
+          projectSelected={projectSelected}
+          saveMiradorState={saveMiradorState}
+          user={user}
+          userPersonalGroup={userPersonalGroup!}
+          viewer={viewer}
+          setViewer={setViewer}
+          manifests={manifests}
+        />
       )
       }
       {
