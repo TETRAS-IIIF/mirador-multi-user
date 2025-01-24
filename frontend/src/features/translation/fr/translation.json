@@ -74,6 +74,7 @@
   "invalidToken": "Jeton de réinitialisation invalide ou manquant",
   "labelApiToken": "Jeton API",
   "labelProjectTitle": "Titre du projet :",
+  "leaveGroupTooltip": "Leave the group",
   "linkManifest": "Lier manifeste",
   "linkMedia": "LIER MÉDIA",
   "loadingImpersonate": "Chargement de l'usurpation...",
