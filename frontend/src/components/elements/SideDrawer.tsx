@@ -33,7 +33,7 @@ import { AdminPanel } from '../../features/admin/components/adminPanel.tsx';
 import { useTranslation } from 'react-i18next';
 import { loadLanguage } from '../../features/translation/i18n.ts';
 import { SaveProject } from './SideDrawer/SaveProject';
-import { SideDrawerHeader } from './SideDrawer/SideDrawerHeaderHeader';
+import { SideDrawerHeader } from './SideDrawer/SideDrawerHeader';
 import { SideDrawerContentMenu } from './SideDrawer/SideDrawerContentMenu';
 
 const drawerWidth = 240;
