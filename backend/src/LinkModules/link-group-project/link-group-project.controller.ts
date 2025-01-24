@@ -187,6 +187,19 @@ export class LinkGroupProjectController {
     );
   }
 
+  @ApiOperation({ summary: "Remove a project from user's list" })
+  @UseGuards(AuthGuard)
+  @Delete('/remove-project/:projectId')
+  async removeProjectFromUser(
+    @Param('projectId') projectId: number,
+    @Req() request,
+  ) {
+    return await this.linkGroupProjectService.removeProjectFromUser(
+      projectId,
+      request.user.sub,
+    );
+  }
+
   //TODO: Check if this routes is usefull
   // @UseGuards(AuthGuard)
   // @Get('/project/:projectId/:userGroupId')

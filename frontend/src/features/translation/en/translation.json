@@ -133,6 +133,7 @@
   "project": "Projects",
   "projectSnapshotUrl": "Project snapshot URL",
   "projectTitle": "My projects",
+  "removeProjectFromList": "Remove project from list",
   "register": "REGISTER",
   "resendConfirmationLink": "Resend Confirmation Link",
   "reset-password": "Reset Password",

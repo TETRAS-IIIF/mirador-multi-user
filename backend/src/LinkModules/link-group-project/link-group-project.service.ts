@@ -55,7 +55,6 @@ export class LinkGroupProjectService {
     }
   }
 
-
   async findOne(id: number) {
     try {
       return await this.linkGroupProjectRepository.findOneBy({ id });
@@ -134,6 +133,19 @@ export class LinkGroupProjectService {
     }
   }
 
+  async removeProjectFromUser(projectId: number, userId: number) {
+    try {
+      const personalGroup =
+        await this.groupService.findUserPersonalGroup(userId);
+      return await this.RemoveProjectToGroup({
+        projectId: projectId,
+        groupId: personalGroup.id,
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(error);
+    }
+  }
   async UpdateRelation(
     project_Id: number,
     user_group_Id: number,

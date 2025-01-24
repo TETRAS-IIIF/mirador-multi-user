@@ -42,6 +42,9 @@ import { Dayjs } from "dayjs";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { removeProjectFromList } from '../api/removeProjectFromList.ts';
+import CancelIcon from '@mui/icons-material/Cancel';
+
 interface AllProjectsProps {
   user: User;
   setSelectedProjectId: (id: number) => void;
@@ -303,6 +306,9 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     setOpenSidePanel(!openSidePanel)
   }
 
+  const handleRemoveProjectFromList= async (projectId: number)=>{
+    await removeProjectFromList(projectId)
+  }
   return (
     <>
       <SidePanelMedia open={openSidePanel && !!openModalProjectId} setOpen={handleSetOpenSidePanel} display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
@@ -354,7 +360,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                         openModal={openModalProjectId === projectUser.id}
                         DefaultButton={<ModalButton tooltipButton={t('openProject')} onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
                         EditorButton={<ModalButton  tooltipButton={t('configuration')} onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<SettingsIcon />} disabled={false}/>}
-                        ReaderButton={<ModalButton tooltipButton={t('configuration')} onClickFunction={()=>console.log(t("notAllowedMessage"))} icon={<SettingsIcon />} disabled={true}/>}
+                        ReaderButton={<ModalButton color={'error'} tooltipButton={t('removeProjectFromList')} onClickFunction={()=>handleRemoveProjectFromList(projectUser.id)} icon={<CancelIcon />} disabled={false}/>}
                         id={projectUser.id}
                         rights={projectUser.rights!}
                         deleteItem={deleteUserProject}
