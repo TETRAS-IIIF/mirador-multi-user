@@ -21,12 +21,12 @@ export function Content({
                           groups,
                           handleDisonnectUser,
                           handleSetCreateManifestIsOpen,
-                          handleSetDisconnectModalOpen,
+                          setShowSignOutModal,
                           handleSetMiradorState,
                           manifests,
                           medias,
                           miradorState,
-                          modalDisconectIsOpen,
+                          showSignOutModal,
                           myRef,
                           projectSelected,
                           saveMiradorState,
@@ -113,8 +113,8 @@ export function Content({
           <UserSettings user={user} />
         )
       }
-      {modalDisconectIsOpen && (
-        <MMUModal openModal={modalDisconectIsOpen} setOpenModal={handleSetDisconnectModalOpen} width={400}
+      {showSignOutModal && (
+        <MMUModal openModal={showSignOutModal} setOpenModal={setShowSignOutModal} width={400}
                   children={<ConfirmDisconnect handleDisconnect={handleDisonnectUser} />} />
       )
       }

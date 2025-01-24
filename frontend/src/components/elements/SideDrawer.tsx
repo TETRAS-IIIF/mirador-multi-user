@@ -52,10 +52,10 @@ export const SideDrawer = ({
                              setViewer,
                              viewer,
                            }: ISideDrawerProps) => {
-  const [isSideDrawerExpanded, setIsSideDrawerExpanded] = useState(true);
+
   const [selectedContent, setSelectedContent] = useState(MENU_ELEMENT.PROJECTS);
   const [userProjects, setUserProjects] = useState<Project[]>([]);
-  const [modalDisconectIsOpen, setModalDisconectIsOpen] = useState(false);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>();
   const [medias, setMedias] = useState<Media[]>([]);
@@ -103,18 +103,12 @@ export const SideDrawer = ({
     setIsMiradorRunning(!isMiradorRunning);
   };
 
-  const handleDrawerOpen = () => {
-    setIsSideDrawerExpanded(true);
-  };
 
   const handleSaveProject = useCallback((newProject: Project) => {
     return setUserProjects([newProject, ...userProjects]);
 
   }, [setUserProjects]);
 
-  const handleDrawerClose = () => {
-    setIsSideDrawerExpanded(false);
-  };
 
   const handleChangeContent = (content: string) => {
     if (selectedProjectId) {
@@ -293,10 +287,6 @@ export const SideDrawer = ({
     await saveMiradorState();
   };
 
-  const handleSetDisconnectModalOpen = () => {
-    setModalDisconectIsOpen(!modalDisconectIsOpen);
-  };
-
   const handleDisonnectUser = () => {
     handleDisconnect();
     handleSetDisconnectModalOpen();
@@ -340,15 +330,11 @@ export const SideDrawer = ({
     <>
       <MMUDrawer
         handleChangeContent={handleChangeContent}
-        handleDrawerClose={handleDrawerClose}
-        handleDrawerOpen={handleDrawerOpen}
-        handleSetDisconnectModalOpen={handleSetDisconnectModalOpen}
-        isSideDrawerExpanded={isSideDrawerExpanded}
         projectSelected={projectSelected}
         saveProject={saveProject}
         selectedContent={selectedContent}
         selectedProjectId={selectedProjectId}
-        t={t}
+        setShowSignOutModal={setShowSignOutModal}
         user={user}
       />
       <Content
@@ -361,12 +347,12 @@ export const SideDrawer = ({
         groups={groups}
         handleDisonnectUser={handleDisonnectUser}
         handleSetCreateManifestIsOpen={handleSetCreateManifestIsOpen}
-        handleSetDisconnectModalOpen={handleSetDisconnectModalOpen}
+        setShowSignOutModal={setShowSignOutModal}
         handleSetMiradorState={handleSetMiradorState}
         manifests={manifests}
         medias={medias}
         miradorState={miradorState}
-        modalDisconectIsOpen={modalDisconectIsOpen}
+        showSignOutModal={showSignOutModal}
         myRef={miradorViewerRef}
         projectSelected={projectSelected}
         saveMiradorState={saveMiradorState}

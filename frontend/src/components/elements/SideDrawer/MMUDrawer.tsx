@@ -8,6 +8,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { MENU_ELEMENT } from '../SideDrawer';
 import MuiDrawer from '@mui/material/Drawer';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -55,18 +57,26 @@ const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== '
  * @constructor
  */
 export function MMUDrawer({
-                            isSideDrawerExpanded,
-                            handleDrawerClose,
-                            handleDrawerOpen,
-                            selectedContent,
                             handleChangeContent,
-                            user,
-                            selectedProjectId,
+                            setShowSignOutModal,
                             projectSelected,
                             saveProject,
-                            t,
-                            handleSetDisconnectModalOpen,
+                            selectedContent,
+                            user,
                           }) {
+
+  const [isSideDrawerExpanded, setIsSideDrawerExpanded] = useState(true);
+
+  const { t } = useTranslation();
+
+  const handleDrawerClose = () => {
+    setIsSideDrawerExpanded(false);
+  };
+
+  const handleDrawerOpen = () => {
+    setIsSideDrawerExpanded(true);
+  };
+
   return (
     <StyledDrawer variant="permanent" open={isSideDrawerExpanded} sx={{ maxHeight: '100vh' }}
     >
@@ -80,7 +90,7 @@ export function MMUDrawer({
       />
       <Divider />
       {
-        selectedProjectId && (
+        projectSelected && (
           <>
             <DrawerElementSaveProject
               open={isSideDrawerExpanded}
@@ -109,7 +119,7 @@ export function MMUDrawer({
         <Tooltip title={t('titleDisconnect')} placement="right">
           <ListItem sx={{ padding: 0 }}>
             <ItemButton open={isSideDrawerExpanded} selected={false} icon={<LogoutIcon />} text={t('disconnect')}
-                        action={handleSetDisconnectModalOpen} />
+                        action={() => setShowSignOutModal(true)} />
           </ListItem>
         </Tooltip>
       </List>
