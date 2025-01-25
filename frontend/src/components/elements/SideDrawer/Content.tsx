@@ -12,10 +12,12 @@ import { ProjectWorkspace } from './ProjectWorkspace';
 
 
 export function Content({
+                          fetchManifestForUser,
+                          manifests,
+                          setManifests,
                           HandleSetIsRunning,
                           HandleSetUserProjects,
                           createManifestIsOpen,
-                          fetchManifestForUser,
                           fetchMediaForUser,
                           fetchGroups,
                           groups,
@@ -23,7 +25,6 @@ export function Content({
                           handleSetCreateManifestIsOpen,
                           setShowSignOutModal,
                           handleSetMiradorState,
-                          manifests,
                           medias,
                           miradorState,
                           showSignOutModal,
@@ -50,15 +51,15 @@ export function Content({
           HandleSetIsRunning={HandleSetIsRunning}
           fetchManifestForUser={fetchManifestForUser}
           handleSetMiradorState={handleSetMiradorState}
+          manifests={manifests}
           miradorState={miradorState!}
           myRef={miradorViewerRef}
           projectSelected={projectSelected}
           saveMiradorState={saveMiradorState}
+          setViewer={setViewer}
           user={user}
           userPersonalGroup={userPersonalGroup}
           viewer={viewer}
-          setViewer={setViewer}
-          manifests={manifests}
         />
       )
       }
@@ -69,51 +70,51 @@ export function Content({
       }
       {user && user.id && selectedContent === MENU_ELEMENT.PROJECTS && !selectedProjectId && (
         <AllProjects
-          selectedProjectId={selectedProjectId}
-          setSelectedProjectId={setSelectedProjectId}
-          user={user}
-          userProjects={userProjects}
-          setUserProjects={HandleSetUserProjects}
           handleSetMiradorState={handleSetMiradorState}
           medias={medias}
+          selectedProjectId={selectedProjectId}
           setMedias={setMedias}
+          setSelectedProjectId={setSelectedProjectId}
+          setUserProjects={HandleSetUserProjects}
+          user={user}
+          userProjects={userProjects}
         />
       )}
       {
         user && user.id && !selectedProjectId && selectedContent === MENU_ELEMENT.MEDIA && (
           <AllMedias
+            fetchMediaForUser={fetchMediaForUser}
+            medias={medias}
+            setMedias={setMedias}
             user={user}
             userPersonalGroup={userPersonalGroup}
-            medias={medias}
-            fetchMediaForUser={fetchMediaForUser}
-            setMedias={setMedias}
           />
         )
       }
       {
         user && user.id && selectedContent === MENU_ELEMENT.GROUPS && (
           <AllGroups
-            setGroups={setGroups}
-            groups={groups}
-            userPersonalGroup={userPersonalGroup}
-            medias={medias}
-            user={user}
-            setMedias={setMedias}
             fetchGroups={fetchGroups}
+            groups={groups}
+            medias={medias}
+            setGroups={setGroups}
+            setMedias={setMedias}
+            user={user}
+            userPersonalGroup={userPersonalGroup}
           />
         )
       }
       {
         user && user.id && selectedContent === MENU_ELEMENT.MANIFEST && (
           <AllManifests
-            fetchMediaForUser={fetchMediaForUser}
             createManifestIsOpen={createManifestIsOpen}
-            setCreateManifestIsOpen={handleSetCreateManifestIsOpen}
-            medias={medias}
-            manifests={manifests}
             fetchManifestForUser={fetchManifestForUser}
+            fetchMediaForUser={fetchMediaForUser}
+            manifests={manifests}
+            medias={medias}
+            setCreateManifestIsOpen={handleSetCreateManifestIsOpen}
+            setManifests={setManifests}
             user={user}
-            groups={groups}
             userPersonalGroup={userPersonalGroup}
           />
         )

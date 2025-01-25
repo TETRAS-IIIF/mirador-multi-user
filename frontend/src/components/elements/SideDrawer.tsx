@@ -16,6 +16,8 @@ import { loadLanguage } from '../../features/translation/i18n.ts';
 import { Content } from './SideDrawer/Content';
 import { MMUDrawer } from './SideDrawer/MMUDrawer';
 import { getUserGroupMedias } from '../../features/media/api/getUserGroupMedias';
+import { Manifest, ManifestGroupRights } from '../../features/manifest/types/types';
+import { getUserGroupManifests } from '../../features/manifest/api/getUserGroupManifests';
 
 
 interface ISideDrawerProps {
@@ -148,6 +150,56 @@ export const SideDrawer = ({
     }
   };
 
+  const [manifests, setManifests] = useState<Manifest[]>([]);
+
+  const getManifestFromUrl = async (manifestUrl: string) => {
+    try {
+      const response = await fetch(manifestUrl);
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchManifestForUser = async () => {
+    const allManifests: Manifest[] = [];
+
+    const userManifests = await getUserGroupManifests(userPersonalGroup!.id);
+    allManifests.push(...userManifests);
+
+    for (const group of groups) {
+      const manifestsGroup = await getUserGroupManifests(group!.id);
+      allManifests.push(...manifestsGroup);
+    }
+
+    const rightsPriority = {
+      [ManifestGroupRights.ADMIN]: 3,
+      [ManifestGroupRights.EDITOR]: 2,
+      [ManifestGroupRights.READER]: 1,
+    };
+
+    const uniqueManifestsMap = new Map<number, Manifest>();
+
+    allManifests.forEach((manifest) => {
+      const existing = uniqueManifestsMap.get(manifest.id);
+
+      if (!existing ||
+        (manifest.rights &&
+          rightsPriority[manifest.rights] > (existing.rights ? rightsPriority[existing.rights] : 0))) {
+        uniqueManifestsMap.set(manifest.id, manifest);
+      }
+    });
+    const uniqueManifests = Array.from(uniqueManifestsMap.values());
+
+    const updatedManifests = await Promise.all(
+      uniqueManifests.map(async (manifest) => {
+        const manifestJson = await getManifestFromUrl(manifest.path);
+        return { ...manifest, json: manifestJson };
+      }),
+    );
+    setManifests(updatedManifests);
+  };
+
 
   const fetchGroups = async () => {
     let groups = await getAllUserGroups(user.id);
@@ -257,7 +309,7 @@ export const SideDrawer = ({
   };
 
   const initializedWorkspace = async () => {
-
+    await fetchManifestForUser();
     await fetchGroups()
     await fetchProjects();
     await fetchMediaForUser();
@@ -287,6 +339,8 @@ export const SideDrawer = ({
         user={user}
       />
       <Content
+        fetchManifestForUser={fetchManifestForUser}
+        manifests={manifests}
         HandleSetIsRunning={HandleSetIsRunning}
         HandleSetUserProjects={HandleSetUserProjects}
         createManifestIsOpen={createManifestIsOpen}
