@@ -14,13 +14,11 @@ import { ProjectWorkspace } from './ProjectWorkspace';
 export function Content({
                           HandleSetIsRunning,
                           HandleSetUserProjects,
-                          createManifestIsOpen,
                           fetchGroups,
                           fetchManifestForUser,
                           fetchMediaForUser,
                           groups,
                           handleDisconnectUser,
-                          handleSetCreateManifestIsOpen,
                           handleSetMiradorState,
                           manifests,
                           medias,

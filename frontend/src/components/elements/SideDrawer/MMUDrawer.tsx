@@ -65,6 +65,7 @@ export function MMUDrawer({
                             user,
                           }) {
 
+
   const [isSideDrawerExpanded, setIsSideDrawerExpanded] = useState(true);
 
   const { t } = useTranslation();

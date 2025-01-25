@@ -30,7 +30,16 @@ interface MiradorViewerProps {
 }
 
 const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props, ref) => {
-  const { miradorState, saveMiradorState, project, setMiradorState, setViewer, HandleSetIsRunning, language } = props;
+  const {
+    miradorState,
+    saveMiradorState,
+    project,
+    setMiradorState,
+    setViewer,
+    HandleSetIsRunning,
+    language
+  } = props;
+
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
   useImperativeHandle(ref, () => ({
