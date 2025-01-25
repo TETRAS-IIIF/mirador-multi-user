@@ -74,12 +74,10 @@ export const AllManifests = ({
                                userPersonalGroup,
                                user,
                                medias,
-                               setCreateManifestIsOpen,
-                               createManifestIsOpen,
                                fetchMediaForUser,
                              }: IAllManifests) => {
 
-
+  const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
   const [searchedManifest, setSearchedManifest] = useState<Manifest | null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
   const [searchedManifestIndex, setSearchedManifestIndex] = useState<number | null>(null);

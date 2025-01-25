@@ -12,31 +12,31 @@ import { ProjectWorkspace } from './ProjectWorkspace';
 
 
 export function Content({
-                          fetchManifestForUser,
-                          manifests,
-                          setManifests,
                           HandleSetIsRunning,
                           HandleSetUserProjects,
                           createManifestIsOpen,
-                          fetchMediaForUser,
                           fetchGroups,
+                          fetchManifestForUser,
+                          fetchMediaForUser,
                           groups,
                           handleDisconnectUser,
                           handleSetCreateManifestIsOpen,
-                          setShowSignOutModal,
                           handleSetMiradorState,
+                          manifests,
                           medias,
                           miradorState,
-                          showSignOutModal,
                           miradorViewerRef,
                           projectSelected,
                           saveMiradorState,
                           selectedContent,
                           selectedProjectId,
                           setGroups,
+                          setManifests,
                           setMedias,
                           setSelectedProjectId,
+                          setShowSignOutModal,
                           setViewer,
+                          showSignOutModal,
                           user,
                           userPersonalGroup,
                           userProjects,
@@ -107,12 +107,10 @@ export function Content({
       {
         user && user.id && selectedContent === MENU_ELEMENT.MANIFEST && (
           <AllManifests
-            createManifestIsOpen={createManifestIsOpen}
             fetchManifestForUser={fetchManifestForUser}
             fetchMediaForUser={fetchMediaForUser}
             manifests={manifests}
             medias={medias}
-            setCreateManifestIsOpen={handleSetCreateManifestIsOpen}
             setManifests={setManifests}
             user={user}
             userPersonalGroup={userPersonalGroup}

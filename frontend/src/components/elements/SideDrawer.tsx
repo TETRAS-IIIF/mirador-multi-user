@@ -60,7 +60,7 @@ export const SideDrawer = ({
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>(null);
   const [medias, setMedias] = useState<Media[]>([]);
 
-  const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
+
   const [groups, setGroups] = useState<UserGroup[]>([]);
   const [isMiradorRunning, setIsMiradorRunning] = useState(false);
 
@@ -95,9 +95,6 @@ export const SideDrawer = ({
     fetchUserPersonalGroup();
     loadPreferredLanguage();
   }, [user]);
-  const handleSetCreateManifestIsOpen = (boolean: boolean) => {
-    setCreateManifestIsOpen(boolean);
-  };
 
   const HandleSetIsRunning = () => {
     setIsMiradorRunning(!isMiradorRunning);
@@ -120,7 +117,6 @@ export const SideDrawer = ({
     }
     setSelectedProjectId(undefined);
     setSelectedContent(content);
-    handleSetCreateManifestIsOpen(false);
   };
 
 
@@ -343,12 +339,10 @@ export const SideDrawer = ({
         manifests={manifests}
         HandleSetIsRunning={HandleSetIsRunning}
         HandleSetUserProjects={HandleSetUserProjects}
-        createManifestIsOpen={createManifestIsOpen}
         fetchGroups={fetchGroups}
         fetchMediaForUser={fetchMediaForUser}
         groups={groups}
         handleDisconnectUser={handleDisconnectUser}
-        handleSetCreateManifestIsOpen={handleSetCreateManifestIsOpen}
         setShowSignOutModal={setShowSignOutModal}
         handleSetMiradorState={handleSetMiradorState}
         medias={medias}
