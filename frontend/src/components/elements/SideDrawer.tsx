@@ -270,6 +270,10 @@ export const SideDrawer = ({
   const fetchMediaForUser = async () => {
     const allMedias: Media[] = [];
 
+    // TODO Sometimes userPersonalGroup is null on first render,
+    //  but at the end UI works as expected
+    // This problem was probably introduced in SideDrawer Refactoring.
+    // Finishing this refactoring is a good opportunity to fix this issue.
     const personalGroupMedias = await getUserGroupMedias(userPersonalGroup!.id);
     allMedias.push(...personalGroupMedias);
 
