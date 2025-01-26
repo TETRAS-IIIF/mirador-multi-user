@@ -305,10 +305,11 @@ export const SideDrawer = ({
   };
 
   const initializedWorkspace = async () => {
-    await fetchManifestForUser();
+    await fetchUserPersonalGroup();
     await fetchGroups()
     await fetchProjects();
     await fetchMediaForUser();
+    await fetchManifestForUser();
   }
 
   useEffect(() => {
