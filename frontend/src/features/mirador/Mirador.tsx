@@ -27,6 +27,8 @@ interface MiradorViewerProps {
   setMiradorState: (state: IState) => void
   setViewer: Dispatch<any>
   viewer: any
+  // Mirador use Plugin that allow to change state of Mirador
+  useEditionPlugins: boolean
 }
 
 const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props, ref) => {
@@ -37,7 +39,8 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
     setMiradorState,
     setViewer,
     HandleSetIsRunning,
-    language
+    language,
+    useEditionPlugins,
   } = props;
 
   const viewerRef = useRef<HTMLDivElement | null>(null);
@@ -75,8 +78,12 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
       let loadingMiradorViewer;
       // First displaying of the viewer
       if (!miradorViewer) {
-        loadingMiradorViewer = Mirador.viewer(config, [
-          ...miradorAnnotationEditorVideo, ...ManifestListTools]);
+        if (useEditionPlugins) {
+          loadingMiradorViewer = Mirador.viewer(config, [
+            ...miradorAnnotationEditorVideo, ...ManifestListTools]);
+        } else {
+          loadingMiradorViewer = Mirador.viewer(config);
+        }
       }
       if (!miradorState) {
         saveMiradorState(loadingMiradorViewer.store.getState(), project.title);

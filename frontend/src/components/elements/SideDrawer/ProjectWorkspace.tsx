@@ -30,6 +30,7 @@ export function ProjectWorkspace({
           setViewer={setViewer}
           ref={myRef}
           HandleSetIsRunning={HandleSetIsRunning}
+          useEditionPlugins={true}
         />
       </Grid>
     </SidePanelManifest>
