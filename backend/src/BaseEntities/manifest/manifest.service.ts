@@ -18,6 +18,7 @@ export class ManifestService {
     @InjectRepository(Manifest)
     private readonly manifestRepository: Repository<Manifest>,
   ) {}
+
   async create(createManifestDto: CreateManifestDto) {
     try {
       const manifest = this.manifestRepository.create({ ...createManifestDto });
