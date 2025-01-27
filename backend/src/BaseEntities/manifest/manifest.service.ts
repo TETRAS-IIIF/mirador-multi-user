@@ -49,10 +49,7 @@ export class ManifestService {
 
   async update(id: number, updateManifestDto: UpdateManifestDto) {
     try {
-      console.log('before done');
       const done = await this.manifestRepository.update(id, updateManifestDto);
-      console.log('done');
-      console.log(done);
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(id);
     } catch (error) {

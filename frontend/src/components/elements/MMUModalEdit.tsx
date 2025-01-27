@@ -224,7 +224,6 @@ export const MMUModalEdit = <
       title: newItemTitle,
       description: newItemDescription,
     };
-    console.log("itemToUpdate", itemToUpdate);
     if (
       objectTypes !== ObjectTypes.GROUP &&
       objectTypes &&

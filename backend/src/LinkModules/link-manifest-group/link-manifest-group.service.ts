@@ -144,8 +144,6 @@ export class LinkManifestGroupService {
 
   async updateManifest(updateManifestDto: UpdateManifestDto) {
     try {
-      console.log('updateManifestDto');
-      console.log(updateManifestDto);
       return await this.manifestService.update(
         updateManifestDto.id,
         updateManifestDto,
