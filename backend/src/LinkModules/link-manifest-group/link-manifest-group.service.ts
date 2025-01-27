@@ -185,7 +185,7 @@ export class LinkManifestGroupService {
       }
 
       // Build the path to the file
-      const path = `./upload/${updateManifestJsonDto.hash}/${updateManifestJsonDto.path}`;
+      const path = `${UPLOAD_FOLDER}/${updateManifestJsonDto.hash}/${updateManifestJsonDto.path}`;
 
       // Overwrite the file with the new JSON data
       this.writeJsonFile(path, updateManifestJsonDto.json);

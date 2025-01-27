@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { In, Repository } from 'typeorm';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
-import { GroupProjectRights } from '../../enum/rights';
+import { GroupProjectRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { ProjectService } from '../../BaseEntities/project/project.service';
@@ -24,6 +24,10 @@ import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { ActionType } from '../../enum/actions';
 import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
 import * as fs from 'fs';
+import {
+  DEFAULT_PROJECT_SNAPSHOT_FILE_NAME,
+  UPLOAD_FOLDER,
+} from '../../utils/constants';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -36,6 +40,7 @@ export class LinkGroupProjectService {
     private readonly groupService: UserGroupService,
     private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
+
   async create(createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
     try {
       const linkGroupProject: LinkGroupProject =
@@ -54,7 +59,6 @@ export class LinkGroupProjectService {
       );
     }
   }
-
 
   async findOne(id: number) {
     try {
@@ -424,10 +428,9 @@ export class LinkGroupProjectService {
       return;
     }
 
-    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
     return linkEntities.reduce((prev, current) => {
-      const prevRight = rightsPriority[prev.rights] || 0;
-      const currentRight = rightsPriority[current.rights] || 0;
+      const prevRight = PROJECT_RIGHTS_PRIORITY[prev.rights] || 0;
+      const currentRight = PROJECT_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
     });
   }
@@ -492,14 +495,14 @@ export class LinkGroupProjectService {
       const hash = generateAlphanumericSHA1Hash(
         `${project.title}${Date.now().toString()}`,
       );
-      const uploadPath = `./upload/${hash}`;
+      const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 
       fs.mkdirSync(uploadPath, { recursive: true });
       const workspaceData = {
         generated_at: Date.now(),
         workspace: project.userWorkspace,
       };
-      const workspaceJsonPath = `${uploadPath}/workspace.json`;
+      const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
       fs.writeFileSync(
         workspaceJsonPath,
         JSON.stringify(workspaceData, null, 2),

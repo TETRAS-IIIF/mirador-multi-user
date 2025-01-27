@@ -31,6 +31,7 @@ import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Media } from '../../BaseEntities/media/entities/media.entity';
 import { mediaTypes } from '../../enum/mediaTypes';
+import { UPLOAD_FOLDER } from '../../utils/constants';
 
 @ApiBearerAuth()
 @Controller('link-media-group')
@@ -48,7 +49,7 @@ export class LinkMediaGroupController {
           const hash = generateAlphanumericSHA1Hash(
             `${file.originalname}${Date.now().toString()}`,
           );
-          const uploadPath = `./upload/${hash}`; // TODO this path should be in a config file
+          const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
           fs.mkdirSync(uploadPath, { recursive: true });
           (req as any).generatedHash = hash;
           callback(null, uploadPath);
