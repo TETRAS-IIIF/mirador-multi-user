@@ -15,8 +15,7 @@ interface MetadataFieldProps {
 }
 
 const MetadataField = memo(
-  ({ field, value, handleInputChange }:MetadataFieldProps) => {
-
+  ({ field, value, handleInputChange }: MetadataFieldProps) => {
     return (
       <Grid item xs={12}>
         <Grid container alignItems="center" spacing={2}>
@@ -48,7 +47,7 @@ const MetadataField = memo(
         </Grid>
       </Grid>
     );
-  }
+  },
 );
 
 export default MetadataField;

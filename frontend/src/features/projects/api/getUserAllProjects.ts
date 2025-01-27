@@ -4,14 +4,17 @@ import dayjs from "dayjs";
 export const getUserAllProjects = async (userPersonalGroupId: number) => {
   const token = storage.getToken();
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-group-project/user/projects/${userPersonalGroupId}`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/link-group-project/user/projects/${userPersonalGroupId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
 
-    const projectData=  await response.json();
+    const projectData = await response.json();
     //convert created_at to dayJS for materialUI input in editModal
     return projectData.map((project: any) => ({
       ...project,

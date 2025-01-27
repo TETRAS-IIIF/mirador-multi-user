@@ -4,12 +4,15 @@ import { User } from "../types/types.ts";
 export const getUser = async (): Promise<User> => {
   const token = storage.getToken();
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/profile`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/auth/profile`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
     if (!response.ok) {
       throw new Error("Failed to fetch user");
     }

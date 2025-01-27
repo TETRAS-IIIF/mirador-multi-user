@@ -1,4 +1,4 @@
-import { Pagination, Box } from '@mui/material';
+import { Box, Pagination } from "@mui/material";
 import { ChangeEvent } from "react";
 
 interface PaginationControlsProps {
@@ -7,11 +7,11 @@ interface PaginationControlsProps {
   onPageChange: (page: number) => void;
 }
 
-export const PaginationControls= ({
-    currentPage,
-    totalPages,
-    onPageChange,
-    }: PaginationControlsProps) => {
+export const PaginationControls = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: PaginationControlsProps) => {
   const handleChange = (_event: ChangeEvent<unknown>, value: number) => {
     onPageChange(value);
   };
@@ -27,4 +27,3 @@ export const PaginationControls= ({
     </Box>
   );
 };
-

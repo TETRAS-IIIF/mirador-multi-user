@@ -1,4 +1,4 @@
-import { Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -8,22 +8,20 @@ interface SortSelectorProps<T> {
   fields: (keyof T)[];
 }
 
-export const SortItemSelector = <T extends Record<string, unknown>>(
-  {
-    sortField,
-    setSortField,
-    fields,
-  }: SortSelectorProps<T>) => {
-
+export const SortItemSelector = <T extends Record<string, unknown>>({
+  sortField,
+  setSortField,
+  fields,
+}: SortSelectorProps<T>) => {
   const { t } = useTranslation();
 
   return (
-    <FormControl fullWidth sx={{minWidth:"150px"}}>
-      <InputLabel id="sort-selector-label">{t('sort_by')}</InputLabel>
+    <FormControl fullWidth sx={{ minWidth: "150px" }}>
+      <InputLabel id="sort-selector-label">{t("sort_by")}</InputLabel>
       <Select
         labelId="sort-selector-label"
         value={sortField}
-        label={t('sort_by')}
+        label={t("sort_by")}
         onChange={(e) => setSortField(e.target.value as keyof T)}
       >
         {fields.map((field) => (

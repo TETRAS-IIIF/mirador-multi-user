@@ -1,18 +1,18 @@
-import React from 'react';
+import React from "react";
 import {
+  Box,
+  Button,
+  Collapse,
+  IconButton,
   TableCell,
   TableRow,
-  IconButton,
-  Collapse,
-  Box, Button
 } from "@mui/material";
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-
 
 interface RowData {
   value: React.ReactNode;
-  align?: 'right' | 'left' | 'center';
+  align?: "right" | "left" | "center";
 }
 
 interface RowProps {
@@ -20,14 +20,17 @@ interface RowProps {
   data: RowData[];
 }
 
-
 interface SingleRowProps {
   row: RowProps;
   renderExpandableContent?: (row: RowProps) => React.ReactNode;
   onActionClick?: (row: RowProps) => void;
 }
 
-export function Row({ row, renderExpandableContent, onActionClick }: SingleRowProps) {
+export function Row({
+  row,
+  renderExpandableContent,
+  onActionClick,
+}: SingleRowProps) {
   const [open, setOpen] = React.useState(false);
   const { t } = useTranslation();
 
@@ -44,13 +47,17 @@ export function Row({ row, renderExpandableContent, onActionClick }: SingleRowPr
           </IconButton>
         </TableCell>
         {row.data.map((cell, index) => (
-          <TableCell key={index} align={cell.align || 'left'}>
+          <TableCell key={index} align={cell.align || "left"}>
             {cell.value}
           </TableCell>
         ))}
         <TableCell align="center">
-          <Button variant="contained" color="primary" onClick={() => onActionClick?.(row)}>
-            {t('impersonate')}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => onActionClick?.(row)}
+          >
+            {t("impersonate")}
           </Button>
         </TableCell>
       </TableRow>

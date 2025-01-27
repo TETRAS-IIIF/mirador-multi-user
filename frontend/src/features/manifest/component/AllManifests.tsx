@@ -75,23 +75,23 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 interface IAllManifests {
-  userPersonalGroup: UserGroup;
-  user: User;
   fetchManifestForUser: () => void;
+  fetchMediaForUser: () => void;
   manifests: Manifest[];
   medias: Media[];
-  fetchMediaForUser: () => void;
+  user: User;
+  userPersonalGroup: UserGroup;
 }
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 
 export const AllManifests = ({
-  manifests,
   fetchManifestForUser,
+  fetchMediaForUser,
+  manifests,
+  medias,
   userPersonalGroup,
   user,
-  medias,
-  fetchMediaForUser,
 }: IAllManifests) => {
   const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
   const [searchedManifest, setSearchedManifest] = useState<Manifest | null>(

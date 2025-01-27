@@ -4,16 +4,19 @@ import storage from "../../../utils/storage.ts";
 export const updateManifestJson = async (manifest: updateManifestJsonDto) => {
   const token = storage.getToken();
   try {
-    const response =  await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/updateJson`, {
-      method: "PATCH",
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/updateJson`,
+      {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(manifest),
       },
-      body: JSON.stringify(manifest)
-    });
-    const toReturn =  await response.json();
-    return toReturn
+    );
+    const toReturn = await response.json();
+    return toReturn;
   } catch (error) {
     throw error;
   }

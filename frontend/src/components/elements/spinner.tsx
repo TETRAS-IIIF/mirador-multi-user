@@ -1,5 +1,3 @@
-export const BigSpinner= () => {
-  return(
-    <h2>🌀 Loading...</h2>
-  )
-}
+export const BigSpinner = () => {
+  return <h2>🌀 Loading...</h2>;
+};

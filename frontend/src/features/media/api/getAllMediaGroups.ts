@@ -1,15 +1,20 @@
 import { ProjectGroup } from "../../projects/types/types.ts";
 import storage from "../../../utils/storage.ts";
 
-export const getAllMediaGroups = async (mediaId: number): Promise<ProjectGroup[]> => {
+export const getAllMediaGroups = async (
+  mediaId: number,
+): Promise<ProjectGroup[]> => {
   const token = storage.getToken();
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-media-group/media/${mediaId}`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    });
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/link-media-group/media/${mediaId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
     if (!response.ok) {
       throw new Error(`Error in getALlMediaGroups: ${response.statusText}`);
     }
@@ -19,4 +24,4 @@ export const getAllMediaGroups = async (mediaId: number): Promise<ProjectGroup[]
     console.error("Error in getALlMediaGroups:", error);
     return [];
   }
-}
+};

@@ -7,14 +7,16 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TableSortLabel, TextField
+  TableSortLabel,
+  TextField,
 } from "@mui/material";
 import { Row } from "./Row.tsx";
 import { ReactNode, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+
 interface RowData {
   value: ReactNode;
-  align?: 'right' | 'left' | 'center';
+  align?: "right" | "left" | "center";
 }
 
 interface RowProps {
@@ -24,7 +26,7 @@ interface RowProps {
 
 interface Column {
   label: string;
-  align?: 'right' | 'left' | 'center';
+  align?: "right" | "left" | "center";
   sortKey?: string;
 }
 
@@ -35,26 +37,25 @@ interface CollapsibleTableProps {
   onActionClick?: (row: RowProps) => void;
 }
 
-export default function CollapsibleTable(
-  {
-    columns,
-    rows,
-    renderExpandableContent,
-    onActionClick,
-  }: CollapsibleTableProps) {
+export default function CollapsibleTable({
+  columns,
+  rows,
+  renderExpandableContent,
+  onActionClick,
+}: CollapsibleTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(null);
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
-  const [filter, setFilter] = useState('');
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [filter, setFilter] = useState("");
   const { t } = useTranslation();
 
   const handleSort = (key: string | undefined) => {
     if (!key) return;
 
     if (sortKey === key) {
-      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
       setSortKey(key);
-      setSortDirection('asc');
+      setSortDirection("asc");
     }
   };
 
@@ -63,8 +64,8 @@ export default function CollapsibleTable(
 
     return rows.filter((row) =>
       row.data.some((cell) =>
-        String(cell.value).toLowerCase().includes(filter.toLowerCase())
-      )
+        String(cell.value).toLowerCase().includes(filter.toLowerCase()),
+      ),
     );
   }, [rows, filter]);
 
@@ -72,14 +73,20 @@ export default function CollapsibleTable(
     if (!sortKey) return filteredRows;
 
     return [...filteredRows].sort((a, b) => {
-      const aValue = a.data.find((_cell, index) => columns[index]?.sortKey === sortKey)?.value;
-      const bValue = b.data.find((_cell, index) => columns[index]?.sortKey === sortKey)?.value;
+      const aValue = a.data.find(
+        (_cell, index) => columns[index]?.sortKey === sortKey,
+      )?.value;
+      const bValue = b.data.find(
+        (_cell, index) => columns[index]?.sortKey === sortKey,
+      )?.value;
 
-      if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return sortDirection === "asc"
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
       }
-      if (typeof aValue === 'number' && typeof bValue === 'number') {
-        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
+      if (typeof aValue === "number" && typeof bValue === "number") {
+        return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
       }
       return 0;
     });
@@ -91,7 +98,7 @@ export default function CollapsibleTable(
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label={t('filter')}
+            label={t("filter")}
             variant="outlined"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -104,11 +111,13 @@ export default function CollapsibleTable(
             <TableRow>
               <TableCell />
               {columns.map((column, index) => (
-                <TableCell key={index} align={column.align || 'left'}>
+                <TableCell key={index} align={column.align || "left"}>
                   {column.sortKey ? (
                     <TableSortLabel
                       active={sortKey === column.sortKey}
-                      direction={sortKey === column.sortKey ? sortDirection : 'asc'}
+                      direction={
+                        sortKey === column.sortKey ? sortDirection : "asc"
+                      }
                       onClick={() => handleSort(column.sortKey)}
                     >
                       {column.label}
@@ -118,7 +127,7 @@ export default function CollapsibleTable(
                   )}
                 </TableCell>
               ))}
-              <TableCell align="center">{t('actions')}</TableCell>
+              <TableCell align="center">{t("actions")}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

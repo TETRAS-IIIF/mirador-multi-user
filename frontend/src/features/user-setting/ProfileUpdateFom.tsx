@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from "react";
 import {
-  TextField,
+  Box,
   Button,
   IconButton,
   InputAdornment,
+  TextField,
   Typography,
-  Box,
-} from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { updateUser } from "../auth/api/updateUser.tsx";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -21,14 +21,16 @@ interface ProfileUpdateFormProps {
   user: UserProfile;
 }
 
-export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) => {
+export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
+  user,
+}) => {
   const { t } = useTranslation();
   const [formValues, setFormValues] = useState({
-    name: '',
-    mail: '',
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    name: "",
+    mail: "",
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState({
     oldPassword: false,
@@ -36,11 +38,11 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
     confirmPassword: false,
   });
   const [errors, setErrors] = useState({
-    name: '',
-    mail: '',
-    oldPassword: '',
-    newPassword: '',
-    confirmPassword: '',
+    name: "",
+    mail: "",
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
 
   useEffect(() => {
@@ -55,20 +57,29 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
 
   const validateForm = () => {
     let valid = true;
-    const newErrors = { name: '', mail: '', oldPassword: '', newPassword: '', confirmPassword: '' };
+    const newErrors = {
+      name: "",
+      mail: "",
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    };
 
-    if (formValues.mail.trim() && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formValues.mail)) {
-      newErrors.mail = t('mailIsNotValid');
+    if (
+      formValues.mail.trim() &&
+      !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formValues.mail)
+    ) {
+      newErrors.mail = t("mailIsNotValid");
       valid = false;
     }
 
     if (formValues.newPassword && formValues.newPassword.length < 6) {
-      newErrors.newPassword = t('characterLimitForPassword');
+      newErrors.newPassword = t("characterLimitForPassword");
       valid = false;
     }
 
     if (formValues.newPassword !== formValues.confirmPassword) {
-      newErrors.confirmPassword = t('passwordMismatch');
+      newErrors.confirmPassword = t("passwordMismatch");
       valid = false;
     }
 
@@ -79,13 +90,13 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
-      const updatedUser =await updateUser({
-        ...formValues
-      })
-      if(updatedUser){
-        toast.success(t('userSuccessfullyUpdated'))
-      }else{
-        toast.error(t('toastErrorUpdateUser'))
+      const updatedUser = await updateUser({
+        ...formValues,
+      });
+      if (updatedUser) {
+        toast.success(t("userSuccessfullyUpdated"));
+      } else {
+        toast.error(t("toastErrorUpdateUser"));
       }
     }
   };
@@ -100,18 +111,18 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
       component="form"
       onSubmit={handleSubmit}
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        width: '40%',
-        maxWidth:'400px'
+        display: "flex",
+        flexDirection: "column",
+        width: "40%",
+        maxWidth: "400px",
       }}
     >
       <Typography variant="h5" sx={{ mb: 3 }}>
-        {t('UpdateProfile')}
+        {t("UpdateProfile")}
       </Typography>
 
       <TextField
-        label={t('name')}
+        label={t("name")}
         name="name"
         value={formValues.name}
         onChange={handleChange}
@@ -122,7 +133,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
       />
 
       <TextField
-        label={t('mail')}
+        label={t("mail")}
         name="mail"
         type="mail"
         value={formValues.mail}
@@ -134,9 +145,9 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
       />
 
       <TextField
-        label={t('oldPassword')}
+        label={t("oldPassword")}
         name="oldPassword"
-        type={showPassword.oldPassword ? 'text' : 'password'}
+        type={showPassword.oldPassword ? "text" : "password"}
         value={formValues.oldPassword}
         onChange={handleChange}
         error={!!errors.oldPassword}
@@ -146,7 +157,10 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={() => togglePasswordVisibility('oldPassword')} edge="end">
+              <IconButton
+                onClick={() => togglePasswordVisibility("oldPassword")}
+                edge="end"
+              >
                 {showPassword.oldPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
@@ -155,9 +169,9 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
       />
 
       <TextField
-        label={t('newPassword')}
+        label={t("newPassword")}
         name="newPassword"
-        type={showPassword.newPassword ? 'text' : 'password'}
+        type={showPassword.newPassword ? "text" : "password"}
         value={formValues.newPassword}
         onChange={handleChange}
         error={!!errors.newPassword}
@@ -167,7 +181,10 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={() => togglePasswordVisibility('newPassword')} edge="end">
+              <IconButton
+                onClick={() => togglePasswordVisibility("newPassword")}
+                edge="end"
+              >
                 {showPassword.newPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </InputAdornment>
@@ -176,9 +193,9 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
       />
 
       <TextField
-        label={t('confirmPassword')}
+        label={t("confirmPassword")}
         name="confirmPassword"
-        type={showPassword.confirmPassword ? 'text' : 'password'}
+        type={showPassword.confirmPassword ? "text" : "password"}
         value={formValues.confirmPassword}
         onChange={handleChange}
         error={!!errors.confirmPassword}
@@ -188,8 +205,15 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={() => togglePasswordVisibility('confirmPassword')} edge="end">
-                {showPassword.confirmPassword ? <VisibilityOff /> : <Visibility />}
+              <IconButton
+                onClick={() => togglePasswordVisibility("confirmPassword")}
+                edge="end"
+              >
+                {showPassword.confirmPassword ? (
+                  <VisibilityOff />
+                ) : (
+                  <Visibility />
+                )}
               </IconButton>
             </InputAdornment>
           ),
@@ -203,9 +227,8 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
         fullWidth
         sx={{ mt: 2 }}
       >
-        {t('saveChanges')}
+        {t("saveChanges")}
       </Button>
     </Box>
   );
 };
-

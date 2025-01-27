@@ -1,7 +1,19 @@
 import { User } from "../../auth/types/types.ts";
 import { Divider, Grid, IconButton, Tooltip, Typography } from "@mui/material";
-import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
-import { CreateGroupDto, LinkUserGroup, ItemsRights, UserGroup } from "../types/types.ts";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import {
+  CreateGroupDto,
+  ItemsRights,
+  LinkUserGroup,
+  UserGroup,
+} from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import AddIcon from "@mui/icons-material/Add";
@@ -30,27 +42,43 @@ import { Dayjs } from "dayjs";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import CancelIcon from '@mui/icons-material/Cancel';
-import { leavingGroup } from '../api/leavingGroup.ts';
+import CancelIcon from "@mui/icons-material/Cancel";
+import { leavingGroup } from "../api/leavingGroup.ts";
 
 interface allGroupsProps {
   user: User;
-  medias:Media[];
-  setMedias:Dispatch<SetStateAction<Media[]>>
-  userPersonalGroup:UserGroup
-  fetchGroups:()=>void
-  groups:UserGroup[]
-  setGroups:Dispatch<SetStateAction<UserGroup[]>>
+  medias: Media[];
+  setMedias: Dispatch<SetStateAction<Media[]>>;
+  userPersonalGroup: UserGroup;
+  fetchGroups: () => void;
+  groups: UserGroup[];
+  setGroups: Dispatch<SetStateAction<UserGroup[]>>;
 }
-export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups, groups,setGroups}:allGroupsProps)=>{
-  const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] = useState(false)
-  const [selectedUserGroup, setSelectedUserGroup] = useState<UserGroup | null>(null);
+
+export const AllGroups = ({
+  user,
+  medias,
+  setMedias,
+  userPersonalGroup,
+  fetchGroups,
+  groups,
+  setGroups,
+}: allGroupsProps) => {
+  const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] =
+    useState(false);
+  const [selectedUserGroup, setSelectedUserGroup] = useState<UserGroup | null>(
+    null,
+  );
   const [openModalGroupId, setOpenModalGroupId] = useState<number | null>(null); // Updated state
-  const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
-  const [userPersonalGroupList, setUserPersonalGroupList] = useState<LinkUserGroup[]>([])
-  const [groupFiltered, setGroupFiltered] = useState<UserGroup[] | undefined>([]);
+  const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
+  const [userPersonalGroupList, setUserPersonalGroupList] = useState<
+    LinkUserGroup[]
+  >([]);
+  const [groupFiltered, setGroupFiltered] = useState<UserGroup[] | undefined>(
+    [],
+  );
   const [currentPage, setCurrentPage] = useState(1);
-  const [openSidePanel , setOpenSidePanel] = useState(false);
+  const [openSidePanel, setOpenSidePanel] = useState(false);
   const [sortField, setSortField] = useState<keyof UserGroup>("title");
   const [sortOrder, setSortOrder] = useState("asc");
 
@@ -80,139 +108,172 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
     });
   }, [groups, sortField, sortOrder]);
 
-
   const itemsPerPage = 10;
 
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return sortedItems.slice(start, end);
-  }, [currentPage, groups,sortedItems]);
+  }, [currentPage, groups, sortedItems]);
 
   const totalPages = Math.ceil(groups.length / itemsPerPage);
 
-  const fetchMediaForUser = async()=>{
-    const medias = await getUserGroupMedias(userPersonalGroup!.id)
+  const fetchMediaForUser = async () => {
+    const medias = await getUserGroupMedias(userPersonalGroup!.id);
     setMedias(medias);
-  }
-
-
-  useEffect(
-    () =>{
-      fetchGroups()
-    },[openModalGroupId, user]
-  )
-  const handleCreateGroup = async (title:string)=>{
-    try{
-      const userGroupToCreate : CreateGroupDto = {
-        title: title,
-        ownerId: user.id,
-        user: user
-      }
-      const groupCreated = await createGroup(userGroupToCreate);
-      fetchGroups()
-      HandleOpenModal(groupCreated.id)
-    }catch(error){
-      console.error(error)
-    }
-  }
-
-  const toggleModalGroupCreation = useCallback(()=>{
-    setModalGroupCreationIsOpen(!modalGroupCreationIsOpen);
-  },[modalGroupCreationIsOpen,setModalGroupCreationIsOpen])
-
-
-  const getOptionLabel = (option: UserGroup): string => {
-    if(option.title){
-      return option.title
-    }
-    return ''
   };
 
-  const getOptionLabelForEditModal = (option: LinkUserGroup , searchInput: string): string => {
+  useEffect(() => {
+    fetchGroups();
+  }, [openModalGroupId, user]);
+  const handleCreateGroup = async (title: string) => {
+    try {
+      const userGroupToCreate: CreateGroupDto = {
+        title: title,
+        ownerId: user.id,
+        user: user,
+      };
+      const groupCreated = await createGroup(userGroupToCreate);
+      fetchGroups();
+      HandleOpenModal(groupCreated.id);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const toggleModalGroupCreation = useCallback(() => {
+    setModalGroupCreationIsOpen(!modalGroupCreationIsOpen);
+  }, [modalGroupCreationIsOpen, setModalGroupCreationIsOpen]);
+
+  const getOptionLabel = (option: UserGroup): string => {
+    if (option.title) {
+      return option.title;
+    }
+    return "";
+  };
+
+  const getOptionLabelForEditModal = (
+    option: LinkUserGroup,
+    searchInput: string,
+  ): string => {
     const user = option.user;
     if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
       return user.name;
     }
-    return user.name
+    return user.name;
   };
 
-
-  const handleChangeRights = async(group: ListItem,eventValue:string, groupId:number) =>{
-    const userToUpdate = userPersonalGroupList.find((user)=>user.user.id=== group.id)
-    await  ChangeAccessToGroup(groupId, {
+  const handleChangeRights = async (
+    group: ListItem,
+    eventValue: string,
+    groupId: number,
+  ) => {
+    const userToUpdate = userPersonalGroupList.find(
+      (user) => user.user.id === group.id,
+    );
+    await ChangeAccessToGroup(groupId, {
       groupId: group.id,
       rights: eventValue as ItemsRights,
       userId: userToUpdate!.user.id,
     });
-  }
+  };
 
-  const HandleOpenModal =useCallback ((groupId: number)=>{
-    setOpenModalGroupId(openModalGroupId === groupId ? null : groupId); // Updated logic
-  },[openModalGroupId, setOpenModalGroupId])
+  const HandleOpenModal = useCallback(
+    (groupId: number) => {
+      setOpenModalGroupId(openModalGroupId === groupId ? null : groupId); // Updated logic
+    },
+    [openModalGroupId, setOpenModalGroupId],
+  );
 
-  const handleDeleteGroup = useCallback(async (groupId: number) => {
-    await deleteGroup(groupId);
-    fetchGroups()
-  },[groups, setGroups])
+  const handleDeleteGroup = useCallback(
+    async (groupId: number) => {
+      await deleteGroup(groupId);
+      fetchGroups();
+    },
+    [groups, setGroups],
+  );
 
-  const updateGroup= useCallback(async (groupUpdated: UserGroup) => {
-    const dataForUpdate = {
-      ...groupUpdated
+  const updateGroup = useCallback(
+    async (groupUpdated: UserGroup) => {
+      const dataForUpdate = {
+        ...groupUpdated,
+      };
+
+      await UpdateGroup(dataForUpdate);
+      fetchGroups();
+    },
+    [groups, setGroups],
+  );
+
+  const grantingAccessToGroup = async (user_group_id: number) => {
+    if (userToAdd == null) {
+      toast.error(t("selectItemToast"));
     }
-
-    await UpdateGroup(dataForUpdate);
-    fetchGroups()
-  },[groups, setGroups])
-
-
-  const grantingAccessToGroup = async ( user_group_id: number) => {
-    if(userToAdd == null){
-      toast.error(t('selectItemToast'))
-    }
-    const user_group = groups.find((groups)=> groups.id === user_group_id)
-    await grantAccessToGroup(userToAdd!.user, user_group! )
-  }
-  const listOfUserPersonalGroup = useMemo(()=>{
+    const user_group = groups.find((groups) => groups.id === user_group_id);
+    await grantAccessToGroup(userToAdd!.user, user_group!);
+  };
+  const listOfUserPersonalGroup = useMemo(() => {
     return userPersonalGroupList.map((userPersonalGroup) => ({
       id: userPersonalGroup.user.id,
       title: userPersonalGroup.user.name,
-      rights: userPersonalGroup.rights
-    }))
-  },[userPersonalGroupList])
+      rights: userPersonalGroup.rights,
+    }));
+  }, [userPersonalGroupList]);
 
-  const handleRemoveUser= async (groupId: number, userToRemoveId: number)=>{
-    await removeAccessToGroup(groupId, userToRemoveId)
-  }
+  const handleRemoveUser = async (groupId: number, userToRemoveId: number) => {
+    await removeAccessToGroup(groupId, userToRemoveId);
+  };
 
-  const handleLookingForGroup =(partialString:string)=>{
-    return groups.filter((groups) => groups.title.startsWith(partialString))
-  }
+  const handleLookingForGroup = (partialString: string) => {
+    return groups.filter((groups) => groups.title.startsWith(partialString));
+  };
 
   const handleFiltered = (partialString: string) => {
     if (partialString.length < 1) {
-      return setGroupFiltered([])
+      return setGroupFiltered([]);
     }
     const groupsFiltered = groups.filter((group) =>
-      group.title.toLowerCase().includes(partialString.toLowerCase())
+      group.title.toLowerCase().includes(partialString.toLowerCase()),
     );
     setGroupFiltered(groupsFiltered.length > 0 ? groupsFiltered : undefined);
   };
 
-  const handleSetOpenSidePanel=()=>{
-    setOpenSidePanel(!openSidePanel)
-  }
+  const handleSetOpenSidePanel = () => {
+    setOpenSidePanel(!openSidePanel);
+  };
 
-  const HandleLeaveGroup= async (groupId: number)=>{
-    await leavingGroup(groupId)
-    return fetchGroups()
-  }
+  const HandleLeaveGroup = async (groupId: number) => {
+    await leavingGroup(groupId);
+    return fetchGroups();
+  };
 
-  return(
+  return (
     <>
-      <SidePanelMedia  open={openSidePanel && !!openModalGroupId} setOpen={handleSetOpenSidePanel} display={!!openModalGroupId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
+      <SidePanelMedia
+        open={openSidePanel && !!openModalGroupId}
+        setOpen={handleSetOpenSidePanel}
+        display={!!openModalGroupId}
+        fetchMediaForUser={fetchMediaForUser}
+        medias={medias}
+        user={user}
+        userPersonalGroup={userPersonalGroup!}
+      >
         <Grid item container flexDirection="column">
-          <Grid item container justifyContent="flex-end" direction="row" spacing={2} alignItems="center"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"18px"}}>
+          <Grid
+            item
+            container
+            justifyContent="flex-end"
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            sx={{
+              position: "sticky",
+              top: 0,
+              zIndex: 1000,
+              backgroundColor: "#dcdcdc",
+              paddingBottom: "18px",
+            }}
+          >
             <Grid item>
               <SortItemSelector<UserGroup>
                 sortField={sortField}
@@ -222,60 +283,105 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
             </Grid>
             <Grid item>
               <Tooltip title={t(sortOrder === "asc" ? "sortAsc" : "sortDesc")}>
-                <IconButton onClick={toggleSortOrder} >{sortOrder === "asc" ? <ArrowDropUpIcon /> : <ArrowDropDownIcon/>}</IconButton>
+                <IconButton onClick={toggleSortOrder}>
+                  {sortOrder === "asc" ? (
+                    <ArrowDropUpIcon />
+                  ) : (
+                    <ArrowDropDownIcon />
+                  )}
+                </IconButton>
               </Tooltip>
             </Grid>
             <Divider orientation="vertical" variant="middle" flexItem />
             <Grid item>
-              <SearchBar handleFiltered={handleFiltered} label={t('filterGroups')} fetchFunction={handleLookingForGroup} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
+              <SearchBar
+                handleFiltered={handleFiltered}
+                label={t("filterGroups")}
+                fetchFunction={handleLookingForGroup}
+                getOptionLabel={getOptionLabel}
+                setSelectedData={setSelectedUserGroup}
+              />
             </Grid>
           </Grid>
-          <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
+          <Grid
+            item
+            container
+            spacing={2}
+            flexDirection="column"
+            sx={{ marginBottom: "40px" }}
+          >
             {!groups.length && (
               <Grid
                 container
                 justifyContent={"center"}
-                sx={{marginTop:'10px'}}
+                sx={{ marginTop: "10px" }}
               >
-                <Typography variant="h6" component="h2">{t('noGroupYet')}</Typography>
+                <Typography variant="h6" component="h2">
+                  {t("noGroupYet")}
+                </Typography>
               </Grid>
             )}
-            {groups && groupFiltered && groupFiltered.length < 1 &&!selectedUserGroup && currentPageData.map((group) => (
-              <Grid item key={group.id}>
-                <MMUCard
-                  objectTypes={ObjectTypes.GROUP}
-                  isGroups={true}
-                  thumbnailUrl={group.thumbnailUrl ? group.thumbnailUrl : null }
-                  searchBarLabel={"Search Users"}
-                  rights={group.rights!}
-                  itemLabel={group.title}
-                  openModal={openModalGroupId === group.id}
-                  getOptionLabel={getOptionLabelForEditModal}
-                  deleteItem={handleDeleteGroup}
-                  item={group}
-                  updateItem={updateGroup}
-                  HandleOpenModal={()=>HandleOpenModal(group.id)}
-                  id={group.id}
-                  AddAccessListItemFunction={grantingAccessToGroup}
-                  EditorButton={<ModalButton tooltipButton={t('editGroupTooltip')} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
-                  ReaderButton={<ModalButton color={'error'} disabled={false} tooltipButton={t('leaveGroupTooltip')} icon={<CancelIcon/>} onClickFunction={()=>HandleLeaveGroup(group.id)}/>}
-                  getAccessToItem={GetAllGroupUsers}
-                  listOfItem={listOfUserPersonalGroup}
-                  removeAccessListItemFunction={handleRemoveUser}
-                  searchModalEditItem={lookingForUsers}
-                  setItemList={setUserPersonalGroupList}
-                  setItemToAdd={setUserToAdd}
-                  description={group.description}
-                  handleSelectorChange={handleChangeRights}
-                />
-              </Grid>
-            ))}
-            {selectedUserGroup &&(
+            {groups &&
+              groupFiltered &&
+              groupFiltered.length < 1 &&
+              !selectedUserGroup &&
+              currentPageData.map((group) => (
+                <Grid item key={group.id}>
+                  <MMUCard
+                    objectTypes={ObjectTypes.GROUP}
+                    isGroups={true}
+                    thumbnailUrl={
+                      group.thumbnailUrl ? group.thumbnailUrl : null
+                    }
+                    searchBarLabel={"Search Users"}
+                    rights={group.rights!}
+                    itemLabel={group.title}
+                    openModal={openModalGroupId === group.id}
+                    getOptionLabel={getOptionLabelForEditModal}
+                    deleteItem={handleDeleteGroup}
+                    item={group}
+                    updateItem={updateGroup}
+                    HandleOpenModal={() => HandleOpenModal(group.id)}
+                    id={group.id}
+                    AddAccessListItemFunction={grantingAccessToGroup}
+                    EditorButton={
+                      <ModalButton
+                        tooltipButton={t("editGroupTooltip")}
+                        disabled={false}
+                        icon={<ModeEditIcon />}
+                        onClickFunction={() => HandleOpenModal(group.id)}
+                      />
+                    }
+                    ReaderButton={
+                      <ModalButton
+                        color={"error"}
+                        disabled={false}
+                        tooltipButton={t("leaveGroupTooltip")}
+                        icon={<CancelIcon />}
+                        onClickFunction={() => HandleLeaveGroup(group.id)}
+                      />
+                    }
+                    getAccessToItem={GetAllGroupUsers}
+                    listOfItem={listOfUserPersonalGroup}
+                    removeAccessListItemFunction={handleRemoveUser}
+                    searchModalEditItem={lookingForUsers}
+                    setItemList={setUserPersonalGroupList}
+                    setItemToAdd={setUserToAdd}
+                    description={group.description}
+                    handleSelectorChange={handleChangeRights}
+                  />
+                </Grid>
+              ))}
+            {selectedUserGroup && (
               <Grid item>
                 <MMUCard
                   objectTypes={ObjectTypes.GROUP}
                   isGroups={true}
-                  thumbnailUrl={selectedUserGroup.thumbnailUrl ? selectedUserGroup.thumbnailUrl : null }
+                  thumbnailUrl={
+                    selectedUserGroup.thumbnailUrl
+                      ? selectedUserGroup.thumbnailUrl
+                      : null
+                  }
                   searchBarLabel={"Search Users"}
                   rights={selectedUserGroup.rights!}
                   itemLabel={selectedUserGroup.title}
@@ -284,11 +390,29 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   deleteItem={handleDeleteGroup}
                   item={selectedUserGroup}
                   updateItem={updateGroup}
-                  HandleOpenModal={()=>HandleOpenModal(selectedUserGroup.id)}
+                  HandleOpenModal={() => HandleOpenModal(selectedUserGroup.id)}
                   id={selectedUserGroup.id}
                   AddAccessListItemFunction={grantingAccessToGroup}
-                  EditorButton={<ModalButton tooltipButton={t('editGroupTooltip')} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(selectedUserGroup.id)}/>}
-                  ReaderButton={<ModalButton tooltipButton={t('openGroupTooltip')} disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
+                  EditorButton={
+                    <ModalButton
+                      tooltipButton={t("editGroupTooltip")}
+                      disabled={false}
+                      icon={<ModeEditIcon />}
+                      onClickFunction={() =>
+                        HandleOpenModal(selectedUserGroup.id)
+                      }
+                    />
+                  }
+                  ReaderButton={
+                    <ModalButton
+                      tooltipButton={t("openGroupTooltip")}
+                      disabled={true}
+                      icon={<ModeEditIcon />}
+                      onClickFunction={() =>
+                        console.log("you're not allowed to do this")
+                      }
+                    />
+                  }
                   getAccessToItem={getAllUserGroups}
                   listOfItem={listOfUserPersonalGroup}
                   removeAccessListItemFunction={handleRemoveUser}
@@ -300,49 +424,83 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                 />
               </Grid>
             )}
-            {groups && groupFiltered && groupFiltered.length > 0 &&!selectedUserGroup && groupFiltered.map((group) => (
-              <Grid item key={group.id}>
-                <MMUCard
-                  objectTypes={ObjectTypes.GROUP}
-                  isGroups={true}
-                  thumbnailUrl={group.thumbnailUrl ? group.thumbnailUrl : null }
-                  searchBarLabel={"Search Users"}
-                  rights={group.rights!}
-                  itemLabel={group.title}
-                  openModal={openModalGroupId === group.id}
-                  getOptionLabel={getOptionLabelForEditModal}
-                  deleteItem={handleDeleteGroup}
-                  item={group}
-                  updateItem={updateGroup}
-                  HandleOpenModal={()=>HandleOpenModal(group.id)}
-                  id={group.id}
-                  AddAccessListItemFunction={grantingAccessToGroup}
-                  EditorButton={<ModalButton tooltipButton={t('editGroupTooltip')}disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
-                  ReaderButton={<ModalButton disabled={true} tooltipButton={t('openGroupTooltip')} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
-                  getAccessToItem={GetAllGroupUsers}
-                  listOfItem={listOfUserPersonalGroup}
-                  removeAccessListItemFunction={handleRemoveUser}
-                  searchModalEditItem={lookingForUsers}
-                  setItemList={setUserPersonalGroupList}
-                  setItemToAdd={setUserToAdd}
-                  description={group.description}
-                  handleSelectorChange={handleChangeRights}
-                />
-              </Grid>
-            ))}
-            {
-              !groupFiltered && (
-                <Grid item container justifyContent="center" alignItems="center">
-                  <Typography variant="h6" component="h2">{t('noMatchingGroupFilter')}</Typography>
+            {groups &&
+              groupFiltered &&
+              groupFiltered.length > 0 &&
+              !selectedUserGroup &&
+              groupFiltered.map((group) => (
+                <Grid item key={group.id}>
+                  <MMUCard
+                    objectTypes={ObjectTypes.GROUP}
+                    isGroups={true}
+                    thumbnailUrl={
+                      group.thumbnailUrl ? group.thumbnailUrl : null
+                    }
+                    searchBarLabel={"Search Users"}
+                    rights={group.rights!}
+                    itemLabel={group.title}
+                    openModal={openModalGroupId === group.id}
+                    getOptionLabel={getOptionLabelForEditModal}
+                    deleteItem={handleDeleteGroup}
+                    item={group}
+                    updateItem={updateGroup}
+                    HandleOpenModal={() => HandleOpenModal(group.id)}
+                    id={group.id}
+                    AddAccessListItemFunction={grantingAccessToGroup}
+                    EditorButton={
+                      <ModalButton
+                        tooltipButton={t("editGroupTooltip")}
+                        disabled={false}
+                        icon={<ModeEditIcon />}
+                        onClickFunction={() => HandleOpenModal(group.id)}
+                      />
+                    }
+                    ReaderButton={
+                      <ModalButton
+                        disabled={true}
+                        tooltipButton={t("openGroupTooltip")}
+                        icon={<ModeEditIcon />}
+                        onClickFunction={() =>
+                          console.log("you're not allowed to do this")
+                        }
+                      />
+                    }
+                    getAccessToItem={GetAllGroupUsers}
+                    listOfItem={listOfUserPersonalGroup}
+                    removeAccessListItemFunction={handleRemoveUser}
+                    searchModalEditItem={lookingForUsers}
+                    setItemList={setUserPersonalGroupList}
+                    setItemToAdd={setUserToAdd}
+                    description={group.description}
+                    handleSelectorChange={handleChangeRights}
+                  />
                 </Grid>
-              )
-            }
-            <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
+              ))}
+            {!groupFiltered && (
+              <Grid item container justifyContent="center" alignItems="center">
+                <Typography variant="h6" component="h2">
+                  {t("noMatchingGroupFilter")}
+                </Typography>
+              </Grid>
+            )}
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </Grid>
-          <FloatingActionButton onClick={toggleModalGroupCreation} content={t('newGroup')} Icon={<AddIcon />} />
-          <DrawerCreateGroup handleCreatGroup={handleCreateGroup} modalCreateGroup={modalGroupCreationIsOpen} toggleModalGroupCreation={toggleModalGroupCreation}/>
+          <FloatingActionButton
+            onClick={toggleModalGroupCreation}
+            content={t("newGroup")}
+            Icon={<AddIcon />}
+          />
+          <DrawerCreateGroup
+            handleCreatGroup={handleCreateGroup}
+            modalCreateGroup={modalGroupCreationIsOpen}
+            toggleModalGroupCreation={toggleModalGroupCreation}
+          />
         </Grid>
       </SidePanelMedia>
     </>
-  )
-}
+  );
+};

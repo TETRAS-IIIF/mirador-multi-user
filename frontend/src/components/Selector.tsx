@@ -1,16 +1,19 @@
-import { useTranslation } from 'react-i18next';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
+import { useTranslation } from "react-i18next";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import { useState } from "react";
-import { ItemsRights } from '../features/user-group/types/types.ts';
+import { ItemsRights } from "../features/user-group/types/types.ts";
 
 export interface SelectorProps {
   value: string;
   onChange?: (event: SelectChangeEvent) => void;
 }
 
-export const Selector = ({ value = ItemsRights.READER, onChange }: SelectorProps) => {
+export const Selector = ({
+  value = ItemsRights.READER,
+  onChange,
+}: SelectorProps) => {
   const { t } = useTranslation();
   const [localValue, setLocalValue] = useState(value);
 
@@ -26,9 +29,9 @@ export const Selector = ({ value = ItemsRights.READER, onChange }: SelectorProps
       <Select
         value={localValue}
         onChange={handleLocalChange}
-        renderValue={()=>t(localValue)}
+        renderValue={() => t(localValue)}
       >
-        { Object.values(ItemsRights).map((item) => (
+        {Object.values(ItemsRights).map((item) => (
           <MenuItem key={item} value={item}>
             {t(item)}
           </MenuItem>

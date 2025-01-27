@@ -1,4 +1,13 @@
-import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
+import {
+  AppBar,
+  Button,
+  Drawer,
+  Grid,
+  Paper,
+  TextField,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
 import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -11,31 +20,37 @@ interface IDrawerCreateMediaProps {
 }
 
 export const DrawerLinkMedia = ({
-                                  modalCreateMediaIsOpen,
-                                  toggleModalMediaCreation,
-                                  CreateMediaWithLink
-                                }: IDrawerCreateMediaProps) => {
+  modalCreateMediaIsOpen,
+  toggleModalMediaCreation,
+  CreateMediaWithLink,
+}: IDrawerCreateMediaProps) => {
   const [mediaLink, setMediaLink] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useTranslation();
 
-  const handleNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-    setMediaLink(event.target.value);
-  }, []);
+  const handleNameChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setMediaLink(event.target.value);
+    },
+    [],
+  );
 
-  const handleLinkingMedia = useCallback((event?: FormEvent) => {
-    if (event) event.preventDefault();
-    toggleModalMediaCreation();
-    setIsLoading(true);
-    try {
-      CreateMediaWithLink(mediaLink);
-    } finally {
-      setIsLoading(false);
-      setMediaLink("");
-    }
-  }, [CreateMediaWithLink, mediaLink, toggleModalMediaCreation]);
+  const handleLinkingMedia = useCallback(
+    (event?: FormEvent) => {
+      if (event) event.preventDefault();
+      toggleModalMediaCreation();
+      setIsLoading(true);
+      try {
+        CreateMediaWithLink(mediaLink);
+      } finally {
+        setIsLoading(false);
+        setMediaLink("");
+      }
+    },
+    [CreateMediaWithLink, mediaLink, toggleModalMediaCreation],
+  );
 
   const handleToggleModalGroupCreation = useCallback(() => {
     toggleModalMediaCreation();
@@ -50,10 +65,15 @@ export const DrawerLinkMedia = ({
   return (
     <>
       <div>
-        <Drawer sx={{ zIndex: 9999 }} anchor="bottom" open={modalCreateMediaIsOpen}
-                onClose={handleToggleModalGroupCreation} ModalProps={{
-          onAnimationEnd: handleDrawerTransition
-        }}>
+        <Drawer
+          sx={{ zIndex: 9999 }}
+          anchor="bottom"
+          open={modalCreateMediaIsOpen}
+          onClose={handleToggleModalGroupCreation}
+          ModalProps={{
+            onAnimationEnd: handleDrawerTransition,
+          }}
+        >
           <Paper
             sx={{
               left: "0",
@@ -63,15 +83,12 @@ export const DrawerLinkMedia = ({
               paddingRight: { sm: 3, xs: 2 },
               paddingTop: 2,
               right: "0",
-              zIndex: 9999
+              zIndex: 9999,
             }}
           >
             <AppBar position="absolute" color="primary" enableColorOnDark>
               <Toolbar variant="dense">
-                <Button
-                  color="inherit"
-                  onClick={toggleModalMediaCreation}
-                >
+                <Button color="inherit" onClick={toggleModalMediaCreation}>
                   <ExpandMoreIcon />
                 </Button>
                 <Typography>{t("linkMedia")}</Typography>
@@ -83,7 +100,11 @@ export const DrawerLinkMedia = ({
                   <label>{t("mediaLink")}:</label>
                 </Grid>
                 <Grid item sx={{ width: "70%" }}>
-                  <TextField inputRef={inputRef} onChange={handleNameChange} sx={{ width: "100%" }}></TextField>
+                  <TextField
+                    inputRef={inputRef}
+                    onChange={handleNameChange}
+                    sx={{ width: "100%" }}
+                  ></TextField>
                 </Grid>
                 <Grid item>
                   <LoadingButton

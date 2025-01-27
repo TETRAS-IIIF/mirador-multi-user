@@ -1,14 +1,16 @@
-import { Box, Grid } from '@mui/material';
-import { useRef } from 'react';
-import { MediaField } from './ManifestCreationForm';
+import { Box, Grid } from "@mui/material";
+import { useRef } from "react";
+import { MediaField } from "./ManifestCreationForm";
 
 interface MediaVideoThumbnailProps {
   media: MediaField;
   setMedia: (media: MediaField) => void;
 }
 
-export function MediaVideoThumbnail({ media, setMedia }: MediaVideoThumbnailProps) {
-
+export function MediaVideoThumbnail({
+  media,
+  setMedia,
+}: MediaVideoThumbnailProps) {
   const handleLoadedMetadata = () => {
     const video = videoEl.current;
     if (!video) return;
@@ -32,14 +34,14 @@ export function MediaVideoThumbnail({ media, setMedia }: MediaVideoThumbnailProp
           sx={{
             width: 200,
             height: 50,
-            objectFit: 'cover',
-            '@media(min-resolution: 2dppx)': {
+            objectFit: "cover",
+            "@media(min-resolution: 2dppx)": {
               width: 100,
               height: 100,
             },
           }}
-        />)
-      }
+        />
+      )}
       {!media.thumbnailUrl && (
         <video
           width="200"
