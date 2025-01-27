@@ -114,7 +114,6 @@ export const SidePanelManifest = ({
   };
 
   const HandleLookingForManifest = async (partialString: string) => {
-    console.log(partialString);
     return manifests.filter((manifest: Manifest) =>
       manifest.title.includes(partialString),
     );
@@ -221,8 +220,6 @@ export const SidePanelManifest = ({
   useEffect(() => {
     fetchThumbnails();
   }, [fetchThumbnails]);
-  console.log("searchedManifest", searchedManifest);
-  console.log("manifestFiltered", manifestFiltered);
   return (
     <div>
       {display && (
