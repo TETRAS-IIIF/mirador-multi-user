@@ -1,28 +1,27 @@
-import { SidePanelManifest } from '../../../features/manifest/component/SidePanelManifest';
-import { Grid } from '@mui/material';
-import MiradorViewer from '../../../features/mirador/Mirador';
-import { ItemsRights } from '../../../features/user-group/types/types';
+import { SidePanelManifest } from "../../../features/manifest/component/SidePanelManifest";
+import { Grid } from "@mui/material";
+import MiradorViewer from "../../../features/mirador/Mirador";
+import { ItemsRights } from "../../../features/user-group/types/types";
 
 export function ProjectWorkspace({
-                                   HandleSetIsRunning,
-                                   fetchManifestForUser,
-                                   handleSetMiradorState,
-                                   miradorState,
-                                   myRef,
-                                   projectSelected,
-                                   saveMiradorState,
-                                   user,
-                                   userPersonalGroup,
-                                   viewer,
-                                   setViewer,
-                                   manifests,
-                                 }) {
-
+  HandleSetIsRunning,
+  fetchManifestForUser,
+  handleSetMiradorState,
+  miradorState,
+  myRef,
+  projectSelected,
+  saveMiradorState,
+  user,
+  userPersonalGroup,
+  viewer,
+  setViewer,
+  manifests,
+}) {
   const isEditor = projectSelected.rights !== ItemsRights.READER;
 
   return (
     <SidePanelManifest
-      manifest={manifests}
+      manifests={manifests}
       userPersonalGroup={userPersonalGroup!}
       user={user}
       fetchManifestForUser={fetchManifestForUser}
@@ -30,7 +29,11 @@ export function ProjectWorkspace({
     >
       <Grid sx={{ paddingRight: 5 }}>
         <MiradorViewer
-          language={user.preferredLanguage ? user.preferredLanguage : navigator.language.split('-')[0]}
+          language={
+            user.preferredLanguage
+              ? user.preferredLanguage
+              : navigator.language.split("-")[0]
+          }
           miradorState={miradorState!}
           setMiradorState={handleSetMiradorState}
           project={projectSelected}
