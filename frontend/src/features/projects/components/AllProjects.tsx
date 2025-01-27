@@ -362,8 +362,17 @@ export const AllProjects = ({
     setOpenSidePanel(!openSidePanel);
   };
 
-  const handleRemoveProjectFromList = async (projectId: number) => {
-    await removeProjectFromList(projectId);
+  const handleRemoveProjectFromList = async (
+    projectId: number,
+    share: string | undefined,
+  ) => {
+    if (share) {
+      return toast.error(t("share-error-message"));
+    } else {
+      await removeProjectFromList(projectId);
+      toast.success(t("removedProjectFromList"));
+      return fetchProjects();
+    }
   };
 
   return (
@@ -494,7 +503,12 @@ export const AllProjects = ({
                             color={"error"}
                             tooltipButton={t("removeProjectFromList")}
                             onClickFunction={() =>
-                              handleRemoveProjectFromList(projectUser.id)
+                              handleRemoveProjectFromList(
+                                projectUser.id,
+                                projectUser.share
+                                  ? projectUser.share
+                                  : undefined,
+                              )
                             }
                             icon={<CancelIcon />}
                             disabled={false}
@@ -517,7 +531,6 @@ export const AllProjects = ({
                         setItemList={setGroupList}
                         metadata={projectUser.metadata}
                         getGroupByOption={getGroupByOption}
-                        share={projectUser.share ? projectUser.share : null}
                       />
                     </Grid>
                   ))}
