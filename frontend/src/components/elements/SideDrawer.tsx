@@ -286,7 +286,6 @@ export const SideDrawer = ({
         ItemsRights.EDITOR,
         ItemsRights.ADMIN,
       ];
-
       const uniqueProjects = Array.from(
         new Set(projects.map((project: Project) => project.id)),
       ).map((id) => {
@@ -314,7 +313,6 @@ export const SideDrawer = ({
 
         return highestRightsProject;
       });
-
       setUserProjects(uniqueProjects);
     } catch (error) {
       console.error(t("errorFetchProject"), error);
