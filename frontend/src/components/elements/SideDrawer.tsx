@@ -381,7 +381,6 @@ export const SideDrawer = ({
         saveMiradorState={saveMiradorState}
         selectedContent={selectedContent}
         selectedProjectId={selectedProjectId}
-        setManifests={setManifests}
         setGroups={setGroups}
         setMedias={setMedias}
         setSelectedProjectId={setSelectedProjectId}

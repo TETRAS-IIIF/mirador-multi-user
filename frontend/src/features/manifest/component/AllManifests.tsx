@@ -75,14 +75,12 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 interface IAllManifests {
-  userPersonalGroup: UserGroup;
-  user: User;
   fetchManifestForUser: () => void;
+  fetchMediaForUser: () => void;
   manifests: Manifest[];
   medias: Media[];
-  setCreateManifestIsOpen: (createManifestIsOpen: boolean) => void;
-  createManifestIsOpen: boolean;
-  fetchMediaForUser: () => void;
+  user: User;
+  userPersonalGroup: UserGroup;
 }
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL;

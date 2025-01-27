@@ -27,11 +27,10 @@ interface ContentProps {
   projectSelected: any;
   saveMiradorState: (state: any) => void;
   selectedContent: string;
-  selectedProjectId: string;
+  selectedProjectId: number | undefined;
   setGroups: (groups: any) => void;
-  setManifests: (manifests: any) => void;
   setMedias: (medias: any) => void;
-  setSelectedProjectId: (projectId: string) => void;
+  setSelectedProjectId: (id: number | undefined) => void;
   setShowSignOutModal: (show: boolean) => void;
   setViewer: (viewer: any) => void;
   showSignOutModal: boolean;
@@ -59,7 +58,6 @@ export function Content({
   selectedContent,
   selectedProjectId,
   setGroups,
-  setManifests,
   setMedias,
   setSelectedProjectId,
   setShowSignOutModal,
@@ -139,7 +137,6 @@ export function Content({
           fetchMediaForUser={fetchMediaForUser}
           manifests={manifests}
           medias={medias}
-          setManifests={setManifests}
           user={user}
           userPersonalGroup={userPersonalGroup}
         />

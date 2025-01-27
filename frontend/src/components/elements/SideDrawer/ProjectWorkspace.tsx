@@ -3,6 +3,21 @@ import { Grid } from "@mui/material";
 import MiradorViewer from "../../../features/mirador/Mirador";
 import { ItemsRights } from "../../../features/user-group/types/types";
 
+interface ProjectWorkspaceProps {
+  HandleSetIsRunning: (isRunning: boolean) => void;
+  fetchManifestForUser: () => void;
+  handleSetMiradorState: (state: any) => void;
+  miradorState: any;
+  myRef: any;
+  projectSelected: any;
+  saveMiradorState: (state: any) => void;
+  user: any;
+  userPersonalGroup: any;
+  viewer: any;
+  setViewer: (viewer: any) => void;
+  manifests: any;
+}
+
 export function ProjectWorkspace({
   HandleSetIsRunning,
   fetchManifestForUser,
@@ -16,7 +31,7 @@ export function ProjectWorkspace({
   viewer,
   setViewer,
   manifests,
-}) {
+}: ProjectWorkspaceProps) {
   const isEditor = projectSelected.rights !== ItemsRights.READER;
 
   return (
