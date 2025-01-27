@@ -40,8 +40,8 @@ interface ISideDrawerProps {
   handleDisconnect: () => void;
   selectedProjectId?: number;
   setSelectedProjectId: (id?: number) => void;
-  setViewer: Dispatch<any>;
   viewer: any;
+  setViewer: Dispatch<any>;
 }
 
 interface MiradorViewerHandle {
@@ -239,7 +239,7 @@ export const SideDrawer = ({
       projectToUpdate.userWorkspace = miradorViewer!;
       if (projectToUpdate) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { rights, ...projectWithoutRights } = projectToUpdate;
+        const { rights, share, ...projectWithoutRights } = projectToUpdate;
         await updateProject({ project: projectWithoutRights });
         toast.success(`Project ${projectWithoutRights.title} saved`); // TODO Trad
       }

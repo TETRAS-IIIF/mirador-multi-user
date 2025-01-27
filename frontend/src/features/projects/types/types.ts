@@ -15,6 +15,7 @@ export type Project = {
   created_at: Dayjs;
   lockedByUserId: number;
   lockedAt: Date;
+  share?: string;
 };
 
 export type ProjectGroup = {

@@ -151,6 +151,7 @@ export class LinkGroupProjectService {
       throw new InternalServerErrorException(error);
     }
   }
+
   async UpdateRelation(
     project_Id: number,
     user_group_Id: number,
@@ -406,11 +407,12 @@ export class LinkGroupProjectService {
         const groupProjects = await this.findAllGroupProjectByUserGroupId(
           usersGroup.id,
         );
-
+        console.log('find projects');
         const userProjects = groupProjects.map((groupProjects) => {
           return {
             ...groupProjects.project,
             rights: groupProjects.rights,
+            share: 'group',
           };
         });
         projects = projects.concat(

@@ -56,19 +56,20 @@ import { useTranslation } from "react-i18next";
 import { dublinCoreMetadata } from "../../../utils/dublinCoreMetadata.ts";
 import { Dayjs } from "dayjs";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { removeProjectFromList } from '../api/removeProjectFromList.ts';
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { removeProjectFromList } from "../api/removeProjectFromList.ts";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 interface AllProjectsProps {
-  handleSetMiradorState: (state: IState | undefined) => void;
-  medias: Media[];
-  selectedProjectId?: number;
-  setMedias: Dispatch<SetStateAction<Media[]>>;
-  setSelectedProjectId: (id: number) => void;
-  setUserProjects: (userProjects: Project[]) => void;
   user: User;
+  setSelectedProjectId: (id: number) => void;
+  selectedProjectId?: number;
+  setUserProjects: (userProjects: Project[]) => void;
   userProjects: Project[];
+  handleSetMiradorState: (state: IState | undefined) => void;
+  setMedias: Dispatch<SetStateAction<Media[]>>;
+  medias: Media[];
 }
 
 export const AllProjects = ({
@@ -170,7 +171,7 @@ export const AllProjects = ({
 
   const updateUserProject = useCallback(
     async (projectUpdated: Project) => {
-      const { rights, ...projectToUpdate } = projectUpdated;
+      const { rights, share, ...projectToUpdate } = projectUpdated;
       let updatedProject: ProjectGroupUpdateDto;
       if (rights) {
         updatedProject = {
@@ -369,9 +370,9 @@ export const AllProjects = ({
     setOpenSidePanel(!openSidePanel);
   };
 
-  const handleRemoveProjectFromList= async (projectId: number)=>{
-    await removeProjectFromList(projectId)
-  }
+  const handleRemoveProjectFromList = async (projectId: number) => {
+    await removeProjectFromList(projectId);
+  };
   return (
     <>
       <SidePanelMedia
@@ -497,12 +498,13 @@ export const AllProjects = ({
                         }
                         ReaderButton={
                           <ModalButton
-                            tooltipButton={t("configuration")}
+                            color={"error"}
+                            tooltipButton={t("removeProjectFromList")}
                             onClickFunction={() =>
-                              console.log(t("notAllowedMessage"))
+                              handleRemoveProjectFromList(projectUser.id)
                             }
-                            icon={<SettingsIcon />}
-                            disabled={true}
+                            icon={<CancelIcon />}
+                            disabled={false}
                           />
                         }
                         id={projectUser.id}
