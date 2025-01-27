@@ -296,4 +296,14 @@ export class LinkUserGroupController {
       },
     );
   }
+
+  @ApiOperation({ summary: 'leaving group' })
+  @Delete('/leaving-group/:groupId')
+  @UseGuards(AuthGuard)
+  async leavingGroup(@Param('groupId') groupId: number, @Req() request) {
+    return this.linkUserGroupService.RemoveAccessToUserGroup(
+      groupId,
+      request.user.sub,
+    );
+  }
 }

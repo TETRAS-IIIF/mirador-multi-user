@@ -41,7 +41,9 @@ import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
 import { UpdateManifestJsonDto } from './dto/UpdateManifestJsonDto';
 import { fileFilterManifest } from './utils/fileFilterManifest';
-import { serializeToValidUrl } from "../../utils/serializeToValideUrl";
+import { serializeToValidUrl } from '../../utils/serializeToValideUrl';
+import { UPLOAD_FOLDER } from '../../utils/constants';
+
 @ApiBearerAuth()
 @Controller('link-manifest-group')
 export class LinkManifestGroupController {
@@ -62,6 +64,7 @@ export class LinkManifestGroupController {
       userGroupId,
     );
   }
+
   @ApiOperation({ summary: 'upload a manifest' })
   @ApiOkResponse({
     description: "The manifest and the user's right on it",
@@ -78,7 +81,7 @@ export class LinkManifestGroupController {
           const hash = generateAlphanumericSHA1Hash(
             `${file.originalname}${Date.now().toString()}`,
           );
-          const uploadPath = `./upload/${hash}`;
+          const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
           fs.mkdirSync(uploadPath, { recursive: true });
           (req as any).generatedHash = hash;
           callback(null, uploadPath);
@@ -107,6 +110,7 @@ export class LinkManifestGroupController {
     };
     return this.linkManifestGroupService.createManifest(manifestToCreate);
   }
+
   @ApiOperation({ summary: 'Create a manifest with a link a manifest' })
   @ApiOkResponse({
     description: "The manifest and the user's right on it",
@@ -124,6 +128,7 @@ export class LinkManifestGroupController {
     };
     return this.linkManifestGroupService.createManifest(manifestToCreate);
   }
+
   @ApiOperation({ summary: 'Create a manifest with a json' })
   @ApiOkResponse({
     description: "The manifest and the user's right on it",
@@ -142,7 +147,7 @@ export class LinkManifestGroupController {
     const serializeLabel = serializeToValidUrl(label);
 
     const hash = createManifestDto.hash;
-    const uploadPath = `./upload/${hash}`;
+    const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
     fs.mkdirSync(uploadPath, { recursive: true });
 
     try {
@@ -206,6 +211,7 @@ export class LinkManifestGroupController {
       },
     );
   }
+
   @ApiOperation({ summary: 'Update a manifest object' })
   @ApiOkResponse({
     description: 'The manifest updated',
@@ -229,6 +235,7 @@ export class LinkManifestGroupController {
       },
     );
   }
+
   @ApiOperation({
     summary: 'Update the relation between a manifest and a group',
   })
@@ -256,6 +263,7 @@ export class LinkManifestGroupController {
       },
     );
   }
+
   @ApiOperation({ summary: 'Grant access to a manifest' })
   @ApiOkResponse({
     description: 'The manifests and the users rights on them',

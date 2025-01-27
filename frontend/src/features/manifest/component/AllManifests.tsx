@@ -69,15 +69,15 @@ const caddyUrl = import.meta.env.VITE_CADDY_URL
 
 
 export const AllManifests = ({
+                               manifests,
+                               fetchManifestForUser,
                                userPersonalGroup,
                                user,
-                               fetchManifestForUser,
-                               manifests,
                                medias,
-                               setCreateManifestIsOpen,
-                               createManifestIsOpen,
                                fetchMediaForUser,
                              }: IAllManifests) => {
+
+  const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
   const [searchedManifest, setSearchedManifest] = useState<Manifest | null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
   const [searchedManifestIndex, setSearchedManifestIndex] = useState<number | null>(null);

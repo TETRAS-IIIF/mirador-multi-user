@@ -22,7 +22,7 @@ export const Terms = () => {
       }}
     >
       <Grid item width={'100%'} height={'100%'}>
-        <iframe src="./../../public/customAssets/terms.html" title="Terms"
+        <iframe src="./../../customAssets/terms.html" title="Terms"
                 style={{ border: 'none' }}></iframe>
       </Grid>
     </Grid>
