@@ -1,91 +1,24 @@
-import { Box, CSSObject, Divider, Grid, IconButton, List, ListItem, styled, Theme, Tooltip } from '@mui/material';
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MuiDrawer from '@mui/material/Drawer';
-import WorkIcon from '@mui/icons-material/Work';
-import GroupsIcon from '@mui/icons-material/Groups';
-import SettingsIcon from '@mui/icons-material/Settings';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { ItemButton } from './SideBar/ItemButton.tsx';
-import { AllProjects } from '../../features/projects/components/AllProjects.tsx';
-import { AllGroups } from '../../features/user-group/components/AllGroups.tsx';
-import SaveIcon from '@mui/icons-material/Save';
 import { updateProject } from '../../features/projects/api/updateProject.ts';
 import { CreateProjectDto, Project } from '../../features/projects/types/types.ts';
 import IState from '../../features/mirador/interface/IState.ts';
-import { MMUModal } from './modal.tsx';
-import { ConfirmDisconnect } from '../../features/auth/components/confirmDisconect.tsx';
-import MiradorViewer from '../../features/mirador/Mirador.tsx';
 import { getUserAllProjects } from '../../features/projects/api/getUserAllProjects.ts';
 import { createProject } from '../../features/projects/api/createProject.ts';
 import toast from 'react-hot-toast';
-import { AllMedias } from '../../features/media/component/AllMedias.tsx';
 import { User } from '../../features/auth/types/types.ts';
 import { Media, MediaGroupRights } from '../../features/media/types/types.ts';
-import { getUserGroupMedias } from '../../features/media/api/getUserGroupMedias.ts';
 import { getUserPersonalGroup } from '../../features/projects/api/getUserPersonalGroup.ts';
 import { UserGroup, UserGroupTypes } from '../../features/user-group/types/types.ts';
-import { AllManifests } from '../../features/manifest/component/AllManifests.tsx';
-import ArticleIcon from '@mui/icons-material/Article';
-import { getUserGroupManifests } from '../../features/manifest/api/getUserGroupManifests.ts';
-import { Manifest, ManifestGroupRights } from '../../features/manifest/types/types.ts';
-import PermMediaIcon from '@mui/icons-material/PermMedia';
 import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
-import { UserSettings } from '../../features/user-setting/UserSettings.tsx';
-import { SidePanelManifest } from '../../features/manifest/component/SidePanelManifest.tsx';
 import { handleLock } from '../../features/projects/api/handleLock.ts';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import { AdminPanel } from '../../features/admin/components/adminPanel.tsx';
 import { useTranslation } from 'react-i18next';
 import { loadLanguage } from '../../features/translation/i18n.ts';
+import { Content } from './SideDrawer/Content';
+import { MMUDrawer } from './SideDrawer/MMUDrawer';
+import { getUserGroupMedias } from '../../features/media/api/getUserGroupMedias';
+import { Manifest, ManifestGroupRights } from '../../features/manifest/types/types';
+import { getUserGroupManifests } from '../../features/manifest/api/getUserGroupManifests';
 
-const drawerWidth = 240;
-const openedMixin = (theme: Theme): CSSObject => ({
-  width: drawerWidth,
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: 'hidden',
-});
-
-const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create('width', {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: 'hidden',
-  width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up('sm')]: {
-    width: `calc(${theme.spacing(8)} + 1px)`,
-  },
-});
-
-const DrawerHeader = styled('div')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-end',
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-}));
-
-const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
-  ({ theme, open }) => ({
-    width: drawerWidth,
-    flexShrink: 0,
-    whiteSpace: 'nowrap',
-    boxSizing: 'border-box',
-    ...(open && {
-      ...openedMixin(theme),
-      '& .MuiDrawer-paper': openedMixin(theme),
-    }),
-    ...(!open && {
-      ...closedMixin(theme),
-      '& .MuiDrawer-paper': closedMixin(theme),
-    }),
-  }),
-);
 
 interface ISideDrawerProps {
   user: User,
@@ -102,7 +35,7 @@ interface MiradorViewerHandle {
 }
 
 
-const CONTENT = {
+export const MENU_ELEMENT = {
   PROJECTS: 'PROJECT',
   GROUPS: 'GROUPS',
   MEDIA: 'MEDIA',
@@ -110,6 +43,7 @@ const CONTENT = {
   SETTING: 'SETTING',
   ADMIN: 'ADMIN',
 };
+
 export const SideDrawer = ({
                              user,
                              handleDisconnect,
@@ -118,26 +52,25 @@ export const SideDrawer = ({
                              setViewer,
                              viewer,
                            }: ISideDrawerProps) => {
-  const [open, setOpen] = useState(true);
-  const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS);
+  const [selectedContent, setSelectedContent] = useState(MENU_ELEMENT.PROJECTS);
   const [userProjects, setUserProjects] = useState<Project[]>([]);
-  const [modalDisconectIsOpen, setModalDisconectIsOpen] = useState(false);
+  const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
-  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>();
+
+  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>(null);
   const [medias, setMedias] = useState<Media[]>([]);
-  const [manifests, setManifests] = useState<Manifest[]>([]);
-  const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
+
+
   const [groups, setGroups] = useState<UserGroup[]>([]);
-  const [isRunning, setIsRunning] = useState(false);
+  const [isMiradorRunning, setIsMiradorRunning] = useState(false);
+
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const myRef = useRef<MiradorViewerHandle>(null);
+  const miradorViewerRef = useRef<MiradorViewerHandle>(null);
+
   const { t } = useTranslation();
 
-  const loadPreferredLanguage = async () => {
-    await loadLanguage(user.preferredLanguage);
-  };
   useEffect(() => {
-    if (myRef.current !== null) {
+    if (miradorViewerRef.current !== null) {
       if (!intervalRef.current) {
         intervalRef.current = setInterval(() => {
           saveProject();
@@ -156,31 +89,27 @@ export const SideDrawer = ({
         intervalRef.current = null;
       }
     };
-  }, [myRef.current, isRunning]);
+  }, [miradorViewerRef.current, isMiradorRunning]);
 
   useEffect(() => {
+    fetchUserPersonalGroup();
     loadPreferredLanguage();
   }, [user]);
-  const handleSetCreateManifestIsOpen = (boolean: boolean) => {
-    setCreateManifestIsOpen(boolean);
-  };
 
   const HandleSetIsRunning = () => {
-    setIsRunning(!isRunning);
+    setIsMiradorRunning(!isMiradorRunning);
   };
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
+  const loadPreferredLanguage = async () => {
+    await loadLanguage(user.preferredLanguage);
   };
+
 
   const handleSaveProject = useCallback((newProject: Project) => {
     return setUserProjects([newProject, ...userProjects]);
 
   }, [setUserProjects]);
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
 
   const handleChangeContent = (content: string) => {
     if (selectedProjectId) {
@@ -188,7 +117,6 @@ export const SideDrawer = ({
     }
     setSelectedProjectId(undefined);
     setSelectedContent(content);
-    handleSetCreateManifestIsOpen(false);
   };
 
 
@@ -205,7 +133,7 @@ export const SideDrawer = ({
     setUserProjects(sortedProjects);
   };
 
-  const HandleSetMiradorState = (state: IState | undefined) => {
+  const handleSetMiradorState = (state: IState) => {
     setMiradorState(state);
   };
 
@@ -213,49 +141,12 @@ export const SideDrawer = ({
     try {
       const personalGroup = await getUserPersonalGroup(user.id);
       setUserPersonalGroup(personalGroup);
-      return personalGroup;
     } catch (error) {
       console.error(error);
     }
   };
 
-  const fetchMediaForUser = async () => {
-    const allMedias: Media[] = [];
-    const personalGroup = await fetchUserPersonalGroup();
-
-    const personalGroupMedias = await getUserGroupMedias(personalGroup!.id);
-    allMedias.push(...personalGroupMedias);
-
-    for (const group of groups) {
-      const groupMedias = await getUserGroupMedias(group.id);
-      allMedias.push(...groupMedias);
-    }
-
-    const rightsPriority = {
-      [MediaGroupRights.ADMIN]: 3,
-      [MediaGroupRights.EDITOR]: 2,
-      [MediaGroupRights.READER]: 1,
-    };
-
-    const uniqueMediasMap = new Map<number, Media>();
-
-    allMedias.forEach((media) => {
-      const existing = uniqueMediasMap.get(media.id);
-
-      if (
-        !existing ||
-        (media.rights &&
-          rightsPriority[media.rights] >
-          (existing.rights ? rightsPriority[existing.rights] : 0))
-      ) {
-        uniqueMediasMap.set(media.id, media);
-      }
-    });
-
-    const uniqueMedias = Array.from(uniqueMediasMap.values());
-
-    setMedias(uniqueMedias);
-  };
+  const [manifests, setManifests] = useState<Manifest[]>([]);
 
   const getManifestFromUrl = async (manifestUrl: string) => {
     try {
@@ -268,9 +159,8 @@ export const SideDrawer = ({
 
   const fetchManifestForUser = async () => {
     const allManifests: Manifest[] = [];
-    const personalGroup = await fetchUserPersonalGroup();
 
-    const userManifests = await getUserGroupManifests(personalGroup!.id);
+    const userManifests = await getUserGroupManifests(userPersonalGroup!.id);
     allManifests.push(...userManifests);
 
     for (const group of groups) {
@@ -295,14 +185,13 @@ export const SideDrawer = ({
         uniqueManifestsMap.set(manifest.id, manifest);
       }
     });
-
     const uniqueManifests = Array.from(uniqueManifestsMap.values());
 
     const updatedManifests = await Promise.all(
       uniqueManifests.map(async (manifest) => {
         const manifestJson = await getManifestFromUrl(manifest.path);
         return { ...manifest, json: manifestJson };
-      })
+      }),
     );
     setManifests(updatedManifests);
   };
@@ -316,7 +205,7 @@ export const SideDrawer = ({
 
 
   const saveMiradorState = useCallback(async () => {
-    const miradorViewer = myRef.current?.setViewer();
+    const miradorViewer = miradorViewerRef.current?.setViewer();
     if (selectedProjectId) {
       let projectToUpdate: Project = userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
@@ -359,17 +248,11 @@ export const SideDrawer = ({
     await saveMiradorState();
   };
 
-  const handleSetDisconnectModalOpen = () => {
-    setModalDisconectIsOpen(!modalDisconectIsOpen);
+  const handleDisconnectUser = () => {
+    handleDisconnect();
+    setShowSignOutModal(false);
   };
 
-  const handleDisonnectUser = () => {
-    handleDisconnect();
-    handleSetDisconnectModalOpen();
-  };
-  const handleSetMiradorState = (state: IState) => {
-    setMiradorState(state);
-  };
 
   const fetchProjects = async () => {
     try {
@@ -384,11 +267,48 @@ export const SideDrawer = ({
     }
   };
 
-  const initializedWorkspace = async ()=> {
+  const fetchMediaForUser = async () => {
+    const allMedias: Media[] = [];
+
+    const personalGroupMedias = await getUserGroupMedias(userPersonalGroup!.id);
+    allMedias.push(...personalGroupMedias);
+
+    for (const group of groups) {
+      const groupMedias = await getUserGroupMedias(group.id);
+      allMedias.push(...groupMedias);
+    }
+
+    const rightsPriority = {
+      [MediaGroupRights.ADMIN]: 3,
+      [MediaGroupRights.EDITOR]: 2,
+      [MediaGroupRights.READER]: 1,
+    };
+
+    const uniqueMediasMap = new Map<number, Media>();
+
+    allMedias.forEach((media) => {
+      const existing = uniqueMediasMap.get(media.id);
+
+      if (
+        !existing ||
+        (media.rights &&
+          rightsPriority[media.rights] >
+          (existing.rights ? rightsPriority[existing.rights] : 0))
+      ) {
+        uniqueMediasMap.set(media.id, media);
+      }
+    });
+
+    const uniqueMedias = Array.from(uniqueMediasMap.values());
+
+    setMedias(uniqueMedias);
+  };
+
+  const initializedWorkspace = async () => {
+    await fetchManifestForUser();
     await fetchGroups()
     await fetchProjects();
     await fetchMediaForUser();
-    await fetchManifestForUser();
   }
 
   useEffect(() => {
@@ -406,167 +326,42 @@ export const SideDrawer = ({
 
   return (
     <>
-      <Drawer variant="permanent" open={open} sx={{ maxHeight: '100vh' }}
-      >
-        <DrawerHeader>
-          <IconButton onClick={open ? handleDrawerClose : handleDrawerOpen}>
-            {!open ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List sx={{ minHeight: '70vh', flexGrow: 1 }}>
-          <Tooltip title={t('projectTitle')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton selected={CONTENT.PROJECTS === selectedContent} open={open} icon={<WorkIcon />}
-                          text={t('project')} action={() => handleChangeContent(CONTENT.PROJECTS)} />
-            </ListItem>
-          </Tooltip>
-          <Tooltip title={t('manifestTitle')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={open} selected={CONTENT.MANIFEST === selectedContent} icon={<ArticleIcon />}
-                          text={t('manifests')} action={() => handleChangeContent(CONTENT.MANIFEST)} />
-            </ListItem>
-          </Tooltip>
-          <Tooltip title={t('mediaTitle')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<PermMediaIcon />}
-                          text={t('media')} action={() => handleChangeContent(CONTENT.MEDIA)} />
-            </ListItem>
-          </Tooltip>
-          <Tooltip title={t('groupTitle')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />}
-                          text={t('group')} action={() => handleChangeContent(CONTENT.GROUPS)} />
-            </ListItem>
-          </Tooltip>
-        </List>
-        <Divider />
-        {
-          selectedProjectId && (
-            <>
-              <List>
-                <Tooltip title={projectSelected!.title} placement="left">
-                  <ListItem sx={{ padding: 0 }}>
-                    <ItemButton icon={<WorkIcon />} text={projectSelected!.title} open={open} selected={false}
-                                action={() => console.log('')} />
-                  </ListItem>
-                </Tooltip>
-                <Divider />
-                <Tooltip title={t('save')} placement="left">
-                  <ListItem sx={{ padding: 0 }}>
-                    <ItemButton open={open} selected={false} icon={<SaveIcon />} text={t('saveProject')}
-                                action={saveProject} />
-                  </ListItem>
-                </Tooltip>
-              </List>
-              <Divider />
-            </>
-          )
-        }
-        <List>
-          {
-            user._isAdmin && (
-              <Tooltip title={t('titleAdmin')} placement="right">
-                <ListItem sx={{ padding: 0 }}>
-                  <ItemButton open={open} selected={false} icon={<AdminPanelSettingsIcon />} text={t('admin')}
-                              action={() => handleChangeContent(CONTENT.ADMIN)} />
-                </ListItem>
-              </Tooltip>
-            )
-          }
-          <Tooltip title={t('titleSettings')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={open} selected={false} icon={<SettingsIcon />} text={t('settings')}
-                          action={() => handleChangeContent(CONTENT.SETTING)} />
-            </ListItem>
-          </Tooltip>
-          <Tooltip title={t('titleDisconnect')} placement="right">
-            <ListItem sx={{ padding: 0 }}>
-              <ItemButton open={open} selected={false} icon={<LogoutIcon />} text={t('disconnect')}
-                          action={handleSetDisconnectModalOpen} />
-            </ListItem>
-          </Tooltip>
-        </List>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: '100vh' }}>
-        {selectedProjectId && projectSelected && (
-          <SidePanelManifest manifest={manifests} userPersonalGroup={userPersonalGroup!} user={user}
-                             fetchManifestForUser={fetchManifestForUser} display={true}>
-            <Grid sx={{ paddingRight: 5 }}>
-              <MiradorViewer
-                language={user.preferredLanguage ? user.preferredLanguage : navigator.language.split('-')[0]}
-                miradorState={miradorState!}
-                setMiradorState={handleSetMiradorState}
-                project={projectSelected}
-                saveMiradorState={saveMiradorState}
-                viewer={viewer}
-                setViewer={setViewer}
-                ref={myRef}
-                HandleSetIsRunning={HandleSetIsRunning}
-              />
-            </Grid>
-          </SidePanelManifest>
-        )
-        }
-        {
-          user && user.id && user._isAdmin && selectedContent === CONTENT.ADMIN && (
-            <AdminPanel />
-          )
-        }
-        {user && user.id && selectedContent === CONTENT.PROJECTS && !selectedProjectId && (
-          <AllProjects
-            selectedProjectId={selectedProjectId}
-            setSelectedProjectId={setSelectedProjectId}
-            user={user}
-            userProjects={userProjects}
-            setUserProjects={HandleSetUserProjects}
-            handleSetMiradorState={HandleSetMiradorState}
-            medias={medias}
-            setMedias={setMedias}
-          />
-        )}
-        {
-          user && user.id && !selectedProjectId && selectedContent === CONTENT.MEDIA && (
-            <AllMedias
-              user={user}
-              userPersonalGroup={userPersonalGroup!}
-              medias={medias}
-              fetchMediaForUser={fetchMediaForUser}
-              setMedias={setMedias}
-            />
-          )
-        }
-        {
-          user && user.id && selectedContent === CONTENT.GROUPS && (
-            <AllGroups
-              setGroups={setGroups}
-              groups={groups}
-              fetchGroups={fetchGroups}
-              userPersonalGroup={userPersonalGroup!}
-              medias={medias}
-              user={user}
-              setMedias={setMedias}
-            />
-          )
-        }
-        {
-          user && user.id && selectedContent === CONTENT.MANIFEST && userPersonalGroup && (
-            <AllManifests fetchMediaForUser={fetchMediaForUser} createManifestIsOpen={createManifestIsOpen}
-                          setCreateManifestIsOpen={handleSetCreateManifestIsOpen} medias={medias} manifests={manifests}
-                          fetchManifestForUser={fetchManifestForUser} user={user} userPersonalGroup={userPersonalGroup} />
-          )
-        }
-        {
-          user && user.id && selectedContent === CONTENT.SETTING && (
-            <UserSettings user={user} />
-          )
-        }
-        {modalDisconectIsOpen && (
-          <MMUModal openModal={modalDisconectIsOpen} setOpenModal={handleSetDisconnectModalOpen} width={400}
-                    children={<ConfirmDisconnect handleDisconnect={handleDisonnectUser} />} />
-        )
-        }
-      </Box>
+      <MMUDrawer
+        selectedContent={selectedContent}
+        handleChangeContent={handleChangeContent}
+        projectSelected={projectSelected}
+        saveProject={saveProject}
+        setShowSignOutModal={setShowSignOutModal}
+        user={user}
+      />
+      <Content
+        fetchManifestForUser={fetchManifestForUser}
+        manifests={manifests}
+        HandleSetIsRunning={HandleSetIsRunning}
+        HandleSetUserProjects={HandleSetUserProjects}
+        fetchGroups={fetchGroups}
+        fetchMediaForUser={fetchMediaForUser}
+        groups={groups}
+        handleDisconnectUser={handleDisconnectUser}
+        setShowSignOutModal={setShowSignOutModal}
+        handleSetMiradorState={handleSetMiradorState}
+        medias={medias}
+        miradorState={miradorState}
+        showSignOutModal={showSignOutModal}
+        miradorViewerRef={miradorViewerRef}
+        projectSelected={projectSelected}
+        saveMiradorState={saveMiradorState}
+        selectedContent={selectedContent}
+        selectedProjectId={selectedProjectId}
+        setGroups={setGroups}
+        setMedias={setMedias}
+        setSelectedProjectId={setSelectedProjectId}
+        setViewer={setViewer}
+        user={user}
+        userPersonalGroup={userPersonalGroup}
+        userProjects={userProjects}
+        viewer={viewer}
+      />
     </>
   );
 };
