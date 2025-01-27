@@ -80,8 +80,6 @@ interface IAllManifests {
   fetchManifestForUser: () => void;
   manifests: Manifest[];
   medias: Media[];
-  setCreateManifestIsOpen: (createManifestIsOpen: boolean) => void;
-  createManifestIsOpen: boolean;
   fetchMediaForUser: () => void;
 }
 

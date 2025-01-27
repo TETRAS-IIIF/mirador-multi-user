@@ -1,32 +1,47 @@
-import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { updateProject } from '../../features/projects/api/updateProject.ts';
-import { CreateProjectDto, Project } from '../../features/projects/types/types.ts';
-import IState from '../../features/mirador/interface/IState.ts';
-import { getUserAllProjects } from '../../features/projects/api/getUserAllProjects.ts';
-import { createProject } from '../../features/projects/api/createProject.ts';
-import toast from 'react-hot-toast';
-import { User } from '../../features/auth/types/types.ts';
-import { Media, MediaGroupRights } from '../../features/media/types/types.ts';
-import { getUserPersonalGroup } from '../../features/projects/api/getUserPersonalGroup.ts';
-import { UserGroup, UserGroupTypes } from '../../features/user-group/types/types.ts';
-import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
-import { handleLock } from '../../features/projects/api/handleLock.ts';
-import { useTranslation } from 'react-i18next';
-import { loadLanguage } from '../../features/translation/i18n.ts';
-import { Content } from './SideDrawer/Content';
-import { MMUDrawer } from './SideDrawer/MMUDrawer';
-import { getUserGroupMedias } from '../../features/media/api/getUserGroupMedias';
-import { Manifest, ManifestGroupRights } from '../../features/manifest/types/types';
-import { getUserGroupManifests } from '../../features/manifest/api/getUserGroupManifests';
-
+import {
+  Dispatch,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { updateProject } from "../../features/projects/api/updateProject.ts";
+import {
+  CreateProjectDto,
+  Project,
+} from "../../features/projects/types/types.ts";
+import IState from "../../features/mirador/interface/IState.ts";
+import { getUserAllProjects } from "../../features/projects/api/getUserAllProjects.ts";
+import { createProject } from "../../features/projects/api/createProject.ts";
+import toast from "react-hot-toast";
+import { User } from "../../features/auth/types/types.ts";
+import { Media, MediaGroupRights } from "../../features/media/types/types.ts";
+import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
+import {
+  UserGroup,
+  UserGroupTypes,
+} from "../../features/user-group/types/types.ts";
+import { getAllUserGroups } from "../../features/user-group/api/getAllUserGroups.ts";
+import { handleLock } from "../../features/projects/api/handleLock.ts";
+import { useTranslation } from "react-i18next";
+import { loadLanguage } from "../../features/translation/i18n.ts";
+import { Content } from "./SideDrawer/Content";
+import { MMUDrawer } from "./SideDrawer/MMUDrawer";
+import { getUserGroupMedias } from "../../features/media/api/getUserGroupMedias";
+import {
+  Manifest,
+  ManifestGroupRights,
+} from "../../features/manifest/types/types";
+import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests";
 
 interface ISideDrawerProps {
-  user: User,
-  handleDisconnect: () => void
-  selectedProjectId?: number
-  setSelectedProjectId: (id?: number) => void
-  setViewer: Dispatch<any>
-  viewer: any
+  user: User;
+  handleDisconnect: () => void;
+  selectedProjectId?: number;
+  setSelectedProjectId: (id?: number) => void;
+  setViewer: Dispatch<any>;
+  viewer: any;
 }
 
 interface MiradorViewerHandle {
@@ -34,32 +49,32 @@ interface MiradorViewerHandle {
   setViewer: () => IState;
 }
 
-
 export const MENU_ELEMENT = {
-  PROJECTS: 'PROJECT',
-  GROUPS: 'GROUPS',
-  MEDIA: 'MEDIA',
-  MANIFEST: 'MANIFEST',
-  SETTING: 'SETTING',
-  ADMIN: 'ADMIN',
+  PROJECTS: "PROJECT",
+  GROUPS: "GROUPS",
+  MEDIA: "MEDIA",
+  MANIFEST: "MANIFEST",
+  SETTING: "SETTING",
+  ADMIN: "ADMIN",
 };
 
 export const SideDrawer = ({
-                             user,
-                             handleDisconnect,
-                             selectedProjectId,
-                             setSelectedProjectId,
-                             setViewer,
-                             viewer,
-                           }: ISideDrawerProps) => {
+  user,
+  handleDisconnect,
+  selectedProjectId,
+  setSelectedProjectId,
+  setViewer,
+  viewer,
+}: ISideDrawerProps) => {
   const [selectedContent, setSelectedContent] = useState(MENU_ELEMENT.PROJECTS);
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
 
-  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>(null);
+  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup | null>(
+    null,
+  );
   const [medias, setMedias] = useState<Media[]>([]);
-
 
   const [groups, setGroups] = useState<UserGroup[]>([]);
   const [isMiradorRunning, setIsMiradorRunning] = useState(false);
@@ -104,12 +119,12 @@ export const SideDrawer = ({
     await loadLanguage(user.preferredLanguage);
   };
 
-
-  const handleSaveProject = useCallback((newProject: Project) => {
-    return setUserProjects([newProject, ...userProjects]);
-
-  }, [setUserProjects]);
-
+  const handleSaveProject = useCallback(
+    (newProject: Project) => {
+      return setUserProjects([newProject, ...userProjects]);
+    },
+    [setUserProjects],
+  );
 
   const handleChangeContent = (content: string) => {
     if (selectedProjectId) {
@@ -119,15 +134,17 @@ export const SideDrawer = ({
     setSelectedContent(content);
   };
 
-
   const HandleSetUserProjects = (userProjects: Project[]) => {
-    const uniqueProjects = Array.from(new Set(userProjects.map((project: Project) => project.id)))
-      .map(id => {
-        return userProjects.find((project: Project) => project.id === id);
-      }) as Project[];
+    const uniqueProjects = Array.from(
+      new Set(userProjects.map((project: Project) => project.id)),
+    ).map((id) => {
+      return userProjects.find((project: Project) => project.id === id);
+    }) as Project[];
 
     const sortedProjects = uniqueProjects.sort((a, b) => {
-      return b.created_at!.toDate().getTime() - a.created_at!.toDate().getTime();
+      return (
+        b.created_at!.toDate().getTime() - a.created_at!.toDate().getTime()
+      );
     });
 
     setUserProjects(sortedProjects);
@@ -179,9 +196,12 @@ export const SideDrawer = ({
     allManifests.forEach((manifest) => {
       const existing = uniqueManifestsMap.get(manifest.id);
 
-      if (!existing ||
+      if (
+        !existing ||
         (manifest.rights &&
-          rightsPriority[manifest.rights] > (existing.rights ? rightsPriority[existing.rights] : 0))) {
+          rightsPriority[manifest.rights] >
+            (existing.rights ? rightsPriority[existing.rights] : 0))
+      ) {
         uniqueManifestsMap.set(manifest.id, manifest);
       }
     });
@@ -196,21 +216,25 @@ export const SideDrawer = ({
     setManifests(updatedManifests);
   };
 
-
   const fetchGroups = async () => {
     let groups = await getAllUserGroups(user.id);
-    groups = groups.filter((group: UserGroup) => group.type == UserGroupTypes.MULTI_USER);
+    groups = groups.filter(
+      (group: UserGroup) => group.type == UserGroupTypes.MULTI_USER,
+    );
     setGroups(groups);
   };
-
 
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = miradorViewerRef.current?.setViewer();
     if (selectedProjectId) {
-      let projectToUpdate: Project = userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
+      let projectToUpdate: Project = userProjects.find(
+        (projectUser) => projectUser.id == selectedProjectId,
+      )!;
       //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
       if (projectToUpdate == undefined) {
-        projectToUpdate = userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
+        projectToUpdate = userProjects.find(
+          (projectUser) => projectUser.id == selectedProjectId,
+        )!;
       }
       projectToUpdate.userWorkspace = miradorViewer!;
       if (projectToUpdate) {
@@ -221,7 +245,7 @@ export const SideDrawer = ({
       }
     } else {
       const project: CreateProjectDto = {
-        title: t('defaultProjectTitle'),
+        title: t("defaultProjectTitle"),
         ownerId: user.id,
         userWorkspace: miradorViewer!,
         metadata: {},
@@ -253,17 +277,17 @@ export const SideDrawer = ({
     setShowSignOutModal(false);
   };
 
-
   const fetchProjects = async () => {
     try {
       const projects = await getUserAllProjects(user.id);
-      const uniqueProjects = Array.from(new Set(projects.map((project: Project) => project.id)))
-        .map(id => {
-          return projects.find((project: Project) => project.id === id);
-        });
+      const uniqueProjects = Array.from(
+        new Set(projects.map((project: Project) => project.id)),
+      ).map((id) => {
+        return projects.find((project: Project) => project.id === id);
+      });
       setUserProjects(uniqueProjects);
     } catch (error) {
-      console.error(t('errorFetchProject'), error);
+      console.error(t("errorFetchProject"), error);
     }
   };
 
@@ -297,7 +321,7 @@ export const SideDrawer = ({
         !existing ||
         (media.rights &&
           rightsPriority[media.rights] >
-          (existing.rights ? rightsPriority[existing.rights] : 0))
+            (existing.rights ? rightsPriority[existing.rights] : 0))
       ) {
         uniqueMediasMap.set(media.id, media);
       }
@@ -310,20 +334,21 @@ export const SideDrawer = ({
 
   const initializedWorkspace = async () => {
     await fetchUserPersonalGroup();
-    await fetchGroups()
+    await fetchGroups();
     await fetchProjects();
     await fetchMediaForUser();
     await fetchManifestForUser();
-  }
+  };
 
   useEffect(() => {
-    initializedWorkspace()
+    initializedWorkspace();
   }, [selectedProjectId]);
-
 
   const projectSelected = useMemo(() => {
     if (userProjects && selectedProjectId) {
-      const foundProject = userProjects.find(userProject => userProject.id === selectedProjectId);
+      const foundProject = userProjects.find(
+        (userProject) => userProject.id === selectedProjectId,
+      );
       return foundProject ? foundProject : null;
     }
     return null;
