@@ -9,6 +9,36 @@ import { MMUModal } from "../modal";
 import { ConfirmDisconnect } from "../../../features/auth/components/confirmDisconect";
 import { MENU_ELEMENT } from "../SideDrawer";
 import { ProjectWorkspace } from "./ProjectWorkspace";
+import { User } from "../../../features/auth/types/types.ts";
+
+interface ContentProps {
+  HandleSetIsRunning: () => void;
+  HandleSetUserProjects: (projects: any) => void;
+  fetchGroups: () => void;
+  fetchManifestForUser: () => void;
+  fetchMediaForUser: () => void;
+  groups: any;
+  handleDisconnectUser: () => void;
+  handleSetMiradorState: (state: any) => void;
+  manifests: any;
+  medias: any;
+  miradorState: any;
+  miradorViewerRef: any;
+  projectSelected: any;
+  saveMiradorState: (state: any) => void;
+  selectedContent: string;
+  selectedProjectId: number | undefined;
+  setGroups: (groups: any) => void;
+  setMedias: (medias: any) => void;
+  setSelectedProjectId: (id: number | undefined) => void;
+  setShowSignOutModal: (show: boolean) => void;
+  setViewer: (viewer: any) => void;
+  showSignOutModal: boolean;
+  user: User;
+  userPersonalGroup: any;
+  userProjects: any;
+  viewer: any;
+}
 
 export function Content({
   HandleSetIsRunning,
@@ -28,7 +58,6 @@ export function Content({
   selectedContent,
   selectedProjectId,
   setGroups,
-  setManifests,
   setMedias,
   setSelectedProjectId,
   setShowSignOutModal,
@@ -38,7 +67,7 @@ export function Content({
   userPersonalGroup,
   userProjects,
   viewer,
-}) {
+}: ContentProps) {
   return (
     <Box
       component="main"
@@ -108,7 +137,6 @@ export function Content({
           fetchMediaForUser={fetchMediaForUser}
           manifests={manifests}
           medias={medias}
-          setManifests={setManifests}
           user={user}
           userPersonalGroup={userPersonalGroup}
         />

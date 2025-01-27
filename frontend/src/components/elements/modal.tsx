@@ -5,7 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 interface IOpenModalProps {
   openModal: boolean;
-  setOpenModal: () => void;
+  setOpenModal: (open: boolean) => void;
   children: ReactNode;
   width: number;
 }
@@ -32,7 +32,7 @@ export const MMUModal = ({
   return (
     <Modal
       open={openModal}
-      onClose={setOpenModal}
+      onClose={() => setOpenModal(false)}
       aria-labelledby="child-modal-title"
       aria-describedby="child-modal-description"
       slotProps={{
@@ -46,7 +46,10 @@ export const MMUModal = ({
         <DialogTitle id="id" sx={{ padding: 0 }}>
           <Box display="flex" alignItems="center" justifyContent="flex-end">
             <Box>
-              <IconButton onClick={setOpenModal} sx={{ padding: 0 }}>
+              <IconButton
+                onClick={() => setOpenModal(false)}
+                sx={{ padding: 0 }}
+              >
                 <CloseIcon />
               </IconButton>
             </Box>

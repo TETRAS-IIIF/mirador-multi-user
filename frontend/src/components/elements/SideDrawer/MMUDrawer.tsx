@@ -58,6 +58,15 @@ const StyledDrawer = styled(MuiDrawer, {
   }),
 }));
 
+interface MMUDrawerProps {
+  handleChangeContent: (content: string) => void;
+  setShowSignOutModal: (show: boolean) => void;
+  projectSelected: any;
+  saveProject: () => void;
+  selectedContent: string;
+  user: any;
+}
+
 /**
  * Drawer on the left of MMU
  *
@@ -70,7 +79,7 @@ export function MMUDrawer({
   saveProject,
   selectedContent,
   user,
-}) {
+}: MMUDrawerProps) {
   const [isSideDrawerExpanded, setIsSideDrawerExpanded] = useState(true);
 
   const { t } = useTranslation();

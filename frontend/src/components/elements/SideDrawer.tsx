@@ -71,7 +71,9 @@ export const SideDrawer = ({
   const [showSignOutModal, setShowSignOutModal] = useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
 
-  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>(null);
+  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup | null>(
+    null,
+  );
   const [medias, setMedias] = useState<Media[]>([]);
 
   const [groups, setGroups] = useState<UserGroup[]>([]);
@@ -363,19 +365,17 @@ export const SideDrawer = ({
         user={user}
       />
       <Content
-        fetchManifestForUser={fetchManifestForUser}
-        manifests={manifests}
         HandleSetIsRunning={HandleSetIsRunning}
         HandleSetUserProjects={HandleSetUserProjects}
         fetchGroups={fetchGroups}
+        fetchManifestForUser={fetchManifestForUser}
         fetchMediaForUser={fetchMediaForUser}
         groups={groups}
         handleDisconnectUser={handleDisconnectUser}
-        setShowSignOutModal={setShowSignOutModal}
         handleSetMiradorState={handleSetMiradorState}
+        manifests={manifests}
         medias={medias}
         miradorState={miradorState}
-        showSignOutModal={showSignOutModal}
         miradorViewerRef={miradorViewerRef}
         projectSelected={projectSelected}
         saveMiradorState={saveMiradorState}
@@ -384,7 +384,9 @@ export const SideDrawer = ({
         setGroups={setGroups}
         setMedias={setMedias}
         setSelectedProjectId={setSelectedProjectId}
+        setShowSignOutModal={setShowSignOutModal}
         setViewer={setViewer}
+        showSignOutModal={showSignOutModal}
         user={user}
         userPersonalGroup={userPersonalGroup}
         userProjects={userProjects}
