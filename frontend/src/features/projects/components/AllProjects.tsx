@@ -15,7 +15,6 @@ import {
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
 import { deleteProject } from "../api/deleteProject.ts";
-import { getUserAllProjects } from "../api/getUserAllProjects.ts";
 import { updateProject } from "../api/updateProject";
 import { createProject } from "../api/createProject";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
@@ -64,6 +63,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 interface AllProjectsProps {
   user: User;
   setSelectedProjectId: (id: number) => void;
+  fetchProjects: () => Project[];
   selectedProjectId?: number;
   setUserProjects: (userProjects: Project[]) => void;
   userProjects: Project[];
@@ -81,6 +81,7 @@ export const AllProjects = ({
   userProjects,
   setUserProjects,
   handleSetMiradorState,
+  fetchProjects,
 }: AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<Project | null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>();
@@ -139,15 +140,6 @@ export const AllProjects = ({
     return sortedItems.slice(start, end);
   }, [currentPage, itemsPerPage, sortedItems]);
 
-  const fetchProjects = async () => {
-    try {
-      const projects = await getUserAllProjects(user.id);
-      setUserProjects(projects);
-    } catch (error) {
-      console.error("Failed to fetch projects:", error);
-    }
-  };
-
   const fetchUserPersonalGroup = async () => {
     const personalGroup = await getUserPersonalGroup(user.id);
     setUserPersonalGroup(personalGroup);
@@ -155,7 +147,7 @@ export const AllProjects = ({
   useEffect(() => {
     fetchProjects();
     fetchUserPersonalGroup();
-  }, [user, openModalProjectId]);
+  }, [openModalProjectId]);
 
   const deleteUserProject = useCallback(
     async (projectId: number) => {
@@ -373,6 +365,7 @@ export const AllProjects = ({
   const handleRemoveProjectFromList = async (projectId: number) => {
     await removeProjectFromList(projectId);
   };
+
   return (
     <>
       <SidePanelMedia
@@ -524,6 +517,7 @@ export const AllProjects = ({
                         setItemList={setGroupList}
                         metadata={projectUser.metadata}
                         getGroupByOption={getGroupByOption}
+                        share={projectUser.share ? projectUser.share : null}
                       />
                     </Grid>
                   ))}

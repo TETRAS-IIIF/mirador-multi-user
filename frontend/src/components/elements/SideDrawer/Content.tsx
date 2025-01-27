@@ -21,6 +21,7 @@ interface ContentProps {
   handleDisconnectUser: () => void;
   handleSetMiradorState: (state: any) => void;
   manifests: any;
+  setManifests:any
   medias: any;
   miradorState: any;
   miradorViewerRef: any;
@@ -38,12 +39,14 @@ interface ContentProps {
   userPersonalGroup: any;
   userProjects: any;
   viewer: any;
+  fetchProjects:()=>void;
 }
 
 export function Content({
   HandleSetIsRunning,
   HandleSetUserProjects,
   fetchGroups,
+  fetchProjects,
   fetchManifestForUser,
   fetchMediaForUser,
   groups,
@@ -59,6 +62,7 @@ export function Content({
   selectedProjectId,
   setGroups,
   setMedias,
+  setManifests,
   setSelectedProjectId,
   setShowSignOutModal,
   setViewer,
@@ -107,6 +111,7 @@ export function Content({
             setUserProjects={HandleSetUserProjects}
             user={user}
             userProjects={userProjects}
+            fetchProjects={fetchProjects}
           />
         )}
       {user &&
@@ -136,6 +141,7 @@ export function Content({
         <AllManifests
           fetchManifestForUser={fetchManifestForUser}
           fetchMediaForUser={fetchMediaForUser}
+          setManifests={setManifests}
           manifests={manifests}
           medias={medias}
           user={user}

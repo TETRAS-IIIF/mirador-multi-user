@@ -407,7 +407,6 @@ export class LinkGroupProjectService {
         const groupProjects = await this.findAllGroupProjectByUserGroupId(
           usersGroup.id,
         );
-        console.log('find projects');
         const userProjects = groupProjects.map((groupProjects) => {
           return {
             ...groupProjects.project,

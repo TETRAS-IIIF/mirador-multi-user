@@ -111,6 +111,7 @@ export const MMUModalEdit = <
     hash?: string;
     path?: string;
     userWorkspace?: Record<string, string>;
+    rights?: ItemsRights;
   },
   G,
 >({
@@ -218,8 +219,9 @@ export const MMUModalEdit = <
   }
 
   const handleUpdateItem = async () => {
+    const { rights, ...itemWithoutRights } = item;
     const itemToUpdate = {
-      ...item,
+      ...itemWithoutRights,
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
       description: newItemDescription,
