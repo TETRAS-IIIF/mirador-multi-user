@@ -4,7 +4,7 @@ import MiradorViewer from "../../../features/mirador/Mirador";
 import { ItemsRights } from "../../../features/user-group/types/types";
 
 interface ProjectWorkspaceProps {
-  HandleSetIsRunning: (isRunning: boolean) => void;
+  HandleSetIsRunning: () => void;
   fetchManifestForUser: () => void;
   handleSetMiradorState: (state: any) => void;
   miradorState: any;

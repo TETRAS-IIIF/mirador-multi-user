@@ -62,7 +62,7 @@ interface MMUDrawerProps {
   handleChangeContent: (content: string) => void;
   setShowSignOutModal: (show: boolean) => void;
   projectSelected: any;
-  saveProject: (project: any) => void;
+  saveProject: () => void;
   selectedContent: string;
   user: any;
 }

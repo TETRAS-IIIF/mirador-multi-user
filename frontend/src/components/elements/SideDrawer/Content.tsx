@@ -12,7 +12,7 @@ import { ProjectWorkspace } from "./ProjectWorkspace";
 import { User } from "../../../features/auth/types/types.ts";
 
 interface ContentProps {
-  HandleSetIsRunning: (isRunning: boolean) => void;
+  HandleSetIsRunning: () => void;
   HandleSetUserProjects: (projects: any) => void;
   fetchGroups: () => void;
   fetchManifestForUser: () => void;
