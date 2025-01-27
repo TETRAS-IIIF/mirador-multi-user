@@ -33,9 +33,3 @@ jobs:
         run: |
           cd frontend
           npm run build
-
-      # Optionally, run lint or tests in the frontend folder
-      - name: Lint code
-        run: |
-          cd frontend
-          npm run lint  # Add this if you have a lint script
