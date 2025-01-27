@@ -1,60 +1,85 @@
-import { Button, Grid, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography } from '@mui/material';
-import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useCallback, useEffect, useState } from 'react';
-import SaveIcon from '@mui/icons-material/Save';
-import { ItemList } from './ItemList.tsx';
-import { MMUModal } from './modal.tsx';
-import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
-import { ItemsRights } from '../../features/user-group/types/types.ts';
-import { ListItem } from '../types.ts';
-import CancelIcon from '@mui/icons-material/Cancel';
-import { MediaGroupRights, mediaOrigin } from '../../features/media/types/types.ts';
-import { ManifestGroupRights, manifestOrigin } from '../../features/manifest/types/types.ts';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import dayjs, { Dayjs } from 'dayjs';
-import { ObjectTypes } from '../../features/tag/type.ts';
-import { a11yProps } from './SideBar/allyProps.tsx';
-import { CustomTabPanel } from './CustomTabPanel.tsx';
-import { MetadataForm } from '../../features/metadata/components/metadataForm.tsx';
-import { getMetadataFormat } from '../../features/metadata/api/getMetadataFormat.ts';
-import { useUser } from '../../utils/auth.tsx';
-import { createMetadataForItem } from '../../features/metadata/api/createMetadataForItem.ts';
-import { gettingMetadataForObject } from '../../features/metadata/api/gettingMetadataForObject.ts';
-import { labelMetadata } from '../../features/metadata/types/types.ts';
-import { uploadMetadataFormat } from '../../features/metadata/api/uploadMetadataFormat.ts';
-import toast from 'react-hot-toast';
-import { JsonEditor } from 'json-edit-react'
-import { fetchManifest } from '../../features/manifest/api/fetchManifest.ts';
-import { updateManifestJson } from '../../features/manifest/api/updateManifestJson.ts';
-import { Selector } from '../Selector.tsx';
-import { useTranslation } from 'react-i18next';
+import {
+  Button,
+  Grid,
+  SelectChangeEvent,
+  Tab,
+  Tabs,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import SaveIcon from "@mui/icons-material/Save";
+import { ItemList } from "./ItemList.tsx";
+import { MMUModal } from "./modal.tsx";
+import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
+import { ItemsRights } from "../../features/user-group/types/types.ts";
+import { ListItem } from "../types.ts";
+import CancelIcon from "@mui/icons-material/Cancel";
+import {
+  MediaGroupRights,
+  mediaOrigin,
+} from "../../features/media/types/types.ts";
+import {
+  ManifestGroupRights,
+  manifestOrigin,
+} from "../../features/manifest/types/types.ts";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
+import { ObjectTypes } from "../../features/tag/type.ts";
+import { a11yProps } from "./SideBar/allyProps.tsx";
+import { CustomTabPanel } from "./CustomTabPanel.tsx";
+import { MetadataForm } from "../../features/metadata/components/metadataForm.tsx";
+import { getMetadataFormat } from "../../features/metadata/api/getMetadataFormat.ts";
+import { useUser } from "../../utils/auth.tsx";
+import { createMetadataForItem } from "../../features/metadata/api/createMetadataForItem.ts";
+import { gettingMetadataForObject } from "../../features/metadata/api/gettingMetadataForObject.ts";
+import { labelMetadata } from "../../features/metadata/types/types.ts";
+import { uploadMetadataFormat } from "../../features/metadata/api/uploadMetadataFormat.ts";
+import toast from "react-hot-toast";
+import { JsonEditor } from "json-edit-react";
+import { fetchManifest } from "../../features/manifest/api/fetchManifest.ts";
+import { updateManifestJson } from "../../features/manifest/api/updateManifestJson.ts";
+import { Selector } from "../Selector.tsx";
+import { useTranslation } from "react-i18next";
 
 interface ModalItemProps<T, G> {
-  item: T,
-  itemLabel: string,
-  updateItem?: (newItem: T) => void,
-  deleteItem?: (itemId: number) => void,
-  duplicateItem?: (itemId: number) => void,
-  handleDeleteAccessListItem: (itemId: number) => void,
-  searchModalEditItem?: (partialString: string) => Promise<any[]> | any[]
-  getOptionLabel?: (option: G, searchInput: string) => string,
-  handleSelectorChange: (listItem: ListItem) => (event: SelectChangeEvent) => Promise<void>,
-  fetchData: () => Promise<void>,
-  listOfItem?: ListItem[],
-  setItemToAdd?: Dispatch<SetStateAction<G | null>>,
-  handleAddAccessListItem: () => void,
-  setSearchInput: Dispatch<SetStateAction<string>>,
-  searchInput: string,
-  rights: ItemsRights | MediaGroupRights | ManifestGroupRights,
-  searchBarLabel: string,
-  description: string,
-  HandleOpenModalEdit: () => void,
-  thumbnailUrl?: string | null
+  item: T;
+  itemLabel: string;
+  updateItem?: (newItem: T) => void;
+  deleteItem?: (itemId: number) => void;
+  duplicateItem?: (itemId: number) => void;
+  handleDeleteAccessListItem: (itemId: number) => void;
+  searchModalEditItem?: (partialString: string) => Promise<any[]> | any[];
+  getOptionLabel?: (option: G, searchInput: string) => string;
+  handleSelectorChange: (
+    listItem: ListItem,
+  ) => (event: SelectChangeEvent) => Promise<void>;
+  fetchData: () => Promise<void>;
+  listOfItem?: ListItem[];
+  setItemToAdd?: Dispatch<SetStateAction<G | null>>;
+  handleAddAccessListItem: () => void;
+  setSearchInput: Dispatch<SetStateAction<string>>;
+  searchInput: string;
+  rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
+  searchBarLabel: string;
+  description: string;
+  HandleOpenModalEdit: () => void;
+  thumbnailUrl?: string | null;
   metadata?: Record<string, string>;
-  isGroups?:boolean
-  objectTypes?:ObjectTypes
-  getGroupByOption?:(option:any)=>string
+  isGroups?: boolean;
+  objectTypes?: ObjectTypes;
+  getGroupByOption?: (option: any) => string;
 }
 
 type MetadataFormat = {
@@ -75,74 +100,99 @@ type MetadataFields = {
   [key: string]: string; // Abstracts all possible key-value pairs where keys are strings and values are strings
 };
 
-
 type MetadataArray = MetadataFormat[];
 
-export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | mediaOrigin, created_at: Dayjs, snapShotHash?: string, hash?: string, path?: string, userWorkspace?: Record<string, string> }, G>(
-  {
-    itemLabel,
-    setItemToAdd,
-    item,
-    updateItem,
-    deleteItem,
-    searchModalEditItem,
-    getOptionLabel,
-    handleSelectorChange,
-    fetchData,
-    listOfItem,
-    handleAddAccessListItem,
-    setSearchInput,
-    searchInput,
-    rights,
-    searchBarLabel,
-    handleDeleteAccessListItem,
-    description,
-    HandleOpenModalEdit,
-    thumbnailUrl,
-    metadata,
-    isGroups,
-    getGroupByOption,
-    duplicateItem,
-    objectTypes,
-  }: ModalItemProps<T, G>) => {
+export const MMUModalEdit = <
+  T extends {
+    id: number;
+    origin?: manifestOrigin | mediaOrigin;
+    created_at: Dayjs;
+    snapShotHash?: string;
+    hash?: string;
+    path?: string;
+    userWorkspace?: Record<string, string>;
+  },
+  G,
+>({
+  itemLabel,
+  setItemToAdd,
+  item,
+  updateItem,
+  deleteItem,
+  searchModalEditItem,
+  getOptionLabel,
+  handleSelectorChange,
+  fetchData,
+  listOfItem,
+  handleAddAccessListItem,
+  setSearchInput,
+  searchInput,
+  rights,
+  searchBarLabel,
+  handleDeleteAccessListItem,
+  description,
+  HandleOpenModalEdit,
+  thumbnailUrl,
+  metadata,
+  isGroups,
+  getGroupByOption,
+  duplicateItem,
+  objectTypes,
+}: ModalItemProps<T, G>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
   const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
-  const [newItemDate, setNewItemDate] = useState<Dayjs | null>(dayjs(item.created_at));
-  const [newItemMetadataCreator, setNewItemMetadataCreator] = useState(metadata?.creator ? metadata.creator : null);
+  const [newItemDate, setNewItemDate] = useState<Dayjs | null>(
+    dayjs(item.created_at),
+  );
+  const [newItemMetadataCreator, setNewItemMetadataCreator] = useState(
+    metadata?.creator ? metadata.creator : null,
+  );
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openDuplicateModal, setOpenDuplicateModal] = useState(false);
   const [metadataFormData, setMetadataFormData] = useState<MetadataArray>();
-  const [selectedMetadataData, setSelectedMetadataData] = useState<MetadataFields>();
+  const [selectedMetadataData, setSelectedMetadataData] =
+    useState<MetadataFields>();
   const [tabValue, setTabValue] = useState(0);
   const [metadataFormats, setMetadataFormats] = useState<MetadataFormat[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<MetadataFormat | undefined>();
-  const [jsonElementToEditInAdvancedEditor, setJsonElementToEditInAdvancedEditor] = useState<Record<string, string> | undefined>();
-  const user = useUser()
+  const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<
+    MetadataFormat | undefined
+  >();
+  const [
+    jsonElementToEditInAdvancedEditor,
+    setJsonElementToEditInAdvancedEditor,
+  ] = useState<Record<string, string> | undefined>();
+  const user = useUser();
   const { t } = useTranslation();
 
-
   const handeUpdateMetadata = (updateData: any) => {
-    setSelectedMetadataData(updateData)
-  }
+    setSelectedMetadataData(updateData);
+  };
 
-  const handleSetSelectedMetadataFormat = (newFormat: MetadataFormat | undefined) => {
+  const handleSetSelectedMetadataFormat = (
+    newFormat: MetadataFormat | undefined,
+  ) => {
     setSelectedMetadataFormat(newFormat!);
     const matchingMetadata = metadataFormData!.find(
       (data) => data.title === newFormat!.title,
     );
 
-
     if (matchingMetadata) {
       const { metadata } = matchingMetadata;
       if (metadataFormData) {
-        const newData = metadataFormData.find((formData) => formData.metadata == metadata);
+        const newData = metadataFormData.find(
+          (formData) => formData.metadata == metadata,
+        );
         if (newData) {
+          const metadata = newData.metadata as unknown as Record<
+            string,
+            string
+          >;
 
-          const metadata = newData.metadata as unknown as Record<string, string>;
-
-          const transformedMetadata: MetadataFields = Object.keys(metadata).reduce((acc, key) => {
+          const transformedMetadata: MetadataFields = Object.keys(
+            metadata,
+          ).reduce((acc, key) => {
             acc[key] = metadata[key]; // Copy the value
             return acc;
           }, {} as MetadataFields);
@@ -151,15 +201,17 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
       }
     }
     if (!matchingMetadata) {
-      const labels = extractLabelsFromMetadata(newFormat!)
+      const labels = extractLabelsFromMetadata(newFormat!);
       setSelectedMetadataData(labels);
     }
-  }
+  };
 
-  function extractLabelsFromMetadata(selectedMetadataFormat: { metadata: MetadataFormatField[] }): Record<string, string> {
+  function extractLabelsFromMetadata(selectedMetadataFormat: {
+    metadata: MetadataFormatField[];
+  }): Record<string, string> {
     const labelsObject: Record<string, string> = {};
     selectedMetadataFormat.metadata.forEach((item) => {
-      labelsObject[item.term.toLowerCase()] = '';
+      labelsObject[item.term.toLowerCase()] = "";
     });
 
     return labelsObject;
@@ -171,24 +223,33 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
       description: newItemDescription,
-    }
-    if (objectTypes !== ObjectTypes.GROUP && objectTypes && selectedMetadataFormat?.title) {
-      await createMetadataForItem(objectTypes!, item.id, selectedMetadataFormat!.title, selectedMetadataData);
+    };
+    console.log("itemToUpdate", itemToUpdate);
+    if (
+      objectTypes !== ObjectTypes.GROUP &&
+      objectTypes &&
+      selectedMetadataFormat?.title
+    ) {
+      await createMetadataForItem(
+        objectTypes!,
+        item.id,
+        selectedMetadataFormat!.title,
+        selectedMetadataData,
+      );
     }
     if (updateItem) {
       updateItem(itemToUpdate);
     }
   };
 
-
   const fetchMetadataFormat = useCallback(async () => {
     setLoading(true);
     try {
       const metadataFormat = await getMetadataFormat(user.data!.id);
       setMetadataFormats(metadataFormat);
-      setSelectedMetadataFormat(metadataFormat[0])
+      setSelectedMetadataFormat(metadataFormat[0]);
     } catch (error) {
-      console.error('Failed to fetch metadata formats', error);
+      console.error("Failed to fetch metadata formats", error);
     } finally {
       setLoading(false);
     }
@@ -197,60 +258,63 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
   const handleFetchMetadataForObject = async () => {
     try {
       if (selectedMetadataFormat !== null) {
-        const objectMetadata = await gettingMetadataForObject(item.id, objectTypes!);
+        const objectMetadata = await gettingMetadataForObject(
+          item.id,
+          objectTypes!,
+        );
         setMetadataFormData(objectMetadata);
         if (objectMetadata.length < 1) {
           const metadataFormat = await getMetadataFormat(user.data!.id);
-          const labels = extractLabelsFromMetadata(metadataFormat[0])
+          const labels = extractLabelsFromMetadata(metadataFormat[0]);
           setSelectedMetadataData(labels);
         } else {
           setSelectedMetadataData(objectMetadata[0].metadata);
         }
       }
     } catch (error) {
-      console.error('Failed to fetch metadata formats', error);
+      console.error("Failed to fetch metadata formats", error);
     }
-  }
+  };
 
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setNewItemTitle(e.target.value);
-  }
+  };
 
   const handleChangeThumbnailUrl = (e: ChangeEvent<HTMLInputElement>) => {
     setNewItemThumbnailUrl(e.target.value);
-  }
+  };
 
   const handleChangeCreator = (e: ChangeEvent<HTMLInputElement>) => {
-    setNewItemMetadataCreator(e.target.value)
-  }
+    setNewItemMetadataCreator(e.target.value);
+  };
 
   const handleChangeDescription = (e: ChangeEvent<HTMLInputElement>) => {
     setNewItemDescription(e.target.value);
-  }
+  };
 
   const handleConfirmDeleteItemModal = () => {
     setOpenDeleteModal(!openDeleteModal);
-  }
+  };
   const handleConfirmDuplicateItem = () => {
     setOpenDuplicateModal(!openDuplicateModal);
-  }
+  };
 
   const handleDuplicateModal = () => {
-    setOpenDuplicateModal(!openDuplicateModal)
-  }
+    setOpenDuplicateModal(!openDuplicateModal);
+  };
   const handleFetchManifest = async () => {
     try {
-      const manifest = await fetchManifest(item.hash!, item.path!)
-      setJsonElementToEditInAdvancedEditor(manifest)
+      const manifest = await fetchManifest(item.hash!, item.path!);
+      setJsonElementToEditInAdvancedEditor(manifest);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
+  };
 
   useEffect(() => {
     fetchData();
     fetchMetadataFormat();
-    handleFetchMetadataForObject()
+    handleFetchMetadataForObject();
     if (objectTypes === ObjectTypes.MANIFEST) {
       handleFetchManifest();
     }
@@ -258,28 +322,29 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
       if (item.userWorkspace) {
         setJsonElementToEditInAdvancedEditor(item.userWorkspace);
       }
-
     }
   }, []);
 
   const handleGetOtpionLabel = (option: G) => {
-    return getOptionLabel ? getOptionLabel(option, searchInput) : ''
-  }
+    return getOptionLabel ? getOptionLabel(option, searchInput) : "";
+  };
   const handleSearchModalEditItem = (query: string) => {
-    return searchModalEditItem ? searchModalEditItem(query) : [''] as unknown as Promise<string[]>
-  }
+    return searchModalEditItem
+      ? searchModalEditItem(query)
+      : ([""] as unknown as Promise<string[]>);
+  };
 
   const handleSubmit = () => {
     handleUpdateItem();
-    HandleOpenModalEdit()
+    HandleOpenModalEdit();
   };
 
   const confirmDuplicate = (itemId: number) => {
     if (duplicateItem) {
-      duplicateItem(itemId)
-      setOpenDuplicateModal(!openDuplicateModal)
+      duplicateItem(itemId);
+      setOpenDuplicateModal(!openDuplicateModal);
     }
-  }
+  };
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -293,27 +358,34 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
         if (e.target?.result) {
           try {
             const metadata = JSON.parse(e.target.result as string);
-            const labelIndex = metadata.findIndex((item: labelMetadata) => item.term === 'metadataFormatLabel');
+            const labelIndex = metadata.findIndex(
+              (item: labelMetadata) => item.term === "metadataFormatLabel",
+            );
             if (labelIndex !== -1) {
               const label = metadata[labelIndex].label;
-              const updatedMetadata = metadata.filter((_: any, index: number) => index !== labelIndex);
-              const upload = await uploadMetadataFormat(label, updatedMetadata, user.data!.id);
+              const updatedMetadata = metadata.filter(
+                (_: any, index: number) => index !== labelIndex,
+              );
+              const upload = await uploadMetadataFormat(
+                label,
+                updatedMetadata,
+                user.data!.id,
+              );
               if (upload.statusCode === 409) {
-                toast.error(t('errorMetadataAlreadyExist'))
+                toast.error(t("errorMetadataAlreadyExist"));
               }
               await fetchMetadataFormat();
             } else {
-              throw new Error('Label field not found in metadata');
+              throw new Error("Label field not found in metadata");
             }
           } catch (error) {
-            console.error('Failed to parse JSON metadata', error);
+            console.error("Failed to parse JSON metadata", error);
           }
         }
       };
       reader.readAsText(file);
     }
   };
-
 
   const handleUpdateAdvancedEditMetadata = async (data: any) => {
     // We can edit manifest or project userworkspace
@@ -325,46 +397,50 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
         origin: item.origin! as manifestOrigin,
         path: item.path!,
         hash: item.hash!,
-      }
-      await updateManifestJson(newManifest)
+      };
+      await updateManifestJson(newManifest);
     }
     if (objectTypes === ObjectTypes.PROJECT && item.userWorkspace) {
       // Update project userworkspace
       if (updateItem) {
-        updateItem({
-          ...item,
-          userWorkspace: data.newData,
-        }!);
+        updateItem(
+          {
+            ...item,
+            userWorkspace: data.newData,
+          }!,
+        );
       }
     }
-  }
+  };
 
   function isValidUrl(string: string) {
-    const pattern = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
+    const pattern =
+      /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
     return pattern.test(string);
   }
 
   return (
-    <Grid container sx={{ overflow: 'scroll', maxHeight: 600 }}>
+    <Grid container sx={{ overflow: "scroll", maxHeight: 600 }}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
-        <Tab label={t('general')}{...a11yProps(0)} />
-        <Tab label={objectTypes != ObjectTypes.GROUP ? t('share') : t('members')} {...a11yProps(2)} />
-        {
-          objectTypes !== ObjectTypes.GROUP && (
-            <Tab label={t('metadata')} {...a11yProps(1)} />
-          )
-        }
-        {
-          (objectTypes === ObjectTypes.PROJECT || (objectTypes === ObjectTypes.MANIFEST && item.origin !== manifestOrigin.LINK)) && (
-            <Tab label={t('advancedEdit')} {...a11yProps(3)} />
-          )
-        }
+        <Tab label={t("general")} {...a11yProps(0)} />
+        <Tab
+          label={objectTypes != ObjectTypes.GROUP ? t("share") : t("members")}
+          {...a11yProps(2)}
+        />
+        {objectTypes !== ObjectTypes.GROUP && (
+          <Tab label={t("metadata")} {...a11yProps(1)} />
+        )}
+        {(objectTypes === ObjectTypes.PROJECT ||
+          (objectTypes === ObjectTypes.MANIFEST &&
+            item.origin !== manifestOrigin.LINK)) && (
+          <Tab label={t("advancedEdit")} {...a11yProps(3)} />
+        )}
       </Tabs>
       <Grid item container flexDirection="column">
         <CustomTabPanel value={tabValue} index={0}>
           <Grid
             item
-            sx={{ minHeight: '200px' }}
+            sx={{ minHeight: "200px" }}
             container
             flexDirection="column"
             justifyContent="space-between"
@@ -373,7 +449,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
           >
             <Grid
               item
-              sx={{ minHeight: '50px', width: '100%', marginTop: '10px' }}
+              sx={{ minHeight: "50px", width: "100%", marginTop: "10px" }}
               container
               flexDirection="row"
               justifyContent="space-between"
@@ -381,7 +457,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             >
               <TextField
                 type="text"
-                label={t('title')}
+                label={t("title")}
                 onChange={handleChangeTitle}
                 variant="outlined"
                 defaultValue={itemLabel}
@@ -390,7 +466,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             </Grid>
             <Grid
               item
-              sx={{ minHeight: '50px', width: '100%' }}
+              sx={{ minHeight: "50px", width: "100%" }}
               container
               flexDirection="row"
               justifyContent="space-between"
@@ -398,7 +474,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             >
               <TextField
                 type="text"
-                label={t('description')}
+                label={t("description")}
                 onChange={handleChangeDescription}
                 variant="outlined"
                 defaultValue={description}
@@ -408,17 +484,21 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             </Grid>
             <Grid
               item
-              sx={{ minHeight: '50px', width: '100%' }}
+              sx={{ minHeight: "50px", width: "100%" }}
               container
               justifyContent="flex-end"
               alignItems="center"
             >
               <TextField
                 type="text"
-                label={t('creator')}
+                label={t("creator")}
                 onChange={handleChangeCreator}
                 variant="outlined"
-                defaultValue={newItemMetadataCreator ? newItemMetadataCreator : user.data?.name}
+                defaultValue={
+                  newItemMetadataCreator
+                    ? newItemMetadataCreator
+                    : user.data?.name
+                }
                 multiline
                 fullWidth
                 disabled
@@ -426,7 +506,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             </Grid>
             <Grid
               item
-              sx={{ minHeight: '50px', width: '100%' }}
+              sx={{ minHeight: "50px", width: "100%" }}
               container
               justifyContent="flex-start"
               alignItems="center"
@@ -434,7 +514,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   disabled
-                  label={t('createdAt')}
+                  label={t("createdAt")}
                   onChange={(newValue) => setNewItemDate(newValue)}
                   value={newItemDate}
                 />
@@ -442,17 +522,21 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             </Grid>
             <Grid
               item
-              sx={{ minHeight: '50px', width: '100%' }}
+              sx={{ minHeight: "50px", width: "100%" }}
               container
               justifyContent="flex-end"
               alignItems="center"
             >
               <TextField
                 type="text"
-                label={t('thumbnailUrl')}
+                label={t("thumbnailUrl")}
                 onChange={handleChangeThumbnailUrl}
                 variant="outlined"
-                defaultValue={thumbnailUrl && isValidUrl(thumbnailUrl) ? thumbnailUrl : undefined}
+                defaultValue={
+                  thumbnailUrl && isValidUrl(thumbnailUrl)
+                    ? thumbnailUrl
+                    : undefined
+                }
                 multiline
                 fullWidth
               />
@@ -467,62 +551,61 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             {/*</Grid>*/}
           </Grid>
         </CustomTabPanel>
-        {rights !== ItemsRights.READER && listOfItem && setItemToAdd && getOptionLabel !== undefined && (
-          <CustomTabPanel value={tabValue} index={1}>
-            <Grid item>
-              <ItemList
+        {rights !== ItemsRights.READER &&
+          listOfItem &&
+          setItemToAdd &&
+          getOptionLabel !== undefined && (
+            <CustomTabPanel value={tabValue} index={1}>
+              <Grid item>
+                <ItemList
+                  item={item}
+                  objectTypes={objectTypes!}
+                  snapShotHash={item.snapShotHash ? item.snapShotHash : ""}
+                  handleAddAccessListItem={handleAddAccessListItem}
+                  setItemToAdd={setItemToAdd}
+                  items={listOfItem}
+                  handleSearchModalEditItem={handleSearchModalEditItem}
+                  removeItem={handleDeleteAccessListItem}
+                  searchBarLabel={searchBarLabel}
+                  setSearchInput={setSearchInput}
+                  handleGetOptionLabel={handleGetOtpionLabel}
+                  getGroupByOption={getGroupByOption}
+                >
+                  {(accessListItem) => (
+                    <Selector
+                      value={accessListItem.rights!}
+                      onChange={handleSelectorChange(accessListItem)}
+                    />
+                  )}
+                </ItemList>
+              </Grid>
+            </CustomTabPanel>
+          )}
+        {!isGroups && (
+          <CustomTabPanel value={tabValue} index={2}>
+            <Grid item container justifyContent="flex-end" alignItems="center">
+              <MetadataForm
+                selectedMetadataData={selectedMetadataData}
                 item={item}
-                objectTypes={objectTypes!}
-                snapShotHash={item.snapShotHash ? item.snapShotHash : ''}
-                handleAddAccessListItem={handleAddAccessListItem}
-                setItemToAdd={setItemToAdd}
-                items={listOfItem}
-                handleSearchModalEditItem={handleSearchModalEditItem}
-                removeItem={handleDeleteAccessListItem}
-                searchBarLabel={searchBarLabel}
-                setSearchInput={setSearchInput}
-                handleGetOptionLabel={handleGetOtpionLabel}
-                getGroupByOption={getGroupByOption}
-              >
-                {(accessListItem) => (
-                  <Selector
-                    value={accessListItem.rights!}
-                    onChange={handleSelectorChange(accessListItem)}
-                  />
-                )}
-              </ItemList>
+                handleSetMetadataFormData={handeUpdateMetadata}
+                metadataFormats={metadataFormats}
+                loading={loading}
+                selectedMetadataFormat={selectedMetadataFormat}
+                setSelectedMetadataFormat={handleSetSelectedMetadataFormat}
+                handleFileChange={handleFileChange}
+              />
             </Grid>
           </CustomTabPanel>
         )}
-        {
-          !isGroups && (
-            <CustomTabPanel value={tabValue} index={2}>
-              <Grid
-                item
-                container
-                justifyContent="flex-end"
-                alignItems="center"
-              >
-                <MetadataForm
-                  selectedMetadataData={selectedMetadataData}
-                  item={item}
-                  handleSetMetadataFormData={handeUpdateMetadata}
-                  metadataFormats={metadataFormats}
-                  loading={loading}
-                  selectedMetadataFormat={selectedMetadataFormat}
-                  setSelectedMetadataFormat={handleSetSelectedMetadataFormat}
-                  handleFileChange={handleFileChange}
-                />
-              </Grid>
+        {jsonElementToEditInAdvancedEditor &&
+          item.origin !== manifestOrigin.LINK && (
+            <CustomTabPanel value={tabValue} index={3}>
+              <JsonEditor
+                data={jsonElementToEditInAdvancedEditor}
+                onUpdate={handleUpdateAdvancedEditMetadata}
+              />
             </CustomTabPanel>
-          )
-        }
-        {(jsonElementToEditInAdvancedEditor && item.origin !== manifestOrigin.LINK) && (
-          <CustomTabPanel value={tabValue} index={3}>
-            <JsonEditor data={jsonElementToEditInAdvancedEditor} onUpdate={handleUpdateAdvancedEditMetadata} />
-          </CustomTabPanel>
-        )
-        }
+          )}
         {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && (
           <Grid
             item
@@ -530,34 +613,36 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             justifyContent="space-between"
             alignItems="center"
             flexDirection="row"
-            sx={{ paddingTop: '20px' }}
+            sx={{ paddingTop: "20px" }}
           >
             <Grid item container xs={5} spacing={3}>
               <Grid item>
                 {rights === ItemsRights.ADMIN && (
-                  <Tooltip title={t('deleteItem')}>
+                  <Tooltip title={t("deleteItem")}>
                     <Button
                       color="error"
                       onClick={handleConfirmDeleteItemModal}
                       variant="contained"
                     >
-                      {t('delete')}
+                      {t("delete")}
                     </Button>
                   </Tooltip>
                 )}
               </Grid>
               <Grid item>
-                {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && duplicateItem && (
-                  <Tooltip title={t('duplicate')}>
-                    <Button
-                      color="primary"
-                      onClick={handleDuplicateModal}
-                      variant="contained"
-                    >
-                      {t('duplicateMAJ')}
-                    </Button>
-                  </Tooltip>
-                )}
+                {(rights === ItemsRights.ADMIN ||
+                  rights === ItemsRights.EDITOR) &&
+                  duplicateItem && (
+                    <Tooltip title={t("duplicate")}>
+                      <Button
+                        color="primary"
+                        onClick={handleDuplicateModal}
+                        variant="contained"
+                      >
+                        {t("duplicateMAJ")}
+                      </Button>
+                    </Tooltip>
+                  )}
               </Grid>
             </Grid>
             <Grid
@@ -567,39 +652,64 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
               flexDirection="row"
               alignItems="center"
               spacing={2}
-              sx={{ width: 'auto' }}
+              sx={{ width: "auto" }}
             >
               <Grid item>
-                <Button variant="contained" type="button" onClick={HandleOpenModalEdit}>
+                <Button
+                  variant="contained"
+                  type="button"
+                  onClick={HandleOpenModalEdit}
+                >
                   <CancelIcon />
-                  {t('cancel')}
+                  {t("cancel")}
                 </Button>
               </Grid>
 
               <Grid item>
-                <Button variant="contained" type="submit" onClick={handleSubmit}>
+                <Button
+                  variant="contained"
+                  type="submit"
+                  onClick={handleSubmit}
+                >
                   <SaveIcon />
-                  {t('saveMAJ')}
+                  {t("saveMAJ")}
                 </Button>
               </Grid>
             </Grid>
-            <MMUModal width={400} openModal={openDeleteModal} setOpenModal={handleConfirmDeleteItemModal}>
+            <MMUModal
+              width={400}
+              openModal={openDeleteModal}
+              setOpenModal={handleConfirmDeleteItemModal}
+            >
               <ModalConfirmDelete
                 deleteItem={deleteItem}
                 itemId={item.id}
                 itemName={itemLabel}
               />
             </MMUModal>
-            <MMUModal width={400} openModal={openDuplicateModal} setOpenModal={handleConfirmDuplicateItem}>
+            <MMUModal
+              width={400}
+              openModal={openDuplicateModal}
+              setOpenModal={handleConfirmDuplicateItem}
+            >
               <Grid>
-                <Typography> {t('areYouSureDuplicate')} <b>{itemLabel}</b> ?</Typography>
-                <Button onClick={() => confirmDuplicate(item.id)}>{t('yes')}</Button>
-                <Button onClick={() => setOpenDuplicateModal(!openDuplicateModal)}>{t('no')}</Button>
+                <Typography>
+                  {" "}
+                  {t("areYouSureDuplicate")} <b>{itemLabel}</b> ?
+                </Typography>
+                <Button onClick={() => confirmDuplicate(item.id)}>
+                  {t("yes")}
+                </Button>
+                <Button
+                  onClick={() => setOpenDuplicateModal(!openDuplicateModal)}
+                >
+                  {t("no")}
+                </Button>
               </Grid>
             </MMUModal>
           </Grid>
         )}
       </Grid>
     </Grid>
-  )
-}
+  );
+};
