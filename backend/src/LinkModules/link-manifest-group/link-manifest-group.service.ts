@@ -25,6 +25,7 @@ import { ActionType } from '../../enum/actions';
 import { UpdateManifestJsonDto } from './dto/UpdateManifestJsonDto';
 import * as path from 'node:path';
 import { manifestOrigin } from '../../enum/origins';
+import { UPLOAD_FOLDER } from '../../utils/constants';
 
 @Injectable()
 export class LinkManifestGroupService {
