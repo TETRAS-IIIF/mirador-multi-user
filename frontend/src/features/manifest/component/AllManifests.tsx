@@ -86,12 +86,12 @@ interface IAllManifests {
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 
 export const AllManifests = ({
-  manifests,
   fetchManifestForUser,
+  fetchMediaForUser,
+  manifests,
+  medias,
   userPersonalGroup,
   user,
-  medias,
-  fetchMediaForUser,
 }: IAllManifests) => {
   const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
   const [searchedManifest, setSearchedManifest] = useState<Manifest | null>(

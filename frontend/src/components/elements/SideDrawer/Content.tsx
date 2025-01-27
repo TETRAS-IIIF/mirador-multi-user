@@ -68,6 +68,7 @@ export function Content({
   userProjects,
   viewer,
 }: ContentProps) {
+
   return (
     <Box
       component="main"
