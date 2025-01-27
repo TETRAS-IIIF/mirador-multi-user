@@ -4,13 +4,18 @@ import IState from "../../mirador/interface/IState.ts";
 import { Project } from "../types/types.ts";
 
 interface IProjectDefaultButtonProps {
-  initializeMirador:(miradorState: (IState | undefined), projectUser: Project) => void,
-  projectUser: Project,
+  initializeMirador: (
+    miradorState: IState | undefined,
+    projectUser: Project,
+  ) => void;
+  projectUser: Project;
 }
 
-
-export const ProjectDefaultButton = ({initializeMirador, projectUser}: IProjectDefaultButtonProps) => {
-  return(
+export const ProjectDefaultButton = ({
+  initializeMirador,
+  projectUser,
+}: IProjectDefaultButtonProps) => {
+  return (
     <>
       <Button
         onClick={() => {
@@ -21,5 +26,5 @@ export const ProjectDefaultButton = ({initializeMirador, projectUser}: IProjectD
         <OpenInNewIcon />
       </Button>
     </>
-  )
-}
+  );
+};

@@ -8,41 +8,41 @@ interface FormFieldProps {
   placeholder: string;
   name: string;
   register: UseFormRegister<any>;
-  required:boolean;
+  required: boolean;
   error?: FieldError | undefined;
   valueAsNumber?: boolean;
 }
 
-const FormField: React.FC<FormFieldProps> = (
-  {
-    type,
-    placeholder,
-    name,
-    register,
-    error,
-    valueAsNumber,
-  }
-) =>{
-
+const FormField: React.FC<FormFieldProps> = ({
+  type,
+  placeholder,
+  name,
+  register,
+  error,
+  valueAsNumber,
+}) => {
   return (
-  <Grid container alignItems="center" spacing={2} justifyContent="space-between">
-    <Grid item>
-    <TextField
+    <Grid
+      container
+      alignItems="center"
+      spacing={2}
+      justifyContent="space-between"
+    >
+      <Grid item>
+        <TextField
           type={type}
           label={placeholder}
           variant="outlined"
           {...register(name, { valueAsNumber })}
           error={!!error}
         />
-    </Grid>
-    {
-      error && (
+      </Grid>
+      {error && (
         <Grid item width={200}>
-    <FormLabel error={true}>{error.message}</FormLabel>
+          <FormLabel error={true}>{error.message}</FormLabel>
         </Grid>
-      )
-    }
-  </Grid>
-);
-}
+      )}
+    </Grid>
+  );
+};
 export default FormField;

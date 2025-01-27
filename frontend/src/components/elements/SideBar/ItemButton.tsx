@@ -1,15 +1,26 @@
-import { ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import {
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import { ReactNode } from "react";
 
 interface IItemButton {
-  open:boolean,
-  action:()=>void
-  icon:ReactNode
-  text:string
-  selected:boolean
+  open: boolean;
+  action: () => void;
+  icon: ReactNode;
+  text: string;
+  selected: boolean;
 }
 
-export const ItemButton = ({ open, action, icon, text, selected }: IItemButton) => {
+export const ItemButton = ({
+  open,
+  action,
+  icon,
+  text,
+  selected,
+}: IItemButton) => {
   return (
     <ListItem
       key={text}
@@ -22,7 +33,7 @@ export const ItemButton = ({ open, action, icon, text, selected }: IItemButton) 
       <ListItemButton
         sx={{
           minHeight: 48,
-          justifyContent: open ? 'initial' : 'center',
+          justifyContent: open ? "initial" : "center",
           px: 2.5,
         }}
         onClick={action}
@@ -30,8 +41,8 @@ export const ItemButton = ({ open, action, icon, text, selected }: IItemButton) 
         <ListItemIcon
           sx={{
             minWidth: 0,
-            mr: open ? 3 : 'auto',
-            justifyContent: 'center',
+            mr: open ? 3 : "auto",
+            justifyContent: "center",
           }}
         >
           {icon}
@@ -40,9 +51,9 @@ export const ItemButton = ({ open, action, icon, text, selected }: IItemButton) 
           primary={text}
           sx={{
             opacity: open ? 1 : 0,
-            textOverflow: 'ellipsis',
-            overflow: 'hidden',
-            whiteSpace: 'nowrap',
+            textOverflow: "ellipsis",
+            overflow: "hidden",
+            whiteSpace: "nowrap",
           }}
         />
       </ListItemButton>

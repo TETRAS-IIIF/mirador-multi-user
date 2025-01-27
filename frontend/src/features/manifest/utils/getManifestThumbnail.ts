@@ -1,5 +1,5 @@
-import ThumbnailFactory from 'mirador/dist/es/src/lib/ThumbnailFactory.js'
-import MiradorManifest from 'mirador/dist/es/src/lib/MiradorManifest.js';
+import ThumbnailFactory from "mirador/dist/es/src/lib/ThumbnailFactory.js";
+import MiradorManifest from "mirador/dist/es/src/lib/MiradorManifest.js";
 
 export const getManifestThumbnail = (resource: any): any | undefined => {
   //TODO : Fix logic to return thumbnail when getThumbnail is null
@@ -18,9 +18,9 @@ export const getManifestThumbnail = (resource: any): any | undefined => {
 
   if (resource.isManifest()) {
     const miradorManifest = new MiradorManifest(resource.__jsonld);
-   const canvases = miradorManifest.manifest.items; // Canvases or sequences are here
+    const canvases = miradorManifest.manifest.items; // Canvases or sequences are here
 
-    if (canvases){
+    if (canvases) {
       const image = ThumbnailFactory.getPreferredImage(canvases[0]);
       if (image) return getManifestThumbnail(image);
     }
@@ -35,7 +35,7 @@ export const getManifestThumbnail = (resource: any): any | undefined => {
     return undefined;
   }
 
-  if (resource.getType() === 'image') {
+  if (resource.getType() === "image") {
     return resource;
   }
 };

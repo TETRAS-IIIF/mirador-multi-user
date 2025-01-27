@@ -4,17 +4,25 @@ export type RegisterCredentialsDTO = {
   name: string;
   mail: string;
   password: string;
-}
+};
 
-export const register = async (data: RegisterCredentialsDTO): Promise<UserResponse> => {
+export const register = async (
+  data: RegisterCredentialsDTO,
+): Promise<UserResponse> => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/user`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/link-user-group/user`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          preferredLanguage: navigator.language.split("-")[0],
+        }),
       },
-      body: JSON.stringify({ ...data,preferredLanguage:navigator.language.split('-')[0] })
-    });
+    );
     if (!response.ok) {
       if (response.status === 409) {
         throw new Error("User already exists");

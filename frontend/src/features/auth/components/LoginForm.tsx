@@ -8,12 +8,11 @@ import { LoginCredentialsDTO } from "../api/login.ts";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-
-export const LoginForm = ()=>{
+export const LoginForm = () => {
   const navigate = useNavigate(); // Use hooks at the top level
   const { t } = useTranslation();
 
-  const { mutateAsync:loginUser } = useLogin();
+  const { mutateAsync: loginUser } = useLogin();
 
   const {
     register,
@@ -26,35 +25,31 @@ export const LoginForm = ()=>{
   const onSubmit = async (data: LoginCredentialsDTO) => {
     try {
       await loginUser(data, {
-        onSuccess: () => navigate('/app/my-projects')
+        onSuccess: () => navigate("/app/my-projects"),
       });
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
     }
   };
 
   return (
     <form>
-      <Grid
-        container
-        flexDirection="column"
-        spacing={2}
-      >
+      <Grid container flexDirection="column" spacing={2}>
         <Grid item>
           <FormField
             type="mail"
-            placeholder={t('mail')}
+            placeholder={t("mail")}
             name="mail"
             required={true}
             register={register}
             error={errors.mail}
           />
         </Grid>
-        <Grid item container alignItems='center' spacing={2}>
+        <Grid item container alignItems="center" spacing={2}>
           <Grid item>
             <FormField
               type="password"
-              placeholder={t('password')}
+              placeholder={t("password")}
               name="password"
               register={register}
               required={true}
@@ -65,9 +60,9 @@ export const LoginForm = ()=>{
             <Button
               variant="text"
               color="primary"
-              onClick={() => window.location.href = '/forgot-password'}
+              onClick={() => (window.location.href = "/forgot-password")}
             >
-              {t('forgot-password')}
+              {t("forgot-password")}
             </Button>
           </Grid>
         </Grid>
@@ -78,10 +73,10 @@ export const LoginForm = ()=>{
             color="primary"
             onClick={handleSubmit(onSubmit)}
           >
-            {t('submit')}
+            {t("submit")}
           </Button>
         </Grid>
       </Grid>
     </form>
-  )
-}
+  );
+};

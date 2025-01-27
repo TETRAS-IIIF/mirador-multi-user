@@ -13,9 +13,10 @@ import { useTranslation } from "react-i18next";
 import LanguageSelector from "../translation/LanguageSelector.tsx";
 
 interface IUserSettingsProps {
-  user:User
+  user: User;
 }
-export const UserSettings = ({user}:IUserSettingsProps) => {
+
+export const UserSettings = ({ user }: IUserSettingsProps) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const { t } = useTranslation();
 
@@ -23,65 +24,80 @@ export const UserSettings = ({user}:IUserSettingsProps) => {
 
   const HandleCopyToClipBoard = async () => {
     await navigator.clipboard.writeText(token);
-    toast.success(t('tokenCopiedToast'));
-  }
+    toast.success(t("tokenCopiedToast"));
+  };
 
-  const handleDeleteAccount= async ()=>{
-    const responseDelete = await deleteAccount(user.id)
-    if(responseDelete){
+  const handleDeleteAccount = async () => {
+    const responseDelete = await deleteAccount(user.id);
+    if (responseDelete) {
       window.location.reload();
     }
-  }
+  };
 
-  const handleConfirmDeleteItemModal =() => {
+  const handleConfirmDeleteItemModal = () => {
     setOpenDeleteModal(!openDeleteModal);
-  }
-
+  };
 
   return (
-    <Grid container spacing={2} sx={{ padding:2}}>
-      <Grid container item flexDirection="row" alignItems="center" spacing={2} sx={{ width: '100%'}}>
+    <Grid container spacing={2} sx={{ padding: 2 }}>
+      <Grid
+        container
+        item
+        flexDirection="row"
+        alignItems="center"
+        spacing={2}
+        sx={{ width: "100%" }}
+      >
         <Grid item xs={10}>
           <TextField
-            label={t('labelApiToken')}
+            label={t("labelApiToken")}
             disabled
             fullWidth
-            helperText={t('helperTextApiToken')}
+            helperText={t("helperTextApiToken")}
             defaultValue={token}
           />
         </Grid>
         <Grid item xs={2}>
-          <ModalButton tooltipButton={t('tooltipButtonToken')} onClickFunction={HandleCopyToClipBoard} disabled={false} icon={<ContentCopyIcon />} />
+          <ModalButton
+            tooltipButton={t("tooltipButtonToken")}
+            onClickFunction={HandleCopyToClipBoard}
+            disabled={false}
+            icon={<ContentCopyIcon />}
+          />
         </Grid>
       </Grid>
       <Grid container item flexDirection="column" spacing={1}>
         <Grid item>
-          <Typography variant="h5">{t('changeLanguage')}</Typography>
+          <Typography variant="h5">{t("changeLanguage")}</Typography>
         </Grid>
         <Grid item>
-          <LanguageSelector userId={user.id}/>
+          <LanguageSelector userId={user.id} />
         </Grid>
       </Grid>
 
       <Grid container item xs={12}>
         <ProfileUpdateForm user={user} />
       </Grid>
-      <Grid item spacing={2} sx={{ width: '100%' }}>
+      <Grid item spacing={2} sx={{ width: "100%" }}>
         <Button
           variant="contained"
           color="error"
           onClick={handleConfirmDeleteItemModal}
         >
-          {t('DeleteAccount')}
+          {t("DeleteAccount")}
         </Button>
       </Grid>
-      <MMUModal width={400} openModal={openDeleteModal} setOpenModal={handleConfirmDeleteItemModal}>
+      <MMUModal
+        width={400}
+        openModal={openDeleteModal}
+        setOpenModal={handleConfirmDeleteItemModal}
+      >
         <ModalConfirmDelete
           deleteItem={handleDeleteAccount}
           itemId={user.id}
-          itemName={t('yourAccount')}
+          itemName={t("yourAccount")}
         />
       </MMUModal>
     </Grid>
-  )
-}
+  );
+};

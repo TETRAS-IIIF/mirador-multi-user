@@ -1,20 +1,20 @@
 export type Tag = {
-  title:string
-  id:number
-  objectsTaggedId?:number[]
-}
+  title: string;
+  id: number;
+  objectsTaggedId?: number[];
+};
 
 export enum ObjectTypes {
-  MEDIA = 'media',
-  MANIFEST = 'manifest',
-  GROUP = 'group',
-  PROJECT = 'project',
+  MEDIA = "media",
+  MANIFEST = "manifest",
+  GROUP = "group",
+  PROJECT = "project",
 }
 
-export type Tagging ={
-  id:number,
-  objectId:number,
-  objectTypes:ObjectTypes,
-  tag:Tag,
-  tagId:number,
-}
+export type Tagging = {
+  id: number;
+  objectId: number;
+  objectTypes: ObjectTypes;
+  tag: Tag;
+  tagId: number;
+};

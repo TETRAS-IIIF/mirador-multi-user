@@ -1,17 +1,17 @@
-html{
+html {
     background-color: #dcdcdc;
 }
 
-* a{
+* a {
     color: inherit;
     text-decoration: inherit;
 }
 
-body, #root{
+body, #root {
     min-height: 100vh;
 }
 
-.App{
+.App {
     display: flex;
     align-items: center;
     justify-content: center;

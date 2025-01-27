@@ -1,16 +1,27 @@
 import storage from "../../../utils/storage.ts";
 
-export const uploadMetadataFormat = async (title: string, metadata:any,creatorId:number) => {
+export const uploadMetadataFormat = async (
+  title: string,
+  metadata: any,
+  creatorId: number,
+) => {
   const token = storage.getToken();
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-metadata-format-group/`, {
-      method: 'POST',
-      headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/link-metadata-format-group/`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: title,
+          metadata: metadata,
+          creatorId: creatorId,
+        }),
       },
-      body:JSON.stringify({ title: title,metadata:metadata,creatorId:creatorId }),
-    });
+    );
     // if (!response.ok) {
     //   throw new Error(`Error uploading metadata: ${response.statusText}`);
     // }
@@ -20,4 +31,4 @@ export const uploadMetadataFormat = async (title: string, metadata:any,creatorId
   } catch (error) {
     console.error("Error while uploading metadata:", error);
   }
-}
+};

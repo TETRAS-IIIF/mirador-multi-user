@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import storage from "../../../utils/storage.ts";
 import { useLogin, useLogout } from "../../../utils/auth.tsx";
 import { useTranslation } from "react-i18next";
@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 export const Impersonate = () => {
   const navigate = useNavigate();
   const logout = useLogout({});
-  const { mutateAsync:loginUser } = useLogin();
+  const { mutateAsync: loginUser } = useLogin();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -35,8 +35,7 @@ export const Impersonate = () => {
 
   return (
     <>
-      <div>{t('loadingImpersonate')}</div>
+      <div>{t("loadingImpersonate")}</div>
     </>
   );
 };
-

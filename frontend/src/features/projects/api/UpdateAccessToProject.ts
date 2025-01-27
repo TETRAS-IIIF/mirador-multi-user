@@ -1,21 +1,31 @@
 import storage from "../../../utils/storage.ts";
 import { ItemsRights } from "../../user-group/types/types.ts";
 
-export const updateAccessToProject = async (projectId:number, userGroupId:number, rights : ItemsRights)=> {
+export const updateAccessToProject = async (
+  projectId: number,
+  userGroupId: number,
+  rights: ItemsRights,
+) => {
   const token = storage.getToken();
-  try{
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-group-project/change-rights`,{
-      method: 'PATCH',
-      headers:{
-        authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
+  try {
+    const response = await fetch(
+      `${import.meta.env.VITE_BACKEND_URL}/link-group-project/change-rights`,
+      {
+        method: "PATCH",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          projectId: projectId,
+          rights: rights,
+          groupId: userGroupId,
+        }),
       },
-      body: JSON.stringify({projectId: projectId, rights: rights, groupId: userGroupId})
-
-    })
+    );
     const toReturn = await response.json();
     return toReturn;
-  }catch(error){
+  } catch (error) {
     throw error;
   }
-}
+};

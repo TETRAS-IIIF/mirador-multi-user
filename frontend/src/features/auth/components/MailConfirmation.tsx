@@ -21,11 +21,11 @@ export const MailConfirmation = () => {
 
     if (token) {
       const returnData = await confirmationMail(token);
-      if(returnData.status === 201){
+      if (returnData.status === 201) {
         toast.success(returnData.message);
         navigate("/");
-      }else{
-        toast.error('an error occurred')
+      } else {
+        toast.error("an error occurred");
       }
     } else {
       console.error("Token not found in the URL");
@@ -33,15 +33,12 @@ export const MailConfirmation = () => {
   };
 
   return (
-    <Layout title={t('mail-confirmation-title')}>
-        <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleConfirmMail}>
-            {t('confirm-mail')}
-          </Button>
-        </Grid>
+    <Layout title={t("mail-confirmation-title")}>
+      <Grid item>
+        <Button variant="contained" color="primary" onClick={handleConfirmMail}>
+          {t("confirm-mail")}
+        </Button>
+      </Grid>
     </Layout>
   );
-}
+};

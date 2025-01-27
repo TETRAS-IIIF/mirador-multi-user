@@ -1,6 +1,6 @@
 export type labelMetadata = {
-  "term": string,
-  "label": string,
-  "definition"?:string,
-  "comment"?: string
-}
+  term: string;
+  label: string;
+  definition?: string;
+  comment?: string;
+};

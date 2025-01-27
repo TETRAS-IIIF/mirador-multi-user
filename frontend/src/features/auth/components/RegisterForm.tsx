@@ -19,9 +19,9 @@ export const RegisterForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
   } = useForm<RegisterFormData>({
-    resolver: zodResolver(UserSchema)
+    resolver: zodResolver(UserSchema),
   });
 
   const [open, setOpen] = React.useState(false);
@@ -31,11 +31,11 @@ export const RegisterForm = () => {
     try {
       await createUser(data, {
         onSuccess: () => {
-          toast.success(t('accountCreated'))
+          toast.success(t("accountCreated"));
           navigate("/");
-        }
+        },
       });
-    } catch (error : any) {
+    } catch (error: any) {
       console.error("error", error);
       setOpen(true);
       setMessage(error.toString());
@@ -55,7 +55,7 @@ export const RegisterForm = () => {
         <Grid item>
           <FormField
             type="mail"
-            placeholder={t('mail')}
+            placeholder={t("mail")}
             name="mail"
             required={true}
             register={register}
@@ -65,7 +65,7 @@ export const RegisterForm = () => {
         <Grid item>
           <FormField
             type="text"
-            placeholder={t('name')}
+            placeholder={t("name")}
             name="name"
             required={true}
             register={register}
@@ -75,7 +75,7 @@ export const RegisterForm = () => {
         <Grid item>
           <FormField
             type="password"
-            placeholder={t('password')}
+            placeholder={t("password")}
             name="password"
             register={register}
             required={true}
@@ -85,7 +85,7 @@ export const RegisterForm = () => {
         <Grid item>
           <FormField
             type="password"
-            placeholder={t('confirm-password')}
+            placeholder={t("confirm-password")}
             name="confirmPassword"
             register={register}
             required={true}
@@ -99,7 +99,7 @@ export const RegisterForm = () => {
             color="primary"
             onClick={handleSubmit(onSubmit)}
           >
-            {t('submit')}
+            {t("submit")}
           </Button>
         </Grid>
       </Grid>

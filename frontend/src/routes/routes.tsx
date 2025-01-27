@@ -5,16 +5,18 @@ import { publicRoutes } from "./publicRoutes.tsx";
 import storage from "../utils/storage.ts";
 import { Grid } from "@mui/material";
 
-export function AppRoutes(){
+export function AppRoutes() {
   const token = storage.getToken();
 
-  const commonRoutes = [{
-    path: "/*",
-    element: <Landing />
-  }];
+  const commonRoutes = [
+    {
+      path: "/*",
+      element: <Landing />,
+    },
+  ];
 
   let routes;
-  if(token){
+  if (token) {
     routes = protectedRoutes;
   } else {
     routes = [...publicRoutes, ...commonRoutes];
@@ -22,9 +24,5 @@ export function AppRoutes(){
 
   const content = useRoutes(routes);
 
-  return(
-    <Grid minHeight='100vh'>
-      {content}
-    </Grid>
-  )
+  return <Grid minHeight="100vh">{content}</Grid>;
 }

@@ -1,4 +1,11 @@
-import { Accordion, AccordionDetails, AccordionSummary, Grid, Paper, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Grid,
+  Paper,
+  Typography,
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForTags } from "../api/lookingForTags.ts";
@@ -10,53 +17,57 @@ import { getTagsForObject } from "../api/getTagsForObject.ts";
 import { removeTag } from "../api/RemoveTag.ts";
 import { TagChip } from "./TagChip.tsx";
 
-interface ITaggingFormProps{
-  object:{id:number},
-  objectTypes:ObjectTypes
+interface ITaggingFormProps {
+  object: { id: number };
+  objectTypes: ObjectTypes;
 }
-export const TaggingForm = ({object,objectTypes}:ITaggingFormProps)=>{
+
+export const TaggingForm = ({ object, objectTypes }: ITaggingFormProps) => {
   const [selectedTag, setSelectedTag] = useState<Tag>();
   const [userInput, setUserInput] = useState("");
-  const [tags,setTags] = useState<Tagging[]>([])
-  const HandleLookingForTags = async (partialString : string) =>{
-    return await lookingForTags(partialString)
-  }
+  const [tags, setTags] = useState<Tagging[]>([]);
+  const HandleLookingForTags = async (partialString: string) => {
+    return await lookingForTags(partialString);
+  };
 
   const HandleGetTags = async () => {
-    const taggingsForObject =  await getTagsForObject(object.id)
+    const taggingsForObject = await getTagsForObject(object.id);
     setTags(taggingsForObject);
-  }
+  };
 
   useEffect(() => {
-    HandleGetTags()
-  },[])
+    HandleGetTags();
+  }, []);
 
-
-  const getOptionLabelForTags = (option:Manifest): string => {
+  const getOptionLabelForTags = (option: Manifest): string => {
     return option.title;
   };
 
   const handleAddTag = async () => {
     if (selectedTag) {
-      await tagging(selectedTag.title, object.id)
+      await tagging(selectedTag.title, object.id);
     }
-    if(!selectedTag){
-      await tagging(userInput,object.id);
+    if (!selectedTag) {
+      await tagging(userInput, object.id);
     }
-    HandleGetTags()
-  }
+    HandleGetTags();
+  };
 
-  const handleSetSelectedTag = (selectedTag:Tag) =>{
+  const handleSetSelectedTag = (selectedTag: Tag) => {
     setSelectedTag(selectedTag);
-  }
+  };
 
-  const handleRemoveTag = async (tagTitle: string,) => {
-    await removeTag( tagTitle, objectTypes, object.id)
-    HandleGetTags()
-  }
+  const handleRemoveTag = async (tagTitle: string) => {
+    await removeTag(tagTitle, objectTypes, object.id);
+    HandleGetTags();
+  };
 
   return (
-    <Accordion component={Paper} elevation={1} sx={{ minHeight:'55px' ,width:'100%'}}>
+    <Accordion
+      component={Paper}
+      elevation={1}
+      sx={{ minHeight: "55px", width: "100%" }}
+    >
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="metadata-content"
@@ -65,7 +76,10 @@ export const TaggingForm = ({object,objectTypes}:ITaggingFormProps)=>{
         <Typography variant="h6">Tagging</Typography>
       </AccordionSummary>
       <AccordionDetails style={{ maxHeight: "400px", overflowY: "auto" }}>
-        <form style={{ width: '100%', marginBottom:"10px" }} onSubmit={() => console.log('taggingFormSubmit')}>
+        <form
+          style={{ width: "100%", marginBottom: "10px" }}
+          onSubmit={() => console.log("taggingFormSubmit")}
+        >
           <Grid item>
             <SearchBar
               setUserInput={setUserInput}
@@ -81,11 +95,11 @@ export const TaggingForm = ({object,objectTypes}:ITaggingFormProps)=>{
         <Grid container spacing={2}>
           {tags.map((tagging) => (
             <Grid item>
-              <TagChip tag={tagging.tag} handleRemoveTag={handleRemoveTag}/>
+              <TagChip tag={tagging.tag} handleRemoveTag={handleRemoveTag} />
             </Grid>
           ))}
         </Grid>
       </AccordionDetails>
     </Accordion>
-  )
-}
+  );
+};

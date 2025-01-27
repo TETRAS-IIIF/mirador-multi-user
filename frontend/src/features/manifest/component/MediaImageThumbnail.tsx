@@ -1,6 +1,6 @@
-import { Box, Grid, Typography } from '@mui/material';
-import { useState } from 'react';
-import { MediaField } from './ManifestCreationForm';
+import { Box, Grid, Typography } from "@mui/material";
+import { useState } from "react";
+import { MediaField } from "./ManifestCreationForm";
 
 interface MediaImageThumbnailProps {
   media: MediaField;
@@ -11,18 +11,16 @@ interface MediaImageThumbnailProps {
 }
 
 export function MediaImageThumbnail({ media, t }: MediaImageThumbnailProps) {
-
   const [isMediaValidURL, setIsMediaValidURL] = useState(false);
   return (
     <Grid>
       {!isMediaValidURL && (
         <Grid item>
           <Typography variant="subtitle1" color="red">
-            {t('urlIsNotValid')}
+            {t("urlIsNotValid")}
           </Typography>
         </Grid>
-      )
-      }
+      )}
       {media.thumbnailUrl && (
         <Box
           component="img"
@@ -33,14 +31,14 @@ export function MediaImageThumbnail({ media, t }: MediaImageThumbnailProps) {
           sx={{
             width: 50,
             height: 50,
-            objectFit: 'cover',
-            '@media(min-resolution: 2dppx)': {
+            objectFit: "cover",
+            "@media(min-resolution: 2dppx)": {
               width: 100,
               height: 100,
             },
           }}
-        />)
-      }
+        />
+      )}
     </Grid>
   );
 }
