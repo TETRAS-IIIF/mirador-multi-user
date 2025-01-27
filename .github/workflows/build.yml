@@ -1,4 +1,4 @@
-name: Build Check
+name: Frontend Build Check
 
 on:
   push:
@@ -22,14 +22,20 @@ jobs:
         with:
           node-version: 20  # Specify your project's Node.js version
 
-      # Install dependencies
+      # Navigate to frontend folder and install dependencies
       - name: Install dependencies
-        run: npm install
+        run: |
+          cd frontend
+          npm install
 
-      # Run TypeScript build
+      # Run TypeScript build in the frontend folder
       - name: Build project
-        run: npm run build
+        run: |
+          cd frontend
+          npm run build
 
-      # Optionally, run lint or tests
+      # Optionally, run lint or tests in the frontend folder
       - name: Lint code
-        run: npm run lint  # Add this if you have a lint script
+        run: |
+          cd frontend
+          npm run lint  # Add this if you have a lint script
