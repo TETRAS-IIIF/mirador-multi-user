@@ -19,6 +19,7 @@ import { User } from "../../features/auth/types/types.ts";
 import { Media, MediaGroupRights } from "../../features/media/types/types.ts";
 import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
 import {
+  ItemsRights,
   UserGroup,
   UserGroupTypes,
 } from "../../features/user-group/types/types.ts";
@@ -275,19 +276,48 @@ export const SideDrawer = ({
     setShowSignOutModal(false);
   };
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       const projects = await getUserAllProjects(user.id);
+      const rightsOrder = [
+        ItemsRights.READER,
+        ItemsRights.EDITOR,
+        ItemsRights.ADMIN,
+      ];
+
       const uniqueProjects = Array.from(
         new Set(projects.map((project: Project) => project.id)),
       ).map((id) => {
-        return projects.find((project: Project) => project.id === id);
+        const allMatchingProjects = projects.filter(
+          (project: Project) => project.id === id,
+        );
+
+        const highestRightsProject = allMatchingProjects.reduce(
+          (prev, curr) => {
+            const prevRightsIndex = prev.rights
+              ? rightsOrder.indexOf(prev.rights)
+              : -1;
+            const currRightsIndex = curr.rights
+              ? rightsOrder.indexOf(curr.rights)
+              : -1;
+            return currRightsIndex > prevRightsIndex ? curr : prev;
+          },
+        );
+
+        allMatchingProjects.forEach((project: Project) => {
+          if (project.share && !highestRightsProject.share) {
+            highestRightsProject.share = project.share;
+          }
+        });
+
+        return highestRightsProject;
       });
+
       setUserProjects(uniqueProjects);
     } catch (error) {
       console.error(t("errorFetchProject"), error);
     }
-  };
+  }, [user.id]);
 
   const fetchMediaForUser = async () => {
     const allMedias: Media[] = [];
@@ -389,6 +419,7 @@ export const SideDrawer = ({
         userPersonalGroup={userPersonalGroup}
         userProjects={userProjects}
         viewer={viewer}
+        fetchProjects={fetchProjects}
       />
     </>
   );

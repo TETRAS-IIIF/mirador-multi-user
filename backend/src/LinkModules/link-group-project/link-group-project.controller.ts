@@ -99,7 +99,7 @@ export class LinkGroupProjectController {
     );
   }
 
-  @ApiOperation({ summary: 'Allow a group to acces a project' })
+  @ApiOperation({ summary: 'Allow a group to access a project' })
   @ApiBody({ type: AddProjectToGroupDto })
   @ApiOkResponse({
     description:
