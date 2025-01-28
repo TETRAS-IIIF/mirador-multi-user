@@ -576,38 +576,48 @@ export const AllManifests = ({
                       objectTypes={ObjectTypes.MANIFEST}
                       AddAccessListItemFunction={handleGrantAccess}
                       DefaultButton={
-                        <Grid container direction={"column"} gap={1}>
-                          <ModalButton
-                            tooltipButton={t("tooltipButtonCopy")}
-                            onClickFunction={
-                              manifest.hash
-                                ? () =>
-                                    HandleCopyToClipBoard(
-                                      `${caddyUrl}/${manifest.hash}/${manifest.path}`,
-                                    )
-                                : () => HandleCopyToClipBoard(manifest.path)
-                            }
-                            disabled={false}
-                            icon={<ContentCopyIcon />}
-                          />
-                          <ModalButton
-                            tooltipButton={t("OpenInMirador")}
-                            onClickFunction={
-                              manifest.hash
-                                ? () =>
-                                    window.open(
-                                      `${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`,
-                                      "_blank",
-                                    )
-                                : () =>
-                                    window.open(
-                                      `${window.location.origin}/manifest/${encodeURI(manifest.path)}`,
-                                      "_blank",
-                                    )
-                            }
-                            disabled={false}
-                            icon={<OpenInNewIcon />}
-                          />
+                        <Grid
+                          item
+                          container
+                          spacing={1}
+                          flexDirection={"row"}
+                          wrap="nowrap"
+                        >
+                          <Grid item>
+                            <ModalButton
+                              tooltipButton={t("tooltipButtonCopy")}
+                              onClickFunction={
+                                manifest.hash
+                                  ? () =>
+                                      HandleCopyToClipBoard(
+                                        `${caddyUrl}/${manifest.hash}/${manifest.path}`,
+                                      )
+                                  : () => HandleCopyToClipBoard(manifest.path)
+                              }
+                              disabled={false}
+                              icon={<ContentCopyIcon />}
+                            />
+                          </Grid>
+                          <Grid item>
+                            <ModalButton
+                              tooltipButton={t("OpenInMirador")}
+                              onClickFunction={
+                                manifest.hash
+                                  ? () =>
+                                      window.open(
+                                        `${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`,
+                                        "_blank",
+                                      )
+                                  : () =>
+                                      window.open(
+                                        `${window.location.origin}/manifest/${encodeURI(manifest.path)}`,
+                                        "_blank",
+                                      )
+                              }
+                              disabled={false}
+                              icon={<OpenInNewIcon />}
+                            />
+                          </Grid>
                         </Grid>
                       }
                       EditorButton={

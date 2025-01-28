@@ -20,6 +20,7 @@ export const ModalButton = ({
     <>
       <Tooltip title={tooltipButton}>
         <Button
+          disableElevation
           disabled={disabled}
           onClick={onClickFunction}
           variant="contained"
