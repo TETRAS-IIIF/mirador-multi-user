@@ -367,7 +367,7 @@ export const AllProjects = ({
     share: string | undefined,
   ) => {
     if (share) {
-      return toast.error(t("share-error-message"));
+      return toast.error(t("share-project-error-message"));
     } else {
       await removeProjectFromList(projectId);
       toast.success(t("removedProjectFromList"));

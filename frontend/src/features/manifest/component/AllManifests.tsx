@@ -61,6 +61,8 @@ import { IIIFResource, ManifestResource } from "manifesto.js";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import CancelIcon from "@mui/icons-material/Cancel";
+import { removeManifestFromList } from "../api/removeManifestFromList.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -374,9 +376,15 @@ export const AllManifests = ({
 
   const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { rights, ...manifestDto } = manifestToUpdate;
-      await updateManifest(manifestDto);
+      if (manifestToUpdate.origin === manifestOrigin.LINK) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { json, rights, ...manifestDto } = manifestToUpdate;
+        await updateManifest(manifestDto);
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { rights, ...manifestDto } = manifestToUpdate;
+        await updateManifest(manifestDto);
+      }
       fetchManifestForUser();
     } catch (error) {
       console.error("Error updating Manifest", error);
@@ -436,6 +444,21 @@ export const AllManifests = ({
   const handleSetOpenSidePanel = () => {
     setOpenSidePanel(!openSidePanel);
   };
+
+  const handleRemoveManifestFromList = async (
+    manifestId: number,
+    share: string | undefined,
+  ) => {
+    if (share) {
+      return toast.error(t("share-manifest-error-message"));
+    } else {
+      await removeManifestFromList(manifestId);
+      toast.success(t("removedProjectFromList"));
+      return fetchManifestForUser();
+    }
+  };
+
+  console.log("manifests", manifests);
   return (
     <>
       <SidePanelMedia
@@ -595,6 +618,20 @@ export const AllManifests = ({
                           tooltipButton={t("tooltipButtonEdit")}
                           onClickFunction={() => HandleOpenModal(manifest.id)}
                           icon={<ModeEditIcon />}
+                          disabled={false}
+                        />
+                      }
+                      ReaderButton={
+                        <ModalButton
+                          color={"error"}
+                          tooltipButton={t("removeManifestFromList")}
+                          onClickFunction={() =>
+                            handleRemoveManifestFromList(
+                              manifest.id,
+                              manifest.share ? manifest.share : undefined,
+                            )
+                          }
+                          icon={<CancelIcon />}
                           disabled={false}
                         />
                       }

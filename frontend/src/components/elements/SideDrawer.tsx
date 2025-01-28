@@ -176,12 +176,16 @@ export const SideDrawer = ({
   const fetchManifestForUser = async () => {
     const allManifests: Manifest[] = [];
 
+    // Fetch user manifests
     const userManifests = await getUserGroupManifests(userPersonalGroup!.id);
     allManifests.push(...userManifests);
 
+    // Fetch group manifests
     for (const group of groups) {
       const manifestsGroup = await getUserGroupManifests(group!.id);
-      allManifests.push(...manifestsGroup);
+      for (const manifest of manifestsGroup) {
+        allManifests.push({ ...manifest, share: "group" });
+      }
     }
 
     const rightsPriority = {
@@ -194,24 +198,32 @@ export const SideDrawer = ({
 
     allManifests.forEach((manifest) => {
       const existing = uniqueManifestsMap.get(manifest.id);
-
       if (
         !existing ||
         (manifest.rights &&
           rightsPriority[manifest.rights] >
             (existing.rights ? rightsPriority[existing.rights] : 0))
       ) {
+        // Add or replace with the manifest that has higher rights
         uniqueManifestsMap.set(manifest.id, manifest);
+        console.log(existing);
+      } else if (existing && manifest.share && !existing.share) {
+        console.log(existing);
+        // Propagate the `share` field if it's missing in the existing manifest
+        existing.share = manifest.share;
       }
     });
+
     const uniqueManifests = Array.from(uniqueManifestsMap.values());
 
+    // Fetch and add manifest JSON
     const updatedManifests = await Promise.all(
       uniqueManifests.map(async (manifest) => {
         const manifestJson = await getManifestFromUrl(manifest.path);
         return { ...manifest, json: manifestJson };
       }),
     );
+
     setManifests(updatedManifests);
   };
 
