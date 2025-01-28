@@ -9,6 +9,7 @@ import {
   ImageListItemBar,
   styled,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -297,93 +298,110 @@ export const SidePanelManifest = ({
             </ImageList>
           )}
 
-          {!searchedManifest && manifestFiltered!.length < 1 && (
-            <ImageList
-              sx={{ minWidth: 400, padding: 1, width: 400 }}
-              cols={2}
-              rowHeight={200}
-            >
-              {currentPageData.map((manifest, index) => (
-                <>
-                  <StyledImageListItem key={manifest.id}>
-                    <Box
-                      component="img"
-                      src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                      alt={manifest.title}
-                      loading="lazy"
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        "@media(min-resolution: 2dppx)": {
+          {!searchedManifest &&
+            manifestFiltered &&
+            manifestFiltered!.length < 1 && (
+              <ImageList
+                sx={{ minWidth: 400, padding: 1, width: 400 }}
+                cols={2}
+                rowHeight={200}
+              >
+                {currentPageData.map((manifest, index) => (
+                  <>
+                    <StyledImageListItem key={manifest.id}>
+                      <Box
+                        component="img"
+                        src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                        alt={manifest.title}
+                        loading="lazy"
+                        sx={{
                           width: "100%",
                           height: "100%",
-                        },
-                      }}
-                    />
-                    <ImageListItemBar
-                      title={manifest.title}
-                      sx={{
-                        position: "absolute",
-                        bottom: 0,
-                        color: "white",
-                      }}
-                    />
-                    <CustomButton
-                      className="overlayButton"
-                      disableRipple
-                      onClick={() => handleCopyToClipBoard(manifest!)}
-                    >
-                      {t("copyPathToClipboard")}
-                    </CustomButton>
-                  </StyledImageListItem>
-                </>
-              ))}
-            </ImageList>
-          )}
-          {!searchedManifest && manifestFiltered!.length > 0 && (
-            <ImageList
-              sx={{ minWidth: 400, padding: 1, width: 400 }}
-              cols={2}
-              rowHeight={200}
-            >
-              {manifestFiltered!.map((manifest, index) => (
-                <>
-                  <StyledImageListItem key={manifest.id}>
-                    <Box
-                      component="img"
-                      src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                      alt={manifest.title}
-                      loading="lazy"
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        "@media(min-resolution: 2dppx)": {
+                          objectFit: "cover",
+                          "@media(min-resolution: 2dppx)": {
+                            width: "100%",
+                            height: "100%",
+                          },
+                        }}
+                      />
+                      <ImageListItemBar
+                        title={manifest.title}
+                        sx={{
+                          position: "absolute",
+                          bottom: 0,
+                          color: "white",
+                        }}
+                      />
+                      <CustomButton
+                        className="overlayButton"
+                        disableRipple
+                        onClick={() => handleCopyToClipBoard(manifest!)}
+                      >
+                        {t("copyPathToClipboard")}
+                      </CustomButton>
+                    </StyledImageListItem>
+                  </>
+                ))}
+              </ImageList>
+            )}
+          {!searchedManifest &&
+            manifestFiltered &&
+            manifestFiltered!.length > 0 && (
+              <ImageList
+                sx={{ minWidth: 400, padding: 1, width: 400 }}
+                cols={2}
+                rowHeight={200}
+              >
+                {manifestFiltered!.map((manifest, index) => (
+                  <>
+                    <StyledImageListItem key={manifest.id}>
+                      <Box
+                        component="img"
+                        src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                        alt={manifest.title}
+                        loading="lazy"
+                        sx={{
                           width: "100%",
                           height: "100%",
-                        },
-                      }}
-                    />
-                    <ImageListItemBar
-                      title={manifest.title}
-                      sx={{
-                        position: "absolute",
-                        bottom: 0,
-                        color: "white",
-                      }}
-                    />
-                    <CustomButton
-                      className="overlayButton"
-                      disableRipple
-                      onClick={() => handleCopyToClipBoard(manifest!)}
-                    >
-                      {t("copyPathToClipboard")}
-                    </CustomButton>
-                  </StyledImageListItem>
-                </>
-              ))}
-            </ImageList>
+                          objectFit: "cover",
+                          "@media(min-resolution: 2dppx)": {
+                            width: "100%",
+                            height: "100%",
+                          },
+                        }}
+                      />
+                      <ImageListItemBar
+                        title={manifest.title}
+                        sx={{
+                          position: "absolute",
+                          bottom: 0,
+                          color: "white",
+                        }}
+                      />
+                      <CustomButton
+                        className="overlayButton"
+                        disableRipple
+                        onClick={() => handleCopyToClipBoard(manifest!)}
+                      >
+                        {t("copyPathToClipboard")}
+                      </CustomButton>
+                    </StyledImageListItem>
+                  </>
+                ))}
+              </ImageList>
+            )}
+          {!manifestFiltered && (
+            <Grid
+              item
+              container
+              sx={{ minWidth: 400, padding: 1, width: 400, minHeight: 400 }}
+              alignItems={"center"}
+              justifyContent={"center"}
+            >
+              <Typography>
+                There is no manifest matching your filter.
+              </Typography>
+            </Grid>
           )}
           <PaginationControls
             currentPage={currentPage}
