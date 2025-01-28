@@ -298,4 +298,17 @@ export class LinkManifestGroupController {
       },
     );
   }
+
+  @ApiOperation({ summary: "Remove a manifest from user's list" })
+  @UseGuards(AuthGuard)
+  @Delete('/remove-manifest/:manifestId')
+  async removeProjectFromUser(
+    @Param('manifestId') manifestId: number,
+    @Req() request,
+  ) {
+    return await this.linkManifestGroupService.removeManifestFromUser(
+      manifestId,
+      request.user.sub,
+    );
+  }
 }
