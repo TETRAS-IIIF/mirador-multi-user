@@ -22,11 +22,7 @@ export const Consent = () => {
       }}
     >
       <Grid item width={"100%"} height={"100%"}>
-        <iframe
-          src="./../../customAssets/consent.html"
-          title="Consent"
-          style={{ border: "none" }}
-        ></iframe>
+        <Consent />
       </Grid>
     </Grid>
   );

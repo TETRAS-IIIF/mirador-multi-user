@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import { theme } from "../../assets/theme/mainTheme.ts";
+import { CustomTerms } from "../../../customAssets/CustomTerms.tsx";
 
 export const Terms = () => {
   useNavigate();
@@ -22,11 +23,7 @@ export const Terms = () => {
       }}
     >
       <Grid item width={"100%"} height={"100%"}>
-        <iframe
-          src="./../../customAssets/terms.html"
-          title="Terms"
-          style={{ border: "none" }}
-        ></iframe>
+        <CustomTerms></CustomTerms>
       </Grid>
     </Grid>
   );

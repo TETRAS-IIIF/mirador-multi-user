@@ -54,6 +54,7 @@ import { SortItemSelector } from "../../../components/elements/sortItemSelector.
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { removeMediaFromList } from "../api/removeManifestFromList.ts";
+import { MediaFooter } from "../../../../customAssets/MediaFooter.tsx";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -643,11 +644,7 @@ export const AllMedias = ({
         </Grid>
       </Grid>
       <Grid item width={"100%"} height={"100%"}>
-        <iframe
-          src="./../../customAssets/media-footer.html"
-          title="Media footer information"
-          style={{ border: "none" }}
-        ></iframe>
+        <MediaFooter />
       </Grid>
     </Box>
   );

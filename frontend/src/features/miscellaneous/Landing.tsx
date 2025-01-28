@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Grid, Typography } from "@mui/material";
 import { theme } from "../../assets/theme/mainTheme.ts";
 import { useTranslation } from "react-i18next";
+import { LandingFooter } from "../../../customAssets/landing-footer.tsx";
 
 export const Landing = () => {
   const navigate = useNavigate();
@@ -52,12 +53,7 @@ export const Landing = () => {
         </Grid>
       </Grid>
       <Grid item width={"100%"}>
-        <iframe
-          src="./../../customAssets/landing-footer.html"
-          width={"100%"}
-          height={100}
-          style={{ border: "none" }}
-        ></iframe>
+        <LandingFooter></LandingFooter>
       </Grid>
     </Grid>
   );
