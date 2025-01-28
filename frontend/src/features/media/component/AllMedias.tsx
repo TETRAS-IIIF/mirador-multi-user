@@ -53,7 +53,7 @@ import { useTranslation } from "react-i18next";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { removeMediaFromList } from "../api/removeManifestFromList.ts";
+import { removeMediaFromList } from "../api/removeMediaFromList.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -208,6 +208,7 @@ export const AllMedias = ({
 
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { share, ...mediaDto } = mediaToUpdate;
       await updateMedia(mediaDto);
       const updatedListOfMedias = medias.filter(function (media) {
