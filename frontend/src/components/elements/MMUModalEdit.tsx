@@ -219,9 +219,10 @@ export const MMUModalEdit = <
   }
 
   const handleUpdateItem = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { rights, ...itemWithoutRights } = item;
     const itemToUpdate = {
-      ...itemWithoutRights,
+      ...(itemWithoutRights as T),
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
       description: newItemDescription,

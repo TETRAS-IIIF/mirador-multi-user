@@ -306,7 +306,7 @@ export const SideDrawer = ({
         );
 
         const highestRightsProject = allMatchingProjects.reduce(
-          (prev, curr) => {
+          (prev: { rights: ItemsRights }, curr: { rights: ItemsRights }) => {
             const prevRightsIndex = prev.rights
               ? rightsOrder.indexOf(prev.rights)
               : -1;
@@ -440,7 +440,7 @@ export const SideDrawer = ({
         setViewer={setViewer}
         showSignOutModal={showSignOutModal}
         user={user}
-        userPersonalGroup={userPersonalGroup}
+        userPersonalGroup={userPersonalGroup!}
         userProjects={userProjects}
         viewer={viewer}
         fetchProjects={fetchProjects}

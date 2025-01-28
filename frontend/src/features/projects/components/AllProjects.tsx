@@ -61,7 +61,7 @@ import { removeProjectFromList } from "../api/removeProjectFromList.ts";
 interface AllProjectsProps {
   user: User;
   setSelectedProjectId: (id: number) => void;
-  fetchProjects: () => Project[];
+  fetchProjects: () => void;
   selectedProjectId?: number;
   setUserProjects: (userProjects: Project[]) => void;
   userProjects: Project[];
@@ -161,6 +161,7 @@ export const AllProjects = ({
 
   const updateUserProject = useCallback(
     async (projectUpdated: Project) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { rights, share, ...projectToUpdate } = projectUpdated;
       let updatedProject: ProjectGroupUpdateDto;
       if (rights) {

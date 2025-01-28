@@ -9,7 +9,6 @@ import { Dispatch, SetStateAction } from "react";
 import { ProjectGroup } from "../../projects/types/types.ts";
 import { LinkUserGroup } from "../../user-group/types/types.ts";
 import { useTranslation } from "react-i18next";
-import CancelIcon from "@mui/icons-material/Cancel";
 
 interface IMediaCardProps {
   media: Media;
@@ -62,7 +61,7 @@ export const MediaCard = ({
   handleChangeRights,
   getGroupByOption,
   handleRemoveMediaFromList,
-  }: IMediaCardProps) => {
+}: IMediaCardProps) => {
   const { t } = useTranslation();
 
   return (
@@ -93,20 +92,6 @@ export const MediaCard = ({
         />
       }
       HandleOpenModal={() => HandleOpenModal(media.id)}
-      ReaderButton={
-        <ModalButton
-          color={"error"}
-          tooltipButton={t("removeMediaFromList")}
-          onClickFunction={() =>
-            handleRemoveMediaFromList(
-              media.id,
-              media.share ? media.share : undefined,
-            )
-          }
-          icon={<CancelIcon />}
-          disabled={false}
-        />
-      }
       deleteItem={() => HandleDeleteMedia(media.id)}
       description={media.description}
       getAccessToItem={getAllMediaGroups}
@@ -127,6 +112,12 @@ export const MediaCard = ({
       updateItem={HandleUpdateMedia}
       handleSelectorChange={handleChangeRights}
       getGroupByOption={getGroupByOption}
+      handleRemoveFromList={() =>
+        handleRemoveMediaFromList(
+          media.id,
+          media.share ? media.share : undefined,
+        )
+      }
     />
   );
 };

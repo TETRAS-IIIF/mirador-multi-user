@@ -61,7 +61,6 @@ import { IIIFResource, ManifestResource } from "manifesto.js";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import CancelIcon from "@mui/icons-material/Cancel";
 import { removeManifestFromList } from "../api/removeManifestFromList.ts";
 
 const VisuallyHiddenInput = styled("input")({
@@ -82,8 +81,6 @@ interface IAllManifests {
   fetchManifestForUser: () => void;
   manifests: Manifest[];
   medias: Media[];
-  setCreateManifestIsOpen: (createManifestIsOpen: boolean) => void;
-  createManifestIsOpen: boolean;
   fetchMediaForUser: () => void;
 }
 
@@ -445,20 +442,20 @@ export const AllManifests = ({
     setOpenSidePanel(!openSidePanel);
   };
 
-  const handleRemoveManifestFromList = async (
+  const handleRemoveManifestFromList: (
     manifestId: number,
     share: string | undefined,
-  ) => {
+  ) => Promise<void> = async (manifestId, share) => {
     if (share) {
-      return toast.error(t("share-manifest-error-message"));
+      toast.error(t("share-manifest-error-message"));
+      return;
     } else {
       await removeManifestFromList(manifestId);
       toast.success(t("removedManifestFromList"));
-      return fetchManifestForUser();
+      fetchManifestForUser();
     }
   };
 
-  console.log("manifests", manifests);
   return (
     <>
       <SidePanelMedia
@@ -621,20 +618,6 @@ export const AllManifests = ({
                           disabled={false}
                         />
                       }
-                      ReaderButton={
-                        <ModalButton
-                          color={"error"}
-                          tooltipButton={t("removeManifestFromList")}
-                          onClickFunction={() =>
-                            handleRemoveManifestFromList(
-                              manifest.id,
-                              manifest.share ? manifest.share : undefined,
-                            )
-                          }
-                          icon={<CancelIcon />}
-                          disabled={false}
-                        />
-                      }
                       HandleOpenModal={() => HandleOpenModal(manifest.id)}
                       deleteItem={handleDeleteManifest}
                       description={manifest.description}
@@ -655,6 +638,12 @@ export const AllManifests = ({
                       thumbnailUrl={thumbnailUrls[index]}
                       updateItem={handleUpdateManifest}
                       handleSelectorChange={handleChangeRights}
+                      handleRemoveFromList={() =>
+                        handleRemoveManifestFromList(
+                          manifest.id,
+                          manifest.share ? manifest.share : undefined,
+                        )
+                      }
                     />
                   </Grid>
                 ))}

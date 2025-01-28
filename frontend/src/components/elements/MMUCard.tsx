@@ -73,9 +73,9 @@ interface IMMUCardProps<T, G, X> {
   objectTypes: ObjectTypes;
   getGroupByOption?: (option: any) => string;
   handleRemoveFromList?: (
-    itemId: number,
+    manifestId: number,
     share: string | undefined,
-  ) => Promise<string | T[]>;
+  ) => Promise<void> | void;
 }
 
 const MMUCard = <
@@ -159,7 +159,6 @@ const MMUCard = <
       }
     };
   const handleConfirmRemoveFromListModal = () => {
-    console.log("toto");
     setOpenRemoveItemFromListModal(!openRemoveItemFromListModal);
   };
 
