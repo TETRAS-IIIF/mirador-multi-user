@@ -365,13 +365,14 @@ export const AllProjects = ({
     projectId: number,
     share: string | undefined,
   ) => {
-    console.log(projectId, share);
     if (share) {
-      return toast.error(t("share-project-error-message"));
+      toast.error(t("share-project-error-message"));
+      return;
     } else {
       await removeProjectFromList(projectId);
       toast.success(t("removedProjectFromList"));
-      return fetchProjects();
+      fetchProjects();
+      return;
     }
   };
 

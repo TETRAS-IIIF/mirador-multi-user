@@ -42,7 +42,6 @@ import { Dayjs } from "dayjs";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import CancelIcon from "@mui/icons-material/Cancel";
 import { leavingGroup } from "../api/leavingGroup.ts";
 
 interface allGroupsProps {
@@ -242,7 +241,7 @@ export const AllGroups = ({
     setOpenSidePanel(!openSidePanel);
   };
 
-  const HandleLeaveGroup = async (groupId: number) => {
+  const handleLeaveGroup = async (groupId: number) => {
     await leavingGroup(groupId);
     return fetchGroups();
   };
@@ -352,15 +351,6 @@ export const AllGroups = ({
                         onClickFunction={() => HandleOpenModal(group.id)}
                       />
                     }
-                    ReaderButton={
-                      <ModalButton
-                        color={"error"}
-                        disabled={false}
-                        tooltipButton={t("leaveGroupTooltip")}
-                        icon={<CancelIcon />}
-                        onClickFunction={() => HandleLeaveGroup(group.id)}
-                      />
-                    }
                     getAccessToItem={GetAllGroupUsers}
                     listOfItem={listOfUserPersonalGroup}
                     removeAccessListItemFunction={handleRemoveUser}
@@ -369,6 +359,7 @@ export const AllGroups = ({
                     setItemToAdd={setUserToAdd}
                     description={group.description}
                     handleSelectorChange={handleChangeRights}
+                    handleRemoveFromList={handleLeaveGroup}
                   />
                 </Grid>
               ))}
@@ -403,16 +394,6 @@ export const AllGroups = ({
                       }
                     />
                   }
-                  ReaderButton={
-                    <ModalButton
-                      tooltipButton={t("openGroupTooltip")}
-                      disabled={true}
-                      icon={<ModeEditIcon />}
-                      onClickFunction={() =>
-                        console.log("you're not allowed to do this")
-                      }
-                    />
-                  }
                   getAccessToItem={getAllUserGroups}
                   listOfItem={listOfUserPersonalGroup}
                   removeAccessListItemFunction={handleRemoveUser}
@@ -421,6 +402,7 @@ export const AllGroups = ({
                   setItemToAdd={setUserToAdd}
                   description={selectedUserGroup.description}
                   handleSelectorChange={handleChangeRights}
+                  handleRemoveFromList={handleLeaveGroup}
                 />
               </Grid>
             )}
@@ -455,16 +437,6 @@ export const AllGroups = ({
                         onClickFunction={() => HandleOpenModal(group.id)}
                       />
                     }
-                    ReaderButton={
-                      <ModalButton
-                        disabled={true}
-                        tooltipButton={t("openGroupTooltip")}
-                        icon={<ModeEditIcon />}
-                        onClickFunction={() =>
-                          console.log("you're not allowed to do this")
-                        }
-                      />
-                    }
                     getAccessToItem={GetAllGroupUsers}
                     listOfItem={listOfUserPersonalGroup}
                     removeAccessListItemFunction={handleRemoveUser}
@@ -473,6 +445,7 @@ export const AllGroups = ({
                     setItemToAdd={setUserToAdd}
                     description={group.description}
                     handleSelectorChange={handleChangeRights}
+                    handleRemoveFromList={handleLeaveGroup}
                   />
                 </Grid>
               ))}
