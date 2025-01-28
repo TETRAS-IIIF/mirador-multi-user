@@ -220,4 +220,14 @@ export class LinkMediaGroupController {
       },
     );
   }
+
+  @ApiOperation({ summary: "Remove a media from user's list" })
+  @UseGuards(AuthGuard)
+  @Delete('/remove-media/:mediaId')
+  async removeMediaFromUser(@Param('mediaId') mediaId: number, @Req() request) {
+    return await this.linkMediaGroupService.removeMediaFromUser(
+      mediaId,
+      request.user.sub,
+    );
+  }
 }

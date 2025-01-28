@@ -4,14 +4,16 @@ import { useTranslation } from "react-i18next";
 
 interface IModalConfirmDeleteProps {
   itemName: string;
-  deleteItem?: (itemId: number) => void;
+  deleteItem?: (itemId: number, share?: string) => void;
   itemId: number;
+  share?: string;
 }
 
 export const ModalConfirmDelete = ({
   itemName,
   deleteItem,
   itemId,
+  share,
 }: IModalConfirmDeleteProps) => {
   const { t } = useTranslation();
 
@@ -33,7 +35,11 @@ export const ModalConfirmDelete = ({
             <Button
               color="error"
               variant="contained"
-              onClick={() => deleteItem(itemId)}
+              onClick={
+                share
+                  ? () => deleteItem(itemId, share)
+                  : () => deleteItem(itemId)
+              }
             >
               {t("deleteDefinitely")}
             </Button>

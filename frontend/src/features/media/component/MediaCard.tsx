@@ -36,6 +36,10 @@ interface IMediaCardProps {
     owner: any,
   ) => Promise<void>;
   getGroupByOption: (option: any) => string;
+  handleRemoveMediaFromList: (
+    mediaId: number,
+    share: string | undefined,
+  ) => void;
 }
 
 export const MediaCard = ({
@@ -56,6 +60,7 @@ export const MediaCard = ({
   HandleUpdateMedia,
   handleChangeRights,
   getGroupByOption,
+  handleRemoveMediaFromList,
 }: IMediaCardProps) => {
   const { t } = useTranslation();
 
@@ -87,14 +92,6 @@ export const MediaCard = ({
         />
       }
       HandleOpenModal={() => HandleOpenModal(media.id)}
-      ReaderButton={
-        <ModalButton
-          tooltipButton={t("openProjectTooltip")}
-          onClickFunction={() => console.log("You're not allowed to do this")}
-          icon={<ModeEditIcon />}
-          disabled={true}
-        />
-      }
       deleteItem={() => HandleDeleteMedia(media.id)}
       description={media.description}
       getAccessToItem={getAllMediaGroups}
@@ -115,6 +112,12 @@ export const MediaCard = ({
       updateItem={HandleUpdateMedia}
       handleSelectorChange={handleChangeRights}
       getGroupByOption={getGroupByOption}
+      handleRemoveFromList={() =>
+        handleRemoveMediaFromList(
+          media.id,
+          media.share ? media.share : undefined,
+        )
+      }
     />
   );
 };

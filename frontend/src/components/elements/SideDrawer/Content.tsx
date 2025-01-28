@@ -10,6 +10,11 @@ import { ConfirmDisconnect } from "../../../features/auth/components/confirmDisc
 import { MENU_ELEMENT } from "../SideDrawer";
 import { ProjectWorkspace } from "./ProjectWorkspace";
 import { User } from "../../../features/auth/types/types.ts";
+import { UserGroup } from "../../../features/user-group/types/types.ts";
+import { Manifest } from "../../../features/manifest/types/types.ts";
+import { Media } from "../../../features/media/types/types.ts";
+import { Project } from "../../../features/projects/types/types.ts";
+import { Dispatch, SetStateAction } from "react";
 
 interface ContentProps {
   HandleSetIsRunning: () => void;
@@ -17,33 +22,35 @@ interface ContentProps {
   fetchGroups: () => void;
   fetchManifestForUser: () => void;
   fetchMediaForUser: () => void;
-  groups: any;
+  groups: UserGroup[];
   handleDisconnectUser: () => void;
   handleSetMiradorState: (state: any) => void;
-  manifests: any;
-  medias: any;
+  manifests: Manifest[];
+  medias: Media[];
   miradorState: any;
   miradorViewerRef: any;
   projectSelected: any;
   saveMiradorState: (state: any) => void;
   selectedContent: string;
   selectedProjectId: number | undefined;
-  setGroups: (groups: any) => void;
-  setMedias: (medias: any) => void;
+  setGroups: Dispatch<SetStateAction<UserGroup[]>>;
+  setMedias: Dispatch<SetStateAction<Media[]>>;
   setSelectedProjectId: (id: number | undefined) => void;
   setShowSignOutModal: (show: boolean) => void;
   setViewer: (viewer: any) => void;
   showSignOutModal: boolean;
   user: User;
-  userPersonalGroup: any;
-  userProjects: any;
+  userPersonalGroup: UserGroup;
+  userProjects: Project[];
   viewer: any;
+  fetchProjects: () => void;
 }
 
 export function Content({
   HandleSetIsRunning,
   HandleSetUserProjects,
   fetchGroups,
+  fetchProjects,
   fetchManifestForUser,
   fetchMediaForUser,
   groups,
@@ -68,7 +75,6 @@ export function Content({
   userProjects,
   viewer,
 }: ContentProps) {
-
   return (
     <Box
       component="main"
@@ -107,6 +113,7 @@ export function Content({
             setUserProjects={HandleSetUserProjects}
             user={user}
             userProjects={userProjects}
+            fetchProjects={fetchProjects}
           />
         )}
       {user &&
