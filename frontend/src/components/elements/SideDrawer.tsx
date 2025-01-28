@@ -127,9 +127,9 @@ export const SideDrawer = ({
     [setUserProjects],
   );
 
-  const handleChangeContent = (content: string) => {
+  const handleChangeContent = async (content: string) => {
     if (selectedProjectId) {
-      saveProject(true);
+      await saveProject(true);
     }
     setSelectedProjectId(undefined);
     setSelectedContent(content);
