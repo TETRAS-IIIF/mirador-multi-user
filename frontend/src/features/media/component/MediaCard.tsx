@@ -9,46 +9,60 @@ import { Dispatch, SetStateAction } from "react";
 import { ProjectGroup } from "../../projects/types/types.ts";
 import { LinkUserGroup } from "../../user-group/types/types.ts";
 import { useTranslation } from "react-i18next";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 interface IMediaCardProps {
-  media:Media;
-  handleGrantAccess:(itemId: number ) => Promise<void> ,
-  HandleCopyToClipBoard:(string:string)=>void,
-  HandleOpenModal:(id:number) => void,
-  HandleDeleteMedia:(itemId: number) => void,
-  getAllMediaGroups:(itemId:number)=> Promise<any>,
-  getOptionLabel: (option: any, searchInput: string) => string,
-  listOfGroup:ListItem[],
-  openModalMediaId:number | null,
-  handleRemoveAccessToMedia:(itemId:number, accessItemId:number )=>Promise<void>,
-  handleLookingForUserGroups:(partialString:string)=>Promise<any[]> | any[],
-  setGroupList:Dispatch<SetStateAction<ProjectGroup[]>>,
-  setUserToAdd: Dispatch<SetStateAction<LinkUserGroup | null>>,
-  caddyUrl:string,
-  HandleUpdateMedia:(item: Media) => void,
-  handleChangeRights:(itemList: ListItem, eventValue : string, itemId:number, owner :any ) => Promise<void>,
-  getGroupByOption:(option:any)=>string,
+  media: Media;
+  handleGrantAccess: (itemId: number) => Promise<void>;
+  HandleCopyToClipBoard: (string: string) => void;
+  HandleOpenModal: (id: number) => void;
+  HandleDeleteMedia: (itemId: number) => void;
+  getAllMediaGroups: (itemId: number) => Promise<any>;
+  getOptionLabel: (option: any, searchInput: string) => string;
+  listOfGroup: ListItem[];
+  openModalMediaId: number | null;
+  handleRemoveAccessToMedia: (
+    itemId: number,
+    accessItemId: number,
+  ) => Promise<void>;
+  handleLookingForUserGroups: (partialString: string) => Promise<any[]> | any[];
+  setGroupList: Dispatch<SetStateAction<ProjectGroup[]>>;
+  setUserToAdd: Dispatch<SetStateAction<LinkUserGroup | null>>;
+  caddyUrl: string;
+  HandleUpdateMedia: (item: Media) => void;
+  handleChangeRights: (
+    itemList: ListItem,
+    eventValue: string,
+    itemId: number,
+    owner: any,
+  ) => Promise<void>;
+  getGroupByOption: (option: any) => string;
+  handleRemoveMediaFromList: (
+    mediaId: number,
+    share: string | undefined,
+  ) => void;
 }
-export const MediaCard = (
-  {
-    media,
-    handleGrantAccess,
-    HandleCopyToClipBoard,
-    HandleOpenModal,
-    HandleDeleteMedia,
-    getAllMediaGroups,
-    getOptionLabel,
-    listOfGroup,
-    openModalMediaId,
-    handleRemoveAccessToMedia,
-    handleLookingForUserGroups,
-    setGroupList,
-    setUserToAdd,
-    caddyUrl,
-    HandleUpdateMedia,
-    handleChangeRights,
-    getGroupByOption,
-  }: IMediaCardProps) => {
+
+export const MediaCard = ({
+  media,
+  handleGrantAccess,
+  HandleCopyToClipBoard,
+  HandleOpenModal,
+  HandleDeleteMedia,
+  getAllMediaGroups,
+  getOptionLabel,
+  listOfGroup,
+  openModalMediaId,
+  handleRemoveAccessToMedia,
+  handleLookingForUserGroups,
+  setGroupList,
+  setUserToAdd,
+  caddyUrl,
+  HandleUpdateMedia,
+  handleChangeRights,
+  getGroupByOption,
+  handleRemoveMediaFromList,
+}: IMediaCardProps) => {
   const { t } = useTranslation();
 
   return (
@@ -58,7 +72,14 @@ export const MediaCard = (
       DefaultButton={
         <ModalButton
           tooltipButton={t("tooltipMediaLink")}
-          onClickFunction={media.path ? () => HandleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) : () => HandleCopyToClipBoard(media.url)}
+          onClickFunction={
+            media.path
+              ? () =>
+                  HandleCopyToClipBoard(
+                    `${caddyUrl}/${media.hash}/${media.path}`,
+                  )
+              : () => HandleCopyToClipBoard(media.url)
+          }
           disabled={false}
           icon={<ContentCopyIcon />}
         />
@@ -74,10 +95,16 @@ export const MediaCard = (
       HandleOpenModal={() => HandleOpenModal(media.id)}
       ReaderButton={
         <ModalButton
-          tooltipButton={t('openProjectTooltip')}
-          onClickFunction={() => console.log("You're not allowed to do this")}
-          icon={<ModeEditIcon />}
-          disabled={true}
+          color={"error"}
+          tooltipButton={t("removeMediaFromList")}
+          onClickFunction={() =>
+            handleRemoveMediaFromList(
+              media.id,
+              media.share ? media.share : undefined,
+            )
+          }
+          icon={<CancelIcon />}
+          disabled={false}
         />
       }
       deleteItem={() => HandleDeleteMedia(media.id)}
@@ -92,7 +119,7 @@ export const MediaCard = (
       openModal={openModalMediaId === media.id}
       removeAccessListItemFunction={handleRemoveAccessToMedia}
       rights={media.rights}
-      searchBarLabel={t('search')}
+      searchBarLabel={t("search")}
       searchModalEditItem={handleLookingForUserGroups}
       setItemList={setGroupList}
       setItemToAdd={setUserToAdd}

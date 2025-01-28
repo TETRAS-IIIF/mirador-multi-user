@@ -332,16 +332,23 @@ export const SideDrawer = ({
   const fetchMediaForUser = async () => {
     const allMedias: Media[] = [];
 
-    // TODO Sometimes userPersonalGroup is null on first render,
-    //  but at the end UI works as expected
-    // This problem was probably introduced in SideDrawer Refactoring.
-    // Finishing this refactoring is a good opportunity to fix this issue.
-    const personalGroupMedias = await getUserGroupMedias(userPersonalGroup!.id);
+    // Handle the case where `userPersonalGroup` might be null on the first render
+    if (!userPersonalGroup) {
+      console.warn("userPersonalGroup is null on first render");
+      return;
+    }
+
+    // Fetch personal group media
+    const personalGroupMedias = await getUserGroupMedias(userPersonalGroup.id);
     allMedias.push(...personalGroupMedias);
 
+    // Fetch group media
     for (const group of groups) {
       const groupMedias = await getUserGroupMedias(group.id);
-      allMedias.push(...groupMedias);
+      for (const media of groupMedias) {
+        // Ensure media from groups includes the "share" field
+        allMedias.push({ ...media, share: "group" });
+      }
     }
 
     const rightsPriority = {
@@ -350,6 +357,7 @@ export const SideDrawer = ({
       [MediaGroupRights.READER]: 1,
     };
 
+    // Create a map to store unique media items based on their `id`
     const uniqueMediasMap = new Map<number, Media>();
 
     allMedias.forEach((media) => {
@@ -361,7 +369,11 @@ export const SideDrawer = ({
           rightsPriority[media.rights] >
             (existing.rights ? rightsPriority[existing.rights] : 0))
       ) {
+        // Add or replace the media item with higher rights
         uniqueMediasMap.set(media.id, media);
+      } else if (existing && media.share && !existing.share) {
+        // Propagate the `share` field if it's missing in the existing media item
+        existing.share = media.share;
       }
     });
 

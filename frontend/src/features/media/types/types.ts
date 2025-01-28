@@ -2,48 +2,49 @@ import { UserGroup } from "../../user-group/types/types.ts";
 import { Dayjs } from "dayjs";
 
 export type CreateMediaDto = {
-  idCreator:number
-  user_group:UserGroup;
-  file:File;
-}
+  idCreator: number;
+  user_group: UserGroup;
+  file: File;
+};
 
 export type LinkMediaDto = {
-  idCreator:number
-  user_group:UserGroup;
-  url: string
-}
+  idCreator: number;
+  user_group: UserGroup;
+  url: string;
+};
 
 export enum mediaOrigin {
-  UPLOAD = 'upload',
-  LINK = 'link',
+  UPLOAD = "upload",
+  LINK = "link",
 }
 
-export type Media={
-  created_at:Dayjs,
-  description:string,
-  hash:string
-  id:number
-  idCreator:number,
-  title:string,
-  origin:mediaOrigin
-  path?:string,
-  rights:MediaGroupRights
-  updated_at:Dayjs,
-  url:string,
+export type Media = {
+  created_at: Dayjs;
+  description: string;
+  hash: string;
+  id: number;
+  idCreator: number;
+  title: string;
+  origin: mediaOrigin;
+  path?: string;
+  rights: MediaGroupRights;
+  updated_at: Dayjs;
+  url: string;
   metadata: Record<string, string>;
-  mediaTypes:MediaTypes;
-}
+  mediaTypes: MediaTypes;
+  share?: string;
+};
 
 export enum MediaGroupRights {
-  ADMIN = 'admin',
-  READER = 'reader',
-  EDITOR = 'editor',
+  ADMIN = "admin",
+  READER = "reader",
+  EDITOR = "editor",
 }
 
 export enum MediaTypes {
-  VIDEO = 'video',
-  IMAGE = 'image',
-  AUDIO = 'audio',
+  VIDEO = "video",
+  IMAGE = "image",
+  AUDIO = "audio",
 }
 
 export type YoutubeVideoJson = {
