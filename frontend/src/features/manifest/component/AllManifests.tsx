@@ -453,7 +453,7 @@ export const AllManifests = ({
       return toast.error(t("share-manifest-error-message"));
     } else {
       await removeManifestFromList(manifestId);
-      toast.success(t("removedProjectFromList"));
+      toast.success(t("removedManifestFromList"));
       return fetchManifestForUser();
     }
   };

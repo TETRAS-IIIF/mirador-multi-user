@@ -439,4 +439,15 @@ export class LinkMediaGroupService {
       throw new InternalServerErrorException(`an error occurred`, error);
     }
   }
+
+  async removeMediaFromUser(mediaId: number, userId: number) {
+    try {
+      const personalGroup =
+        await this.groupService.findUserPersonalGroup(userId);
+      return await this.removeAccesToMedia(mediaId, personalGroup.id);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(error);
+    }
+  }
 }

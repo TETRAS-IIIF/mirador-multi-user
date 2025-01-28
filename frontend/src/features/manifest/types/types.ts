@@ -16,7 +16,7 @@ export type Manifest = {
   metadata: Record<string, string>;
   rights?: ManifestGroupRights;
   url: string;
-  share: string;
+  share?: string;
 };
 
 export type updateManifestJsonDto = {

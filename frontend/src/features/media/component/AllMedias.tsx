@@ -53,6 +53,7 @@ import { useTranslation } from "react-i18next";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { removeMediaFromList } from "../api/removeManifestFromList.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -207,7 +208,9 @@ export const AllMedias = ({
 
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
-      await updateMedia(mediaToUpdate);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { share, ...mediaDto } = mediaToUpdate;
+      await updateMedia(mediaDto);
       const updatedListOfMedias = medias.filter(function (media) {
         return media.id != mediaToUpdate.id;
       });
@@ -351,6 +354,19 @@ export const AllMedias = ({
     }
   };
 
+  const handleRemoveMediaFromList = async (
+    mediaId: number,
+    share: string | undefined,
+  ) => {
+    if (share) {
+      return toast.error(t("share-media-error-message"));
+    } else {
+      await removeMediaFromList(mediaId);
+      toast.success(t("removedMediaFromList"));
+      return fetchMediaForUser();
+    }
+  };
+
   return (
     <Box sx={{ padding: 2 }}>
       <Grid item container flexDirection="column" spacing={1}>
@@ -462,6 +478,7 @@ export const AllMedias = ({
                       listOfGroup={listOfGroup}
                       setGroupList={setGroupList}
                       setUserToAdd={setUserToAdd}
+                      handleRemoveMediaFromList={handleRemoveMediaFromList}
                     />
                   </Grid>
                 ))}
@@ -490,6 +507,7 @@ export const AllMedias = ({
                       listOfGroup={listOfGroup}
                       setGroupList={setGroupList}
                       setUserToAdd={setUserToAdd}
+                      handleRemoveMediaFromList={handleRemoveMediaFromList}
                     />
                   </Grid>
                 ))}
@@ -518,6 +536,7 @@ export const AllMedias = ({
                       listOfGroup={listOfGroup}
                       setGroupList={setGroupList}
                       setUserToAdd={setUserToAdd}
+                      handleRemoveMediaFromList={handleRemoveMediaFromList}
                     />
                   </Grid>
                 ))}
@@ -559,6 +578,7 @@ export const AllMedias = ({
                   listOfGroup={listOfGroup}
                   setGroupList={setGroupList}
                   setUserToAdd={setUserToAdd}
+                  handleRemoveMediaFromList={handleRemoveMediaFromList}
                 />
               </Grid>
             }
@@ -593,6 +613,7 @@ export const AllMedias = ({
                   listOfGroup={listOfGroup}
                   setGroupList={setGroupList}
                   setUserToAdd={setUserToAdd}
+                  handleRemoveMediaFromList={handleRemoveMediaFromList}
                 />
               </Grid>
             ))}
