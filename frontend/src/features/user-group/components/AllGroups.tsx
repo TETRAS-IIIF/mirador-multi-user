@@ -1,5 +1,5 @@
 import { User } from "../../auth/types/types.ts";
-import { Divider, Grid, IconButton, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import {
   Dispatch,
   SetStateAction,
@@ -274,6 +274,15 @@ export const AllGroups = ({
             }}
           >
             <Grid item>
+              <SearchBar
+                handleFiltered={handleFiltered}
+                label={t("filterGroups")}
+                fetchFunction={handleLookingForGroup}
+                getOptionLabel={getOptionLabel}
+                setSelectedData={setSelectedUserGroup}
+              />
+            </Grid>
+            <Grid item>
               <SortItemSelector<UserGroup>
                 sortField={sortField}
                 setSortField={setSortField}
@@ -290,16 +299,6 @@ export const AllGroups = ({
                   )}
                 </IconButton>
               </Tooltip>
-            </Grid>
-            <Divider orientation="vertical" variant="middle" flexItem />
-            <Grid item>
-              <SearchBar
-                handleFiltered={handleFiltered}
-                label={t("filterGroups")}
-                fetchFunction={handleLookingForGroup}
-                getOptionLabel={getOptionLabel}
-                setSelectedData={setSelectedUserGroup}
-              />
             </Grid>
           </Grid>
           <Grid

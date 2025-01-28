@@ -1,11 +1,4 @@
-import {
-  Divider,
-  Grid,
-  IconButton,
-  styled,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Grid, IconButton, styled, Tooltip, Typography } from "@mui/material";
 import {
   ChangeEvent,
   ReactNode,
@@ -497,6 +490,16 @@ export const AllManifests = ({
                 alignItems="center"
               >
                 <Grid item>
+                  <SearchBar
+                    fetchFunction={HandleLookingForManifests}
+                    getOptionLabel={getOptionLabelForManifestSearchBar}
+                    label={t("filterManifest")}
+                    setSearchedData={handleSetSearchManifest}
+                    setFilter={setManifestFiltered}
+                    handleFiltered={handleFiltered}
+                  />
+                </Grid>
+                <Grid item>
                   <SortItemSelector<Manifest>
                     sortField={sortField}
                     setSortField={setSortField}
@@ -515,17 +518,6 @@ export const AllManifests = ({
                       )}
                     </IconButton>
                   </Tooltip>
-                </Grid>
-                <Divider orientation="vertical" variant="middle" flexItem />
-                <Grid item>
-                  <SearchBar
-                    fetchFunction={HandleLookingForManifests}
-                    getOptionLabel={getOptionLabelForManifestSearchBar}
-                    label={t("filterManifest")}
-                    setSearchedData={handleSetSearchManifest}
-                    setFilter={setManifestFiltered}
-                    handleFiltered={handleFiltered}
-                  />
                 </Grid>
               </Grid>
             )}

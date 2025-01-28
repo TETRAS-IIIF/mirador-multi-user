@@ -1,6 +1,5 @@
 import {
   Box,
-  Divider,
   Grid,
   IconButton,
   styled,
@@ -412,6 +411,16 @@ export const AllMedias = ({
             justifyContent="flex-end"
           >
             <Grid item>
+              <SearchBar
+                handleFiltered={handleFiltered}
+                setFilter={setMediaFiltered}
+                fetchFunction={HandleLookingForMedia}
+                getOptionLabel={getOptionLabelForMediaSearchBar}
+                label={t("filterMedia")}
+                setSearchedData={handleSetSearchMedia}
+              />
+            </Grid>
+            <Grid item>
               <SortItemSelector<Media>
                 sortField={sortField}
                 setSortField={setSortField}
@@ -428,17 +437,6 @@ export const AllMedias = ({
                   )}
                 </IconButton>
               </Tooltip>
-            </Grid>
-            <Divider orientation="vertical" variant="middle" flexItem />
-            <Grid item>
-              <SearchBar
-                handleFiltered={handleFiltered}
-                setFilter={setMediaFiltered}
-                fetchFunction={HandleLookingForMedia}
-                getOptionLabel={getOptionLabelForMediaSearchBar}
-                label={t("filterMedia")}
-                setSearchedData={handleSetSearchMedia}
-              />
             </Grid>
           </Grid>
         </Grid>

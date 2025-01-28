@@ -1,4 +1,4 @@
-import { Divider, Grid, IconButton, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import {
   Dispatch,
   SetStateAction,
@@ -412,6 +412,15 @@ export const AllProjects = ({
                 alignItems="center"
               >
                 <Grid item>
+                  <SearchBar
+                    handleFiltered={handleFiltered}
+                    label={t("filterProjects")}
+                    fetchFunction={handleLookingForProject}
+                    getOptionLabel={getOptionLabelForProjectSearchBar}
+                    setSearchedData={handleSetSearchProject}
+                  />
+                </Grid>
+                <Grid item>
                   <SortItemSelector<Project>
                     sortField={sortField}
                     setSortField={setSortField}
@@ -430,16 +439,6 @@ export const AllProjects = ({
                       )}
                     </IconButton>
                   </Tooltip>
-                </Grid>
-                <Divider orientation="vertical" variant="middle" flexItem />
-                <Grid item>
-                  <SearchBar
-                    handleFiltered={handleFiltered}
-                    label={t("filterProjects")}
-                    fetchFunction={handleLookingForProject}
-                    getOptionLabel={getOptionLabelForProjectSearchBar}
-                    setSearchedData={handleSetSearchProject}
-                  />
                 </Grid>
               </Grid>
             )}

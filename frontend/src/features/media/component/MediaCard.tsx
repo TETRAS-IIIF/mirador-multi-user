@@ -9,6 +9,8 @@ import { Dispatch, SetStateAction } from "react";
 import { ProjectGroup } from "../../projects/types/types.ts";
 import { LinkUserGroup } from "../../user-group/types/types.ts";
 import { useTranslation } from "react-i18next";
+import { Grid } from "@mui/material";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 interface IMediaCardProps {
   media: Media;
@@ -69,19 +71,39 @@ export const MediaCard = ({
       objectTypes={ObjectTypes.MEDIA}
       AddAccessListItemFunction={handleGrantAccess}
       DefaultButton={
-        <ModalButton
-          tooltipButton={t("tooltipMediaLink")}
-          onClickFunction={
-            media.path
-              ? () =>
-                  HandleCopyToClipBoard(
-                    `${caddyUrl}/${media.hash}/${media.path}`,
-                  )
-              : () => HandleCopyToClipBoard(media.url)
-          }
-          disabled={false}
-          icon={<ContentCopyIcon />}
-        />
+        <Grid item container spacing={1} flexDirection={"row"} wrap="nowrap">
+          <Grid item>
+            <ModalButton
+              tooltipButton={t("tooltipMediaLink")}
+              onClickFunction={
+                media.path
+                  ? () =>
+                      HandleCopyToClipBoard(
+                        `${caddyUrl}/${media.hash}/${media.path}`,
+                      )
+                  : () => HandleCopyToClipBoard(media.url)
+              }
+              disabled={false}
+              icon={<ContentCopyIcon />}
+            />
+          </Grid>
+          <Grid item>
+            <ModalButton
+              tooltipButton={t("openInNewTab")}
+              onClickFunction={
+                media.path
+                  ? () =>
+                      window.open(
+                        `${caddyUrl}/${media.hash}/${media.path}`,
+                        "_blank",
+                      )
+                  : () => window.open(media.url, "_blank")
+              }
+              disabled={false}
+              icon={<OpenInNewIcon />}
+            />
+          </Grid>
+        </Grid>
       }
       EditorButton={
         <ModalButton
