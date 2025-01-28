@@ -241,9 +241,9 @@ const MMUCard = <
         </Grid>
         <Grid item alignSelf="center">
           <CardActions sx={{ padding: 1 }}>
-            <Grid container flexDirection="row" wrap="nowrap" spacing={2}>
+            <Grid container flexDirection="row" wrap="nowrap" spacing={1}>
               {id && (
-                <Grid item alignContent={"center"}>
+                <Grid item>
                   {rights === ItemsRights.READER ? ReaderButton : EditorButton}
                 </Grid>
               )}
