@@ -37,7 +37,6 @@ import { lookingForUsers } from "../../user-group/api/lookingForUsers.ts";
 import AddIcon from "@mui/icons-material/Add";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
 import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
@@ -58,7 +57,6 @@ import { SortItemSelector } from "../../../components/elements/sortItemSelector.
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { removeProjectFromList } from "../api/removeProjectFromList.ts";
-import CancelIcon from "@mui/icons-material/Cancel";
 
 interface AllProjectsProps {
   user: User;
@@ -366,6 +364,7 @@ export const AllProjects = ({
     projectId: number,
     share: string | undefined,
   ) => {
+    console.log(projectId, share);
     if (share) {
       return toast.error(t("share-project-error-message"));
     } else {
@@ -374,6 +373,8 @@ export const AllProjects = ({
       return fetchProjects();
     }
   };
+
+  console.log("userProjects", userProjects);
 
   return (
     <>
@@ -498,22 +499,6 @@ export const AllProjects = ({
                             disabled={false}
                           />
                         }
-                        ReaderButton={
-                          <ModalButton
-                            color={"error"}
-                            tooltipButton={t("removeProjectFromList")}
-                            onClickFunction={() =>
-                              handleRemoveProjectFromList(
-                                projectUser.id,
-                                projectUser.share
-                                  ? projectUser.share
-                                  : undefined,
-                              )
-                            }
-                            icon={<CancelIcon />}
-                            disabled={false}
-                          />
-                        }
                         id={projectUser.id}
                         rights={projectUser.rights!}
                         deleteItem={deleteUserProject}
@@ -531,6 +516,7 @@ export const AllProjects = ({
                         setItemList={setGroupList}
                         metadata={projectUser.metadata}
                         getGroupByOption={getGroupByOption}
+                        handleRemoveFromList={handleRemoveProjectFromList}
                       />
                     </Grid>
                   ))}
@@ -595,16 +581,7 @@ export const AllProjects = ({
                         disabled={false}
                       />
                     }
-                    ReaderButton={
-                      <ModalButton
-                        tooltipButton={t("openProject")}
-                        onClickFunction={() =>
-                          console.log(t("notAllowedMessage"))
-                        }
-                        icon={<ModeEditIcon />}
-                        disabled={true}
-                      />
-                    }
+                    handleRemoveFromList={handleRemoveProjectFromList}
                     id={searchedProject.id}
                     rights={searchedProject.rights!}
                     deleteItem={deleteUserProject}
@@ -668,16 +645,7 @@ export const AllProjects = ({
                             disabled={false}
                           />
                         }
-                        ReaderButton={
-                          <ModalButton
-                            tooltipButton={t("openProject")}
-                            onClickFunction={() =>
-                              console.log(t("notAllowedMessage"))
-                            }
-                            icon={<ModeEditIcon />}
-                            disabled={true}
-                          />
-                        }
+                        handleRemoveFromList={handleRemoveProjectFromList}
                         id={projectUser.id}
                         rights={projectUser.rights!}
                         deleteItem={deleteUserProject}
