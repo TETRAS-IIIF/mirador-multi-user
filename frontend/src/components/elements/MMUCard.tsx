@@ -32,6 +32,9 @@ import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import ImageIcon from "@mui/icons-material/Image";
 import { useTranslation } from "react-i18next";
 import placeholder from "../../assets/Placeholder.svg";
+import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
+import { ModalButton } from "./ModalButton.tsx";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 interface IMMUCardProps<T, G, X> {
   id: number;
@@ -40,7 +43,6 @@ interface IMMUCardProps<T, G, X> {
   HandleOpenModal: () => void;
   openModal: boolean;
   DefaultButton?: ReactElement;
-  ReaderButton?: ReactElement;
   EditorButton?: ReactElement;
   itemLabel: string;
   handleSelectorChange?: (
@@ -70,6 +72,10 @@ interface IMMUCardProps<T, G, X> {
   isGroups?: boolean;
   objectTypes: ObjectTypes;
   getGroupByOption?: (option: any) => string;
+  handleRemoveFromList?: (
+    manifestId: number,
+    share: string | undefined,
+  ) => Promise<void> | void;
 }
 
 const MMUCard = <
@@ -79,6 +85,8 @@ const MMUCard = <
     snapShotHash?: string;
     mediaTypes?: MediaTypes;
     origin?: manifestOrigin | mediaOrigin;
+    title?: string;
+    share?: string;
   },
   G,
   X extends { id: number },
@@ -89,7 +97,6 @@ const MMUCard = <
   HandleOpenModal,
   openModal,
   DefaultButton,
-  ReaderButton,
   EditorButton,
   itemLabel,
   handleSelectorChange,
@@ -111,8 +118,12 @@ const MMUCard = <
   objectTypes,
   getGroupByOption,
   duplicateItem,
+  handleRemoveFromList,
 }: IMMUCardProps<T, G, X>) => {
   const [searchInput, setSearchInput] = useState<string>("");
+  const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
+    useState(false);
+
   const { t } = useTranslation();
   const handleRemoveAccessListItem = async (accessItemId: number) => {
     if (removeAccessListItemFunction) {
@@ -147,6 +158,9 @@ const MMUCard = <
         );
       }
     };
+  const handleConfirmRemoveFromListModal = () => {
+    setOpenRemoveItemFromListModal(!openRemoveItemFromListModal);
+  };
 
   return (
     <Card>
@@ -244,7 +258,16 @@ const MMUCard = <
             <Grid container flexDirection="row" wrap="nowrap" spacing={2}>
               {id && (
                 <Grid item alignContent={"center"}>
-                  {rights === ItemsRights.READER ? ReaderButton : EditorButton}
+                  {rights === ItemsRights.READER ? (
+                    <ModalButton
+                      tooltipButton={t("removeProjectFromList")}
+                      onClickFunction={handleConfirmRemoveFromListModal}
+                      icon={<CancelIcon />}
+                      disabled={false}
+                    />
+                  ) : (
+                    EditorButton
+                  )}
                 </Grid>
               )}
               {DefaultButton && <Grid item>{DefaultButton}</Grid>}
@@ -287,6 +310,18 @@ const MMUCard = <
           />
         </Grid>
       </Grid>
+      <MMUModal
+        width={400}
+        openModal={openRemoveItemFromListModal}
+        setOpenModal={handleConfirmRemoveFromListModal}
+      >
+        <ModalConfirmDelete
+          deleteItem={handleRemoveFromList!}
+          itemId={item.id}
+          itemName={item.title ? item.title : "item"}
+          share={item.share}
+        />
+      </MMUModal>
     </Card>
   );
 };

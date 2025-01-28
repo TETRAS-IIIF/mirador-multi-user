@@ -61,6 +61,7 @@ import { IIIFResource, ManifestResource } from "manifesto.js";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { removeManifestFromList } from "../api/removeManifestFromList.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -75,23 +76,23 @@ const VisuallyHiddenInput = styled("input")({
 });
 
 interface IAllManifests {
+  userPersonalGroup: UserGroup;
+  user: User;
   fetchManifestForUser: () => void;
-  fetchMediaForUser: () => void;
   manifests: Manifest[];
   medias: Media[];
-  user: User;
-  userPersonalGroup: UserGroup;
+  fetchMediaForUser: () => void;
 }
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 
 export const AllManifests = ({
-  fetchManifestForUser,
-  fetchMediaForUser,
   manifests,
-  medias,
+  fetchManifestForUser,
   userPersonalGroup,
   user,
+  medias,
+  fetchMediaForUser,
 }: IAllManifests) => {
   const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
   const [searchedManifest, setSearchedManifest] = useState<Manifest | null>(
@@ -372,9 +373,15 @@ export const AllManifests = ({
 
   const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { rights, ...manifestDto } = manifestToUpdate;
-      await updateManifest(manifestDto);
+      if (manifestToUpdate.origin === manifestOrigin.LINK) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { json, rights, ...manifestDto } = manifestToUpdate;
+        await updateManifest(manifestDto);
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { rights, ...manifestDto } = manifestToUpdate;
+        await updateManifest(manifestDto);
+      }
       fetchManifestForUser();
     } catch (error) {
       console.error("Error updating Manifest", error);
@@ -433,6 +440,20 @@ export const AllManifests = ({
   };
   const handleSetOpenSidePanel = () => {
     setOpenSidePanel(!openSidePanel);
+  };
+
+  const handleRemoveManifestFromList: (
+    manifestId: number,
+    share: string | undefined,
+  ) => Promise<void> = async (manifestId, share) => {
+    if (share) {
+      toast.error(t("share-manifest-error-message"));
+      return;
+    } else {
+      await removeManifestFromList(manifestId);
+      toast.success(t("removedManifestFromList"));
+      fetchManifestForUser();
+    }
   };
 
   return (
@@ -617,6 +638,12 @@ export const AllManifests = ({
                       thumbnailUrl={thumbnailUrls[index]}
                       updateItem={handleUpdateManifest}
                       handleSelectorChange={handleChangeRights}
+                      handleRemoveFromList={() =>
+                        handleRemoveManifestFromList(
+                          manifest.id,
+                          manifest.share ? manifest.share : undefined,
+                        )
+                      }
                     />
                   </Grid>
                 ))}

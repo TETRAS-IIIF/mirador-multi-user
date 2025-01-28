@@ -32,6 +32,7 @@ export type Media = {
   url: string;
   metadata: Record<string, string>;
   mediaTypes: MediaTypes;
+  share?: string;
 };
 
 export enum MediaGroupRights {

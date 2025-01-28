@@ -485,4 +485,15 @@ export class LinkManifestGroupService {
       throw new InternalServerErrorException(`an error occurred`, error);
     }
   }
+
+  async removeManifestFromUser(manifestId: number, userId: number) {
+    try {
+      const personalGroup =
+        await this.groupService.findUserPersonalGroup(userId);
+      return await this.removeAccesToManifest(manifestId, personalGroup.id);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(error);
+    }
+  }
 }

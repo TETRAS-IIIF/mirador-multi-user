@@ -111,6 +111,7 @@ export const MMUModalEdit = <
     hash?: string;
     path?: string;
     userWorkspace?: Record<string, string>;
+    rights?: ItemsRights;
   },
   G,
 >({
@@ -218,8 +219,10 @@ export const MMUModalEdit = <
   }
 
   const handleUpdateItem = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { rights, ...itemWithoutRights } = item;
     const itemToUpdate = {
-      ...item,
+      ...(itemWithoutRights as T),
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
       description: newItemDescription,

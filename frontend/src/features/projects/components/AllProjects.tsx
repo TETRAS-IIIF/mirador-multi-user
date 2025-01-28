@@ -15,7 +15,6 @@ import {
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
 import { deleteProject } from "../api/deleteProject.ts";
-import { getUserAllProjects } from "../api/getUserAllProjects.ts";
 import { updateProject } from "../api/updateProject";
 import { createProject } from "../api/createProject";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
@@ -38,7 +37,6 @@ import { lookingForUsers } from "../../user-group/api/lookingForUsers.ts";
 import AddIcon from "@mui/icons-material/Add";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
 import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
@@ -58,16 +56,18 @@ import { Dayjs } from "dayjs";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { removeProjectFromList } from "../api/removeProjectFromList.ts";
 
 interface AllProjectsProps {
-  handleSetMiradorState: (state: IState | undefined) => void;
-  medias: Media[];
-  selectedProjectId?: number;
-  setMedias: Dispatch<SetStateAction<Media[]>>;
-  setSelectedProjectId: (id: number) => void;
-  setUserProjects: (userProjects: Project[]) => void;
   user: User;
+  setSelectedProjectId: (id: number) => void;
+  fetchProjects: () => void;
+  selectedProjectId?: number;
+  setUserProjects: (userProjects: Project[]) => void;
   userProjects: Project[];
+  handleSetMiradorState: (state: IState | undefined) => void;
+  setMedias: Dispatch<SetStateAction<Media[]>>;
+  medias: Media[];
 }
 
 export const AllProjects = ({
@@ -79,6 +79,7 @@ export const AllProjects = ({
   userProjects,
   setUserProjects,
   handleSetMiradorState,
+  fetchProjects,
 }: AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<Project | null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>();
@@ -137,15 +138,6 @@ export const AllProjects = ({
     return sortedItems.slice(start, end);
   }, [currentPage, itemsPerPage, sortedItems]);
 
-  const fetchProjects = async () => {
-    try {
-      const projects = await getUserAllProjects(user.id);
-      setUserProjects(projects);
-    } catch (error) {
-      console.error("Failed to fetch projects:", error);
-    }
-  };
-
   const fetchUserPersonalGroup = async () => {
     const personalGroup = await getUserPersonalGroup(user.id);
     setUserPersonalGroup(personalGroup);
@@ -153,7 +145,7 @@ export const AllProjects = ({
   useEffect(() => {
     fetchProjects();
     fetchUserPersonalGroup();
-  }, [user, openModalProjectId]);
+  }, [openModalProjectId]);
 
   const deleteUserProject = useCallback(
     async (projectId: number) => {
@@ -169,7 +161,8 @@ export const AllProjects = ({
 
   const updateUserProject = useCallback(
     async (projectUpdated: Project) => {
-      const { rights, ...projectToUpdate } = projectUpdated;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { rights, share, ...projectToUpdate } = projectUpdated;
       let updatedProject: ProjectGroupUpdateDto;
       if (rights) {
         updatedProject = {
@@ -368,6 +361,22 @@ export const AllProjects = ({
     setOpenSidePanel(!openSidePanel);
   };
 
+  const handleRemoveProjectFromList = async (
+    projectId: number,
+    share: string | undefined,
+  ) => {
+    console.log(projectId, share);
+    if (share) {
+      return toast.error(t("share-project-error-message"));
+    } else {
+      await removeProjectFromList(projectId);
+      toast.success(t("removedProjectFromList"));
+      return fetchProjects();
+    }
+  };
+
+  console.log("userProjects", userProjects);
+
   return (
     <>
       <SidePanelMedia
@@ -491,16 +500,6 @@ export const AllProjects = ({
                             disabled={false}
                           />
                         }
-                        ReaderButton={
-                          <ModalButton
-                            tooltipButton={t("configuration")}
-                            onClickFunction={() =>
-                              console.log(t("notAllowedMessage"))
-                            }
-                            icon={<SettingsIcon />}
-                            disabled={true}
-                          />
-                        }
                         id={projectUser.id}
                         rights={projectUser.rights!}
                         deleteItem={deleteUserProject}
@@ -518,6 +517,7 @@ export const AllProjects = ({
                         setItemList={setGroupList}
                         metadata={projectUser.metadata}
                         getGroupByOption={getGroupByOption}
+                        handleRemoveFromList={handleRemoveProjectFromList}
                       />
                     </Grid>
                   ))}
@@ -582,16 +582,7 @@ export const AllProjects = ({
                         disabled={false}
                       />
                     }
-                    ReaderButton={
-                      <ModalButton
-                        tooltipButton={t("openProject")}
-                        onClickFunction={() =>
-                          console.log(t("notAllowedMessage"))
-                        }
-                        icon={<ModeEditIcon />}
-                        disabled={true}
-                      />
-                    }
+                    handleRemoveFromList={handleRemoveProjectFromList}
                     id={searchedProject.id}
                     rights={searchedProject.rights!}
                     deleteItem={deleteUserProject}
@@ -655,16 +646,7 @@ export const AllProjects = ({
                             disabled={false}
                           />
                         }
-                        ReaderButton={
-                          <ModalButton
-                            tooltipButton={t("openProject")}
-                            onClickFunction={() =>
-                              console.log(t("notAllowedMessage"))
-                            }
-                            icon={<ModeEditIcon />}
-                            disabled={true}
-                          />
-                        }
+                        handleRemoveFromList={handleRemoveProjectFromList}
                         id={projectUser.id}
                         rights={projectUser.rights!}
                         deleteItem={deleteUserProject}

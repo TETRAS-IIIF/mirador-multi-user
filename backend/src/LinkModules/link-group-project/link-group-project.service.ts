@@ -28,6 +28,7 @@ import {
   DEFAULT_PROJECT_SNAPSHOT_FILE_NAME,
   UPLOAD_FOLDER,
 } from '../../utils/constants';
+import { UserGroupTypes } from '../../enum/user-group-types';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -76,7 +77,7 @@ export class LinkGroupProjectService {
     try {
       return await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userId } },
-        relations: ['project'],
+        relations: ['project', 'user_group'],
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -131,6 +132,20 @@ export class LinkGroupProjectService {
       return await this.linkGroupProjectRepository.find({
         where: { project: { id: projectId } },
         relations: ['user_group'],
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async removeProjectFromUser(projectId: number, userId: number) {
+    try {
+      const personalGroup =
+        await this.groupService.findUserPersonalGroup(userId);
+      return await this.RemoveProjectToGroup({
+        projectId: projectId,
+        groupId: personalGroup.id,
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -389,21 +404,38 @@ export class LinkGroupProjectService {
       const usersGroups =
         await this.linkUserGroupService.findALlGroupsForUser(userId);
       let projects: Project[] = [];
+
       for (const usersGroup of usersGroups) {
         const groupProjects = await this.findAllGroupProjectByUserGroupId(
           usersGroup.id,
         );
 
-        const userProjects = groupProjects.map((groupProjects) => {
-          return {
-            ...groupProjects.project,
-            rights: groupProjects.rights,
-          };
+        const userProjects = groupProjects.map((groupProject) => {
+          let project;
+          if (groupProject.user_group.type === UserGroupTypes.MULTI_USER) {
+            project = {
+              ...groupProject.project,
+              rights: groupProject.rights,
+              share: 'group',
+            };
+          }
+          if (groupProject.user_group.type === UserGroupTypes.PERSONAL) {
+            project = {
+              ...groupProject.project,
+              rights: groupProject.rights,
+            };
+          }
+
+          return project;
         });
+
         projects = projects.concat(
-          userProjects.filter((project) => !projects.includes(project)),
+          userProjects.filter(
+            (project) => !projects.some((p) => p.id === project.id),
+          ),
         );
       }
+
       return projects;
     } catch (error) {
       this.logger.error(error.message, error.stack);

@@ -99,7 +99,7 @@ export class LinkGroupProjectController {
     );
   }
 
-  @ApiOperation({ summary: 'Allow a group to acces a project' })
+  @ApiOperation({ summary: 'Allow a group to access a project' })
   @ApiBody({ type: AddProjectToGroupDto })
   @ApiOkResponse({
     description:
@@ -187,6 +187,19 @@ export class LinkGroupProjectController {
     );
   }
 
+  @ApiOperation({ summary: "Remove a project from user's list" })
+  @UseGuards(AuthGuard)
+  @Delete('/remove-project/:projectId')
+  async removeProjectFromUser(
+    @Param('projectId') projectId: number,
+    @Req() request,
+  ) {
+    return await this.linkGroupProjectService.removeProjectFromUser(
+      projectId,
+      request.user.sub,
+    );
+  }
+
   //TODO: Check if this routes is usefull
   // @UseGuards(AuthGuard)
   // @Get('/project/:projectId/:userGroupId')
@@ -238,9 +251,7 @@ export class LinkGroupProjectController {
   @Get('/user/projects/:userId')
   async getAllUsersProjects(@Param('userId') userId: number, @Req() request) {
     if (request.user.sub == userId) {
-      const toreturn =
-        await this.linkGroupProjectService.findAllUserProjects(userId);
-      return toreturn;
+      return await this.linkGroupProjectService.findAllUserProjects(userId);
     } else {
       return new UnauthorizedException(
         'you are not allowed to request for this projects',
