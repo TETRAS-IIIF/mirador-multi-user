@@ -65,7 +65,6 @@ export const MediaCard = ({
   handleRemoveMediaFromList,
 }: IMediaCardProps) => {
   const { t } = useTranslation();
-
   return (
     <MMUCard
       objectTypes={ObjectTypes.MEDIA}
@@ -130,7 +129,9 @@ export const MediaCard = ({
       searchModalEditItem={handleLookingForUserGroups}
       setItemList={setGroupList}
       setItemToAdd={setUserToAdd}
-      thumbnailUrl={`${caddyUrl}/${media.hash}/thumbnail.webp`}
+      thumbnailUrl={
+        media.hash ? `${caddyUrl}/${media.hash}/thumbnail.webp` : null
+      }
       updateItem={HandleUpdateMedia}
       handleSelectorChange={handleChangeRights}
       getGroupByOption={getGroupByOption}

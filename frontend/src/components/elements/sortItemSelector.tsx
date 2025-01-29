@@ -26,7 +26,7 @@ export const SortItemSelector = <T extends Record<string, unknown>>({
       >
         {fields.map((field) => (
           <MenuItem key={field as string} value={field as string}>
-            {field as string}
+            {t(field as string)}
           </MenuItem>
         ))}
       </Select>

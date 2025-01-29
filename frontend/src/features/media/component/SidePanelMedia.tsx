@@ -200,11 +200,14 @@ export const SidePanelMedia = ({
   const handleCreateMedia = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
-        await createMedia({
-          idCreator: user.id,
-          user_group: userPersonalGroup!,
-          file: event.target.files[0],
-        });
+        await createMedia(
+          {
+            idCreator: user.id,
+            user_group: userPersonalGroup!,
+            file: event.target.files[0],
+          },
+          t,
+        );
         fetchMediaForUser();
       }
     },
