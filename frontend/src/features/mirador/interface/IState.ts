@@ -8,6 +8,7 @@ export default interface IState {
   companionWindows: {};
   config: {
     annotation: {};
+    export: { config: boolean };
   };
   elasticLayout: {};
   layers: {};

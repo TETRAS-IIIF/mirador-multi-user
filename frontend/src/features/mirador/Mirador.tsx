@@ -100,11 +100,17 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
             project.title,
           );
         }
-
+        // TODO : this is a workaround for scroll issue but it should be removed
+        let configWorkaround = loadingMiradorViewer.store.getState();
+        //this get the catalog from the project and inject it into workaroundconfig
+        configWorkaround = {
+          ...configWorkaround,
+          catalog: miradorState?.catalog ? miradorState.catalog : [],
+        };
         // Load state only if it is not empty
         if (loadingMiradorViewer && project.id && miradorState) {
           const configWithAdapter = {
-            ...miradorState.config,
+            ...configWorkaround.config,
             annotation: {
               ...miradorState.config.annotation,
               adapter: (canvasId: string) =>
@@ -112,7 +118,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
             },
           };
           const miradorStateWithAdapter = {
-            ...miradorState,
+            ...configWorkaround,
             config: {
               ...configWithAdapter,
             },
