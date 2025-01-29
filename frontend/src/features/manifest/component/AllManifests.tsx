@@ -779,7 +779,7 @@ export const AllManifests = ({
           {!manifestFiltered && (
             <Grid item container justifyContent="center" alignItems="center">
               <Typography variant="h6" component="h2">
-                There is no manifest matching your filter.
+                {t("noMatchingManifestFilter")}
               </Typography>
             </Grid>
           )}

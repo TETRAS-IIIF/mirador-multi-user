@@ -398,9 +398,7 @@ export const SidePanelManifest = ({
               alignItems={"center"}
               justifyContent={"center"}
             >
-              <Typography>
-                There is no manifest matching your filter.
-              </Typography>
+              <Typography>t('noMatchingManifestFilter')</Typography>
             </Grid>
           )}
           <PaginationControls

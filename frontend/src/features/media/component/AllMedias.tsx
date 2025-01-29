@@ -171,11 +171,14 @@ export const AllMedias = ({
             }),
           );
         } else {
-          await createMedia({
-            idCreator: user.id,
-            user_group: userPersonalGroup!,
-            file: event.target.files[0],
-          });
+          await createMedia(
+            {
+              idCreator: user.id,
+              user_group: userPersonalGroup!,
+              file: event.target.files[0],
+            },
+            t,
+          );
           fetchMediaForUser();
         }
       }

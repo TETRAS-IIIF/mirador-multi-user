@@ -208,9 +208,7 @@ export const SideDrawer = ({
       ) {
         // Add or replace with the manifest that has higher rights
         uniqueManifestsMap.set(manifest.id, manifest);
-        console.log(existing);
       } else if (existing && manifest.share && !existing.share) {
-        console.log(existing);
         // Propagate the `share` field if it's missing in the existing manifest
         existing.share = manifest.share;
       }
