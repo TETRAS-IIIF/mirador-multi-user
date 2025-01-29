@@ -34,6 +34,7 @@
     "mirador-mltools-plugin-mmu": "^0.0.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-favicon": "^2.0.7",
     "react-hook-form": "^7.51.3",
     "react-hot-toast": "^2.4.1",
     "react-i18next": "^15.2.0",
