@@ -235,7 +235,12 @@ const MMUCard = <
           </Grid>
           <Grid item xs={12} sm={1}>
             {item.created_at && (
-              <Tooltip title={item.created_at.toString()}>
+              <Tooltip
+                title={dayjs(item.created_at)
+                  .locale(i18n.language)
+                  .format("LLLL")
+                  .toString()}
+              >
                 <Typography
                   variant="subtitle1"
                   sx={{
@@ -246,7 +251,7 @@ const MMUCard = <
                   }}
                 >
                   {dayjs(item.created_at)
-                    .locale(i18n.language) // Explicitly set locale per instance
+                    .locale(i18n.language)
                     .format("ddd, D MMM")}
                 </Typography>
               </Tooltip>
