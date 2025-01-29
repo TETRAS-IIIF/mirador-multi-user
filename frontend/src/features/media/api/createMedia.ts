@@ -2,7 +2,10 @@ import storage from "../../../utils/storage.ts";
 import { CreateMediaDto } from "../types/types.ts";
 import toast from "react-hot-toast";
 
-export const createMedia = async (mediaDto: CreateMediaDto) => {
+export const createMedia = async (
+  mediaDto: CreateMediaDto,
+  t: (key: string) => string,
+) => {
   const token = storage.getToken();
   const formData = new FormData();
 
@@ -25,14 +28,11 @@ export const createMedia = async (mediaDto: CreateMediaDto) => {
     if (!response.ok) {
       if (response.statusText === "Payload Too Large") {
         // TODO The message should be more user-friendly and say the maximum size allowed
-        toast.error("Your media is too large.");
+        toast.error(t("mediaTooLarge"));
       } else {
         // TODO The message should be more user-friendly
         // Be specific if the error come from unsupported image format or from video media
-        // TODO TRAD
-        toast.error(
-          "Unsupported media type, to upload videos please use Youtube, Peertube or link your media by URL.",
-        );
+        toast.error(t("unsupportedMedia"));
       }
     }
 

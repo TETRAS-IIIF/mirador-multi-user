@@ -41,7 +41,7 @@ export function DrawerElementContentMenu({
           />
         </ListItem>
       </Tooltip>
-      <Tooltip title={t("manifestTitle")} placement="right">
+      <Tooltip title={t("myManifests")} placement="right">
         <ListItem sx={{ padding: 0 }}>
           <ItemButton
             open={open}

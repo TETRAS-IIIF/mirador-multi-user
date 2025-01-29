@@ -43,6 +43,7 @@ export const ManifestCreationFormCanvases = ({
     }
 
     try {
+      //TODO : refacto order of checks to optimize and handle the case where the url doesn't contain any of these case.
       if (isRawVideo(mediaURL)) {
         updatedCanvas[itemIndex].media[0].thumbnailUrl = undefined;
         updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;

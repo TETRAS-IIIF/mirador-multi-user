@@ -98,7 +98,6 @@ export class LinkMediaGroupController {
       title: `${req.body.url}`,
       description: 'your media description',
       user_group: createMediaDto.user_group,
-      hash: `${(req as any).generatedHash}`,
       url: `${req.body.url}`,
       origin: mediaOrigin.LINK,
       mediaTypes: req.mediaTypes,

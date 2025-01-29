@@ -31,7 +31,7 @@ export class Media {
   thumbnailUrl: string;
 
   @IsString()
-  @Column()
+  @Column({ nullable: true })
   hash: string;
 
   @IsString()
