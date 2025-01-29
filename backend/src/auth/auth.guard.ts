@@ -1,6 +1,7 @@
 import {
   CanActivate,
   ExecutionContext,
+  ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -34,13 +35,16 @@ export class AuthGuard implements CanActivate {
 
       // Check if email is confirmed
       if (!payload.isEmailConfirmed) {
-        throw new UnauthorizedException('Email not confirmed');
+        throw new ForbiddenException('Email not confirmed');
       }
 
       // Assign payload to the request object for use in route handlers
       request['user'] = payload;
       request.metadata = { action };
-    } catch {
+    } catch (error) {
+      if (error instanceof ForbiddenException) {
+        throw error;
+      }
       throw new UnauthorizedException();
     }
     return true;

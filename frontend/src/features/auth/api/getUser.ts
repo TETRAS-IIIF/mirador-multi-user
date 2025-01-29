@@ -13,12 +13,22 @@ export const getUser = async (): Promise<User> => {
         },
       },
     );
+    const user = await response.json();
     if (!response.ok) {
+      if (response.status === 403) {
+        console.warn(
+          "Access forbidden: Email not confirmed or insufficient permissions.",
+        );
+        throw new Error("Access forbidden");
+      }
       throw new Error("Failed to fetch user");
     }
-    const user = await response.json();
+
     return user;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === "Access forbidden") {
+      return Promise.reject(error);
+    }
     storage.clearToken();
     window.location.reload();
     throw error;

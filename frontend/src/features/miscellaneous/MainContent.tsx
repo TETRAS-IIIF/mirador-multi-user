@@ -29,7 +29,6 @@ export const MainContent = () => {
   };
   return (
     <Grid container direction="row" sx={{ padding: 0 }}>
-      {/*TODO Why viewer state et selecttProjectId are here ?*/}
       <SideDrawer
         user={user.data}
         handleDisconnect={handleDisconnect}

@@ -2,6 +2,7 @@ import { Grid, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { NavLink } from "react-router-dom";
 import { ReactNode } from "react";
+import storage from "../../../utils/storage.ts";
 
 type LayoutProps = {
   children: ReactNode;
@@ -29,7 +30,12 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
         alignItems="center"
       >
         <Grid item>
-          <NavLink to="/">
+          <NavLink
+            to="/"
+            onClick={() => {
+              storage.clearToken();
+            }}
+          >
             <ArrowBackIcon />
           </NavLink>
         </Grid>
