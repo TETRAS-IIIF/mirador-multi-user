@@ -6,12 +6,15 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from "./assets/theme/mainTheme.ts";
 import { I18nextProvider } from "react-i18next";
 import i18n from "./features/translation/i18n.ts";
+import faviconImage from "../customAssets/favicon.svg";
+import Favicon from "react-favicon";
 
 function App() {
   document.title = import.meta.env.VITE_INSTANCE_SHORT_NAME;
 
   return (
     <I18nextProvider i18n={i18n}>
+      <Favicon url={faviconImage} />
       <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
         <AppProvider>
           <ThemeProvider theme={theme}>
