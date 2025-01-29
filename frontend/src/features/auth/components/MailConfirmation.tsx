@@ -4,12 +4,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Layout } from "./layout.tsx";
 import { useTranslation } from "react-i18next";
+import storage from "../../../utils/storage.ts";
 
 export const MailConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate(); // Use hooks at the top level
   const { t } = useTranslation();
-
   const handleConfirmMail = async () => {
     // Extract token from the URL
     const extractToken = () => {
@@ -21,6 +21,7 @@ export const MailConfirmation = () => {
 
     if (token) {
       const returnData = await confirmationMail(token);
+      storage.clearToken();
       if (returnData.status === 201) {
         toast.success(returnData.message);
         navigate("/");
