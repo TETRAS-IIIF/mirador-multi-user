@@ -29,9 +29,9 @@
     "manifest-editor": "^1.0.2",
     "manifesto.js": "^4.2.21",
     "mirador": "npm:mirador-video@1.0.15",
-    "mirador-annotation-editor": "^1.0.75",
-    "mirador-annotation-editor-video": "^0.0.46",
-    "mirador-mltools-plugin-mmu": "^0.0.14",
+    "mirador-annotation-editor": "^1.0.76",
+    "mirador-annotation-editor-video": "^0.0.47",
+    "mirador-mltools-plugin-mmu": "^0.0.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.3",
@@ -62,6 +62,9 @@
   },
   "overrides": {
     "mirador-annotation-editor": {
+      "mirador": "npm:mirador-video@1.0.15"
+    },
+    "mirador-mltools-plugin-mmu": {
       "mirador": "npm:mirador-video@1.0.15"
     }
   }
