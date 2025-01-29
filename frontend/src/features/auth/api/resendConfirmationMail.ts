@@ -1,3 +1,5 @@
+import storage from "../../../utils/storage.ts";
+
 export const ResendConfirmationMail = async (
   email: string,
   language: string,
@@ -12,6 +14,7 @@ export const ResendConfirmationMail = async (
         },
       },
     );
+    storage.clearToken();
     return await response.json();
   } catch (error) {
     console.error("Network error:", error);
