@@ -12,15 +12,11 @@ import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
 import { AuthGuard } from './auth.guard';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { ImpersonationService } from '../impersonation/impersonation.service';
 
 @ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly impersonationService: ImpersonationService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @ApiOperation({ summary: 'Login with your credentials' })
   @HttpCode(HttpStatus.OK)
