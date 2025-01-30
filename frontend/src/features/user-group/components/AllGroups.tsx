@@ -192,17 +192,10 @@ export const AllGroups = ({
     [groups, setGroups],
   );
 
-  const updateGroup = useCallback(
-    async (groupUpdated: UserGroup) => {
-      const dataForUpdate = {
-        ...groupUpdated,
-      };
-
-      await UpdateGroup(dataForUpdate);
-      fetchGroups();
-    },
-    [groups, setGroups],
-  );
+  const updateGroup = async (groupUpdated: UserGroup) => {
+    await UpdateGroup(groupUpdated);
+    fetchGroups();
+  };
 
   const grantingAccessToGroup = async (user_group_id: number) => {
     if (userToAdd == null) {

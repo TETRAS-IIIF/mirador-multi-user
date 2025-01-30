@@ -147,44 +147,31 @@ export const AllProjects = ({
     fetchUserPersonalGroup();
   }, [openModalProjectId]);
 
-  const deleteUserProject = useCallback(
-    async (projectId: number) => {
-      await deleteProject(projectId);
-      setOpenModalProjectId(null);
-      const updatedListOfProject = userProjects.filter(function (ProjectUser) {
-        return ProjectUser.id != projectId;
-      });
-      setUserProjects(updatedListOfProject);
-    },
-    [setUserProjects, userProjects],
-  );
+  const deleteUserProject = async (projectId: number) => {
+    await deleteProject(projectId);
+    setOpenModalProjectId(null);
+    fetchProjects();
+  };
 
-  const updateUserProject = useCallback(
-    async (projectUpdated: Project) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { rights, share, ...projectToUpdate } = projectUpdated;
-      let updatedProject: ProjectGroupUpdateDto;
-      if (rights) {
-        updatedProject = {
-          project: { ...projectToUpdate },
-          group: userPersonalGroup,
-          rights: rights,
-        };
-      } else {
-        updatedProject = {
-          project: { ...projectToUpdate },
-          group: userPersonalGroup,
-        };
-      }
-      await updateProject({ ...updatedProject });
-      let updatedListOfProject = userProjects.filter(function (p) {
-        return p.id != updatedProject.project.id;
-      });
-      updatedListOfProject = [projectUpdated, ...updatedListOfProject];
-      setUserProjects(updatedListOfProject);
-    },
-    [setUserProjects, userPersonalGroup, userProjects],
-  );
+  const updateUserProject = async (projectUpdated: Project) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { rights, share, ...projectToUpdate } = projectUpdated;
+    let updatedProject: ProjectGroupUpdateDto;
+    if (rights) {
+      updatedProject = {
+        project: { ...projectToUpdate },
+        group: userPersonalGroup,
+        rights: rights,
+      };
+    } else {
+      updatedProject = {
+        project: { ...projectToUpdate },
+        group: userPersonalGroup,
+      };
+    }
+    await updateProject({ ...updatedProject });
+    fetchProjects();
+  };
 
   const initializeMirador = useCallback(
     async (miradorState: IState | undefined, projectUser: Project) => {
