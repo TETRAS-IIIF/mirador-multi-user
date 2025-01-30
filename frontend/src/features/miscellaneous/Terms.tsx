@@ -22,8 +22,16 @@ export const Terms = () => {
         marginTop: 0,
       }}
     >
-      <Grid item width={"100%"} height={"100%"}>
-        <CustomTerms></CustomTerms>
+      <Grid
+        item
+        container
+        sx={{ backgroundColor: "rgba(255, 255, 255, 0.4)" }}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Grid item>
+          <CustomTerms></CustomTerms>
+        </Grid>
       </Grid>
     </Grid>
   );
