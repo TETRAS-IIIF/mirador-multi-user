@@ -1,14 +1,15 @@
 import {
-  Controller,
   Body,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
+  Param,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { UserGroupService } from './user-group.service';
 import { AuthGuard } from '../../auth/auth.guard';
-import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+
 @ApiBearerAuth()
 @Controller('user-group')
 export class UserGroupController {
@@ -40,7 +41,6 @@ export class UserGroupController {
   updateGroup(@Body() updateDate) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { metadata, ...restOfGroupUpdated } = updateDate;
-
     return this.userGroupService.updateGroup(restOfGroupUpdated);
   }
 

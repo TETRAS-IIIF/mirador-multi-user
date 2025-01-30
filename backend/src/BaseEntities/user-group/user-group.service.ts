@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -73,10 +74,18 @@ export class UserGroupService {
   async updateGroup(updateData: UpdateUserGroupDto) {
     try {
       const { rights, ...data } = updateData;
-      if (rights === User_UserGroupRights.ADMIN) {
+      console.log(data);
+      console.log('"""""""""""""""""""');
+      console.log(rights);
+      if (
+        rights === User_UserGroupRights.ADMIN ||
+        rights === User_UserGroupRights.EDITOR
+      ) {
         await this.userGroupRepository.update(updateData.id, {
           ...data,
         });
+      } else {
+        throw new UnauthorizedException('you are not allowed to do this.');
       }
       return await this.userGroupRepository.find({
         where: { id: updateData.id },
