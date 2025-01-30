@@ -3,6 +3,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { NavLink } from "react-router-dom";
 import { ReactNode } from "react";
 import storage from "../../../utils/storage.ts";
+import { TermsFooter } from "../../../../customAssets/TermsFooter.tsx";
 
 type LayoutProps = {
   children: ReactNode;
@@ -19,7 +20,7 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
       alignItems="center"
       min-height="100vh"
       sx={{
-        height: "100%",
+        height: "100vh",
       }}
     >
       <Grid
@@ -55,6 +56,9 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
         minHeight="80vh"
       >
         {children}
+      </Grid>
+      <Grid item container sx={{ width: "100%" }}>
+        <TermsFooter />
       </Grid>
     </Grid>
   );

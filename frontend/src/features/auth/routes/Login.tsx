@@ -18,7 +18,9 @@ export const Login = () => {
         </Grid>
       }
     >
-      <LoginForm />
+      <Grid item>
+        <LoginForm />
+      </Grid>
     </Layout>
   );
 };
