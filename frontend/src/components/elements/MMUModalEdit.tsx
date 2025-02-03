@@ -113,7 +113,7 @@ export const MMUModalEdit = <
     userWorkspace?: Record<string, string>;
     rights?: ItemsRights;
   },
-  G,
+  G extends { title: string },
 >({
   itemLabel,
   setItemToAdd,

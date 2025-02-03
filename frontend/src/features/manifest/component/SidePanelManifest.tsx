@@ -78,9 +78,6 @@ export const SidePanelManifest = ({
   fetchManifestForUser,
 }: PopUpManifestProps) => {
   const [open, setOpen] = useState(false);
-  const [searchedManifest, setsearchedManifest] = useState<Manifest | null>(
-    null,
-  );
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
@@ -101,23 +98,6 @@ export const SidePanelManifest = ({
 
   const toggleDrawer = () => {
     setOpen((prevOpen) => !prevOpen);
-  };
-
-  const handleSetSearchManifest = (mediaQuery: Manifest) => {
-    if (mediaQuery) {
-      const searchedMedia = manifests.find(
-        (media) => media.id === mediaQuery.id,
-      );
-      setsearchedManifest(searchedMedia!);
-    } else {
-      setsearchedManifest(null);
-    }
-  };
-
-  const HandleLookingForManifest = async (partialString: string) => {
-    return manifests.filter((manifest: Manifest) =>
-      manifest.title.includes(partialString),
-    );
   };
 
   const getManifestURL = (manifest: Manifest) => {
@@ -144,7 +124,7 @@ export const SidePanelManifest = ({
   const handleFiltered = (partialString: string) => {
     if (partialString.length < 1) {
       setManifestFiltered([]);
-      return;
+      return [];
     }
     const manifestsFiltered = manifests.filter((manifest) =>
       manifest.title.toLowerCase().includes(partialString.toLowerCase()),
@@ -152,9 +132,7 @@ export const SidePanelManifest = ({
     setManifestFiltered(
       manifestsFiltered.length > 0 ? manifestsFiltered : undefined,
     );
-  };
-  const getOptionLabelForManifestSearchBar = (option: Manifest): string => {
-    return option.title;
+    return manifestsFiltered.length > 0 ? manifestsFiltered : [];
   };
 
   const handleLinkManifest = useCallback(
@@ -253,11 +231,9 @@ export const SidePanelManifest = ({
           >
             <Grid item>
               <SearchBar
-                fetchFunction={HandleLookingForManifest}
-                getOptionLabel={getOptionLabelForManifestSearchBar}
                 label={t("search")}
-                setSearchedData={handleSetSearchManifest}
                 handleFiltered={handleFiltered}
+                setFilter={setManifestFiltered}
               />
             </Grid>
             <Grid item>
@@ -273,123 +249,94 @@ export const SidePanelManifest = ({
               </Tooltip>
             </Grid>
           </Grid>
-          {searchedManifest && (
+          {manifestFiltered && manifestFiltered!.length < 1 && (
             <ImageList
               sx={{ minWidth: 400, padding: 1, width: 400 }}
               cols={2}
               rowHeight={200}
             >
-              <StyledImageListItem>
-                <img
-                  srcSet={`${searchedManifest.thumbnailUrl}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                  src={`${searchedManifest.thumbnailUrl}?w=248&fit=crop&auto=format`}
-                  alt={searchedManifest.title}
-                  loading="lazy"
-                />
-                <ImageListItemBar title={searchedManifest.title} />
-                <CustomButton
-                  className="overlayButton"
-                  disableRipple
-                  onClick={() => handleCopyToClipBoard(searchedManifest!)}
-                >
-                  {t("copyPathToClipboard")}
-                </CustomButton>
-              </StyledImageListItem>
+              {currentPageData.map((manifest, index) => (
+                <>
+                  <StyledImageListItem key={manifest.id}>
+                    <Box
+                      component="img"
+                      src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                      alt={manifest.title}
+                      loading="lazy"
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        "@media(min-resolution: 2dppx)": {
+                          width: "100%",
+                          height: "100%",
+                        },
+                      }}
+                    />
+                    <ImageListItemBar
+                      title={manifest.title}
+                      sx={{
+                        position: "absolute",
+                        bottom: 0,
+                        color: "white",
+                      }}
+                    />
+                    <CustomButton
+                      className="overlayButton"
+                      disableRipple
+                      onClick={() => handleCopyToClipBoard(manifest!)}
+                    >
+                      {t("copyPathToClipboard")}
+                    </CustomButton>
+                  </StyledImageListItem>
+                </>
+              ))}
             </ImageList>
           )}
-
-          {!searchedManifest &&
-            manifestFiltered &&
-            manifestFiltered!.length < 1 && (
-              <ImageList
-                sx={{ minWidth: 400, padding: 1, width: 400 }}
-                cols={2}
-                rowHeight={200}
-              >
-                {currentPageData.map((manifest, index) => (
-                  <>
-                    <StyledImageListItem key={manifest.id}>
-                      <Box
-                        component="img"
-                        src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                        alt={manifest.title}
-                        loading="lazy"
-                        sx={{
+          {manifestFiltered && manifestFiltered!.length > 0 && (
+            <ImageList
+              sx={{ minWidth: 400, padding: 1, width: 400 }}
+              cols={2}
+              rowHeight={200}
+            >
+              {manifestFiltered!.map((manifest, index) => (
+                <>
+                  <StyledImageListItem key={manifest.id}>
+                    <Box
+                      component="img"
+                      src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                      alt={manifest.title}
+                      loading="lazy"
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                        "@media(min-resolution: 2dppx)": {
                           width: "100%",
                           height: "100%",
-                          objectFit: "cover",
-                          "@media(min-resolution: 2dppx)": {
-                            width: "100%",
-                            height: "100%",
-                          },
-                        }}
-                      />
-                      <ImageListItemBar
-                        title={manifest.title}
-                        sx={{
-                          position: "absolute",
-                          bottom: 0,
-                          color: "white",
-                        }}
-                      />
-                      <CustomButton
-                        className="overlayButton"
-                        disableRipple
-                        onClick={() => handleCopyToClipBoard(manifest!)}
-                      >
-                        {t("copyPathToClipboard")}
-                      </CustomButton>
-                    </StyledImageListItem>
-                  </>
-                ))}
-              </ImageList>
-            )}
-          {!searchedManifest &&
-            manifestFiltered &&
-            manifestFiltered!.length > 0 && (
-              <ImageList
-                sx={{ minWidth: 400, padding: 1, width: 400 }}
-                cols={2}
-                rowHeight={200}
-              >
-                {manifestFiltered!.map((manifest, index) => (
-                  <>
-                    <StyledImageListItem key={manifest.id}>
-                      <Box
-                        component="img"
-                        src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                        alt={manifest.title}
-                        loading="lazy"
-                        sx={{
-                          width: "100%",
-                          height: "100%",
-                          objectFit: "cover",
-                          "@media(min-resolution: 2dppx)": {
-                            width: "100%",
-                            height: "100%",
-                          },
-                        }}
-                      />
-                      <ImageListItemBar
-                        title={manifest.title}
-                        sx={{
-                          position: "absolute",
-                          bottom: 0,
-                          color: "white",
-                        }}
-                      />
-                      <CustomButton
-                        className="overlayButton"
-                        disableRipple
-                        onClick={() => handleCopyToClipBoard(manifest!)}
-                      >
-                        {t("copyPathToClipboard")}
-                      </CustomButton>
-                    </StyledImageListItem>
-                  </>
-                ))}
-              </ImageList>
-            )}
+                        },
+                      }}
+                    />
+                    <ImageListItemBar
+                      title={manifest.title}
+                      sx={{
+                        position: "absolute",
+                        bottom: 0,
+                        color: "white",
+                      }}
+                    />
+                    <CustomButton
+                      className="overlayButton"
+                      disableRipple
+                      onClick={() => handleCopyToClipBoard(manifest!)}
+                    >
+                      {t("copyPathToClipboard")}
+                    </CustomButton>
+                  </StyledImageListItem>
+                </>
+              ))}
+            </ImageList>
+          )}
           {!manifestFiltered && (
             <Grid
               item
