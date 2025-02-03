@@ -14,7 +14,6 @@ import {
   LinkUserGroup,
   UserGroup,
 } from "../types/types.ts";
-import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import AddIcon from "@mui/icons-material/Add";
 import { DrawerCreateGroup } from "./DrawerCreateGroup.tsx";
@@ -63,9 +62,6 @@ export const AllGroups = ({
 }: allGroupsProps) => {
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] =
     useState(false);
-  const [selectedUserGroup, setSelectedUserGroup] = useState<UserGroup | null>(
-    null,
-  );
   const [openModalGroupId, setOpenModalGroupId] = useState<number | null>(null); // Updated state
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [userPersonalGroupList, setUserPersonalGroupList] = useState<
@@ -142,13 +138,6 @@ export const AllGroups = ({
     setModalGroupCreationIsOpen(!modalGroupCreationIsOpen);
   }, [modalGroupCreationIsOpen, setModalGroupCreationIsOpen]);
 
-  const getOptionLabel = (option: UserGroup): string => {
-    if (option.title) {
-      return option.title;
-    }
-    return "";
-  };
-
   const getOptionLabelForEditModal = (
     option: LinkUserGroup,
     searchInput: string,
@@ -211,18 +200,16 @@ export const AllGroups = ({
     await removeAccessToGroup(groupId, userToRemoveId);
   };
 
-  const handleLookingForGroup = (partialString: string) => {
-    return groups.filter((groups) => groups.title.startsWith(partialString));
-  };
-
   const handleFiltered = (partialString: string) => {
     if (partialString.length < 1) {
-      return setGroupFiltered([]);
+      setGroupFiltered([]);
+      return [];
     }
     const groupsFiltered = groups.filter((group) =>
       group.title.toLowerCase().includes(partialString.toLowerCase()),
     );
     setGroupFiltered(groupsFiltered.length > 0 ? groupsFiltered : undefined);
+    return groupsFiltered.length > 0 ? groupsFiltered : [];
   };
 
   const handleSetOpenSidePanel = () => {
@@ -265,9 +252,7 @@ export const AllGroups = ({
               <SearchBar
                 handleFiltered={handleFiltered}
                 label={t("filterGroups")}
-                fetchFunction={handleLookingForGroup}
-                getOptionLabel={getOptionLabel}
-                setSelectedData={setSelectedUserGroup}
+                setFilter={setGroupFiltered}
               />
             </Grid>
             <Grid item>
@@ -310,7 +295,6 @@ export const AllGroups = ({
             {groups &&
               groupFiltered &&
               groupFiltered.length < 1 &&
-              !selectedUserGroup &&
               currentPageData.map((group) => (
                 <Grid item key={group.id}>
                   <MMUCard
@@ -350,53 +334,9 @@ export const AllGroups = ({
                   />
                 </Grid>
               ))}
-            {selectedUserGroup && (
-              <Grid item>
-                <MMUCard
-                  objectTypes={ObjectTypes.GROUP}
-                  isGroups={true}
-                  thumbnailUrl={
-                    selectedUserGroup.thumbnailUrl
-                      ? selectedUserGroup.thumbnailUrl
-                      : null
-                  }
-                  searchBarLabel={"Search Users"}
-                  rights={selectedUserGroup.rights!}
-                  itemLabel={selectedUserGroup.title}
-                  openModal={openModalGroupId === selectedUserGroup.id}
-                  getOptionLabel={getOptionLabel}
-                  deleteItem={handleDeleteGroup}
-                  item={selectedUserGroup}
-                  updateItem={updateGroup}
-                  HandleOpenModal={() => HandleOpenModal(selectedUserGroup.id)}
-                  id={selectedUserGroup.id}
-                  AddAccessListItemFunction={grantingAccessToGroup}
-                  EditorButton={
-                    <ModalButton
-                      tooltipButton={t("editGroupTooltip")}
-                      disabled={false}
-                      icon={<ModeEditIcon />}
-                      onClickFunction={() =>
-                        HandleOpenModal(selectedUserGroup.id)
-                      }
-                    />
-                  }
-                  getAccessToItem={getAllUserGroups}
-                  listOfItem={listOfUserPersonalGroup}
-                  removeAccessListItemFunction={handleRemoveUser}
-                  searchModalEditItem={lookingForUsers}
-                  setItemList={setUserPersonalGroupList}
-                  setItemToAdd={setUserToAdd}
-                  description={selectedUserGroup.description}
-                  handleSelectorChange={handleChangeRights}
-                  handleRemoveFromList={handleLeaveGroup}
-                />
-              </Grid>
-            )}
             {groups &&
               groupFiltered &&
               groupFiltered.length > 0 &&
-              !selectedUserGroup &&
               groupFiltered.map((group) => (
                 <Grid item key={group.id}>
                   <MMUCard

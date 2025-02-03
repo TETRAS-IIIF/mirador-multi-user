@@ -22,7 +22,6 @@ import {
 import { uploadManifest } from "../api/uploadManifest.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { lookingForManifests } from "../api/loonkingForManifests.ts";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import toast from "react-hot-toast";
@@ -88,15 +87,9 @@ export const AllManifests = ({
   fetchMediaForUser,
 }: IAllManifests) => {
   const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
-  const [searchedManifest, setSearchedManifest] = useState<Manifest | null>(
-    null,
-  );
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(
     null,
   );
-  const [searchedManifestIndex, setSearchedManifestIndex] = useState<
-    number | null
-  >(null);
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false);
   const [manifestFiltered, setManifestFiltered] = useState<
     Manifest[] | undefined
@@ -247,36 +240,6 @@ export const AllManifests = ({
     fetchManifestForUser();
   }, []);
 
-  const HandleLookingForManifests = async (partialString: string) => {
-    const userManifests = await lookingForManifests(
-      partialString,
-      userPersonalGroup.id,
-    );
-    return userManifests;
-  };
-
-  const getOptionLabelForManifestSearchBar = (option: Manifest): string => {
-    return option.title;
-  };
-
-  const handleSetSearchManifest = (manifestQuery: Manifest) => {
-    if (manifestQuery) {
-      const manifestIndex = manifests.findIndex(
-        (manifest: Manifest) => manifest.id === manifestQuery.id,
-      );
-      if (manifestIndex !== -1) {
-        setSearchedManifest(manifests[manifestIndex]);
-        setSearchedManifestIndex(manifestIndex);
-      } else {
-        setSearchedManifest(null);
-        setSearchedManifestIndex(null);
-      }
-    } else {
-      setSearchedManifest(null);
-      setSearchedManifestIndex(null);
-    }
-  };
-
   const HandleCopyToClipBoard = async (path: string) => {
     await navigator.clipboard.writeText(path);
     toast.success(t("pathCopiedToClipboard"));
@@ -353,8 +316,8 @@ export const AllManifests = ({
 
   const handleFiltered = (partialString: string) => {
     if (partialString.length < 1) {
-      setManifestFiltered([]);
-      return;
+      setManifestFiltered(undefined);
+      return [];
     }
     const manifestsFiltered = manifests.filter((manifest) =>
       manifest.title.toLowerCase().includes(partialString.toLowerCase()),
@@ -362,6 +325,7 @@ export const AllManifests = ({
     setManifestFiltered(
       manifestsFiltered.length > 0 ? manifestsFiltered : undefined,
     );
+    return manifestsFiltered.length > 0 ? manifestsFiltered : [];
   };
 
   const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
@@ -491,10 +455,7 @@ export const AllManifests = ({
               >
                 <Grid item>
                   <SearchBar
-                    fetchFunction={HandleLookingForManifests}
-                    getOptionLabel={getOptionLabelForManifestSearchBar}
                     label={t("filterManifest")}
-                    setSearchedData={handleSetSearchManifest}
                     setFilter={setManifestFiltered}
                     handleFiltered={handleFiltered}
                   />
@@ -551,8 +512,7 @@ export const AllManifests = ({
               </Typography>
             </Grid>
           )}
-          {!searchedManifest &&
-            !createManifestIsOpen &&
+          {!createManifestIsOpen &&
             manifestFiltered &&
             manifestFiltered.length < 1 && (
               <Grid
@@ -651,8 +611,7 @@ export const AllManifests = ({
                 ))}
               </Grid>
             )}
-          {!searchedManifest &&
-            !createManifestIsOpen &&
+          {!createManifestIsOpen &&
             manifestFiltered &&
             manifestFiltered.length > 0 && (
               <Grid
@@ -715,67 +674,6 @@ export const AllManifests = ({
                 ))}
               </Grid>
             )}
-          {searchedManifest && !createManifestIsOpen && (
-            <Grid
-              item
-              container
-              spacing={1}
-              flexDirection="column"
-              sx={{ marginBottom: "70px" }}
-            >
-              <Grid item key={searchedManifest.id}>
-                <MMUCard
-                  objectTypes={ObjectTypes.MANIFEST}
-                  AddAccessListItemFunction={handleGrantAccess}
-                  DefaultButton={
-                    <ModalButton
-                      tooltipButton={t("tooltipButtonCopy")}
-                      onClickFunction={
-                        searchedManifest.hash
-                          ? () =>
-                              HandleCopyToClipBoard(
-                                `${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`,
-                              )
-                          : () => HandleCopyToClipBoard(searchedManifest.path)
-                      }
-                      disabled={false}
-                      icon={<ContentCopyIcon />}
-                    />
-                  }
-                  EditorButton={
-                    <ModalButton
-                      tooltipButton={t("tooltipButtonEdit")}
-                      onClickFunction={() =>
-                        HandleOpenModal(searchedManifest.id)
-                      }
-                      icon={<ModeEditIcon />}
-                      disabled={false}
-                    />
-                  }
-                  HandleOpenModal={() => HandleOpenModal(searchedManifest.id)}
-                  deleteItem={handleDeleteManifest}
-                  description={searchedManifest.description}
-                  getAccessToItem={getAllManifestGroups}
-                  getOptionLabel={getOptionLabel}
-                  getGroupByOption={getGroupByOption}
-                  id={searchedManifest.id}
-                  item={searchedManifest}
-                  itemLabel={searchedManifest.title}
-                  listOfItem={listOfGroup}
-                  metadata={searchedManifest.metadata}
-                  openModal={openModalManifestId === searchedManifest.id}
-                  rights={searchedManifest.rights!}
-                  searchBarLabel={t("searchLabel")}
-                  searchModalEditItem={handleLookingForUserGroups}
-                  setItemToAdd={setUserToAdd}
-                  setItemList={setGroupList}
-                  thumbnailUrl={thumbnailUrls[searchedManifestIndex!]}
-                  updateItem={handleUpdateManifest}
-                  handleSelectorChange={handleChangeRights}
-                />
-              </Grid>
-            </Grid>
-          )}
           {!manifestFiltered && (
             <Grid item container justifyContent="center" alignItems="center">
               <Typography variant="h6" component="h2">
