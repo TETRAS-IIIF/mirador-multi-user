@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 
 interface IUsersSearchBarProps<T> {
   handleAdd?: () => void;
-  setSelectedData?: Dispatch<SetStateAction<T | null>>;
+  setSelectedData?: Dispatch<SetStateAction<any>>;
   setSearchedData?: any;
   fetchFunction?: (partialString: string) => Promise<any[]> | any[];
   getOptionLabel?: (option: any) => string;
