@@ -28,7 +28,10 @@ interface IProjectUserGroup<G, T> {
   objectTypes: ObjectTypes;
 }
 
-export const ItemList = <G, T extends { id: number; snapShotHash?: string }>({
+export const ItemList = <
+  G extends { title: string },
+  T extends { id: number; snapShotHash?: string },
+>({
   items,
   children,
   removeItem,
@@ -87,7 +90,7 @@ export const ItemList = <G, T extends { id: number; snapShotHash?: string }>({
           <SearchBar
             label={searchBarLabel}
             handleAdd={handleAddAccessListItem}
-            setSelectedData={setItemToAdd}
+            setSelectedData={setItemToAdd!}
             getOptionLabel={handleGetOptionLabel}
             fetchFunction={handleSearchModalEditItem}
             setSearchInput={setSearchInput}

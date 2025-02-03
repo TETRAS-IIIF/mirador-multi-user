@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 
 interface IUsersSearchBarProps<T> {
   handleAdd?: () => void;
-  setSelectedData?: Dispatch<SetStateAction<string | null>>;
+  setSelectedData?: Dispatch<SetStateAction<T | null>>;
   setSearchedData?: any;
   fetchFunction?: (partialString: string) => Promise<any[]> | any[];
   getOptionLabel?: (option: any) => string;
@@ -96,6 +96,7 @@ export const SearchBar = <T extends { title: string }>({
 
   const handleChange = (_event: SyntheticEvent, value: string | null) => {
     if (setSelectedData) {
+      // @ts-ignore
       setSelectedData(value);
     } else if (setSearchedData) {
       setSearchedData(value);
