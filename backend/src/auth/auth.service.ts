@@ -74,6 +74,9 @@ export class AuthService {
         access_token: await this.jwtService.signAsync(payload),
       };
     } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred`,
