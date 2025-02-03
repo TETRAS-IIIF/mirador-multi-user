@@ -51,7 +51,6 @@ interface allGroupsProps {
   userPersonalGroup: UserGroup;
   fetchGroups: () => void;
   groups: UserGroup[];
-  setGroups: Dispatch<SetStateAction<UserGroup[]>>;
 }
 
 export const AllGroups = ({
@@ -61,7 +60,6 @@ export const AllGroups = ({
   userPersonalGroup,
   fetchGroups,
   groups,
-  setGroups,
 }: allGroupsProps) => {
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] =
     useState(false);
@@ -184,13 +182,10 @@ export const AllGroups = ({
     [openModalGroupId, setOpenModalGroupId],
   );
 
-  const handleDeleteGroup = useCallback(
-    async (groupId: number) => {
-      await deleteGroup(groupId);
-      fetchGroups();
-    },
-    [groups, setGroups],
-  );
+  const handleDeleteGroup = async (groupId: number) => {
+    await deleteGroup(groupId);
+    fetchGroups();
+  };
 
   const updateGroup = async (groupUpdated: UserGroup) => {
     await UpdateGroup(groupUpdated);
