@@ -420,7 +420,7 @@ export const MMUModalEdit = <
   }
 
   return (
-    <Grid container sx={{ overflow: "scroll", maxHeight: 600 }}>
+    <Grid container sx={{ maxHeight: 600 }}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
         <Tab label={t("general")} {...a11yProps(0)} />
         <Tab
