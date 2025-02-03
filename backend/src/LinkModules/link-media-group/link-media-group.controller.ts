@@ -101,6 +101,7 @@ export class LinkMediaGroupController {
       url: `${req.body.url}`,
       origin: mediaOrigin.LINK,
       mediaTypes: req.mediaTypes,
+      hash: req.generatedHash,
     };
     return await this.linkMediaGroupService.createMedia(mediaToCreate);
   }
