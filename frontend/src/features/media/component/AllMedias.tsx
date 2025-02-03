@@ -30,7 +30,6 @@ import { Media, MediaGroupRights, MediaTypes } from "../types/types.ts";
 import toast from "react-hot-toast";
 import { deleteMedia } from "../api/deleteMedia.ts";
 import { updateMedia } from "../api/updateMedia.ts";
-import { lookingForMedias } from "../api/lookingForMedias.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
 import { addMediaToGroup } from "../api/AddMediaToGroup.ts";
@@ -89,7 +88,6 @@ export const AllMedias = ({
   setMedias,
 }: IAllMediasProps) => {
   const [openModalMediaId, setOpenModalMediaId] = useState<number | null>(null);
-  const [searchedMedia, setSearchedMedia] = useState<Media | null>(null);
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
@@ -235,27 +233,6 @@ export const AllMedias = ({
     [medias, setMedias],
   );
 
-  const HandleLookingForMedia = async (partialString: string) => {
-    const mediaFiltered = await lookingForMedias(
-      partialString,
-      userPersonalGroup.id,
-    );
-    return mediaFiltered;
-  };
-
-  const getOptionLabelForMediaSearchBar = (option: Media): string => {
-    return option.title;
-  };
-
-  const handleSetSearchMedia = (mediaQuery: Media) => {
-    if (mediaQuery) {
-      const searchedMedia = medias.find((media) => media.id === mediaQuery.id);
-      setSearchedMedia(searchedMedia!);
-    } else {
-      setSearchedMedia(null);
-    }
-  };
-
   const handleGrantAccess = async (mediaId: number) => {
     if (userToAdd == null) {
       toast.error(t("toastSelectItem"));
@@ -322,12 +299,14 @@ export const AllMedias = ({
 
   const handleFiltered = (partialString: string) => {
     if (partialString.length < 1) {
-      return setMediaFiltered([]);
+      setMediaFiltered([]);
+      return [];
     }
     const mediaFiltered = medias.filter((media) =>
       media.title.toLowerCase().includes(partialString.toLowerCase()),
     );
     setMediaFiltered(mediaFiltered.length > 0 ? mediaFiltered : undefined);
+    return mediaFiltered.length > 0 ? mediaFiltered : [];
   };
 
   const actions = [
@@ -428,10 +407,7 @@ export const AllMedias = ({
               <SearchBar
                 handleFiltered={handleFiltered}
                 setFilter={setMediaFiltered}
-                fetchFunction={HandleLookingForMedia}
-                getOptionLabel={getOptionLabelForMediaSearchBar}
                 label={t("filterMedia")}
-                setSearchedData={handleSetSearchMedia}
               />
             </Grid>
             <Grid item>
@@ -461,7 +437,7 @@ export const AllMedias = ({
             </Typography>
           </Grid>
         )}
-        {!searchedMedia && mediaFiltered && mediaFiltered.length < 1 && (
+        {mediaFiltered && mediaFiltered.length < 1 && (
           <Grid
             item
             container
@@ -562,42 +538,7 @@ export const AllMedias = ({
             />
           </Grid>
         )}
-        {searchedMedia && (
-          <Grid
-            item
-            container
-            spacing={1}
-            flexDirection="column"
-            sx={{ marginBottom: "70px" }}
-          >
-            {
-              <Grid item key={searchedMedia.id}>
-                <MediaCard
-                  key={searchedMedia.id}
-                  media={searchedMedia}
-                  getAllMediaGroups={getAllMediaGroups}
-                  getOptionLabel={getOptionLabel}
-                  getGroupByOption={getGroupByOption}
-                  HandleOpenModal={HandleOpenModal}
-                  HandleDeleteMedia={HandleDeleteMedia}
-                  handleGrantAccess={handleGrantAccess}
-                  HandleCopyToClipBoard={HandleCopyToClipBoard}
-                  HandleUpdateMedia={HandleUpdateMedia}
-                  caddyUrl={caddyUrl}
-                  handleChangeRights={handleChangeRights}
-                  handleLookingForUserGroups={handleLookingForUserGroups}
-                  handleRemoveAccessToMedia={handleRemoveAccessToMedia}
-                  openModalMediaId={openModalMediaId}
-                  listOfGroup={listOfGroup}
-                  setGroupList={setGroupList}
-                  setUserToAdd={setUserToAdd}
-                  handleRemoveMediaFromList={handleRemoveMediaFromList}
-                />
-              </Grid>
-            }
-          </Grid>
-        )}
-        {!searchedMedia && mediaFiltered && mediaFiltered.length > 0 && (
+        {mediaFiltered && mediaFiltered.length > 0 && (
           <Grid
             item
             container
