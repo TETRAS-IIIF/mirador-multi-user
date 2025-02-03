@@ -88,7 +88,7 @@ const MMUCard = <
     title?: string;
     share?: string;
   },
-  G,
+  G extends { title: string },
   X extends { id: number },
 >({
   id,
