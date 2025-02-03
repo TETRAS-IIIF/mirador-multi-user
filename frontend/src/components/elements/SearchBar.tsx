@@ -98,7 +98,7 @@ export const SearchBar = <T,>({
               renderInput={(params) => <TextField {...params} label={label} />}
               getOptionLabel={getOptionLabel}
               groupBy={groupByOption ? groupByOption : undefined}
-              noOptionsText={t("noOptions")}
+              noOptionsText={false}
             />
           </Grid>
           <Grid item>
