@@ -52,6 +52,7 @@
   "emailAddress": "Adresse e-mail",
   "emailConfirmed": "e-mail confirmé",
   "errorAddUser": "Sélectionnez un élément dans la liste",
+  "error_image_type": "Seul les images sont autorisées",
   "errorFetchProject": "Échec de la récupération des projets :",
   "errorMail": "Veuillez entrer votre adresse e-mail.",
   "errorMetadataAlreadyExist": "Un métadonné avec ce titre existe déjà",
