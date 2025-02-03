@@ -11,7 +11,8 @@ import { ConfigService } from '@nestjs/config';
 import { resetPassword } from './templates/resetPassword';
 import { ResetPasswordEmailDto } from './Dto/resetPasswordEmailDto';
 import { confirmationEmailTemplateFrench } from './templates/confirmationMail/French';
-import { confirmationEmailTemplateSpanish } from "./templates/confirmationMail/Spanish";
+import { confirmationEmailTemplateSpanish } from './templates/confirmationMail/Spanish';
+
 @Injectable()
 export class EmailServerService implements MailService {
   private readonly logger = new CustomLogger();
@@ -45,6 +46,7 @@ export class EmailServerService implements MailService {
       userName: userName,
     });
   }
+
   private _confirmMailTemplate(
     url: string,
     name: string,
@@ -110,21 +112,58 @@ export class EmailServerService implements MailService {
     url: string;
     method: string;
     timestamp: string;
+    body: any;
+    user: {
+      id: number;
+      email: string;
+      name: string;
+    };
+    stack: string;
   }) {
-    if (!Boolean(process.env.SMTP_DOMAIN)) {
+    if (!process.env.SMTP_DOMAIN) {
       return;
     }
-    console.log('Send mail internal server error');
-    const subject = `Internal Server Error: ${details.url}`;
-    const body = `
-      An internal server error occurred:
-      - URL: ${details.url}
-      - Method: ${details.method}
-      - Message: ${details.message}
-      - Timestamp: ${details.timestamp}
-    `;
 
-    await this._processSendEmail(process.env.ADMIN_MAIL, subject, body, body);
+    // Hide sensitive fields
+    if (details.body?.password) {
+      details.body.password = 'HIDDEN_USER_PASSWORD_TRY';
+    }
+
+    console.log('Send mail internal server error');
+
+    const subject = `🚨 Internal Server Error: ${details.url}`;
+
+    // Format JSON fields for readability
+    const formattedBody = JSON.stringify(details.body, null, 2)
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    const formattedStack = details.stack
+      ? `<pre style="background: #fee; padding: 10px; border-radius: 5px; white-space: pre-wrap; color: darkred;">${details.stack.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`
+      : '<p>No stack trace available</p>';
+
+    const mailBody = `
+    <h2 style="color: red;">🚨 Internal Server Error</h2>
+    <p><strong>URL:</strong> ${details.url}</p>
+    <p><strong>Method:</strong> ${details.method}</p>
+    <p><strong>Message:</strong> ${details.message}</p>
+    <h3>User Details</h3>
+    <p><strong>ID:</strong> ${details.user.id}</p>
+    <p><strong>Email:</strong> ${details.user.email}</p>
+    <p><strong>Name:</strong> ${details.user.name}</p>
+    <h3>Request Body</h3>
+    <pre style="background: #f4f4f4; padding: 10px; border-radius: 5px; white-space: pre-wrap;">${formattedBody}</pre>
+    <p><strong>Timestamp:</strong> ${details.timestamp}</p>
+    <h3>Stack Trace</h3>
+    ${formattedStack}
+  `;
+
+    await this._processSendEmail(
+      process.env.ADMIN_MAIL,
+      subject,
+      mailBody,
+      mailBody,
+    );
   }
 
   async sendConfirmationEmail(email: ConfirmationEmailDto): Promise<void> {
