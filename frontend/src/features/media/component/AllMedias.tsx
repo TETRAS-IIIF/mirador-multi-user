@@ -161,27 +161,42 @@ export const AllMedias = ({
   );
   const handleCreateMedia = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files) {
-        const maxUploadSize =
-          import.meta.env.VITE_MAX_UPLOAD_SIZE * 1024 * 1024;
-        if (event.target.files[0].size > maxUploadSize) {
-          toast.error(
-            t("fileTooLarge", {
-              maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
-            }),
-          );
-        } else {
-          await createMedia(
-            {
-              idCreator: user.id,
-              user_group: userPersonalGroup!,
-              file: event.target.files[0],
-            },
-            t,
-          );
-          fetchMediaForUser();
-        }
+      if (!event.target.files || event.target.files.length === 0) return;
+
+      const maxUploadSize = import.meta.env.VITE_MAX_UPLOAD_SIZE * 1024 * 1024;
+      const file = event.target.files[0]; // Get the first file
+
+      // Validate file type
+      if (
+        !file.name.match(
+          /\.(jpg|jpeg|png|webp|gif|bmp|tiff|svg|ico|jfif|heic|heif)$/i,
+        )
+      ) {
+        toast.error("Only image files are allowed");
+        return;
       }
+
+      // Validate file size
+      if (file.size > maxUploadSize) {
+        toast.error(
+          t("fileTooLarge", {
+            maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
+          }),
+        );
+        return;
+      }
+
+      // Proceed with media creation
+      await createMedia(
+        {
+          idCreator: user.id,
+          user_group: userPersonalGroup!,
+          file: file,
+        },
+        t,
+      );
+
+      fetchMediaForUser();
     },
     [fetchMediaForUser, medias],
   );
