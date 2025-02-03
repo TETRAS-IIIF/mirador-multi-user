@@ -20,7 +20,6 @@ import { createProject } from "../api/createProject";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
 import {
   ItemsRights,
@@ -33,7 +32,6 @@ import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
 import { ListItem } from "../../../components/types.ts";
 import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
-import { lookingForUsers } from "../../user-group/api/lookingForUsers.ts";
 import AddIcon from "@mui/icons-material/Add";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
@@ -81,7 +79,6 @@ export const AllProjects = ({
   handleSetMiradorState,
   fetchProjects,
 }: AllProjectsProps) => {
-  const [searchedProject, setSearchedProject] = useState<Project | null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>();
   const [openModalProjectId, setOpenModalProjectId] = useState<number | null>(
     null,
@@ -225,29 +222,6 @@ export const AllProjects = ({
     ],
   );
 
-  const handleLookingForProject = async (partialProjectName: string) => {
-    const userProjectArray = await lookingForProject(
-      partialProjectName,
-      userPersonalGroup!.id,
-    );
-    const projectArray = [];
-    for (const projectUser of userProjectArray) {
-      projectArray.push(projectUser.project);
-    }
-    return projectArray;
-  };
-
-  const handleSetSearchProject = (project: Project) => {
-    if (project) {
-      const searchedProject = userProjects.find(
-        (userProject) => userProject.id === project.id,
-      );
-      setSearchedProject(searchedProject!);
-    } else {
-      setSearchedProject(null);
-    }
-  };
-
   const handleAddUser = async (projectId: number) => {
     if (userToAdd == null) {
       toast.error(t("errorAddUser"));
@@ -292,10 +266,6 @@ export const AllProjects = ({
     }));
   }, [groupList]);
 
-  const getOptionLabelForProjectSearchBar = (option: Project): string => {
-    return option.title;
-  };
-
   const handleLookingForUserGroups = async (partialString: string) => {
     if (partialString.length > 0) {
       const linkUserGroups: LinkUserGroup[] =
@@ -316,7 +286,8 @@ export const AllProjects = ({
 
   const handleFiltered = (partialString: string) => {
     if (partialString.length < 1) {
-      return setProjectFiltered([]);
+      setProjectFiltered([]);
+      return [];
     }
     const projectFiltered = userProjects.filter((project) =>
       project.title.toLowerCase().includes(partialString.toLowerCase()),
@@ -324,6 +295,7 @@ export const AllProjects = ({
     setProjectFiltered(
       projectFiltered.length > 0 ? projectFiltered : undefined,
     );
+    return projectFiltered.length > 0 ? projectFiltered : [];
   };
 
   const getGroupByOption = (option: UserGroup): string => {
@@ -400,9 +372,7 @@ export const AllProjects = ({
                   <SearchBar
                     handleFiltered={handleFiltered}
                     label={t("filterProjects")}
-                    fetchFunction={handleLookingForProject}
-                    getOptionLabel={getOptionLabelForProjectSearchBar}
-                    setSearchedData={handleSetSearchProject}
+                    setFilter={setProjectFiltered}
                   />
                 </Grid>
                 <Grid item>
@@ -439,7 +409,6 @@ export const AllProjects = ({
             {!selectedProjectId &&
               projectFiltered &&
               projectFiltered.length < 1 &&
-              !searchedProject &&
               userProjects && (
                 <Grid
                   item
@@ -527,7 +496,7 @@ export const AllProjects = ({
                   />
                 </Grid>
               )}
-            {searchedProject && !selectedProjectId && (
+            {projectFiltered && projectFiltered.length > 0 && (
               <Grid
                 item
                 container
@@ -535,138 +504,75 @@ export const AllProjects = ({
                 flexDirection="column"
                 sx={{ marginBottom: "70px" }}
               >
+                {projectFiltered.map((projectUser) => (
+                  <Grid item key={projectUser.id}>
+                    <MMUCard
+                      duplicateItem={handleDuplicateProject}
+                      objectTypes={ObjectTypes.PROJECT}
+                      metadata={projectUser.metadata}
+                      searchBarLabel={t("searchUser")}
+                      description={projectUser.description}
+                      HandleOpenModal={() => HandleOpenModal(projectUser.id)}
+                      openModal={openModalProjectId === projectUser.id}
+                      DefaultButton={
+                        <ModalButton
+                          tooltipButton={t("openProject")}
+                          onClickFunction={() =>
+                            initializeMirador(
+                              projectUser.userWorkspace,
+                              projectUser,
+                            )
+                          }
+                          disabled={false}
+                          icon={<OpenInNewIcon />}
+                        />
+                      }
+                      EditorButton={
+                        <ModalButton
+                          tooltipButton={t("configuration")}
+                          onClickFunction={() =>
+                            HandleOpenModal(projectUser.id)
+                          }
+                          icon={<SettingsIcon />}
+                          disabled={false}
+                        />
+                      }
+                      handleRemoveFromList={handleRemoveProjectFromList}
+                      id={projectUser.id}
+                      rights={projectUser.rights!}
+                      deleteItem={deleteUserProject}
+                      getOptionLabel={getOptionLabel}
+                      AddAccessListItemFunction={handleAddUser}
+                      handleSelectorChange={handleChangeRights}
+                      item={projectUser}
+                      itemLabel={projectUser.title}
+                      listOfItem={listOfGroup}
+                      searchModalEditItem={handleLookingForUserGroups}
+                      getAccessToItem={getGroupsAccessToProject}
+                      setItemToAdd={setUserToAdd}
+                      updateItem={updateUserProject}
+                      removeAccessListItemFunction={handleRemoveUser}
+                      setItemList={setGroupList}
+                      getGroupByOption={getGroupByOption}
+                    />
+                  </Grid>
+                ))}
                 <Grid item>
-                  <MMUCard
-                    duplicateItem={handleDuplicateProject}
-                    objectTypes={ObjectTypes.PROJECT}
-                    metadata={searchedProject.metadata}
-                    searchBarLabel={t("searchUser")}
-                    description={searchedProject.description}
-                    HandleOpenModal={() => HandleOpenModal(searchedProject.id)}
-                    openModal={openModalProjectId === searchedProject.id}
-                    DefaultButton={
-                      <ModalButton
-                        tooltipButton={t("openProject")}
-                        onClickFunction={() =>
-                          initializeMirador(
-                            searchedProject.userWorkspace,
-                            searchedProject,
-                          )
-                        }
-                        disabled={false}
-                        icon={<OpenInNewIcon />}
-                      />
-                    }
-                    EditorButton={
-                      <ModalButton
-                        tooltipButton={t("configuration")}
-                        onClickFunction={() =>
-                          HandleOpenModal(searchedProject.id)
-                        }
-                        icon={<SettingsIcon />}
-                        disabled={false}
-                      />
-                    }
-                    handleRemoveFromList={handleRemoveProjectFromList}
-                    id={searchedProject.id}
-                    rights={searchedProject.rights!}
-                    deleteItem={deleteUserProject}
-                    getOptionLabel={getOptionLabel}
-                    AddAccessListItemFunction={handleAddUser}
-                    handleSelectorChange={handleChangeRights}
-                    item={searchedProject}
-                    itemLabel={searchedProject.title}
-                    listOfItem={listOfGroup}
-                    searchModalEditItem={lookingForUsers}
-                    getAccessToItem={getGroupsAccessToProject}
-                    setItemToAdd={setUserToAdd}
-                    updateItem={updateUserProject}
-                    removeAccessListItemFunction={handleRemoveUser}
-                    setItemList={setGroupList}
-                    getGroupByOption={getGroupByOption}
+                  <FloatingActionButton
+                    onClick={toggleModalProjectCreation}
+                    content={t("newProject")}
+                    Icon={<AddIcon />}
                   />
+                  <div>
+                    <DrawerCreateProject
+                      InitializeProject={InitializeProject}
+                      toggleModalProjectCreation={toggleModalProjectCreation}
+                      modalCreateProjectIsOpen={modalCreateProjectIsOpen}
+                    />
+                  </div>
                 </Grid>
               </Grid>
             )}
-            {projectFiltered &&
-              projectFiltered.length > 0 &&
-              !searchedProject && (
-                <Grid
-                  item
-                  container
-                  spacing={1}
-                  flexDirection="column"
-                  sx={{ marginBottom: "70px" }}
-                >
-                  {projectFiltered.map((projectUser) => (
-                    <Grid item key={projectUser.id}>
-                      <MMUCard
-                        duplicateItem={handleDuplicateProject}
-                        objectTypes={ObjectTypes.PROJECT}
-                        metadata={projectUser.metadata}
-                        searchBarLabel={t("searchUser")}
-                        description={projectUser.description}
-                        HandleOpenModal={() => HandleOpenModal(projectUser.id)}
-                        openModal={openModalProjectId === projectUser.id}
-                        DefaultButton={
-                          <ModalButton
-                            tooltipButton={t("openProject")}
-                            onClickFunction={() =>
-                              initializeMirador(
-                                projectUser.userWorkspace,
-                                projectUser,
-                              )
-                            }
-                            disabled={false}
-                            icon={<OpenInNewIcon />}
-                          />
-                        }
-                        EditorButton={
-                          <ModalButton
-                            tooltipButton={t("configuration")}
-                            onClickFunction={() =>
-                              HandleOpenModal(projectUser.id)
-                            }
-                            icon={<SettingsIcon />}
-                            disabled={false}
-                          />
-                        }
-                        handleRemoveFromList={handleRemoveProjectFromList}
-                        id={projectUser.id}
-                        rights={projectUser.rights!}
-                        deleteItem={deleteUserProject}
-                        getOptionLabel={getOptionLabel}
-                        AddAccessListItemFunction={handleAddUser}
-                        handleSelectorChange={handleChangeRights}
-                        item={projectUser}
-                        itemLabel={projectUser.title}
-                        listOfItem={listOfGroup}
-                        searchModalEditItem={handleLookingForUserGroups}
-                        getAccessToItem={getGroupsAccessToProject}
-                        setItemToAdd={setUserToAdd}
-                        updateItem={updateUserProject}
-                        removeAccessListItemFunction={handleRemoveUser}
-                        setItemList={setGroupList}
-                        getGroupByOption={getGroupByOption}
-                      />
-                    </Grid>
-                  ))}
-                  <Grid item>
-                    <FloatingActionButton
-                      onClick={toggleModalProjectCreation}
-                      content={t("newProject")}
-                      Icon={<AddIcon />}
-                    />
-                    <div>
-                      <DrawerCreateProject
-                        InitializeProject={InitializeProject}
-                        toggleModalProjectCreation={toggleModalProjectCreation}
-                        modalCreateProjectIsOpen={modalCreateProjectIsOpen}
-                      />
-                    </div>
-                  </Grid>
-                </Grid>
-              )}
             {!projectFiltered && (
               <Grid item container justifyContent="center" alignItems="center">
                 <Typography variant="h6" component="h2">

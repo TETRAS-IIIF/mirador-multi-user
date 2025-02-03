@@ -18,7 +18,7 @@ interface IUsersSearchBarProps<T> {
   setSearchInput?: (value: string) => void;
   actionButtonLabel?: string;
   label: string;
-  setFilter?: (filteredArray: any[]) => void;
+  setFilter?: (filteredArray: any[] | undefined) => void;
   handleFiltered?: (partialString: string) => T[];
   setUserInput?: (input: string) => void;
   groupByOption?: (option: any) => string;
@@ -61,17 +61,10 @@ export const SearchBar = <T extends { title: string }>({
 
   const handleInputChange = async (_event: SyntheticEvent, value: string) => {
     setSearchValue(value);
-
     if (!value) {
       setSuggestions([]);
-      if (setFilter) setFilter([]);
     }
     if (setUserInput) setUserInput(value);
-    if (handleFiltered) {
-      const filteredItems = handleFiltered(value);
-      setSuggestions(filteredItems.map((item) => item.title));
-      if (setFilter) setFilter(filteredItems); // Update filter
-    }
     if (setSearchInput) setSearchInput(value);
     if (setSelectedData && fetchFunction) {
       fetchFunction(value);
@@ -88,10 +81,14 @@ export const SearchBar = <T extends { title: string }>({
     if (setUserInput) setUserInput(value);
     if (setSearchInput) setSearchInput(value);
 
-    if (handleFiltered) {
+    if (handleFiltered && setFilter) {
       const filteredItems = handleFiltered(value);
-      setSuggestions(filteredItems.map((item) => item.title));
-      if (setFilter) setFilter(filteredItems); // Update filter dynamically
+      if (filteredItems.length > 0) {
+        setSuggestions(filteredItems.map((item) => item.title));
+        setFilter(filteredItems);
+      } else {
+        setFilter(undefined);
+      }
     }
 
     if (!value && setFilter) setFilter([]);
