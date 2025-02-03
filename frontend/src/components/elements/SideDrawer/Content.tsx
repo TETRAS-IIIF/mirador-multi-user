@@ -33,7 +33,6 @@ interface ContentProps {
   saveMiradorState: (state: any) => void;
   selectedContent: string;
   selectedProjectId: number | undefined;
-  setGroups: Dispatch<SetStateAction<UserGroup[]>>;
   setMedias: Dispatch<SetStateAction<Media[]>>;
   setSelectedProjectId: (id: number | undefined) => void;
   setShowSignOutModal: (show: boolean) => void;
@@ -64,7 +63,6 @@ export function Content({
   saveMiradorState,
   selectedContent,
   selectedProjectId,
-  setGroups,
   setMedias,
   setSelectedProjectId,
   setShowSignOutModal,
@@ -133,7 +131,6 @@ export function Content({
           fetchGroups={fetchGroups}
           groups={groups}
           medias={medias}
-          setGroups={setGroups}
           setMedias={setMedias}
           user={user}
           userPersonalGroup={userPersonalGroup}

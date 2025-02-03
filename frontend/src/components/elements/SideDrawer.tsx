@@ -431,7 +431,6 @@ export const SideDrawer = ({
         saveMiradorState={saveMiradorState}
         selectedContent={selectedContent}
         selectedProjectId={selectedProjectId}
-        setGroups={setGroups}
         setMedias={setMedias}
         setSelectedProjectId={setSelectedProjectId}
         setShowSignOutModal={setShowSignOutModal}
