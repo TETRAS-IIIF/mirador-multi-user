@@ -52,6 +52,7 @@
   "emailConfirmed": "email confirmed",
   "errorAddUser": "select an item in the list",
   "errorFetchProject": "Failed to fetch projects:",
+  "error_image_type": "Only image files are allowed",
   "errorMail": "Please enter your email address.",
   "errorMetadataAlreadyExist": "metadata with this title already exists",
   "errorProjectAlreadyOpen": "Project is already open by...",

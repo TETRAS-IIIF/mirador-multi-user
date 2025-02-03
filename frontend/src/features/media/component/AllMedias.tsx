@@ -54,6 +54,10 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { removeMediaFromList } from "../api/removeManifestFromList.ts";
 import { MediaFooter } from "../../../../customAssets/MediaFooter.tsx";
+import {
+  isFileSizeUnderLimit,
+  isValidFileForUpload,
+} from "../../../utils/utils.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -161,27 +165,34 @@ export const AllMedias = ({
   );
   const handleCreateMedia = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
-      if (event.target.files) {
-        const maxUploadSize =
-          import.meta.env.VITE_MAX_UPLOAD_SIZE * 1024 * 1024;
-        if (event.target.files[0].size > maxUploadSize) {
-          toast.error(
-            t("fileTooLarge", {
-              maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
-            }),
-          );
-        } else {
-          await createMedia(
-            {
-              idCreator: user.id,
-              user_group: userPersonalGroup!,
-              file: event.target.files[0],
-            },
-            t,
-          );
-          fetchMediaForUser();
-        }
+      if (!event.target.files || event.target.files.length === 0) return;
+
+      const file = event.target.files[0];
+
+      if (!isValidFileForUpload(file)) {
+        toast.error(t("error_image_type"));
+        return;
       }
+      if (isFileSizeUnderLimit(file)) {
+        toast.error(
+          t("fileTooLarge", {
+            maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
+          }),
+        );
+        return;
+      }
+
+      // Proceed with media creation
+      await createMedia(
+        {
+          idCreator: user.id,
+          user_group: userPersonalGroup!,
+          file: file,
+        },
+        t,
+      );
+
+      fetchMediaForUser();
     },
     [fetchMediaForUser, medias],
   );
