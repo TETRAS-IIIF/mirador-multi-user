@@ -10,7 +10,7 @@ interface IframeGeneratorProps {
   snapshotUrl: string | null;
 }
 
-export const IframeGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
+export const IFrameGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
   const [openIframeModal, setOpenIframeModal] = useState(false);
   const { t } = useTranslation();
 

@@ -6,7 +6,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { getGroupsAccessToProject } from "../../features/projects/api/generateProjectSnapShot.ts";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { IframeGenerator } from "../../features/projects/components/ProjectIframe.tsx";
+import { IFrameGenerator } from "../../features/projects/components/IFrameGenerator.tsx";
 
 interface IShareLinkProps {
   itemId: number;
@@ -102,7 +102,7 @@ export const ShareLink = ({ itemId, snapShotHash }: IShareLinkProps) => {
             </>
           )}
           <Grid item>
-            <IframeGenerator snapshotUrl={projectSnapshotURL} />
+            <IFrameGenerator snapshotUrl={projectSnapshotURL} />
           </Grid>
         </Grid>
       </Grid>
