@@ -1,7 +1,6 @@
 import { Autocomplete, Button, Grid, TextField } from "@mui/material";
 import { useDebounceCallback } from "usehooks-ts";
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
-import { useTranslation } from "react-i18next";
 
 interface IUsersSearchBarProps<T> {
   handleAdd?: () => void;
@@ -33,7 +32,6 @@ export const SearchBar = <T,>({
   groupByOption,
 }: IUsersSearchBarProps<T>) => {
   const [suggestions, setSuggestions] = useState<T[]>([]);
-  const { t } = useTranslation();
 
   const HandlefetchData = async (partialDataName: string) => {
     try {
