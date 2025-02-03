@@ -54,7 +54,10 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { removeMediaFromList } from "../api/removeManifestFromList.ts";
 import { MediaFooter } from "../../../../customAssets/MediaFooter.tsx";
-import { isValidFileForUpload } from "../../../utils/utils.ts";
+import {
+  isFileSizeUnderLimit,
+  isValidFileForUpload,
+} from "../../../utils/utils.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -164,15 +167,13 @@ export const AllMedias = ({
     async (event: ChangeEvent<HTMLInputElement>) => {
       if (!event.target.files || event.target.files.length === 0) return;
 
-      const maxUploadSize = import.meta.env.VITE_MAX_UPLOAD_SIZE * 1024 * 1024;
       const file = event.target.files[0];
 
       if (!isValidFileForUpload(file)) {
         toast.error(t("error_image_type"));
         return;
       }
-
-      if (file.size > maxUploadSize) {
+      if (isFileSizeUnderLimit(file)) {
         toast.error(
           t("fileTooLarge", {
             maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
