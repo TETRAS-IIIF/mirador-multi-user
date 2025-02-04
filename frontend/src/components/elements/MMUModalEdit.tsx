@@ -439,13 +439,13 @@ export const MMUModalEdit = <
       <Grid item container flexDirection="column">
         <CustomTabPanel value={tabValue} index={0}>
           <Grid
-            item
-            sx={{ minHeight: "200px" }}
             container
-            flexDirection="column"
-            justifyContent="space-between"
-            alignItems="center"
-            spacing={2}
+            item
+            sx={{
+              minHeight: "55px",
+              height: "400px",
+              overflowY: "auto",
+            }}
           >
             <Grid
               item
@@ -557,13 +557,13 @@ export const MMUModalEdit = <
           getOptionLabel !== undefined && (
             <CustomTabPanel value={tabValue} index={1}>
               <Grid
-                item
-                sx={{ minHeight: "200px" }}
                 container
-                flexDirection="column"
-                justifyContent="space-between"
-                alignItems="center"
-                spacing={2}
+                item
+                sx={{
+                  minHeight: "55px",
+                  height: "400px",
+                  overflowY: "auto",
+                }}
               >
                 <ItemList
                   item={item}
@@ -591,7 +591,15 @@ export const MMUModalEdit = <
           )}
         {!isGroups && (
           <CustomTabPanel value={tabValue} index={2}>
-            <Grid item container justifyContent="flex-end" alignItems="center">
+            <Grid
+              container
+              item
+              sx={{
+                minHeight: "55px",
+                height: "400px",
+                overflowY: "auto",
+              }}
+            >
               <MetadataForm
                 selectedMetadataData={selectedMetadataData}
                 item={item}
@@ -631,7 +639,6 @@ export const MMUModalEdit = <
             justifyContent="space-between"
             alignItems="center"
             flexDirection="row"
-            sx={{ paddingTop: "20px" }}
           >
             <Grid item container xs={5} spacing={3}>
               <Grid item>
