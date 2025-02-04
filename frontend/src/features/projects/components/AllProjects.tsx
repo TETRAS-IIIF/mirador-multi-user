@@ -88,9 +88,7 @@ export const AllProjects = ({
     useState(false);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
-  const [projectFiltered, setProjectFiltered] = useState<Project[] | undefined>(
-    [],
-  );
+  const [projectFilter, setProjectFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [openSidePanel, setOpenSidePanel] = useState(false);
   const [sortField, setSortField] = useState<keyof Project>("title");
@@ -104,36 +102,42 @@ export const AllProjects = ({
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
 
-  const sortedItems = useMemo(() => {
-    return [...userProjects].sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
-
-      let comparison = 0;
-
-      if (sortField === "created_at") {
-        const aDate =
-          aValue instanceof Date ? aValue : (aValue as Dayjs).toDate();
-        const bDate =
-          bValue instanceof Date ? bValue : (bValue as Dayjs).toDate();
-        comparison = aDate.getTime() - bDate.getTime();
-      } else if (typeof aValue === "string" && typeof bValue === "string") {
-        comparison = aValue.localeCompare(bValue);
-      } else if (typeof aValue === "number" && typeof bValue === "number") {
-        comparison = aValue - bValue;
-      }
-
-      return sortOrder === "asc" ? comparison : -comparison;
-    });
-  }, [userProjects, sortField, sortOrder]);
-
   const totalPages = Math.ceil(userProjects.length / itemsPerPage);
 
+  const isInFilter = (project: Project) => {
+    if (projectFilter) {
+      return project.title.includes(projectFilter);
+    } else {
+      return true;
+    }
+  };
+
   const currentPageData = useMemo(() => {
+    const filteredAndSortedItems = [...userProjects]
+      .filter((project) => isInFilter(project))
+      .sort((a, b) => {
+        const aValue = a[sortField];
+        const bValue = b[sortField];
+
+        let comparison = 0;
+
+        if (sortField === "created_at") {
+          const aDate =
+            aValue instanceof Date ? aValue : (aValue as Dayjs).toDate();
+          const bDate =
+            bValue instanceof Date ? bValue : (bValue as Dayjs).toDate();
+          comparison = aDate.getTime() - bDate.getTime();
+        } else if (typeof aValue === "string" && typeof bValue === "string") {
+          comparison = aValue.localeCompare(bValue);
+        } else if (typeof aValue === "number" && typeof bValue === "number") {
+          comparison = aValue - bValue;
+        }
+        return sortOrder === "asc" ? comparison : -comparison;
+      });
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return sortedItems.slice(start, end);
-  }, [currentPage, itemsPerPage, sortedItems]);
+    return filteredAndSortedItems.slice(start, end);
+  }, [currentPage, userProjects, sortField, sortOrder, projectFilter]);
 
   const fetchUserPersonalGroup = async () => {
     const personalGroup = await getUserPersonalGroup(user.id);
@@ -284,20 +288,6 @@ export const AllProjects = ({
     }
   };
 
-  const handleFiltered = (partialString: string) => {
-    if (partialString.length < 1) {
-      setProjectFiltered([]);
-      return [];
-    }
-    const projectFiltered = userProjects.filter((project) =>
-      project.title.toLowerCase().includes(partialString.toLowerCase()),
-    );
-    setProjectFiltered(
-      projectFiltered.length > 0 ? projectFiltered : undefined,
-    );
-    return projectFiltered.length > 0 ? projectFiltered : [];
-  };
-
   const getGroupByOption = (option: UserGroup): string => {
     if (option.type === UserGroupTypes.MULTI_USER) {
       return t("groups");
@@ -370,9 +360,8 @@ export const AllProjects = ({
               >
                 <Grid item>
                   <SearchBar
-                    handleFiltered={handleFiltered}
                     label={t("filterProjects")}
-                    setFilter={setProjectFiltered}
+                    setFilter={setProjectFilter}
                   />
                 </Grid>
                 <Grid item>
@@ -406,18 +395,16 @@ export const AllProjects = ({
                 </Typography>
               </Grid>
             )}
-            {!selectedProjectId &&
-              projectFiltered &&
-              projectFiltered.length < 1 &&
-              userProjects && (
-                <Grid
-                  item
-                  container
-                  spacing={1}
-                  flexDirection="column"
-                  sx={{ marginBottom: "70px" }}
-                >
-                  {currentPageData.map((projectUser) => (
+            {!selectedProjectId && userProjects && (
+              <Grid
+                item
+                container
+                spacing={1}
+                flexDirection="column"
+                sx={{ marginBottom: "70px" }}
+              >
+                {currentPageData.length > 0 ? (
+                  currentPageData.map((projectUser) => (
                     <Grid item key={projectUser.id}>
                       <MMUCard
                         duplicateItem={handleDuplicateProject}
@@ -474,89 +461,19 @@ export const AllProjects = ({
                         handleRemoveFromList={handleRemoveProjectFromList}
                       />
                     </Grid>
-                  ))}
-                  <Grid item>
-                    <FloatingActionButton
-                      onClick={toggleModalProjectCreation}
-                      content={t("newProject")}
-                      Icon={<AddIcon />}
-                    />
-                    <div>
-                      <DrawerCreateProject
-                        InitializeProject={InitializeProject}
-                        toggleModalProjectCreation={toggleModalProjectCreation}
-                        modalCreateProjectIsOpen={modalCreateProjectIsOpen}
-                      />
-                    </div>
+                  ))
+                ) : (
+                  <Grid
+                    item
+                    container
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <Typography variant="h6" component="h2">
+                      {t("noProjectMatchFilter")}
+                    </Typography>
                   </Grid>
-                  <PaginationControls
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={setCurrentPage}
-                  />
-                </Grid>
-              )}
-            {projectFiltered && projectFiltered.length > 0 && (
-              <Grid
-                item
-                container
-                spacing={1}
-                flexDirection="column"
-                sx={{ marginBottom: "70px" }}
-              >
-                {projectFiltered.map((projectUser) => (
-                  <Grid item key={projectUser.id}>
-                    <MMUCard
-                      duplicateItem={handleDuplicateProject}
-                      objectTypes={ObjectTypes.PROJECT}
-                      metadata={projectUser.metadata}
-                      searchBarLabel={t("searchUser")}
-                      description={projectUser.description}
-                      HandleOpenModal={() => HandleOpenModal(projectUser.id)}
-                      openModal={openModalProjectId === projectUser.id}
-                      DefaultButton={
-                        <ModalButton
-                          tooltipButton={t("openProject")}
-                          onClickFunction={() =>
-                            initializeMirador(
-                              projectUser.userWorkspace,
-                              projectUser,
-                            )
-                          }
-                          disabled={false}
-                          icon={<OpenInNewIcon />}
-                        />
-                      }
-                      EditorButton={
-                        <ModalButton
-                          tooltipButton={t("configuration")}
-                          onClickFunction={() =>
-                            HandleOpenModal(projectUser.id)
-                          }
-                          icon={<SettingsIcon />}
-                          disabled={false}
-                        />
-                      }
-                      handleRemoveFromList={handleRemoveProjectFromList}
-                      id={projectUser.id}
-                      rights={projectUser.rights!}
-                      deleteItem={deleteUserProject}
-                      getOptionLabel={getOptionLabel}
-                      AddAccessListItemFunction={handleAddUser}
-                      handleSelectorChange={handleChangeRights}
-                      item={projectUser}
-                      itemLabel={projectUser.title}
-                      listOfItem={listOfGroup}
-                      searchModalEditItem={handleLookingForUserGroups}
-                      getAccessToItem={getGroupsAccessToProject}
-                      setItemToAdd={setUserToAdd}
-                      updateItem={updateUserProject}
-                      removeAccessListItemFunction={handleRemoveUser}
-                      setItemList={setGroupList}
-                      getGroupByOption={getGroupByOption}
-                    />
-                  </Grid>
-                ))}
+                )}
                 <Grid item>
                   <FloatingActionButton
                     onClick={toggleModalProjectCreation}
@@ -571,13 +488,11 @@ export const AllProjects = ({
                     />
                   </div>
                 </Grid>
-              </Grid>
-            )}
-            {!projectFiltered && (
-              <Grid item container justifyContent="center" alignItems="center">
-                <Typography variant="h6" component="h2">
-                  {t("noProjectMatchFilter")}
-                </Typography>
+                <PaginationControls
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={setCurrentPage}
+                />
               </Grid>
             )}
           </Grid>
