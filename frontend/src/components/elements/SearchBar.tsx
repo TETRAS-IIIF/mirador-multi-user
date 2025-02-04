@@ -1,26 +1,30 @@
 import { Autocomplete, Button, Grid, TextField } from "@mui/material";
 import { useDebounceCallback } from "usehooks-ts";
-import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  SyntheticEvent,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
 
-interface IUsersSearchBarProps<T> {
+interface IUsersSearchBarProps {
   handleAdd?: () => void;
-  setSelectedData?: Dispatch<SetStateAction<T | null>>;
+  setSelectedData?: Dispatch<SetStateAction<any>>;
   setSearchedData?: any;
-  fetchFunction: (partialString: string) => Promise<any[]> | any[];
-  getOptionLabel: (option: any) => string;
+  fetchFunction?: (partialString: string) => Promise<any[]> | any[];
+  getOptionLabel?: (option: any) => string;
   setSearchInput?: (value: string) => void;
   actionButtonLabel?: string;
   label: string;
-  setFilter?: (myarray: any[]) => void;
-  handleFiltered?: (partialString: string) => void;
+  setFilter?: (filteredArray: string | null) => void;
   setUserInput?: (input: string) => void;
   groupByOption?: (option: any) => string;
 }
 
-export const SearchBar = <T,>({
+export const SearchBar = ({
   setUserInput,
-  handleFiltered,
   setFilter,
   label,
   getOptionLabel,
@@ -31,51 +35,57 @@ export const SearchBar = <T,>({
   setSearchInput,
   actionButtonLabel,
   groupByOption,
-}: IUsersSearchBarProps<T>) => {
-  const [suggestions, setSuggestions] = useState<T[]>([]);
+}: IUsersSearchBarProps) => {
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const { t } = useTranslation();
+  const [searchValue, setSearchValue] = useState<string>("");
 
-  const HandlefetchData = async (partialDataName: string) => {
+  const handleFetchData = async (partialDataName: string) => {
     try {
-      const data = await fetchFunction(partialDataName);
-      if (data) {
-        setSuggestions(data);
+      if (fetchFunction) {
+        const data = await fetchFunction(partialDataName);
+        if (data) {
+          setSuggestions(data);
+        }
       }
     } catch (error) {
-      console.error("Error fetching address data:", error);
+      console.error("Error fetching data:", error);
     }
   };
+
   const debouncedFetch = useDebounceCallback(async (value: string) => {
-    await HandlefetchData(value);
+    await handleFetchData(value);
   }, 500);
 
   const handleInputChange = async (_event: SyntheticEvent, value: string) => {
+    setSearchValue(value);
     if (!value) {
       setSuggestions([]);
     }
-    if (setUserInput) {
-      setUserInput(value);
-    }
-    if (handleFiltered) {
-      handleFiltered(value);
-    }
-    if (setSearchInput) {
-      setSearchInput(value);
-    }
-    if (setSelectedData) {
+    if (setUserInput) setUserInput(value);
+    if (setSearchInput) setSearchInput(value);
+    if (setSelectedData && fetchFunction) {
       fetchFunction(value);
     }
-    if (value) {
+    if (value && fetchFunction) {
       await debouncedFetch(value);
-    }
-    if (!value && setFilter) {
-      setFilter([]);
-      setSuggestions([]);
     }
   };
 
-  const handleChange = (_event: SyntheticEvent, value: T | null) => {
+  const handleTextFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSearchValue(value);
+    if (value) {
+      setFilter!(value);
+    }
+    if (setUserInput) setUserInput(value);
+    if (setSearchInput) setSearchInput(value);
+    if (!value) setFilter!(null);
+  };
+
+  const handleChange = (_event: SyntheticEvent, value: string | null) => {
     if (setSelectedData) {
+      // @ts-ignore
       setSelectedData(value);
     } else if (setSearchedData) {
       setSearchedData(value);
@@ -83,9 +93,9 @@ export const SearchBar = <T,>({
   };
 
   return (
-    <Grid item container flexDirection="column" spacing={1}>
-      <Grid item container spacing={2}>
-        <Grid item container spacing={2} direction="row" alignItems="center">
+    <Grid container flexDirection="column" spacing={1}>
+      <Grid container spacing={2} alignItems="center">
+        {fetchFunction ? (
           <Grid item>
             <Autocomplete
               disablePortal
@@ -97,20 +107,29 @@ export const SearchBar = <T,>({
               clearOnBlur={false}
               renderInput={(params) => <TextField {...params} label={label} />}
               getOptionLabel={getOptionLabel}
-              groupBy={groupByOption ? groupByOption : undefined}
+              groupBy={groupByOption}
               noOptionsText={t("noOptions")}
             />
           </Grid>
+        ) : (
           <Grid item>
-            {actionButtonLabel && (
-              <>
-                <Button variant="contained" onClick={handleAdd}>
-                  {actionButtonLabel}
-                </Button>
-              </>
-            )}
+            <TextField
+              label={label}
+              variant="outlined"
+              value={searchValue}
+              onChange={handleTextFieldChange}
+              sx={{ width: "250px" }}
+              InputProps={{ type: "search" }}
+            />
           </Grid>
-        </Grid>
+        )}
+        {actionButtonLabel && (
+          <Grid item>
+            <Button variant="contained" onClick={handleAdd}>
+              {actionButtonLabel}
+            </Button>
+          </Grid>
+        )}
       </Grid>
     </Grid>
   );

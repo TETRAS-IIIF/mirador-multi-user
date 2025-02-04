@@ -14,7 +14,6 @@ import {
   LinkUserGroup,
   UserGroup,
 } from "../types/types.ts";
-import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import AddIcon from "@mui/icons-material/Add";
 import { DrawerCreateGroup } from "./DrawerCreateGroup.tsx";
@@ -63,17 +62,12 @@ export const AllGroups = ({
 }: allGroupsProps) => {
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] =
     useState(false);
-  const [selectedUserGroup, setSelectedUserGroup] = useState<UserGroup | null>(
-    null,
-  );
   const [openModalGroupId, setOpenModalGroupId] = useState<number | null>(null); // Updated state
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [userPersonalGroupList, setUserPersonalGroupList] = useState<
     LinkUserGroup[]
   >([]);
-  const [groupFiltered, setGroupFiltered] = useState<UserGroup[] | undefined>(
-    [],
-  );
+  const [groupFilter, setGroupFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [openSidePanel, setOpenSidePanel] = useState(false);
   const [sortField, setSortField] = useState<keyof UserGroup>("title");
@@ -85,33 +79,41 @@ export const AllGroups = ({
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
 
-  const sortedItems = useMemo(() => {
-    return [...groups].sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
-      let comparison = 0;
-
-      if (sortField === "created_at") {
-        const aDate = (aValue as Dayjs).toDate();
-        const bDate = (bValue as Dayjs).toDate();
-        comparison = aDate.getTime() - bDate.getTime();
-      } else if (typeof aValue === "string" && typeof bValue === "string") {
-        comparison = aValue.localeCompare(bValue);
-      } else if (typeof aValue === "number" && typeof bValue === "number") {
-        comparison = aValue - bValue;
-      }
-
-      return sortOrder === "asc" ? comparison : -comparison;
-    });
-  }, [groups, sortField, sortOrder]);
-
   const itemsPerPage = 10;
 
+  const isInFilter = (group: UserGroup) => {
+    if (groupFilter) {
+      return group.title.includes(groupFilter);
+    } else {
+      return true;
+    }
+  };
+
   const currentPageData = useMemo(() => {
+    const filteredAndSortedItems = [...groups]
+      .filter((group) => isInFilter(group))
+      .sort((a, b) => {
+        const aValue = a[sortField];
+        const bValue = b[sortField];
+        let comparison = 0;
+
+        if (sortField === "created_at") {
+          const aDate = (aValue as Dayjs).toDate();
+          const bDate = (bValue as Dayjs).toDate();
+          comparison = aDate.getTime() - bDate.getTime();
+        } else if (typeof aValue === "string" && typeof bValue === "string") {
+          comparison = aValue.localeCompare(bValue);
+        } else if (typeof aValue === "number" && typeof bValue === "number") {
+          comparison = aValue - bValue;
+        }
+
+        return sortOrder === "asc" ? comparison : -comparison;
+      });
+    console.log(filteredAndSortedItems);
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return sortedItems.slice(start, end);
-  }, [currentPage, groups, sortedItems]);
+    return filteredAndSortedItems.slice(start, end);
+  }, [currentPage, groups, sortField, sortOrder, groupFilter]);
 
   const totalPages = Math.ceil(groups.length / itemsPerPage);
 
@@ -141,13 +143,6 @@ export const AllGroups = ({
   const toggleModalGroupCreation = useCallback(() => {
     setModalGroupCreationIsOpen(!modalGroupCreationIsOpen);
   }, [modalGroupCreationIsOpen, setModalGroupCreationIsOpen]);
-
-  const getOptionLabel = (option: UserGroup): string => {
-    if (option.title) {
-      return option.title;
-    }
-    return "";
-  };
 
   const getOptionLabelForEditModal = (
     option: LinkUserGroup,
@@ -211,20 +206,6 @@ export const AllGroups = ({
     await removeAccessToGroup(groupId, userToRemoveId);
   };
 
-  const handleLookingForGroup = (partialString: string) => {
-    return groups.filter((groups) => groups.title.startsWith(partialString));
-  };
-
-  const handleFiltered = (partialString: string) => {
-    if (partialString.length < 1) {
-      return setGroupFiltered([]);
-    }
-    const groupsFiltered = groups.filter((group) =>
-      group.title.toLowerCase().includes(partialString.toLowerCase()),
-    );
-    setGroupFiltered(groupsFiltered.length > 0 ? groupsFiltered : undefined);
-  };
-
   const handleSetOpenSidePanel = () => {
     setOpenSidePanel(!openSidePanel);
   };
@@ -262,13 +243,7 @@ export const AllGroups = ({
             }}
           >
             <Grid item>
-              <SearchBar
-                handleFiltered={handleFiltered}
-                label={t("filterGroups")}
-                fetchFunction={handleLookingForGroup}
-                getOptionLabel={getOptionLabel}
-                setSelectedData={setSelectedUserGroup}
-              />
+              <SearchBar label={t("filterGroups")} setFilter={setGroupFilter} />
             </Grid>
             <Grid item>
               <SortItemSelector<UserGroup>
@@ -307,10 +282,7 @@ export const AllGroups = ({
                 </Typography>
               </Grid>
             )}
-            {groups &&
-              groupFiltered &&
-              groupFiltered.length < 1 &&
-              !selectedUserGroup &&
+            {currentPageData.length > 0 ? (
               currentPageData.map((group) => (
                 <Grid item key={group.id}>
                   <MMUCard
@@ -349,94 +321,8 @@ export const AllGroups = ({
                     handleRemoveFromList={handleLeaveGroup}
                   />
                 </Grid>
-              ))}
-            {selectedUserGroup && (
-              <Grid item>
-                <MMUCard
-                  objectTypes={ObjectTypes.GROUP}
-                  isGroups={true}
-                  thumbnailUrl={
-                    selectedUserGroup.thumbnailUrl
-                      ? selectedUserGroup.thumbnailUrl
-                      : null
-                  }
-                  searchBarLabel={"Search Users"}
-                  rights={selectedUserGroup.rights!}
-                  itemLabel={selectedUserGroup.title}
-                  openModal={openModalGroupId === selectedUserGroup.id}
-                  getOptionLabel={getOptionLabel}
-                  deleteItem={handleDeleteGroup}
-                  item={selectedUserGroup}
-                  updateItem={updateGroup}
-                  HandleOpenModal={() => HandleOpenModal(selectedUserGroup.id)}
-                  id={selectedUserGroup.id}
-                  AddAccessListItemFunction={grantingAccessToGroup}
-                  EditorButton={
-                    <ModalButton
-                      tooltipButton={t("editGroupTooltip")}
-                      disabled={false}
-                      icon={<ModeEditIcon />}
-                      onClickFunction={() =>
-                        HandleOpenModal(selectedUserGroup.id)
-                      }
-                    />
-                  }
-                  getAccessToItem={getAllUserGroups}
-                  listOfItem={listOfUserPersonalGroup}
-                  removeAccessListItemFunction={handleRemoveUser}
-                  searchModalEditItem={lookingForUsers}
-                  setItemList={setUserPersonalGroupList}
-                  setItemToAdd={setUserToAdd}
-                  description={selectedUserGroup.description}
-                  handleSelectorChange={handleChangeRights}
-                  handleRemoveFromList={handleLeaveGroup}
-                />
-              </Grid>
-            )}
-            {groups &&
-              groupFiltered &&
-              groupFiltered.length > 0 &&
-              !selectedUserGroup &&
-              groupFiltered.map((group) => (
-                <Grid item key={group.id}>
-                  <MMUCard
-                    objectTypes={ObjectTypes.GROUP}
-                    isGroups={true}
-                    thumbnailUrl={
-                      group.thumbnailUrl ? group.thumbnailUrl : null
-                    }
-                    searchBarLabel={"Search Users"}
-                    rights={group.rights!}
-                    itemLabel={group.title}
-                    openModal={openModalGroupId === group.id}
-                    getOptionLabel={getOptionLabelForEditModal}
-                    deleteItem={handleDeleteGroup}
-                    item={group}
-                    updateItem={updateGroup}
-                    HandleOpenModal={() => HandleOpenModal(group.id)}
-                    id={group.id}
-                    AddAccessListItemFunction={grantingAccessToGroup}
-                    EditorButton={
-                      <ModalButton
-                        tooltipButton={t("editGroupTooltip")}
-                        disabled={false}
-                        icon={<ModeEditIcon />}
-                        onClickFunction={() => HandleOpenModal(group.id)}
-                      />
-                    }
-                    getAccessToItem={GetAllGroupUsers}
-                    listOfItem={listOfUserPersonalGroup}
-                    removeAccessListItemFunction={handleRemoveUser}
-                    searchModalEditItem={lookingForUsers}
-                    setItemList={setUserPersonalGroupList}
-                    setItemToAdd={setUserToAdd}
-                    description={group.description}
-                    handleSelectorChange={handleChangeRights}
-                    handleRemoveFromList={handleLeaveGroup}
-                  />
-                </Grid>
-              ))}
-            {!groupFiltered && (
+              ))
+            ) : (
               <Grid item container justifyContent="center" alignItems="center">
                 <Typography variant="h6" component="h2">
                   {t("noMatchingGroupFilter")}

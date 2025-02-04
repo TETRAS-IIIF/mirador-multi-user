@@ -36,7 +36,7 @@ import { ModalConfirmDelete } from "../../features/projects/components/ModalConf
 import { ModalButton } from "./ModalButton.tsx";
 import CancelIcon from "@mui/icons-material/Cancel";
 
-interface IMMUCardProps<T, G, X> {
+interface IMMUCardProps<T, X> {
   id: number;
   rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
   description: string;
@@ -58,7 +58,7 @@ interface IMMUCardProps<T, G, X> {
   AddAccessListItemFunction?: (itemId: number) => Promise<void>;
   item: T;
   searchModalEditItem?: (partialString: string) => Promise<any[]> | any[];
-  setItemToAdd?: Dispatch<SetStateAction<G | null>>;
+  setItemToAdd?: Dispatch<SetStateAction<any>>;
   updateItem?: (item: T) => void;
   getAccessToItem?: (itemId: number) => Promise<any>;
   removeAccessListItemFunction?: (
@@ -88,7 +88,6 @@ const MMUCard = <
     title?: string;
     share?: string;
   },
-  G,
   X extends { id: number },
 >({
   id,
@@ -119,7 +118,7 @@ const MMUCard = <
   getGroupByOption,
   duplicateItem,
   handleRemoveFromList,
-}: IMMUCardProps<T, G, X>) => {
+}: IMMUCardProps<T, X>) => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
     useState(false);

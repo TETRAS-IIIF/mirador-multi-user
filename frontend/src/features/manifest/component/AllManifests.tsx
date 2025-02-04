@@ -22,7 +22,6 @@ import {
 import { uploadManifest } from "../api/uploadManifest.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { lookingForManifests } from "../api/loonkingForManifests.ts";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import toast from "react-hot-toast";
@@ -88,19 +87,11 @@ export const AllManifests = ({
   fetchMediaForUser,
 }: IAllManifests) => {
   const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
-  const [searchedManifest, setSearchedManifest] = useState<Manifest | null>(
-    null,
-  );
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(
     null,
   );
-  const [searchedManifestIndex, setSearchedManifestIndex] = useState<
-    number | null
-  >(null);
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false);
-  const [manifestFiltered, setManifestFiltered] = useState<
-    Manifest[] | undefined
-  >([]);
+  const [manifestFilter, setManifestFilter] = useState<string | null>(null);
   const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [userGroupSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
@@ -118,34 +109,54 @@ export const AllManifests = ({
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
 
+  const isInFilter = (manifest: Manifest) => {
+    if (manifestFilter) {
+      return manifest.title.includes(manifestFilter);
+    } else {
+      return true;
+    }
+  };
+
   const sortedItems = useMemo(() => {
-    return [...manifests].sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
-      let comparison = 0;
-
-      if (sortField === "created_at") {
-        const aDate = typeof aValue === "string" ? new Date(aValue) : aValue;
-        const bDate = typeof bValue === "string" ? new Date(bValue) : bValue;
-        comparison = aDate.getTime() - bDate.getTime();
-      }
-
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        comparison = aValue.localeCompare(bValue);
-      }
-
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        comparison = aValue - bValue;
-      }
-      return sortOrder === "asc" ? comparison : -comparison;
-    });
+    return [...manifests];
   }, [manifests, sortField, sortOrder]);
 
   const currentPageData = useMemo(() => {
+    const filteredAndSortedItems = [...manifests]
+      .filter((manifest) => isInFilter(manifest))
+      .sort((a, b) => {
+        const aValue = a[sortField];
+        const bValue = b[sortField];
+        let comparison = 0;
+
+        if (sortField === "created_at") {
+          const aDate = typeof aValue === "string" ? new Date(aValue) : aValue;
+          const bDate = typeof bValue === "string" ? new Date(bValue) : bValue;
+          comparison = aDate.getTime() - bDate.getTime();
+        }
+
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          comparison = aValue.localeCompare(bValue);
+        }
+
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          comparison = aValue - bValue;
+        }
+        return sortOrder === "asc" ? comparison : -comparison;
+      });
+
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return sortedItems.slice(start, end);
-  }, [currentPage, itemsPerPage, sortedItems]);
+    return filteredAndSortedItems.slice(start, end);
+  }, [
+    currentPage,
+    itemsPerPage,
+    sortedItems,
+    manifests,
+    sortField,
+    sortOrder,
+    manifestFilter,
+  ]);
 
   const totalPages = Math.ceil(manifests.length / itemsPerPage);
 
@@ -247,36 +258,6 @@ export const AllManifests = ({
     fetchManifestForUser();
   }, []);
 
-  const HandleLookingForManifests = async (partialString: string) => {
-    const userManifests = await lookingForManifests(
-      partialString,
-      userPersonalGroup.id,
-    );
-    return userManifests;
-  };
-
-  const getOptionLabelForManifestSearchBar = (option: Manifest): string => {
-    return option.title;
-  };
-
-  const handleSetSearchManifest = (manifestQuery: Manifest) => {
-    if (manifestQuery) {
-      const manifestIndex = manifests.findIndex(
-        (manifest: Manifest) => manifest.id === manifestQuery.id,
-      );
-      if (manifestIndex !== -1) {
-        setSearchedManifest(manifests[manifestIndex]);
-        setSearchedManifestIndex(manifestIndex);
-      } else {
-        setSearchedManifest(null);
-        setSearchedManifestIndex(null);
-      }
-    } else {
-      setSearchedManifest(null);
-      setSearchedManifestIndex(null);
-    }
-  };
-
   const HandleCopyToClipBoard = async (path: string) => {
     await navigator.clipboard.writeText(path);
     toast.success(t("pathCopiedToClipboard"));
@@ -349,19 +330,6 @@ export const AllManifests = ({
       setUserGroupSearch([]);
       return [];
     }
-  };
-
-  const handleFiltered = (partialString: string) => {
-    if (partialString.length < 1) {
-      setManifestFiltered([]);
-      return;
-    }
-    const manifestsFiltered = manifests.filter((manifest) =>
-      manifest.title.toLowerCase().includes(partialString.toLowerCase()),
-    );
-    setManifestFiltered(
-      manifestsFiltered.length > 0 ? manifestsFiltered : undefined,
-    );
   };
 
   const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
@@ -491,12 +459,8 @@ export const AllManifests = ({
               >
                 <Grid item>
                   <SearchBar
-                    fetchFunction={HandleLookingForManifests}
-                    getOptionLabel={getOptionLabelForManifestSearchBar}
                     label={t("filterManifest")}
-                    setSearchedData={handleSetSearchManifest}
-                    setFilter={setManifestFiltered}
-                    handleFiltered={handleFiltered}
+                    setFilter={setManifestFilter}
                   />
                 </Grid>
                 <Grid item>
@@ -551,10 +515,8 @@ export const AllManifests = ({
               </Typography>
             </Grid>
           )}
-          {!searchedManifest &&
-            !createManifestIsOpen &&
-            manifestFiltered &&
-            manifestFiltered.length < 1 && (
+          {!createManifestIsOpen &&
+            (currentPageData.length > 0 ? (
               <Grid
                 item
                 container
@@ -650,139 +612,13 @@ export const AllManifests = ({
                   </Grid>
                 ))}
               </Grid>
-            )}
-          {!searchedManifest &&
-            !createManifestIsOpen &&
-            manifestFiltered &&
-            manifestFiltered.length > 0 && (
-              <Grid
-                item
-                container
-                spacing={1}
-                flexDirection="column"
-                sx={{ marginBottom: "70px" }}
-              >
-                {manifestFiltered.map((manifest, index) => (
-                  <Grid item key={manifest.id}>
-                    <MMUCard
-                      objectTypes={ObjectTypes.MANIFEST}
-                      AddAccessListItemFunction={handleGrantAccess}
-                      DefaultButton={
-                        <ModalButton
-                          tooltipButton={t("tooltipButtonCopy")}
-                          onClickFunction={
-                            manifest.hash
-                              ? () =>
-                                  HandleCopyToClipBoard(
-                                    `${caddyUrl}/${manifest.hash}/${manifest.path}`,
-                                  )
-                              : () => HandleCopyToClipBoard(manifest.path)
-                          }
-                          disabled={false}
-                          icon={<ContentCopyIcon />}
-                        />
-                      }
-                      EditorButton={
-                        <ModalButton
-                          tooltipButton={t("tooltipButtonEdit")}
-                          onClickFunction={() => HandleOpenModal(manifest.id)}
-                          icon={<ModeEditIcon />}
-                          disabled={false}
-                        />
-                      }
-                      HandleOpenModal={() => HandleOpenModal(manifest.id)}
-                      deleteItem={handleDeleteManifest}
-                      description={manifest.description}
-                      getAccessToItem={getAllManifestGroups}
-                      getOptionLabel={getOptionLabel}
-                      getGroupByOption={getGroupByOption}
-                      id={manifest.id}
-                      item={manifest}
-                      itemLabel={manifest.title}
-                      listOfItem={listOfGroup}
-                      metadata={manifest.metadata}
-                      openModal={openModalManifestId === manifest.id}
-                      rights={manifest.rights!}
-                      searchBarLabel={t("searchLabel")}
-                      searchModalEditItem={handleLookingForUserGroups}
-                      setItemToAdd={setUserToAdd}
-                      setItemList={setGroupList}
-                      thumbnailUrl={thumbnailUrls[index]}
-                      updateItem={handleUpdateManifest}
-                      handleSelectorChange={handleChangeRights}
-                    />
-                  </Grid>
-                ))}
+            ) : (
+              <Grid item container justifyContent="center" alignItems="center">
+                <Typography variant="h6" component="h2">
+                  {t("noMatchingManifestFilter")}
+                </Typography>
               </Grid>
-            )}
-          {searchedManifest && !createManifestIsOpen && (
-            <Grid
-              item
-              container
-              spacing={1}
-              flexDirection="column"
-              sx={{ marginBottom: "70px" }}
-            >
-              <Grid item key={searchedManifest.id}>
-                <MMUCard
-                  objectTypes={ObjectTypes.MANIFEST}
-                  AddAccessListItemFunction={handleGrantAccess}
-                  DefaultButton={
-                    <ModalButton
-                      tooltipButton={t("tooltipButtonCopy")}
-                      onClickFunction={
-                        searchedManifest.hash
-                          ? () =>
-                              HandleCopyToClipBoard(
-                                `${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`,
-                              )
-                          : () => HandleCopyToClipBoard(searchedManifest.path)
-                      }
-                      disabled={false}
-                      icon={<ContentCopyIcon />}
-                    />
-                  }
-                  EditorButton={
-                    <ModalButton
-                      tooltipButton={t("tooltipButtonEdit")}
-                      onClickFunction={() =>
-                        HandleOpenModal(searchedManifest.id)
-                      }
-                      icon={<ModeEditIcon />}
-                      disabled={false}
-                    />
-                  }
-                  HandleOpenModal={() => HandleOpenModal(searchedManifest.id)}
-                  deleteItem={handleDeleteManifest}
-                  description={searchedManifest.description}
-                  getAccessToItem={getAllManifestGroups}
-                  getOptionLabel={getOptionLabel}
-                  getGroupByOption={getGroupByOption}
-                  id={searchedManifest.id}
-                  item={searchedManifest}
-                  itemLabel={searchedManifest.title}
-                  listOfItem={listOfGroup}
-                  metadata={searchedManifest.metadata}
-                  openModal={openModalManifestId === searchedManifest.id}
-                  rights={searchedManifest.rights!}
-                  searchBarLabel={t("searchLabel")}
-                  searchModalEditItem={handleLookingForUserGroups}
-                  setItemToAdd={setUserToAdd}
-                  setItemList={setGroupList}
-                  thumbnailUrl={thumbnailUrls[searchedManifestIndex!]}
-                  updateItem={handleUpdateManifest}
-                  handleSelectorChange={handleChangeRights}
-                />
-              </Grid>
-            </Grid>
-          )}
-          {!manifestFiltered && (
-            <Grid item container justifyContent="center" alignItems="center">
-              <Typography variant="h6" component="h2">
-                {t("noMatchingManifestFilter")}
-              </Typography>
-            </Grid>
-          )}
+            ))}
           {createManifestIsOpen && (
             <Grid
               item
