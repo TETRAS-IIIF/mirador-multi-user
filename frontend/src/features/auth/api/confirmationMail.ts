@@ -1,11 +1,4 @@
-type ConfirmMailResponse = {
-  message: string;
-  status: number;
-};
-
-export const confirmationMail = async (
-  token: string,
-): Promise<ConfirmMailResponse> => {
+export const confirmationMail = async (token: string) => {
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/email-confirmation/confirm`,
@@ -17,18 +10,7 @@ export const confirmationMail = async (
         body: JSON.stringify({ token }),
       },
     );
-    if (response.status === 201) {
-      return {
-        message: "email confirmed",
-        status: response.status,
-      };
-    } else {
-      console.error("Unexpected status:", response.status, response.statusText);
-      return {
-        message: "Email not confirmed",
-        status: response.status,
-      };
-    }
+    return response.status;
   } catch (error) {
     console.error("Network error:", error);
     return {
