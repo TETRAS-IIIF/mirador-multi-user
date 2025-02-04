@@ -127,7 +127,6 @@ export const AllMedias = ({
   };
 
   const currentPageData = useMemo(() => {
-    console.log("use memo");
     const filteredAndSortedItems = [...medias]
       .filter((media) => {
         if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
@@ -443,38 +442,39 @@ export const AllMedias = ({
           sx={{ marginBottom: "70px" }}
         >
           <Grid container spacing={2} direction="column">
-            {currentPageData.map((media) => (
-              <Grid item key={media.id}>
-                <MediaCard
-                  media={media}
-                  getAllMediaGroups={getAllMediaGroups}
-                  getOptionLabel={getOptionLabel}
-                  getGroupByOption={getGroupByOption}
-                  HandleOpenModal={HandleOpenModal}
-                  HandleDeleteMedia={HandleDeleteMedia}
-                  handleGrantAccess={handleGrantAccess}
-                  HandleCopyToClipBoard={HandleCopyToClipBoard}
-                  HandleUpdateMedia={HandleUpdateMedia}
-                  caddyUrl={caddyUrl}
-                  handleChangeRights={handleChangeRights}
-                  handleLookingForUserGroups={handleLookingForUserGroups}
-                  handleRemoveAccessToMedia={handleRemoveAccessToMedia}
-                  openModalMediaId={openModalMediaId}
-                  listOfGroup={listOfGroup}
-                  setGroupList={setGroupList}
-                  setUserToAdd={setUserToAdd}
-                  handleRemoveMediaFromList={handleRemoveMediaFromList}
-                />
+            {currentPageData.length > 0 ? (
+              currentPageData.map((media) => (
+                <Grid item key={media.id}>
+                  <MediaCard
+                    media={media}
+                    getAllMediaGroups={getAllMediaGroups}
+                    getOptionLabel={getOptionLabel}
+                    getGroupByOption={getGroupByOption}
+                    HandleOpenModal={HandleOpenModal}
+                    HandleDeleteMedia={HandleDeleteMedia}
+                    handleGrantAccess={handleGrantAccess}
+                    HandleCopyToClipBoard={HandleCopyToClipBoard}
+                    HandleUpdateMedia={HandleUpdateMedia}
+                    caddyUrl={caddyUrl}
+                    handleChangeRights={handleChangeRights}
+                    handleLookingForUserGroups={handleLookingForUserGroups}
+                    handleRemoveAccessToMedia={handleRemoveAccessToMedia}
+                    openModalMediaId={openModalMediaId}
+                    listOfGroup={listOfGroup}
+                    setGroupList={setGroupList}
+                    setUserToAdd={setUserToAdd}
+                    handleRemoveMediaFromList={handleRemoveMediaFromList}
+                  />
+                </Grid>
+              ))
+            ) : (
+              <Grid item container justifyContent="center" alignItems="center">
+                <Typography variant="h6" component="h2">
+                  {t("noMatchingMediaFilter")}
+                </Typography>
               </Grid>
-            ))}
+            )}
           </Grid>
-          {currentPageData.filter(isInFilter).length < 1 && (
-            <Grid item container justifyContent="center" alignItems="center">
-              <Typography variant="h6" component="h2">
-                {t("noMatchingMediaFilter")}
-              </Typography>
-            </Grid>
-          )}
           <PaginationControls
             currentPage={currentPage}
             totalPages={totalPages}
