@@ -80,6 +80,12 @@ interface IAllMediasProps {
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 
+const MEDIA_TYPES_TABS = {
+  ALL: 0,
+  VIDEO: 1,
+  IMAGE: 2,
+};
+
 export const AllMedias = ({
   user,
   userPersonalGroup,
@@ -93,7 +99,7 @@ export const AllMedias = ({
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
-  const [tabValue, setTabValue] = useState(0);
+  const [mediaTabShown, setmediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
   const [sortField, setSortField] = useState<keyof Media>("title");
   const [sortOrder, setSortOrder] = useState("asc");
   const { t } = useTranslation();
@@ -103,7 +109,7 @@ export const AllMedias = ({
   }, []);
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
+    setmediaTabShown(newValue);
     setCurrentPage(1);
   };
 
@@ -114,11 +120,12 @@ export const AllMedias = ({
   const itemsPerPage = 10;
 
   const currentPageData = useMemo(() => {
+    console.log("use memo");
     const filteredAndSortedItems = [...medias]
       .filter((media) => {
-        if (tabValue === 1) {
+        if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
           return media.mediaTypes === MediaTypes.VIDEO;
-        } else if (tabValue === 2) {
+        } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
           return media.mediaTypes === MediaTypes.IMAGE;
         }
         return true;
@@ -148,13 +155,13 @@ export const AllMedias = ({
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return filteredAndSortedItems.slice(start, end);
-  }, [currentPage, medias, sortField, sortOrder, tabValue, mediaFilter]);
+  }, [currentPage, medias, sortField, sortOrder, mediaTabShown, mediaFilter]);
 
   const totalPages = Math.ceil(
     medias.filter((media) => {
-      if (tabValue === 1) {
+      if (mediaTabShown === 1) {
         return media.mediaTypes === MediaTypes.VIDEO;
-      } else if (tabValue === 2) {
+      } else if (mediaTabShown === 2) {
         return media.mediaTypes === MediaTypes.IMAGE;
       }
       return true;
@@ -372,7 +379,7 @@ export const AllMedias = ({
           <Grid item>
             <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
               <Tabs
-                value={tabValue}
+                value={mediaTabShown}
                 onChange={handleChangeTab}
                 aria-label="basic tabs"
               >
@@ -434,7 +441,7 @@ export const AllMedias = ({
           flexDirection="column"
           sx={{ marginBottom: "70px" }}
         >
-          <CustomTabPanel value={tabValue} index={0}>
+          <CustomTabPanel value={mediaTabShown} index={0}>
             <Grid container spacing={2} direction="column">
               {currentPageData.map(
                 (media) =>
