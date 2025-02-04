@@ -360,6 +360,7 @@ export const AllMedias = ({
       return true;
     }
   };
+
   return (
     <Box sx={{ padding: 2 }}>
       <Grid item container flexDirection="column" spacing={1}>
@@ -441,33 +442,30 @@ export const AllMedias = ({
           sx={{ marginBottom: "70px" }}
         >
           <Grid container spacing={2} direction="column">
-            {currentPageData.map(
-              (media) =>
-                isInFilter(media) && (
-                  <Grid item key={media.id}>
-                    <MediaCard
-                      media={media}
-                      getAllMediaGroups={getAllMediaGroups}
-                      getOptionLabel={getOptionLabel}
-                      getGroupByOption={getGroupByOption}
-                      HandleOpenModal={HandleOpenModal}
-                      HandleDeleteMedia={HandleDeleteMedia}
-                      handleGrantAccess={handleGrantAccess}
-                      HandleCopyToClipBoard={HandleCopyToClipBoard}
-                      HandleUpdateMedia={HandleUpdateMedia}
-                      caddyUrl={caddyUrl}
-                      handleChangeRights={handleChangeRights}
-                      handleLookingForUserGroups={handleLookingForUserGroups}
-                      handleRemoveAccessToMedia={handleRemoveAccessToMedia}
-                      openModalMediaId={openModalMediaId}
-                      listOfGroup={listOfGroup}
-                      setGroupList={setGroupList}
-                      setUserToAdd={setUserToAdd}
-                      handleRemoveMediaFromList={handleRemoveMediaFromList}
-                    />
-                  </Grid>
-                ),
-            )}
+            {currentPageData.filter(isInFilter).map((media) => (
+              <Grid item key={media.id}>
+                <MediaCard
+                  media={media}
+                  getAllMediaGroups={getAllMediaGroups}
+                  getOptionLabel={getOptionLabel}
+                  getGroupByOption={getGroupByOption}
+                  HandleOpenModal={HandleOpenModal}
+                  HandleDeleteMedia={HandleDeleteMedia}
+                  handleGrantAccess={handleGrantAccess}
+                  HandleCopyToClipBoard={HandleCopyToClipBoard}
+                  HandleUpdateMedia={HandleUpdateMedia}
+                  caddyUrl={caddyUrl}
+                  handleChangeRights={handleChangeRights}
+                  handleLookingForUserGroups={handleLookingForUserGroups}
+                  handleRemoveAccessToMedia={handleRemoveAccessToMedia}
+                  openModalMediaId={openModalMediaId}
+                  listOfGroup={listOfGroup}
+                  setGroupList={setGroupList}
+                  setUserToAdd={setUserToAdd}
+                  handleRemoveMediaFromList={handleRemoveMediaFromList}
+                />
+              </Grid>
+            ))}
           </Grid>
           {currentPageData.filter(isInFilter).length < 1 && (
             <Grid item container justifyContent="center" alignItems="center">
