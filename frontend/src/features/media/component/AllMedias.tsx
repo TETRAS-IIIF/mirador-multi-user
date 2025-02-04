@@ -127,6 +127,7 @@ export const AllMedias = ({
   };
 
   const currentPageData = useMemo(() => {
+    console.log("use memo");
     const filteredAndSortedItems = [...medias]
       .filter((media) => {
         if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
