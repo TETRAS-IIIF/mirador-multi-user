@@ -20,13 +20,19 @@ export const MailConfirmation = () => {
     const token = extractToken();
 
     if (token) {
-      const returnData = await confirmationMail(token);
+      const returnStatus = await confirmationMail(token);
+      let toastMessage: string;
+      if (returnStatus === 201) {
+        toastMessage = t("emailConfirmed");
+      } else {
+        toastMessage = t("error_occurred");
+      }
       storage.clearToken();
-      if (returnData.status === 201) {
-        toast.success(returnData.message);
+      if (returnStatus === 201) {
+        toast.success(toastMessage);
         navigate("/");
       } else {
-        toast.error("an error occurred");
+        toast.error(toastMessage);
       }
     } else {
       console.error("Token not found in the URL");
