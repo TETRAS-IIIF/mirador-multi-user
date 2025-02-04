@@ -516,7 +516,7 @@ export const AllManifests = ({
             </Grid>
           )}
           {!createManifestIsOpen &&
-            (currentPageData.length > 1 ? (
+            (currentPageData.length > 0 ? (
               <Grid
                 item
                 container

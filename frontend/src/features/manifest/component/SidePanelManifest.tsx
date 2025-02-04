@@ -82,17 +82,26 @@ export const SidePanelManifest = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
   const itemsPerPage = 6;
-  const [manifestFiltered, setManifestFiltered] = useState<
-    Manifest[] | undefined
-  >([]);
+  const [manifestFilter, setManifestFilter] = useState<string | null>(null);
 
   const { t } = useTranslation();
 
+  const isInFilter = (manifest: Manifest) => {
+    if (manifestFilter) {
+      return manifest.title.includes(manifestFilter);
+    } else {
+      return true;
+    }
+  };
+
   const currentPageData = useMemo(() => {
+    const filteredAndSortedItems = [...manifests].filter((manifest) =>
+      isInFilter(manifest),
+    );
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return manifests.slice(start, end);
-  }, [currentPage, manifests]);
+    return filteredAndSortedItems.slice(start, end);
+  }, [currentPage, itemsPerPage, manifests, manifestFilter]);
 
   const totalPages = Math.ceil(manifests.length / itemsPerPage);
 
@@ -119,20 +128,6 @@ export const SidePanelManifest = ({
     } catch (error) {
       toast.error(t("pathNotCopiedToClipboard"));
     }
-  };
-
-  const handleFiltered = (partialString: string) => {
-    if (partialString.length < 1) {
-      setManifestFiltered([]);
-      return [];
-    }
-    const manifestsFiltered = manifests.filter((manifest) =>
-      manifest.title.toLowerCase().includes(partialString.toLowerCase()),
-    );
-    setManifestFiltered(
-      manifestsFiltered.length > 0 ? manifestsFiltered : undefined,
-    );
-    return manifestsFiltered.length > 0 ? manifestsFiltered : [];
   };
 
   const handleLinkManifest = useCallback(
@@ -226,15 +221,11 @@ export const SidePanelManifest = ({
             item
             container
             spacing={1}
-            sx={{ padding: "10px" }}
+            sx={{ padding: "20px" }}
             alignItems="center"
           >
             <Grid item>
-              <SearchBar
-                label={t("search")}
-                handleFiltered={handleFiltered}
-                setFilter={setManifestFiltered}
-              />
+              <SearchBar label={t("search")} setFilter={setManifestFilter} />
             </Grid>
             <Grid item>
               <Tooltip title={t("linkManifest")}>
@@ -249,7 +240,7 @@ export const SidePanelManifest = ({
               </Tooltip>
             </Grid>
           </Grid>
-          {manifestFiltered && manifestFiltered!.length < 1 && (
+          {currentPageData.length > 0 ? (
             <ImageList
               sx={{ minWidth: 400, padding: 1, width: 400 }}
               cols={2}
@@ -292,52 +283,7 @@ export const SidePanelManifest = ({
                 </>
               ))}
             </ImageList>
-          )}
-          {manifestFiltered && manifestFiltered!.length > 0 && (
-            <ImageList
-              sx={{ minWidth: 400, padding: 1, width: 400 }}
-              cols={2}
-              rowHeight={200}
-            >
-              {manifestFiltered!.map((manifest, index) => (
-                <>
-                  <StyledImageListItem key={manifest.id}>
-                    <Box
-                      component="img"
-                      src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
-                      alt={manifest.title}
-                      loading="lazy"
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        "@media(min-resolution: 2dppx)": {
-                          width: "100%",
-                          height: "100%",
-                        },
-                      }}
-                    />
-                    <ImageListItemBar
-                      title={manifest.title}
-                      sx={{
-                        position: "absolute",
-                        bottom: 0,
-                        color: "white",
-                      }}
-                    />
-                    <CustomButton
-                      className="overlayButton"
-                      disableRipple
-                      onClick={() => handleCopyToClipBoard(manifest!)}
-                    >
-                      {t("copyPathToClipboard")}
-                    </CustomButton>
-                  </StyledImageListItem>
-                </>
-              ))}
-            </ImageList>
-          )}
-          {!manifestFiltered && (
+          ) : (
             <Grid
               item
               container
@@ -345,7 +291,7 @@ export const SidePanelManifest = ({
               alignItems={"center"}
               justifyContent={"center"}
             >
-              <Typography>t('noMatchingManifestFilter')</Typography>
+              <Typography>{t("noMatchingManifestFilter")}</Typography>
             </Grid>
           )}
           <PaginationControls

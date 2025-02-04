@@ -109,9 +109,6 @@ export const SidePanelMedia = ({
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [tabValue, setTabValue] = useState(0);
-  // const [mediasTags, setMediasTags] = useState<Tag[]>([]);
-  // const [tagFilter ,setTagFilter] = useState<Tag|null>(null);
-  // const [showAllTags, setShowAllTags] = useState(false);
   const itemsPerPage = 9;
 
   const { t } = useTranslation();
@@ -124,52 +121,6 @@ export const SidePanelMedia = ({
       toast.error(t("pathNotCopiedToClipboard"));
     }
   };
-
-  // const handleShowAllTags = () => {
-  //   setShowAllTags(!showAllTags);
-  // };
-
-  // useEffect(() => {
-  //   const fetchTags = async () => {
-  //     const allTags = await Promise.all(
-  //       medias.map((media) =>
-  //         getTagsForObject(media.id).then(tags => ({ mediaId: media.id, tags }))
-  //       )
-  //     );
-  //
-  //     const tagsWithMedia = allTags.flatMap(({ mediaId, tags }) =>
-  //       tags.map((tagObj: { tag: Tag; }) => ({
-  //         id: tagObj.tag.id,
-  //         title: tagObj.tag.title,
-  //         mediaId
-  //       }))
-  //     );
-  //
-  //     const tagMap = new Map();
-  //     tagsWithMedia.forEach(({ id, title, mediaId }) => {
-  //       if (!tagMap.has(id)) {
-  //         tagMap.set(id, { id, title, objectsTaggedId: [mediaId] });
-  //       } else {
-  //         tagMap.get(id).objectsTaggedId.push(mediaId);
-  //       }
-  //     });
-  //
-  //     const uniqueTagsWithMedia = Array.from(tagMap.values());
-  //     setMediasTags(uniqueTagsWithMedia);
-  //   };
-  //
-  //   fetchTags();
-  // }, [medias]);
-
-  // const currentPageData = useMemo(() => {
-  //   const filteredMedias = tagFilter?.objectsTaggedId
-  //     ? medias.filter(media => tagFilter.objectsTaggedId!.includes(media.id))
-  //     : medias;
-  //
-  //   const start = (currentPage - 1) * itemsPerPage;
-  //   const end = start + itemsPerPage;
-  //   return filteredMedias.slice(start, end);
-  // }, [currentPage, itemsPerPage, medias, tagFilter]);
 
   const filteredMedias = useMemo(() => {
     if (tabValue === 1) {
@@ -248,10 +199,6 @@ export const SidePanelMedia = ({
     }
   };
 
-  // const handleFilterByTag = (tag:Tag)=>{
-  //   return setTagFilter(tag)
-  // }
-
   return (
     <div>
       {display && (
@@ -310,34 +257,6 @@ export const SidePanelMedia = ({
               </Tooltip>
             </Grid>
           </Grid>
-          {/*<Grid item container spacing={2} sx={{padding:'0 0 0 20px', maxWidth:500}}>*/}
-          {/*  {*/}
-          {/*    tagFilter &&(*/}
-          {/*      <Grid item>*/}
-          {/*        <Chip color="error" label={"remove tag"} onClick={()=>setTagFilter(null)} />*/}
-          {/*      </Grid>*/}
-          {/*    )*/}
-          {/*  }*/}
-          {/*    {mediasTags.slice(0, showAllTags ? mediasTags.length : 3).map((tag) => (*/}
-          {/*      <Grid item key={tag.id}>*/}
-          {/*        <TagChip*/}
-          {/*          tag={tag}*/}
-          {/*          onClick={() => handleFilterByTag(tag)}*/}
-          {/*          color={tagFilter?.id === tag.id ? "primary" : "default"}*/}
-          {/*        />*/}
-          {/*      </Grid>*/}
-          {/*    ))}*/}
-          {/*    {!showAllTags && mediasTags.length > 1 && (*/}
-          {/*      <Grid item>*/}
-          {/*        <TagChip tag={{ title: '...', id: -1 }} onClick={handleShowAllTags} color="default" />*/}
-          {/*      </Grid>*/}
-          {/*    )}*/}
-          {/*  {showAllTags && mediasTags.length > 1 && (*/}
-          {/*      <Grid item>*/}
-          {/*        <TagChip tag={{ title: 'x', id: -1 }} onClick={handleShowAllTags} color="error" />*/}
-          {/*      </Grid>*/}
-          {/*    )}*/}
-          {/*</Grid>*/}
           <Tabs
             value={tabValue}
             onChange={handleChangeTab}
