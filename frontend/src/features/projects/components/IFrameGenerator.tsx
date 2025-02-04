@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Box, Button, Grid, TextField } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { MMUModal } from "../../../components/elements/modal.tsx";
@@ -10,18 +10,11 @@ interface IframeGeneratorProps {
   snapshotUrl: string | null;
 }
 
-export const IframeGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
-  const [iframeCode, setIframeCode] = useState<string>("");
+export const IFrameGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
   const [openIframeModal, setOpenIframeModal] = useState(false);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    if (snapshotUrl) {
-      setIframeCode(
-        `<iframe src="${snapshotUrl}" width="100%" height="600px" style="border:none;" title="Project Snapshot"></iframe>`,
-      );
-    }
-  }, [snapshotUrl]);
+  const iframeCode = `<iframe src="${snapshotUrl}" width="100%" height="600px" style="border:none;" title="Project Snapshot"></iframe>`;
 
   const handleCopyToClipboard = async () => {
     if (iframeCode) {
