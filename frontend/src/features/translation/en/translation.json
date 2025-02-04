@@ -30,6 +30,7 @@
   "confirm-mail": "Confirm Email",
   "confirm-password": "confirm password",
   "confirmPassword": "Confirm Password",
+  "confirm_remove_item_from_list": "Are you sure you want to remove <b>{{itemName}}</b> from your list ? This action is <b>irreversible</b>.",
   "Copy_iframe_code": "Copy Iframe Code",
   "copyPathToClipboard": "Copy path to clipboard",
   "create-account": "Create account",

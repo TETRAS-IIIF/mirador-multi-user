@@ -95,7 +95,10 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
         <ModalConfirmDelete
           deleteItem={handleDeleteAccount}
           itemId={user.id}
-          itemName={t("yourAccount")}
+          content={t("deleteConfirmation", {
+            itemName: t("yourAccount"),
+          })}
+          buttonLabel={t("deleteDefinitely")}
         />
       </MMUModal>
     </Grid>
