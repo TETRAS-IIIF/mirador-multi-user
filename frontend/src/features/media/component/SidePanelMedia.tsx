@@ -11,6 +11,7 @@ import {
   Tab,
   Tabs,
   Tooltip,
+  Typography,
 } from "@mui/material";
 import {
   ChangeEvent,
@@ -23,7 +24,6 @@ import {
 import toast from "react-hot-toast";
 import { Media, MediaTypes } from "../types/types.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { lookingForMedias } from "../api/lookingForMedias.ts";
 import { UserGroup } from "../../user-group/types/types.ts";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
@@ -95,6 +95,12 @@ interface PopUpMediaProps {
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 
+const MEDIA_TYPES_TABS = {
+  ALL: 0,
+  VIDEO: 1,
+  IMAGE: 2,
+};
+
 export const SidePanelMedia = ({
   display,
   medias,
@@ -105,10 +111,11 @@ export const SidePanelMedia = ({
   open,
   setOpen,
 }: PopUpMediaProps) => {
-  const [searchedMedia, setSearchedMedia] = useState<Media | null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [tabValue, setTabValue] = useState(0);
+  const [mediaTabShown, setMediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
+  const [mediaFilter, setMediaFilter] = useState<string | null>(null);
+
   const itemsPerPage = 9;
 
   const { t } = useTranslation();
@@ -122,20 +129,30 @@ export const SidePanelMedia = ({
     }
   };
 
-  const filteredMedias = useMemo(() => {
-    if (tabValue === 1) {
-      return medias.filter((media) => media.mediaTypes === MediaTypes.VIDEO);
-    } else if (tabValue === 2) {
-      return medias.filter((media) => media.mediaTypes === MediaTypes.IMAGE);
+  const isInFilter = (media: Media) => {
+    if (mediaFilter) {
+      return media.title.includes(mediaFilter);
+    } else {
+      return true;
     }
-    return medias;
-  }, [tabValue, medias]);
+  };
 
   const currentPageData = useMemo(() => {
+    const filteredAndSortedItems = [...medias]
+      .filter((media) => {
+        if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
+          return media.mediaTypes === MediaTypes.VIDEO;
+        } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
+          return media.mediaTypes === MediaTypes.IMAGE;
+        }
+        return true;
+      })
+      .filter((media) => isInFilter(media));
+    // Paginate the filtered and sorted items
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return filteredMedias.slice(start, end);
-  }, [currentPage, filteredMedias]);
+    return filteredAndSortedItems.slice(start, end);
+  }, [currentPage, medias, mediaTabShown, mediaFilter]);
 
   const totalPages = Math.ceil(medias.length / itemsPerPage);
 
@@ -144,7 +161,7 @@ export const SidePanelMedia = ({
   };
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
-    setTabValue(newValue);
+    setMediaTabShown(newValue);
     setCurrentPage(1);
   };
 
@@ -165,27 +182,6 @@ export const SidePanelMedia = ({
     [fetchMediaForUser, user.id, userPersonalGroup, medias],
   );
 
-  const handleSetSearchMedia = (mediaQuery: Media) => {
-    if (mediaQuery?.description) {
-      const searchedMedia = medias.find((media) => media.id === mediaQuery.id);
-      return setSearchedMedia(searchedMedia!);
-    } else {
-      setSearchedMedia(null);
-    }
-  };
-
-  const handleButtonClick = () => {
-    document.getElementById("file-upload")!.click();
-  };
-
-  const HandleLookingForMedia = async (partialString: string) => {
-    return await lookingForMedias(partialString, userPersonalGroup.id);
-  };
-
-  const getOptionLabelForMediaSearchBar = (option: Media): string => {
-    return option.title;
-  };
-
   const createMediaWithLink = async (link: string) => {
     try {
       await createMediaLink({
@@ -199,8 +195,12 @@ export const SidePanelMedia = ({
     }
   };
 
+  const handleButtonClick = () => {
+    document.getElementById("file-upload")!.click();
+  };
+
   return (
-    <div>
+    <Grid container>
       {display && (
         <ToggleButton open={open} onClick={toggleDrawer}>
           {open ? <CloseButton text="Medias" /> : <OpenButton text="Medias" />}
@@ -222,23 +222,13 @@ export const SidePanelMedia = ({
             item
             container
             spacing={1}
-            sx={{ padding: "10px" }}
+            sx={{ padding: "20px" }}
             alignItems="center"
           >
             <Grid item>
-              <SearchBar
-                fetchFunction={HandleLookingForMedia}
-                getOptionLabel={getOptionLabelForMediaSearchBar}
-                label={"Search Media"}
-                setSearchedData={handleSetSearchMedia}
-              />
+              <SearchBar label={t("search")} setFilter={setMediaFilter} />
             </Grid>
             <Grid item>
-              <VisuallyHiddenInput
-                id="file-upload"
-                type="file"
-                onChange={handleCreateMedia}
-              />
               <Tooltip title="Upload Media">
                 <Button onClick={handleButtonClick} variant="contained">
                   {" "}
@@ -258,7 +248,7 @@ export const SidePanelMedia = ({
             </Grid>
           </Grid>
           <Tabs
-            value={tabValue}
+            value={mediaTabShown}
             onChange={handleChangeTab}
             aria-label="basic tabs example"
           >
@@ -266,46 +256,8 @@ export const SidePanelMedia = ({
             <Tab label="Videos" {...a11yProps(1)} />
             <Tab label="Images" {...a11yProps(2)} />
           </Tabs>
-          {searchedMedia && (
-            <ImageList
-              sx={{ minWidth: 500, maxWidth: 500, padding: 1, width: 500 }}
-              cols={3}
-              rowHeight={164}
-            >
-              <CustomImageItem key={searchedMedia.path}>
-                <Box
-                  component="img"
-                  src={`${caddyUrl}/${searchedMedia.hash}/thumbnail.webp`}
-                  alt={searchedMedia.title}
-                  loading="lazy"
-                  sx={{
-                    width: 150,
-                    height: 150,
-                    objectFit: "cover",
-                    "@media(min-resolution: 2dppx)": {
-                      width: 150 * 2,
-                      height: 150 * 2,
-                    },
-                  }}
-                />
-                <CustomButton
-                  className="overlayButton"
-                  disableRipple
-                  onClick={
-                    searchedMedia.path
-                      ? () =>
-                          handleCopyToClipBoard(
-                            `${caddyUrl}/${searchedMedia.hash}/${searchedMedia.path}`,
-                          )
-                      : () => handleCopyToClipBoard(`${searchedMedia.url}`)
-                  }
-                >
-                  Copy URL to clipboard
-                </CustomButton>
-              </CustomImageItem>
-            </ImageList>
-          )}
-          {searchedMedia === null && (
+
+          {currentPageData.length > 0 ? (
             <ImageList
               sx={{ minWidth: 500, padding: 1, width: 500 }}
               cols={3}
@@ -375,14 +327,28 @@ export const SidePanelMedia = ({
                 </CustomImageItem>
               ))}
             </ImageList>
+          ) : (
+            <Grid item container justifyContent="center" alignItems="center">
+              <Typography variant="h6" component="h2">
+                {t("noMatchingMediaFilter")}
+              </Typography>
+            </Grid>
           )}
           <PaginationControls
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={setCurrentPage}
           />
+          <Grid item>
+            <VisuallyHiddenInput
+              id="file-upload"
+              type="file"
+              onChange={handleCreateMedia}
+            />
+          </Grid>
         </Drawer>
       )}
+
       <Box
         sx={{
           flexGrow: 1,
@@ -402,6 +368,6 @@ export const SidePanelMedia = ({
           modalCreateMediaIsOpen={modalLinkMediaIsOpen}
         />
       </Grid>
-    </div>
+    </Grid>
   );
 };

@@ -33,6 +33,7 @@ export const MMUModal = ({
     <Modal
       open={openModal}
       onClose={() => setOpenModal(false)}
+      disableEnforceFocus
       aria-labelledby="child-modal-title"
       aria-describedby="child-modal-description"
       slotProps={{
