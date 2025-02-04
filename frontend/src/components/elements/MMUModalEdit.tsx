@@ -556,7 +556,15 @@ export const MMUModalEdit = <
           setItemToAdd &&
           getOptionLabel !== undefined && (
             <CustomTabPanel value={tabValue} index={1}>
-              <Grid item>
+              <Grid
+                item
+                sx={{ minHeight: "200px" }}
+                container
+                flexDirection="column"
+                justifyContent="space-between"
+                alignItems="center"
+                spacing={2}
+              >
                 <ItemList
                   item={item}
                   objectTypes={objectTypes!}
@@ -600,10 +608,20 @@ export const MMUModalEdit = <
         {jsonElementToEditInAdvancedEditor &&
           item.origin !== manifestOrigin.LINK && (
             <CustomTabPanel value={tabValue} index={3}>
-              <JsonEditor
-                data={jsonElementToEditInAdvancedEditor}
-                onUpdate={handleUpdateAdvancedEditMetadata}
-              />
+              <Grid
+                container
+                item
+                sx={{
+                  minHeight: "55px",
+                  height: "400px",
+                  overflowY: "auto",
+                }}
+              >
+                <JsonEditor
+                  data={jsonElementToEditInAdvancedEditor}
+                  onUpdate={handleUpdateAdvancedEditMetadata}
+                />
+              </Grid>
             </CustomTabPanel>
           )}
         {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && (
