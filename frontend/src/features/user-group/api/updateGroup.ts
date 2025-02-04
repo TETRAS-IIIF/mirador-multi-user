@@ -5,10 +5,9 @@ export const UpdateGroup = async (
   updateData: Partial<UserGroup>,
 ): Promise<UserGroup[]> => {
   try {
-    console.log("UpdateGroup", updateData);
     const token = storage.getToken();
     const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/user-group/update/`,
+      `${import.meta.env.VITE_BACKEND_URL}/link-user-group/update-group/`,
       {
         method: "PATCH",
         headers: {
