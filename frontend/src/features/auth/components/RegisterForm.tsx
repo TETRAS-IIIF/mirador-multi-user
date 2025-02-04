@@ -37,6 +37,12 @@ export const RegisterForm = () => {
       });
     } catch (error: any) {
       console.error("error", error);
+      if (
+        error.toString() ===
+        "Error: a user with this email or username already exists"
+      ) {
+        return setMessage(t("user_already_exists"));
+      }
       setOpen(true);
       setMessage(error.toString());
     }

@@ -25,7 +25,7 @@ export const register = async (
     );
     if (!response.ok) {
       if (response.status === 409) {
-        throw new Error("User already exists");
+        throw new Error("a user with this email or username already exists");
       }
       throw new Error("Failed to create user");
     }

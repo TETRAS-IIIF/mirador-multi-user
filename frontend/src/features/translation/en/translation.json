@@ -195,6 +195,7 @@
   "urlIsNotValid": "URL is not valid",
   "userSuccessfullyUpdated": "user successfully updated",
   "users": "Users",
+  "user_already_exists": "a user with this email or username already exists",
   "welcome": "Welcome to {{instanceName}}",
   "yes": "Yes",
   "yourAccount": "Your account"

@@ -125,6 +125,7 @@ export class LinkUserGroupService {
         userId: savedUser.id,
         user_groupId: userPersonalGroup.id,
       });
+
       if (!Boolean(process.env.SMTP_DOMAIN)) {
         return savedUser;
       }
