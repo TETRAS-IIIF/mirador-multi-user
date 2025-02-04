@@ -22,6 +22,7 @@ import { ActionType } from '../../enum/actions';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { LinkGroupProject } from '../link-group-project/entities/link-group-project.entity';
 import { LinkUserGroup } from './entities/link-user-group.entity';
+import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 
 @ApiBearerAuth()
 @Controller('link-user-group')
@@ -204,6 +205,24 @@ export class LinkUserGroupController {
           grantAccessToGroupDto.userId,
           grantAccessToGroupDto.rights,
         );
+      },
+    );
+  }
+
+  @ApiOperation({ summary: 'Update group' })
+  @SetMetadata('action', ActionType.UPDATE)
+  @UseGuards(AuthGuard)
+  @Patch('/update-group')
+  async updateGroup(
+    @Body() updateGroupDto: UpdateUserGroupDto,
+    @Req() request,
+  ) {
+    return await this.linkUserGroupService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      updateGroupDto.id,
+      async () => {
+        return this.linkUserGroupService.updateGroup(updateGroupDto);
       },
     );
   }

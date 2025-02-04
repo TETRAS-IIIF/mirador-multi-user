@@ -74,9 +74,6 @@ export class UserGroupService {
   async updateGroup(updateData: UpdateUserGroupDto) {
     try {
       const { rights, ...data } = updateData;
-      console.log(data);
-      console.log('"""""""""""""""""""');
-      console.log(rights);
       if (
         rights === User_UserGroupRights.ADMIN ||
         rights === User_UserGroupRights.EDITOR

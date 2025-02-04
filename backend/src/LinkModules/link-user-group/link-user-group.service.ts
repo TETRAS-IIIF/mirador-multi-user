@@ -24,6 +24,7 @@ import { EmailServerService } from '../../utils/email/email.service';
 import * as process from 'process';
 import { LinkMetadataFormatGroupService } from '../link-metadata-format-group/link-metadata-format-group.service';
 import { dublinCoreSample } from '../../utils/metadataSample/dublinCoreSample';
+import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -254,6 +255,21 @@ export class LinkUserGroupService {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `Granting access to userId : ${createUserGroupDto.user_groupId} to group with id ${createUserGroupDto.user_groupId} failed`,
+        error,
+      );
+    }
+  }
+
+  async updateGroup(updateUserGroupDto: UpdateUserGroupDto) {
+    try {
+      return await this.groupService.updateGroup(updateUserGroupDto);
+    } catch (error) {
+      console.error(
+        `Error updating group with id : ${updateUserGroupDto.id}`,
+        error,
+      );
+      throw new InternalServerErrorException(
+        `Error updating group with id : ${updateUserGroupDto.id}.`,
         error,
       );
     }
