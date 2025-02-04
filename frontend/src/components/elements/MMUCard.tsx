@@ -324,7 +324,7 @@ const MMUCard = <
           deleteItem={handleRemoveFromList!}
           itemId={item.id}
           share={item.share}
-          content={t("deleteConfirmation", {
+          content={t("confirm_remove_item_from_list", {
             itemName: item.title ? item.title : "item",
           })}
           buttonLabel={t("deleteDefinitely")}

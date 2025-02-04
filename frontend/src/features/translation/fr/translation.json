@@ -31,6 +31,7 @@
   "confirm-password": "Confirmer le mot de passe",
   "confirmPassword": "Confirmer le mot de passe",
   "copyPathToClipboard": "Copier le lien dans le presse-papier",
+  "confirm_remove_item_from_list": "Êtes-vous sûr de vouloir retirer <b>{{itemName}}</b> de votre liste ? Cette action est <b>irréversible</b>.",
   "Copy_iframe_code": "Copier le code de l'Iframe",
   "crateGroupMAJ": "CRÉER UN GROUPE",
   "create-account": "Créer un compte",
