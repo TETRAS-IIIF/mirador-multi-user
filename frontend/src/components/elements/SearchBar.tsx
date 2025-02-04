@@ -9,7 +9,7 @@ import {
 } from "react";
 import { useTranslation } from "react-i18next";
 
-interface IUsersSearchBarProps<T> {
+interface IUsersSearchBarProps {
   handleAdd?: () => void;
   setSelectedData?: Dispatch<SetStateAction<any>>;
   setSearchedData?: any;
@@ -18,15 +18,13 @@ interface IUsersSearchBarProps<T> {
   setSearchInput?: (value: string) => void;
   actionButtonLabel?: string;
   label: string;
-  setFilter?: (filteredArray: any[] | undefined) => void;
-  handleFiltered?: (partialString: string) => T[];
+  setFilter?: (filteredArray: string | null) => void;
   setUserInput?: (input: string) => void;
   groupByOption?: (option: any) => string;
 }
 
-export const SearchBar = <T extends { title: string }>({
+export const SearchBar = ({
   setUserInput,
-  handleFiltered,
   setFilter,
   label,
   getOptionLabel,
@@ -37,7 +35,7 @@ export const SearchBar = <T extends { title: string }>({
   setSearchInput,
   actionButtonLabel,
   groupByOption,
-}: IUsersSearchBarProps<T>) => {
+}: IUsersSearchBarProps) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
@@ -77,21 +75,12 @@ export const SearchBar = <T extends { title: string }>({
   const handleTextFieldChange = (event: ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
     setSearchValue(value);
-
+    if (value) {
+      setFilter!(value);
+    }
     if (setUserInput) setUserInput(value);
     if (setSearchInput) setSearchInput(value);
-
-    if (handleFiltered && setFilter) {
-      const filteredItems = handleFiltered(value);
-      if (filteredItems.length > 0) {
-        setSuggestions(filteredItems.map((item) => item.title));
-        setFilter(filteredItems);
-      } else {
-        setFilter(undefined);
-      }
-    }
-
-    if (!value && setFilter) setFilter([]);
+    if (!value) setFilter!(null);
   };
 
   const handleChange = (_event: SyntheticEvent, value: string | null) => {

@@ -91,12 +91,11 @@ export const AllMedias = ({
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
-  const [mediaFiltered, setMediaFiltered] = useState<Media[] | undefined>([]);
+  const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [sortField, setSortField] = useState<keyof Media>("title");
   const [sortOrder, setSortOrder] = useState("asc");
-
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -149,7 +148,7 @@ export const AllMedias = ({
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return filteredAndSortedItems.slice(start, end);
-  }, [currentPage, medias, sortField, sortOrder, tabValue]);
+  }, [currentPage, medias, sortField, sortOrder, tabValue, mediaFilter]);
 
   const totalPages = Math.ceil(
     medias.filter((media) => {
@@ -297,18 +296,6 @@ export const AllMedias = ({
     document.getElementById("file-upload")!.click();
   };
 
-  const handleFiltered = (partialString: string) => {
-    if (partialString.length < 1) {
-      setMediaFiltered([]);
-      return [];
-    }
-    const mediaFiltered = medias.filter((media) =>
-      media.title.toLowerCase().includes(partialString.toLowerCase()),
-    );
-    setMediaFiltered(mediaFiltered.length > 0 ? mediaFiltered : undefined);
-    return mediaFiltered.length > 0 ? mediaFiltered : [];
-  };
-
   const actions = [
     {
       icon: (<AddLinkIcon />) as ReactNode,
@@ -360,6 +347,13 @@ export const AllMedias = ({
     }
   };
 
+  const isInFilter = (media: Media) => {
+    if (mediaFilter) {
+      return media.title.includes(mediaFilter);
+    } else {
+      return true;
+    }
+  };
   return (
     <Box sx={{ padding: 2 }}>
       <Grid item container flexDirection="column" spacing={1}>
@@ -404,11 +398,7 @@ export const AllMedias = ({
             justifyContent="flex-end"
           >
             <Grid item>
-              <SearchBar
-                handleFiltered={handleFiltered}
-                setFilter={setMediaFiltered}
-                label={t("filterMedia")}
-              />
+              <SearchBar setFilter={setMediaFilter} label={t("filterMedia")} />
             </Grid>
             <Grid item>
               <SortItemSelector<Media>
@@ -437,149 +427,110 @@ export const AllMedias = ({
             </Typography>
           </Grid>
         )}
-        {mediaFiltered && mediaFiltered.length < 1 && (
-          <Grid
-            item
-            container
-            spacing={1}
-            flexDirection="column"
-            sx={{ marginBottom: "70px" }}
-          >
-            <CustomTabPanel value={tabValue} index={0}>
-              <Grid container spacing={2} direction="column">
-                {currentPageData.map((media) => (
-                  <Grid item key={media.id}>
-                    <MediaCard
-                      media={media}
-                      getAllMediaGroups={getAllMediaGroups}
-                      getOptionLabel={getOptionLabel}
-                      getGroupByOption={getGroupByOption}
-                      HandleOpenModal={HandleOpenModal}
-                      HandleDeleteMedia={HandleDeleteMedia}
-                      handleGrantAccess={handleGrantAccess}
-                      HandleCopyToClipBoard={HandleCopyToClipBoard}
-                      HandleUpdateMedia={HandleUpdateMedia}
-                      caddyUrl={caddyUrl}
-                      handleChangeRights={handleChangeRights}
-                      handleLookingForUserGroups={handleLookingForUserGroups}
-                      handleRemoveAccessToMedia={handleRemoveAccessToMedia}
-                      openModalMediaId={openModalMediaId}
-                      listOfGroup={listOfGroup}
-                      setGroupList={setGroupList}
-                      setUserToAdd={setUserToAdd}
-                      handleRemoveMediaFromList={handleRemoveMediaFromList}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </CustomTabPanel>
-            <CustomTabPanel value={tabValue} index={1}>
-              <Grid container spacing={2} direction="column">
-                {currentPageData.map((media) => (
-                  <Grid item key={media.id}>
-                    <MediaCard
-                      key={media.id}
-                      media={media}
-                      getAllMediaGroups={getAllMediaGroups}
-                      getOptionLabel={getOptionLabel}
-                      getGroupByOption={getGroupByOption}
-                      HandleOpenModal={HandleOpenModal}
-                      HandleDeleteMedia={HandleDeleteMedia}
-                      handleGrantAccess={handleGrantAccess}
-                      HandleCopyToClipBoard={HandleCopyToClipBoard}
-                      HandleUpdateMedia={HandleUpdateMedia}
-                      caddyUrl={caddyUrl}
-                      handleChangeRights={handleChangeRights}
-                      handleLookingForUserGroups={handleLookingForUserGroups}
-                      handleRemoveAccessToMedia={handleRemoveAccessToMedia}
-                      openModalMediaId={openModalMediaId}
-                      listOfGroup={listOfGroup}
-                      setGroupList={setGroupList}
-                      setUserToAdd={setUserToAdd}
-                      handleRemoveMediaFromList={handleRemoveMediaFromList}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </CustomTabPanel>
-            <CustomTabPanel value={tabValue} index={2}>
-              <Grid container spacing={2} direction="column">
-                {currentPageData.map((media) => (
-                  <Grid item key={media.id}>
-                    <MediaCard
-                      key={media.id}
-                      media={media}
-                      getAllMediaGroups={getAllMediaGroups}
-                      getOptionLabel={getOptionLabel}
-                      getGroupByOption={getGroupByOption}
-                      HandleOpenModal={HandleOpenModal}
-                      HandleDeleteMedia={HandleDeleteMedia}
-                      handleGrantAccess={handleGrantAccess}
-                      HandleCopyToClipBoard={HandleCopyToClipBoard}
-                      HandleUpdateMedia={HandleUpdateMedia}
-                      caddyUrl={caddyUrl}
-                      handleChangeRights={handleChangeRights}
-                      handleLookingForUserGroups={handleLookingForUserGroups}
-                      handleRemoveAccessToMedia={handleRemoveAccessToMedia}
-                      openModalMediaId={openModalMediaId}
-                      listOfGroup={listOfGroup}
-                      setGroupList={setGroupList}
-                      setUserToAdd={setUserToAdd}
-                      handleRemoveMediaFromList={handleRemoveMediaFromList}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-            </CustomTabPanel>
-            <PaginationControls
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </Grid>
-        )}
-        {mediaFiltered && mediaFiltered.length > 0 && (
-          <Grid
-            item
-            container
-            spacing={1}
-            flexDirection="column"
-            sx={{ marginBottom: "70px" }}
-          >
-            {mediaFiltered.map((media) => (
-              <Grid item key={media.id}>
-                <MediaCard
-                  key={media.id}
-                  media={media}
-                  getAllMediaGroups={getAllMediaGroups}
-                  getOptionLabel={getOptionLabel}
-                  getGroupByOption={getGroupByOption}
-                  HandleOpenModal={HandleOpenModal}
-                  HandleDeleteMedia={HandleDeleteMedia}
-                  handleGrantAccess={handleGrantAccess}
-                  HandleCopyToClipBoard={HandleCopyToClipBoard}
-                  HandleUpdateMedia={HandleUpdateMedia}
-                  caddyUrl={caddyUrl}
-                  handleChangeRights={handleChangeRights}
-                  handleLookingForUserGroups={handleLookingForUserGroups}
-                  handleRemoveAccessToMedia={handleRemoveAccessToMedia}
-                  openModalMediaId={openModalMediaId}
-                  listOfGroup={listOfGroup}
-                  setGroupList={setGroupList}
-                  setUserToAdd={setUserToAdd}
-                  handleRemoveMediaFromList={handleRemoveMediaFromList}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        )}
-        {!mediaFiltered && (
-          <Grid item container justifyContent="center" alignItems="center">
-            <Typography variant="h6" component="h2">
-              {t("noMatchingMediaFilter")}
-            </Typography>
-          </Grid>
-        )}
+        <Grid
+          item
+          container
+          spacing={1}
+          flexDirection="column"
+          sx={{ marginBottom: "70px" }}
+        >
+          <CustomTabPanel value={tabValue} index={0}>
+            <Grid container spacing={2} direction="column">
+              {currentPageData.filter(isInFilter).map((media) => (
+                <Grid item key={media.id}>
+                  <MediaCard
+                    media={media}
+                    getAllMediaGroups={getAllMediaGroups}
+                    getOptionLabel={getOptionLabel}
+                    getGroupByOption={getGroupByOption}
+                    HandleOpenModal={HandleOpenModal}
+                    HandleDeleteMedia={HandleDeleteMedia}
+                    handleGrantAccess={handleGrantAccess}
+                    HandleCopyToClipBoard={HandleCopyToClipBoard}
+                    HandleUpdateMedia={HandleUpdateMedia}
+                    caddyUrl={caddyUrl}
+                    handleChangeRights={handleChangeRights}
+                    handleLookingForUserGroups={handleLookingForUserGroups}
+                    handleRemoveAccessToMedia={handleRemoveAccessToMedia}
+                    openModalMediaId={openModalMediaId}
+                    listOfGroup={listOfGroup}
+                    setGroupList={setGroupList}
+                    setUserToAdd={setUserToAdd}
+                    handleRemoveMediaFromList={handleRemoveMediaFromList}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </CustomTabPanel>
+          <CustomTabPanel value={tabValue} index={1}>
+            <Grid container spacing={2} direction="column">
+              {currentPageData.filter(isInFilter).map((media) => (
+                <Grid item key={media.id}>
+                  <MediaCard
+                    media={media}
+                    getAllMediaGroups={getAllMediaGroups}
+                    getOptionLabel={getOptionLabel}
+                    getGroupByOption={getGroupByOption}
+                    HandleOpenModal={HandleOpenModal}
+                    HandleDeleteMedia={HandleDeleteMedia}
+                    handleGrantAccess={handleGrantAccess}
+                    HandleCopyToClipBoard={HandleCopyToClipBoard}
+                    HandleUpdateMedia={HandleUpdateMedia}
+                    caddyUrl={caddyUrl}
+                    handleChangeRights={handleChangeRights}
+                    handleLookingForUserGroups={handleLookingForUserGroups}
+                    handleRemoveAccessToMedia={handleRemoveAccessToMedia}
+                    openModalMediaId={openModalMediaId}
+                    listOfGroup={listOfGroup}
+                    setGroupList={setGroupList}
+                    setUserToAdd={setUserToAdd}
+                    handleRemoveMediaFromList={handleRemoveMediaFromList}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </CustomTabPanel>
+          <CustomTabPanel value={tabValue} index={2}>
+            <Grid container spacing={2} direction="column">
+              {currentPageData.filter(isInFilter).map((media) => (
+                <Grid item key={media.id}>
+                  <MediaCard
+                    media={media}
+                    getAllMediaGroups={getAllMediaGroups}
+                    getOptionLabel={getOptionLabel}
+                    getGroupByOption={getGroupByOption}
+                    HandleOpenModal={HandleOpenModal}
+                    HandleDeleteMedia={HandleDeleteMedia}
+                    handleGrantAccess={handleGrantAccess}
+                    HandleCopyToClipBoard={HandleCopyToClipBoard}
+                    HandleUpdateMedia={HandleUpdateMedia}
+                    caddyUrl={caddyUrl}
+                    handleChangeRights={handleChangeRights}
+                    handleLookingForUserGroups={handleLookingForUserGroups}
+                    handleRemoveAccessToMedia={handleRemoveAccessToMedia}
+                    openModalMediaId={openModalMediaId}
+                    listOfGroup={listOfGroup}
+                    setGroupList={setGroupList}
+                    setUserToAdd={setUserToAdd}
+                    handleRemoveMediaFromList={handleRemoveMediaFromList}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          </CustomTabPanel>
+          {currentPageData.filter(isInFilter).length < 1 && (
+            <Grid item container justifyContent="center" alignItems="center">
+              <Typography variant="h6" component="h2">
+                {t("noMatchingMediaFilter")}
+              </Typography>
+            </Grid>
+          )}
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </Grid>
         <Grid>
           <DrawerLinkMedia
             toggleModalMediaCreation={() =>
