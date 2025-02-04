@@ -1,4 +1,4 @@
-import { Divider, Grid, IconButton, Paper, Typography } from "@mui/material";
+import { Divider, Grid, IconButton, Typography } from "@mui/material";
 import { ListItem } from "../types.ts";
 import { BigSpinner } from "./spinner.tsx";
 import { Dispatch, ReactNode, SetStateAction } from "react";
@@ -44,8 +44,9 @@ export const ItemList = <G, T extends { id: number; snapShotHash?: string }>({
 }: IProjectUserGroup<G, T>): JSX.Element => {
   const { t } = useTranslation();
   return (
-    <Paper
-      elevation={1}
+    <Grid
+      container
+      item
       sx={{
         minHeight: "55px",
         height: "400px",
@@ -142,6 +143,6 @@ export const ItemList = <G, T extends { id: number; snapShotHash?: string }>({
             )}
         </Grid>
       </Grid>
-    </Paper>
+    </Grid>
   );
 };
