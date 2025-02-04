@@ -6,7 +6,6 @@ import {
   Grid,
   InputLabel,
   MenuItem,
-  Paper,
   Select,
   SelectChangeEvent,
 } from "@mui/material";
@@ -115,8 +114,7 @@ export const MetadataForm = <T extends { id: number }>({
           <CircularProgress />
         </Grid>
       ) : (
-        <Paper
-          elevation={1}
+        <Box
           sx={{
             minHeight: "55px",
             height: "400px",
@@ -199,7 +197,7 @@ export const MetadataForm = <T extends { id: number }>({
               ></Grid>
             </form>
           ) : null}
-        </Paper>
+        </Box>
       )}
     </>
   );
