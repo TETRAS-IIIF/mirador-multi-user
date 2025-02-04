@@ -323,8 +323,11 @@ const MMUCard = <
         <ModalConfirmDelete
           deleteItem={handleRemoveFromList!}
           itemId={item.id}
-          itemName={item.title ? item.title : "item"}
           share={item.share}
+          content={t("deleteConfirmation", {
+            itemName: item.title ? item.title : "item",
+          })}
+          buttonLabel={t("deleteDefinitely")}
         />
       </MMUModal>
     </Card>

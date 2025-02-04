@@ -1,22 +1,21 @@
 import { Button, Grid, Typography } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
-import { useTranslation } from "react-i18next";
 
 interface IModalConfirmDeleteProps {
-  itemName: string;
   deleteItem?: (itemId: number, share?: string) => void;
   itemId: number;
   share?: string;
+  content: string;
+  buttonLabel: string;
 }
 
 export const ModalConfirmDelete = ({
-  itemName,
   deleteItem,
   itemId,
   share,
+  content,
+  buttonLabel,
 }: IModalConfirmDeleteProps) => {
-  const { t } = useTranslation();
-
   return (
     <Grid container wrap="nowrap" spacing={2}>
       <Grid item>
@@ -24,11 +23,7 @@ export const ModalConfirmDelete = ({
       </Grid>
       <Grid item container spacing={2}>
         <Grid item>
-          <Typography
-            dangerouslySetInnerHTML={{
-              __html: t("deleteConfirmation", { itemName }),
-            }}
-          />
+          <Typography dangerouslySetInnerHTML={{ __html: content }} />
         </Grid>
         <Grid item>
           {deleteItem && (
@@ -41,7 +36,7 @@ export const ModalConfirmDelete = ({
                   : () => deleteItem(itemId)
               }
             >
-              {t("deleteDefinitely")}
+              {buttonLabel}
             </Button>
           )}
         </Grid>
