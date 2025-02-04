@@ -6,7 +6,7 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { getGroupsAccessToProject } from "../../features/projects/api/generateProjectSnapShot.ts";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { IframeGenerator } from "../../features/projects/components/ProjectIframe.tsx";
+import { IFrameGenerator } from "../../features/projects/components/IFrameGenerator.tsx";
 
 interface IShareLinkProps {
   itemId: number;
@@ -16,15 +16,16 @@ interface IShareLinkProps {
 export const ShareLink = ({ itemId, snapShotHash }: IShareLinkProps) => {
   const baseUrl =
     window.location.origin + window.location.pathname.split("/app")[0];
-  const [projectUrl, setProjectUrl] = useState(
+  const [projectSnapshotURL, setProjectSnapshotURL] = useState(
     `${baseUrl}/mirador/${snapShotHash}/workspace.json`,
   );
   const [generatedAt, setGeneratedAt] = useState<null | string>(null);
+
   const { t } = useTranslation();
 
   const handleCopyToClipboard = async () => {
     if (generatedAt) {
-      await navigator.clipboard.writeText(projectUrl);
+      await navigator.clipboard.writeText(projectSnapshotURL);
       toast.success(t("toastSuccessSnapshot"));
     } else {
       toast.error(t("toastErrorSnapshot"));
@@ -34,7 +35,7 @@ export const ShareLink = ({ itemId, snapShotHash }: IShareLinkProps) => {
   const handleGenerateSnapshot = async () => {
     const snapShotUrl = await getGroupsAccessToProject(itemId);
     fetchManifestInfo(snapShotUrl.snapShotHash);
-    setProjectUrl(
+    setProjectSnapshotURL(
       `${baseUrl}/mirador/${snapShotUrl.snapShotHash}/workspace.json`,
     );
   };
@@ -55,8 +56,8 @@ export const ShareLink = ({ itemId, snapShotHash }: IShareLinkProps) => {
   };
 
   useEffect(() => {
-    if (projectUrl) fetchManifestInfo(`${snapShotHash}`);
-  }, [projectUrl]);
+    if (projectSnapshotURL) fetchManifestInfo(`${snapShotHash}`);
+  }, [projectSnapshotURL]);
 
   return (
     <Grid container item spacing={2}>
@@ -69,12 +70,12 @@ export const ShareLink = ({ itemId, snapShotHash }: IShareLinkProps) => {
           spacing={2}
           sx={{ width: "100%" }}
         >
-          {projectUrl && (
+          {projectSnapshotURL && (
             <>
               <Grid item xs={8}>
                 <TextField
                   label={t("projectSnapshotUrl")}
-                  value={projectUrl}
+                  value={projectSnapshotURL}
                   disabled
                   fullWidth
                   helperText={
@@ -101,9 +102,7 @@ export const ShareLink = ({ itemId, snapShotHash }: IShareLinkProps) => {
             </>
           )}
           <Grid item>
-            <IframeGenerator
-              snapshotUrl={`${baseUrl}/mirador/${snapShotHash}/workspace.json`}
-            />
+            <IFrameGenerator snapshotUrl={projectSnapshotURL} />
           </Grid>
         </Grid>
       </Grid>
