@@ -54,6 +54,7 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { removeManifestFromList } from "../api/removeManifestFromList.ts";
+import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -108,55 +109,14 @@ export const AllManifests = ({
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
-
-  const isInFilter = (manifest: Manifest) => {
-    if (manifestFilter) {
-      return manifest.title.includes(manifestFilter);
-    } else {
-      return true;
-    }
-  };
-
-  const sortedItems = useMemo(() => {
-    return [...manifests];
-  }, [manifests, sortField, sortOrder]);
-
-  const currentPageData = useMemo(() => {
-    const filteredAndSortedItems = [...manifests]
-      .filter((manifest) => isInFilter(manifest))
-      .sort((a, b) => {
-        const aValue = a[sortField];
-        const bValue = b[sortField];
-        let comparison = 0;
-
-        if (sortField === "created_at") {
-          const aDate = typeof aValue === "string" ? new Date(aValue) : aValue;
-          const bDate = typeof bValue === "string" ? new Date(bValue) : bValue;
-          comparison = aDate.getTime() - bDate.getTime();
-        }
-
-        if (typeof aValue === "string" && typeof bValue === "string") {
-          comparison = aValue.localeCompare(bValue);
-        }
-
-        if (typeof aValue === "number" && typeof bValue === "number") {
-          comparison = aValue - bValue;
-        }
-        return sortOrder === "asc" ? comparison : -comparison;
-      });
-
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return filteredAndSortedItems.slice(start, end);
-  }, [
+  const currentPageData = useCurrentPageData({
     currentPage,
-    itemsPerPage,
-    sortedItems,
-    manifests,
     sortField,
     sortOrder,
-    manifestFilter,
-  ]);
+    items: manifests,
+    itemsPerPage,
+    filter: manifestFilter,
+  });
 
   const totalPages = Math.ceil(manifests.length / itemsPerPage);
 

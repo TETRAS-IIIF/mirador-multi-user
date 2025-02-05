@@ -56,6 +56,7 @@ import {
   isFileSizeUnderLimit,
   isValidFileForUpload,
 } from "../../../utils/utils.ts";
+import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -118,51 +119,26 @@ export const AllMedias = ({
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const isInFilter = (media: Media) => {
-    if (mediaFilter) {
-      return media.title.includes(mediaFilter);
-    } else {
-      return true;
+  const filterByMediaType = (medias: Media[]) => {
+    if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
+      return medias.filter((media) => media.mediaTypes === MediaTypes.VIDEO);
+    } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
+      return medias.filter((media) => media.mediaTypes === MediaTypes.IMAGE);
+    } else if (mediaTabShown === MEDIA_TYPES_TABS.ALL) {
+      return medias;
     }
+    return [];
   };
 
-  const currentPageData = useMemo(() => {
-    const filteredAndSortedItems = [...medias]
-      .filter((media) => {
-        if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-          return media.mediaTypes === MediaTypes.VIDEO;
-        } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-          return media.mediaTypes === MediaTypes.IMAGE;
-        }
-        return true;
-      })
-      .filter((media) => isInFilter(media))
-      .sort((a, b) => {
-        const aValue = a[sortField];
-        const bValue = b[sortField];
-        let comparison = 0;
-
-        if (sortField === "created_at") {
-          const aDate = new Date(aValue as string);
-          const bDate = new Date(bValue as string);
-
-          if (!isNaN(aDate.getTime()) && !isNaN(bDate.getTime())) {
-            comparison = aDate.getTime() - bDate.getTime();
-          }
-        }
-        if (typeof aValue === "string" && typeof bValue === "string") {
-          comparison = aValue.localeCompare(bValue);
-        }
-        if (typeof aValue === "number" && typeof bValue === "number") {
-          comparison = aValue - bValue;
-        }
-        return sortOrder === "asc" ? comparison : -comparison;
-      });
-    // Paginate the filtered and sorted items
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return filteredAndSortedItems.slice(start, end);
-  }, [currentPage, medias, sortField, sortOrder, mediaTabShown, mediaFilter]);
+  const currentPageData = useCurrentPageData({
+    currentPage,
+    sortField,
+    sortOrder,
+    items: medias,
+    itemsPerPage,
+    filter: mediaFilter,
+    customSortFunction: filterByMediaType,
+  });
 
   const totalPages = Math.ceil(
     medias.filter((media) => {
