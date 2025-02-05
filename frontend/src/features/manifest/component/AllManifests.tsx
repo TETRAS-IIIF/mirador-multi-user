@@ -110,27 +110,22 @@ export const AllManifests = ({
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
 
-  const sortedItems = useMemo(() => {
-    return [...manifests];
-  }, [manifests, sortField, sortOrder]);
-
-  const currentPageData = useCurrentPageData(
+  const currentPageData = useCurrentPageData({
     currentPage,
     sortField,
     sortOrder,
-    sortedItems,
+    items: manifests,
     itemsPerPage,
     [
       currentPage,
-      itemsPerPage,
-      sortedItems,
-      manifests,
-      sortField,
-      sortOrder,
-      manifestFilter,
-    ],
+    itemsPerPage,
+    manifests,
+    sortField,
+    sortOrder,
     manifestFilter,
-  );
+],
+  manifestFilter,
+});
 
   const totalPages = Math.ceil(manifests.length / itemsPerPage);
 
