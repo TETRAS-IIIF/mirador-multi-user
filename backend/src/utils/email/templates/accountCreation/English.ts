@@ -1,4 +1,4 @@
-export const accountCreationTemplate = (data: { userName: string }) => `
+export const accountCreationTemplateEnglish = (data: { userName: string }) => `
 <!DOCTYPE html>
 <html>
 <div>

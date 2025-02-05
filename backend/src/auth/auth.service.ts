@@ -105,6 +105,7 @@ export class AuthService {
         to: user.mail,
         userName: user.name,
         token: token,
+        language: user.preferredLanguage,
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);

@@ -13,6 +13,7 @@ import { QueryFailedError, Repository } from 'typeorm';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { Language } from '../../utils/email/utils';
 
 @Injectable()
 export class UsersService {
@@ -173,7 +174,7 @@ export class UsersService {
     }
   }
 
-  async updatePreferredLanguage(userId: number, preferredLanguage: string) {
+  async updatePreferredLanguage(userId: number, preferredLanguage: Language) {
     try {
       const updateResult = await this.userRepository.update(userId, {
         preferredLanguage,

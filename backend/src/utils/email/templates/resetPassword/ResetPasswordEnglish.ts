@@ -1,7 +1,4 @@
-export const resetPassword = (data: {
-  url: string;
-  name: string;
-}) => `
+export const resetPasswordEnglish = (data: { url: string; name: string }) => `
 <!DOCTYPE html>
 <html>
 <div>

@@ -23,6 +23,7 @@ import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { LinkGroupProject } from '../link-group-project/entities/link-group-project.entity';
 import { LinkUserGroup } from './entities/link-user-group.entity';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
+import { Language } from '../../utils/email/utils';
 
 @ApiBearerAuth()
 @Controller('link-user-group')
@@ -299,7 +300,7 @@ export class LinkUserGroupController {
   async updateUserLanguage(
     @Param('userId') userId: number,
     @Req() request,
-    @Body() preferredLanguageDto: { preferredLanguage: string },
+    @Body() preferredLanguageDto: { preferredLanguage: Language },
   ) {
     const userPersonalGroup =
       await this.linkUserGroupService.findUserPersonalGroup(request.user.sub);

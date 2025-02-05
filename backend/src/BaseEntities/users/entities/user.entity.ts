@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { LinkUserGroup } from '../../../LinkModules/link-user-group/entities/link-user-group.entity';
 import { Impersonation } from '../../../impersonation/entities/impersonation.entity';
+import { Language } from '../../../utils/email/utils';
 
 @Entity()
 export class User {
@@ -50,8 +51,8 @@ export class User {
   impersonations: Impersonation[];
 
   @Index()
-  @Column({ nullable: true })
-  preferredLanguage: string;
+  @Column({ nullable: true, type: 'enum', enum: Language })
+  preferredLanguage: Language;
 
   @Index()
   @Column({ nullable: true })
