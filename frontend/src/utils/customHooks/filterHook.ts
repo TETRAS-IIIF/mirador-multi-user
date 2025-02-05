@@ -1,14 +1,12 @@
 import { useMemo } from "react";
 import { Item } from "../../types";
-import { Item } from "../../features/manifest/types/types.ts";
 
 interface IUseCurrentPageData {
   currentPage: number;
-  sortField: string;
+  sortField: keyof Item;
   sortOrder: string;
   items: Item[];
   itemsPerPage: number;
-  deps: any[];
   filter: string;
 }
 
@@ -18,7 +16,6 @@ export const useCurrentPageData = ({
   sortOrder,
   items,
   itemsPerPage,
-  deps,
   filter,
 }: IUseCurrentPageData) => {
   return useMemo(() => {
@@ -48,7 +45,7 @@ export const useCurrentPageData = ({
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return filteredAndSortedItems.slice(start, end);
-  }, deps);
+  }, [currentPage, sortField, sortOrder, items, itemsPerPage, filter]);
 };
 
 const isInFilter = (item: Item, filter: string) => {

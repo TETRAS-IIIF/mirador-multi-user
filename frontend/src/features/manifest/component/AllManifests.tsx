@@ -15,6 +15,7 @@ import {
 import { User } from "../../auth/types/types.ts";
 import {
   Item,
+  Manifest,
   ManifestCanvases,
   ManifestGroupRights,
   manifestOrigin,
@@ -72,7 +73,7 @@ interface IAllManifests {
   userPersonalGroup: UserGroup;
   user: User;
   fetchManifestForUser: () => void;
-  manifests: Item[];
+  manifests: Manifest[];
   medias: Media[];
   fetchMediaForUser: () => void;
 }
@@ -99,7 +100,7 @@ export const AllManifests = ({
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [openSidePanel, setOpenSidePanel] = useState(false);
-  const [sortField, setSortField] = useState<keyof Item>("title");
+  const [sortField, setSortField] = useState<keyof Manifest>("title");
   const [sortOrder, setSortOrder] = useState("asc");
 
   const { t } = useTranslation();
@@ -116,16 +117,8 @@ export const AllManifests = ({
     sortOrder,
     items: manifests,
     itemsPerPage,
-    [
-      currentPage,
-    itemsPerPage,
-    manifests,
-    sortField,
-    sortOrder,
     manifestFilter,
-],
-  manifestFilter,
-});
+  });
 
   const totalPages = Math.ceil(manifests.length / itemsPerPage);
 
