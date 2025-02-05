@@ -55,6 +55,6 @@ export class User {
   preferredLanguage: Language;
 
   @Index()
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ nullable: true })
   lastConnectedAt: Date;
 }
