@@ -227,7 +227,7 @@ export const SidePanelMedia = ({
             item
             container
             spacing={1}
-            sx={{ padding: "20px" }}
+            sx={{ padding: "20px", width: "510px" }}
             alignItems="center"
           >
             <Grid item>
