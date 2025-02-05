@@ -117,7 +117,7 @@ export const AllManifests = ({
     sortOrder,
     items: manifests,
     itemsPerPage,
-    manifestFilter,
+    filter: manifestFilter,
   });
 
   const totalPages = Math.ceil(manifests.length / itemsPerPage);

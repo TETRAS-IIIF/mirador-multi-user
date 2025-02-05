@@ -7,7 +7,7 @@ interface IUseCurrentPageData {
   sortOrder: string;
   items: Item[];
   itemsPerPage: number;
-  filter: string;
+  filter: string | null;
 }
 
 export const useCurrentPageData = ({
@@ -48,7 +48,7 @@ export const useCurrentPageData = ({
   }, [currentPage, sortField, sortOrder, items, itemsPerPage, filter]);
 };
 
-const isInFilter = (item: Item, filter: string) => {
+const isInFilter = (item: Item, filter: string | null) => {
   if (filter) {
     return item.title.includes(filter);
   } else {
