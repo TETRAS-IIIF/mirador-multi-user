@@ -1,18 +1,15 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { MailerService as MailerMain } from '@nestjs-modules/mailer';
 import { MailService } from './IMailService';
-import { CreateEmailServerDto } from './Dto/createEmailServerDto';
-import { accountCreationTemplateEnglish } from './templates/accountCreation/English';
 import { CustomLogger } from '../Logger/CustomLogger.service';
 import { ConfirmationEmailDto } from './Dto/ConfirmationEmailDto';
 import { confirmationEmailTemplateEnglish } from './templates/confirmationMail/English';
 import { JwtService } from '@nestjs/jwt';
-import { resetPassword } from './templates/resetPassword';
+import { resetPasswordEnglish } from './templates/resetPassword/ResetPasswordEnglish';
 import { ResetPasswordEmailDto } from './Dto/resetPasswordEmailDto';
 import { confirmationEmailTemplateFrench } from './templates/confirmationMail/French';
-import { confirmationEmailTemplateSpanish } from './templates/confirmationMail/Spanish';
 import { Language } from './utils';
-import { accountCreationTemplateFrench } from './templates/accountCreation/French';
+import { resetPasswordFrench } from './templates/resetPassword/French';
 
 @Injectable()
 export class EmailServerService implements MailService {
@@ -23,75 +20,39 @@ export class EmailServerService implements MailService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async sendMail(email: CreateEmailServerDto): Promise<void> {
-    try {
-      const renderedTemplate = this._bodyTemplate(
-        email.userName,
-        email.language,
-      );
-      const plainText = `Hello ${email.userName}, your account was successfully created!`;
-      const toReturn = await this._processSendEmail(
-        email.to,
-        email.subject,
-        plainText,
-        renderedTemplate,
-      );
-      return toReturn;
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException('an error occurred', error);
-    }
-  }
-
-  private _bodyTemplate(userName: string, language: string): string {
-    // Use the template function to generate the HTML content
-    if (language === Language.ENGLISH) {
-      return accountCreationTemplateEnglish({
-        userName: userName,
-      });
-    }
-    if (language === Language.FRENCH) {
-      return accountCreationTemplateFrench({
-        userName: userName,
-      });
-    }
-  }
-
   private _confirmMailTemplate(
     url: string,
     name: string,
     language: string,
   ): string {
-    if (language === 'en') {
-      return confirmationEmailTemplateEnglish({
-        url: url,
-        name: name,
-      });
-    }
-    if (language === 'fr') {
-      return confirmationEmailTemplateFrench({
-        url: url,
-        name: name,
-      });
-    }
-    if (language === 'es') {
-      return confirmationEmailTemplateSpanish({
-        url: url,
-        name: name,
-      });
+    switch (language) {
+      case Language.ENGLISH:
+        return confirmationEmailTemplateEnglish({ url, name });
+      case Language.FRENCH:
+        return confirmationEmailTemplateFrench({ url, name });
+      default:
+        throw new Error(`Unsupported language: ${language}`);
     }
   }
 
-  private _passwordResetTemplate(url: string, name: string): string {
-    // Use the template function to generate the HTML content
-    return resetPassword({
-      url: url,
-      name: name,
-    });
+  private _passwordResetTemplate(
+    url: string,
+    name: string,
+    language: Language,
+  ): string {
+    switch (language) {
+      case Language.ENGLISH:
+        return resetPasswordEnglish({ url, name });
+      case Language.FRENCH:
+        return resetPasswordFrench({ url, name });
+      default:
+        throw new Error(`Unsupported language: ${language}`);
+    }
   }
 
   //UNCOMMENT FOR TESTS
-  async sendMailSandBox(email: CreateEmailServerDto): Promise<void> {
+  async sendMailSandBox() // email: CreateEmailServerDto
+  : Promise<void> {
     //   // Generate the template directly using the data
     //   const renderedTemplate = this._bodyTemplate();
     //
@@ -168,12 +129,12 @@ export class EmailServerService implements MailService {
     ${formattedStack}
   `;
 
-    await this._processSendEmail(
-      process.env.ADMIN_MAIL,
-      subject,
-      mailBody,
-      mailBody,
-    );
+    await this.sendMail({
+      to: process.env.ADMIN_MAIL,
+      subject: subject,
+      body: mailBody,
+      text: mailBody,
+    });
   }
 
   async sendConfirmationEmail(email: ConfirmationEmailDto): Promise<void> {
@@ -197,26 +158,30 @@ export class EmailServerService implements MailService {
         email.language,
       );
       const plainText = `Welcome to ${process.env.INSTANCE_NAME}. To confirm the email address, click here: ${url}`;
-      const toReturn = await this._processSendEmail(
-        email.to,
-        email.subject,
-        plainText,
-        renderedTemplate,
-      );
-      return toReturn;
+      return await this.sendMail({
+        to: email.to,
+        subject: email.subject,
+        text: plainText,
+        body: renderedTemplate,
+      });
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException('an error occurred', error);
     }
   }
 
-  async _processSendEmail(to, subject, text, body): Promise<void> {
+  async sendMail(content: {
+    subject: string;
+    to: string;
+    text: string;
+    body: string;
+  }): Promise<void> {
     try {
       await this.mailerMain.sendMail({
-        to: to,
-        subject: `[${process.env.INSTANCE_NAME}] ${subject}`,
-        text: text,
-        html: body,
+        to: content.to,
+        subject: `[${process.env.INSTANCE_NAME}] ${content.subject}`,
+        text: content.text,
+        html: content.body,
       });
       console.log('Email sent');
     } catch (error) {
@@ -228,14 +193,18 @@ export class EmailServerService implements MailService {
   async sendResetPasswordLink(email: ResetPasswordEmailDto): Promise<void> {
     const url = `${process.env.FRONTEND_URL}/reset-password/${email.token}`;
 
-    const renderedTemplate = this._passwordResetTemplate(url, email.userName);
+    const renderedTemplate = this._passwordResetTemplate(
+      url,
+      email.userName,
+      email.language,
+    );
     const plainText = `Hi, \\nTo reset your password, click here: ${url}`;
 
-    return this._processSendEmail(
-      email.to,
-      'Reset password',
-      plainText,
-      renderedTemplate,
-    );
+    return this.sendMail({
+      to: email.to,
+      subject: 'Reset password',
+      text: plainText,
+      body: renderedTemplate,
+    });
   }
 }

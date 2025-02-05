@@ -1,6 +1,7 @@
 import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateProjectDto } from '../../project/dto/create-project.dto';
+import { Language } from '../../../utils/email/utils';
 
 export class CreateUserDto {
   @IsEmail()
@@ -16,5 +17,5 @@ export class CreateUserDto {
   @IsOptional()
   Projects: CreateProjectDto[];
 
-  preferredLanguage: string;
+  preferredLanguage: Language;
 }

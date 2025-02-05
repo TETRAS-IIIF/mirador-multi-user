@@ -25,6 +25,7 @@ import * as process from 'process';
 import { LinkMetadataFormatGroupService } from '../link-metadata-format-group/link-metadata-format-group.service';
 import { dublinCoreSample } from '../../utils/metadataSample/dublinCoreSample';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
+import { Language } from '../../utils/email/utils';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -553,7 +554,7 @@ export class LinkUserGroupService {
     }
   }
 
-  async updateUserLanguage(userId: number, preferredLanguage: string) {
+  async updateUserLanguage(userId: number, preferredLanguage: Language) {
     try {
       return await this.userService.updatePreferredLanguage(
         userId,
