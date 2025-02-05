@@ -18,6 +18,7 @@ import {
   ReactNode,
   SyntheticEvent,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -136,6 +137,10 @@ export const SidePanelMedia = ({
       return true;
     }
   };
+
+  useEffect(() => {
+    fetchMediaForUser();
+  }, []);
 
   const currentPageData = useMemo(() => {
     const filteredAndSortedItems = [...medias]
