@@ -86,7 +86,7 @@ export const ItemList = <
             />
           </Grid>
         </Grid>
-        <Grid item>
+        <Grid item sx={{ marginLeft: "10px" }}>
           <SearchBar
             label={searchBarLabel}
             handleAdd={handleAddAccessListItem}
