@@ -37,11 +37,11 @@ import { PaginationControls } from "../../../components/elements/Pagination.tsx"
 import { ObjectTypes } from "../../tag/type.ts";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { Dayjs } from "dayjs";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { leavingGroup } from "../api/leavingGroup.ts";
+import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
 
 interface allGroupsProps {
   user: User;
@@ -81,39 +81,14 @@ export const AllGroups = ({
 
   const itemsPerPage = 10;
 
-  const isInFilter = (group: UserGroup) => {
-    if (groupFilter) {
-      return group.title.includes(groupFilter);
-    } else {
-      return true;
-    }
-  };
-
-  const currentPageData = useMemo(() => {
-    const filteredAndSortedItems = [...groups]
-      .filter((group) => isInFilter(group))
-      .sort((a, b) => {
-        const aValue = a[sortField];
-        const bValue = b[sortField];
-        let comparison = 0;
-
-        if (sortField === "created_at") {
-          const aDate = (aValue as Dayjs).toDate();
-          const bDate = (bValue as Dayjs).toDate();
-          comparison = aDate.getTime() - bDate.getTime();
-        } else if (typeof aValue === "string" && typeof bValue === "string") {
-          comparison = aValue.localeCompare(bValue);
-        } else if (typeof aValue === "number" && typeof bValue === "number") {
-          comparison = aValue - bValue;
-        }
-
-        return sortOrder === "asc" ? comparison : -comparison;
-      });
-    console.log(filteredAndSortedItems);
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return filteredAndSortedItems.slice(start, end);
-  }, [currentPage, groups, sortField, sortOrder, groupFilter]);
+  const currentPageData = useCurrentPageData({
+    currentPage,
+    sortField,
+    sortOrder,
+    items: groups,
+    itemsPerPage,
+    filter: groupFilter,
+  });
 
   const totalPages = Math.ceil(groups.length / itemsPerPage);
 

@@ -50,11 +50,11 @@ import { isProjectLocked } from "../api/isProjectLocked.ts";
 import { handleLock } from "../api/handleLock.ts";
 import { useTranslation } from "react-i18next";
 import { dublinCoreMetadata } from "../../../utils/dublinCoreMetadata.ts";
-import { Dayjs } from "dayjs";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { removeProjectFromList } from "../api/removeProjectFromList.ts";
+import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
 
 interface AllProjectsProps {
   user: User;
@@ -104,40 +104,14 @@ export const AllProjects = ({
 
   const totalPages = Math.ceil(userProjects.length / itemsPerPage);
 
-  const isInFilter = (project: Project) => {
-    if (projectFilter) {
-      return project.title.includes(projectFilter);
-    } else {
-      return true;
-    }
-  };
-
-  const currentPageData = useMemo(() => {
-    const filteredAndSortedItems = [...userProjects]
-      .filter((project) => isInFilter(project))
-      .sort((a, b) => {
-        const aValue = a[sortField];
-        const bValue = b[sortField];
-
-        let comparison = 0;
-
-        if (sortField === "created_at") {
-          const aDate =
-            aValue instanceof Date ? aValue : (aValue as Dayjs).toDate();
-          const bDate =
-            bValue instanceof Date ? bValue : (bValue as Dayjs).toDate();
-          comparison = aDate.getTime() - bDate.getTime();
-        } else if (typeof aValue === "string" && typeof bValue === "string") {
-          comparison = aValue.localeCompare(bValue);
-        } else if (typeof aValue === "number" && typeof bValue === "number") {
-          comparison = aValue - bValue;
-        }
-        return sortOrder === "asc" ? comparison : -comparison;
-      });
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return filteredAndSortedItems.slice(start, end);
-  }, [currentPage, userProjects, sortField, sortOrder, projectFilter]);
+  const currentPageData = useCurrentPageData({
+    currentPage,
+    sortField,
+    sortOrder,
+    items: userProjects,
+    itemsPerPage,
+    filter: projectFilter,
+  });
 
   const fetchUserPersonalGroup = async () => {
     const personalGroup = await getUserPersonalGroup(user.id);

@@ -109,7 +109,6 @@ export const AllManifests = ({
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
-
   const currentPageData = useCurrentPageData({
     currentPage,
     sortField,

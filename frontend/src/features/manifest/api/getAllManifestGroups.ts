@@ -1,5 +1,6 @@
 import { ProjectGroup } from "../../projects/types/types.ts";
 import storage from "../../../utils/storage.ts";
+import dayjs from "dayjs";
 
 export const getAllManifestGroups = async (
   manifestId: number,
@@ -19,8 +20,11 @@ export const getAllManifestGroups = async (
       throw new Error(`Error fetching groups: ${response.statusText}`);
     }
 
-    const toreTurn = await response.json();
-    return toreTurn;
+    const manifests = await response.json();
+    return manifests.map((manifest: any) => ({
+      ...manifest,
+      created_at: dayjs(manifest.created_at),
+    }));
   } catch (error) {
     console.error("Error in getGroupsAccessToManifest:", error);
     return [];
