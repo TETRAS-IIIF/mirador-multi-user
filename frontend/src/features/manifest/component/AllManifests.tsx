@@ -293,7 +293,7 @@ export const AllManifests = ({
     }
   };
 
-  const handleUpdateManifest = async (manifestToUpdate: Item) => {
+  const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
     try {
       if (manifestToUpdate.origin === manifestOrigin.LINK) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

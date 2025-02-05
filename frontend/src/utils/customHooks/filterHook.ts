@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Item } from "../../types";
+import { Item } from "../types";
 
 interface IUseCurrentPageData {
   currentPage: number;
