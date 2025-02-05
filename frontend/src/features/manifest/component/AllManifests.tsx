@@ -476,6 +476,7 @@ export const AllManifests = ({
             </Grid>
           )}
           {!createManifestIsOpen &&
+            manifests.length > 0 &&
             (currentPageData.length > 0 ? (
               <Grid
                 item

@@ -18,6 +18,7 @@ import {
   ReactNode,
   SyntheticEvent,
   useCallback,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -137,6 +138,10 @@ export const SidePanelMedia = ({
     }
   };
 
+  useEffect(() => {
+    fetchMediaForUser();
+  }, []);
+
   const currentPageData = useMemo(() => {
     const filteredAndSortedItems = [...medias]
       .filter((media) => {
@@ -222,7 +227,7 @@ export const SidePanelMedia = ({
             item
             container
             spacing={1}
-            sx={{ padding: "20px" }}
+            sx={{ padding: "20px", width: "510px" }}
             alignItems="center"
           >
             <Grid item>

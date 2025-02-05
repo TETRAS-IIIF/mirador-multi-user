@@ -377,77 +377,80 @@ export const AllProjects = ({
                 flexDirection="column"
                 sx={{ marginBottom: "70px" }}
               >
-                {currentPageData.length > 0 ? (
-                  currentPageData.map((projectUser) => (
-                    <Grid item key={projectUser.id}>
-                      <MMUCard
-                        duplicateItem={handleDuplicateProject}
-                        objectTypes={ObjectTypes.PROJECT}
-                        thumbnailUrl={
-                          projectUser.thumbnailUrl
-                            ? projectUser.thumbnailUrl
-                            : null
-                        }
-                        searchBarLabel={t("searchUser")}
-                        description={projectUser.description}
-                        HandleOpenModal={() => HandleOpenModal(projectUser.id)}
-                        openModal={openModalProjectId === projectUser.id}
-                        DefaultButton={
-                          <ModalButton
-                            tooltipButton={t("openProject")}
-                            onClickFunction={() =>
-                              initializeMirador(
-                                projectUser.userWorkspace,
-                                projectUser,
-                              )
-                            }
-                            disabled={false}
-                            icon={<OpenInNewIcon />}
-                          />
-                        }
-                        EditorButton={
-                          <ModalButton
-                            tooltipButton={t("configuration")}
-                            onClickFunction={() =>
-                              HandleOpenModal(projectUser.id)
-                            }
-                            icon={<SettingsIcon />}
-                            disabled={false}
-                          />
-                        }
-                        id={projectUser.id}
-                        rights={projectUser.rights!}
-                        deleteItem={deleteUserProject}
-                        getOptionLabel={getOptionLabel}
-                        AddAccessListItemFunction={handleAddUser}
-                        handleSelectorChange={handleChangeRights}
-                        item={projectUser}
-                        itemLabel={projectUser.title}
-                        listOfItem={listOfGroup}
-                        searchModalEditItem={handleLookingForUserGroups}
-                        getAccessToItem={getGroupsAccessToProject}
-                        setItemToAdd={setUserToAdd}
-                        updateItem={updateUserProject}
-                        removeAccessListItemFunction={handleRemoveUser}
-                        setItemList={setGroupList}
-                        metadata={projectUser.metadata}
-                        getGroupByOption={getGroupByOption}
-                        handleRemoveFromList={handleRemoveProjectFromList}
-                      />
+                {userProjects.length > 0 &&
+                  (currentPageData.length > 0 ? (
+                    currentPageData.map((projectUser) => (
+                      <Grid item key={projectUser.id}>
+                        <MMUCard
+                          duplicateItem={handleDuplicateProject}
+                          objectTypes={ObjectTypes.PROJECT}
+                          thumbnailUrl={
+                            projectUser.thumbnailUrl
+                              ? projectUser.thumbnailUrl
+                              : null
+                          }
+                          searchBarLabel={t("searchUser")}
+                          description={projectUser.description}
+                          HandleOpenModal={() =>
+                            HandleOpenModal(projectUser.id)
+                          }
+                          openModal={openModalProjectId === projectUser.id}
+                          DefaultButton={
+                            <ModalButton
+                              tooltipButton={t("openProject")}
+                              onClickFunction={() =>
+                                initializeMirador(
+                                  projectUser.userWorkspace,
+                                  projectUser,
+                                )
+                              }
+                              disabled={false}
+                              icon={<OpenInNewIcon />}
+                            />
+                          }
+                          EditorButton={
+                            <ModalButton
+                              tooltipButton={t("configuration")}
+                              onClickFunction={() =>
+                                HandleOpenModal(projectUser.id)
+                              }
+                              icon={<SettingsIcon />}
+                              disabled={false}
+                            />
+                          }
+                          id={projectUser.id}
+                          rights={projectUser.rights!}
+                          deleteItem={deleteUserProject}
+                          getOptionLabel={getOptionLabel}
+                          AddAccessListItemFunction={handleAddUser}
+                          handleSelectorChange={handleChangeRights}
+                          item={projectUser}
+                          itemLabel={projectUser.title}
+                          listOfItem={listOfGroup}
+                          searchModalEditItem={handleLookingForUserGroups}
+                          getAccessToItem={getGroupsAccessToProject}
+                          setItemToAdd={setUserToAdd}
+                          updateItem={updateUserProject}
+                          removeAccessListItemFunction={handleRemoveUser}
+                          setItemList={setGroupList}
+                          metadata={projectUser.metadata}
+                          getGroupByOption={getGroupByOption}
+                          handleRemoveFromList={handleRemoveProjectFromList}
+                        />
+                      </Grid>
+                    ))
+                  ) : (
+                    <Grid
+                      item
+                      container
+                      justifyContent="center"
+                      alignItems="center"
+                    >
+                      <Typography variant="h6" component="h2">
+                        {t("noProjectMatchFilter")}
+                      </Typography>
                     </Grid>
-                  ))
-                ) : (
-                  <Grid
-                    item
-                    container
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <Typography variant="h6" component="h2">
-                      {t("noProjectMatchFilter")}
-                    </Typography>
-                  </Grid>
-                )}
+                  ))}
                 <Grid item>
                   <FloatingActionButton
                     onClick={toggleModalProjectCreation}
