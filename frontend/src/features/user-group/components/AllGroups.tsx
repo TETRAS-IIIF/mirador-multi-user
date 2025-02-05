@@ -109,7 +109,6 @@ export const AllGroups = ({
 
         return sortOrder === "asc" ? comparison : -comparison;
       });
-    console.log(filteredAndSortedItems);
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return filteredAndSortedItems.slice(start, end);
@@ -282,53 +281,59 @@ export const AllGroups = ({
                 </Typography>
               </Grid>
             )}
-            {currentPageData.length > 0 ? (
-              currentPageData.map((group) => (
-                <Grid item key={group.id}>
-                  <MMUCard
-                    objectTypes={ObjectTypes.GROUP}
-                    isGroups={true}
-                    thumbnailUrl={
-                      group.thumbnailUrl ? group.thumbnailUrl : null
-                    }
-                    searchBarLabel={"Search Users"}
-                    rights={group.rights!}
-                    itemLabel={group.title}
-                    openModal={openModalGroupId === group.id}
-                    getOptionLabel={getOptionLabelForEditModal}
-                    deleteItem={handleDeleteGroup}
-                    item={group}
-                    updateItem={updateGroup}
-                    HandleOpenModal={() => HandleOpenModal(group.id)}
-                    id={group.id}
-                    AddAccessListItemFunction={grantingAccessToGroup}
-                    EditorButton={
-                      <ModalButton
-                        tooltipButton={t("editGroupTooltip")}
-                        disabled={false}
-                        icon={<ModeEditIcon />}
-                        onClickFunction={() => HandleOpenModal(group.id)}
-                      />
-                    }
-                    getAccessToItem={GetAllGroupUsers}
-                    listOfItem={listOfUserPersonalGroup}
-                    removeAccessListItemFunction={handleRemoveUser}
-                    searchModalEditItem={lookingForUsers}
-                    setItemList={setUserPersonalGroupList}
-                    setItemToAdd={setUserToAdd}
-                    description={group.description}
-                    handleSelectorChange={handleChangeRights}
-                    handleRemoveFromList={handleLeaveGroup}
-                  />
+            {groups.length > 0 &&
+              (currentPageData.length > 0 ? (
+                currentPageData.map((group) => (
+                  <Grid item key={group.id}>
+                    <MMUCard
+                      objectTypes={ObjectTypes.GROUP}
+                      isGroups={true}
+                      thumbnailUrl={
+                        group.thumbnailUrl ? group.thumbnailUrl : null
+                      }
+                      searchBarLabel={"Search Users"}
+                      rights={group.rights!}
+                      itemLabel={group.title}
+                      openModal={openModalGroupId === group.id}
+                      getOptionLabel={getOptionLabelForEditModal}
+                      deleteItem={handleDeleteGroup}
+                      item={group}
+                      updateItem={updateGroup}
+                      HandleOpenModal={() => HandleOpenModal(group.id)}
+                      id={group.id}
+                      AddAccessListItemFunction={grantingAccessToGroup}
+                      EditorButton={
+                        <ModalButton
+                          tooltipButton={t("editGroupTooltip")}
+                          disabled={false}
+                          icon={<ModeEditIcon />}
+                          onClickFunction={() => HandleOpenModal(group.id)}
+                        />
+                      }
+                      getAccessToItem={GetAllGroupUsers}
+                      listOfItem={listOfUserPersonalGroup}
+                      removeAccessListItemFunction={handleRemoveUser}
+                      searchModalEditItem={lookingForUsers}
+                      setItemList={setUserPersonalGroupList}
+                      setItemToAdd={setUserToAdd}
+                      description={group.description}
+                      handleSelectorChange={handleChangeRights}
+                      handleRemoveFromList={handleLeaveGroup}
+                    />
+                  </Grid>
+                ))
+              ) : (
+                <Grid
+                  item
+                  container
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Typography variant="h6" component="h2">
+                    {t("noMatchingGroupFilter")}
+                  </Typography>
                 </Grid>
-              ))
-            ) : (
-              <Grid item container justifyContent="center" alignItems="center">
-                <Typography variant="h6" component="h2">
-                  {t("noMatchingGroupFilter")}
-                </Typography>
-              </Grid>
-            )}
+              ))}
             <PaginationControls
               currentPage={currentPage}
               totalPages={totalPages}
