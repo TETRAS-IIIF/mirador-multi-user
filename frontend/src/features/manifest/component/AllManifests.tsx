@@ -14,7 +14,7 @@ import {
 } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
 import {
-  Manifest,
+  Item,
   ManifestCanvases,
   ManifestGroupRights,
   manifestOrigin,
@@ -54,6 +54,7 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { removeManifestFromList } from "../api/removeManifestFromList.ts";
+import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -71,7 +72,7 @@ interface IAllManifests {
   userPersonalGroup: UserGroup;
   user: User;
   fetchManifestForUser: () => void;
-  manifests: Manifest[];
+  manifests: Item[];
   medias: Media[];
   fetchMediaForUser: () => void;
 }
@@ -98,7 +99,7 @@ export const AllManifests = ({
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [openSidePanel, setOpenSidePanel] = useState(false);
-  const [sortField, setSortField] = useState<keyof Manifest>("title");
+  const [sortField, setSortField] = useState<keyof Item>("title");
   const [sortOrder, setSortOrder] = useState("asc");
 
   const { t } = useTranslation();
@@ -109,54 +110,27 @@ export const AllManifests = ({
     setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
   };
 
-  const isInFilter = (manifest: Manifest) => {
-    if (manifestFilter) {
-      return manifest.title.includes(manifestFilter);
-    } else {
-      return true;
-    }
-  };
-
   const sortedItems = useMemo(() => {
     return [...manifests];
   }, [manifests, sortField, sortOrder]);
 
-  const currentPageData = useMemo(() => {
-    const filteredAndSortedItems = [...manifests]
-      .filter((manifest) => isInFilter(manifest))
-      .sort((a, b) => {
-        const aValue = a[sortField];
-        const bValue = b[sortField];
-        let comparison = 0;
-
-        if (sortField === "created_at") {
-          const aDate = typeof aValue === "string" ? new Date(aValue) : aValue;
-          const bDate = typeof bValue === "string" ? new Date(bValue) : bValue;
-          comparison = aDate.getTime() - bDate.getTime();
-        }
-
-        if (typeof aValue === "string" && typeof bValue === "string") {
-          comparison = aValue.localeCompare(bValue);
-        }
-
-        if (typeof aValue === "number" && typeof bValue === "number") {
-          comparison = aValue - bValue;
-        }
-        return sortOrder === "asc" ? comparison : -comparison;
-      });
-
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return filteredAndSortedItems.slice(start, end);
-  }, [
+  const currentPageData = useCurrentPageData(
     currentPage,
-    itemsPerPage,
-    sortedItems,
-    manifests,
     sortField,
     sortOrder,
+    sortedItems,
+    itemsPerPage,
+    [
+      currentPage,
+      itemsPerPage,
+      sortedItems,
+      manifests,
+      sortField,
+      sortOrder,
+      manifestFilter,
+    ],
     manifestFilter,
-  ]);
+  );
 
   const totalPages = Math.ceil(manifests.length / itemsPerPage);
 
@@ -332,7 +306,7 @@ export const AllManifests = ({
     }
   };
 
-  const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
+  const handleUpdateManifest = async (manifestToUpdate: Item) => {
     try {
       if (manifestToUpdate.origin === manifestOrigin.LINK) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -464,7 +438,7 @@ export const AllManifests = ({
                   />
                 </Grid>
                 <Grid item>
-                  <SortItemSelector<Manifest>
+                  <SortItemSelector<Item>
                     sortField={sortField}
                     setSortField={setSortField}
                     fields={["title", "created_at"]}
