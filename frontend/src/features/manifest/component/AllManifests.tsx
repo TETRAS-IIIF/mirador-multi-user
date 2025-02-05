@@ -14,7 +14,6 @@ import {
 } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
 import {
-  Item,
   Manifest,
   ManifestCanvases,
   ManifestGroupRights,
@@ -426,7 +425,7 @@ export const AllManifests = ({
                   />
                 </Grid>
                 <Grid item>
-                  <SortItemSelector<Item>
+                  <SortItemSelector<Manifest>
                     sortField={sortField}
                     setSortField={setSortField}
                     fields={["title", "created_at"]}
