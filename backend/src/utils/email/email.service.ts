@@ -2,16 +2,17 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { MailerService as MailerMain } from '@nestjs-modules/mailer';
 import { MailService } from './IMailService';
 import { CreateEmailServerDto } from './Dto/createEmailServerDto';
-import { accountCreationTemplate } from './templates/accountCreation';
+import { accountCreationTemplateEnglish } from './templates/accountCreation/English';
 import { CustomLogger } from '../Logger/CustomLogger.service';
 import { ConfirmationEmailDto } from './Dto/ConfirmationEmailDto';
 import { confirmationEmailTemplateEnglish } from './templates/confirmationMail/English';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { resetPassword } from './templates/resetPassword';
 import { ResetPasswordEmailDto } from './Dto/resetPasswordEmailDto';
 import { confirmationEmailTemplateFrench } from './templates/confirmationMail/French';
 import { confirmationEmailTemplateSpanish } from './templates/confirmationMail/Spanish';
+import { Language } from './utils';
+import { accountCreationTemplateFrench } from './templates/accountCreation/French';
 
 @Injectable()
 export class EmailServerService implements MailService {
@@ -20,12 +21,14 @@ export class EmailServerService implements MailService {
   constructor(
     private readonly mailerMain: MailerMain,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
   ) {}
 
   async sendMail(email: CreateEmailServerDto): Promise<void> {
     try {
-      const renderedTemplate = this._bodyTemplate(email.userName);
+      const renderedTemplate = this._bodyTemplate(
+        email.userName,
+        email.language,
+      );
       const plainText = `Hello ${email.userName}, your account was successfully created!`;
       const toReturn = await this._processSendEmail(
         email.to,
@@ -40,11 +43,18 @@ export class EmailServerService implements MailService {
     }
   }
 
-  private _bodyTemplate(userName: string): string {
+  private _bodyTemplate(userName: string, language: string): string {
     // Use the template function to generate the HTML content
-    return accountCreationTemplate({
-      userName: userName,
-    });
+    if (language === Language.ENGLISH) {
+      return accountCreationTemplateEnglish({
+        userName: userName,
+      });
+    }
+    if (language === Language.FRENCH) {
+      return accountCreationTemplateFrench({
+        userName: userName,
+      });
+    }
   }
 
   private _confirmMailTemplate(
