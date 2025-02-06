@@ -12,9 +12,11 @@ import metadata from './metadata';
 import { EmailServerService } from './utils/email/email.service';
 import { InternalServerErrorFilter } from './utils/ErrorFilters/InternalServerErrorExceptionFilter';
 import { UsersService } from './BaseEntities/users/users.service';
+import { json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.use(json({ limit: '50mb' }));
   app.useGlobalPipes(new ValidationPipe());
 
   app.useGlobalFilters(
