@@ -4,9 +4,18 @@ import { deleteAnnotationPage } from "../api/deleteAnnotationPage.ts";
 
 export default class MMUAdapter {
   /** */
-  constructor(projectId, annotationPageId) {
+  constructor(projectId, annotationPageId, user) {
     this.projectId = projectId;
     this.annotationPageId = annotationPageId;
+    this.user = user;
+  }
+
+  /**
+   * Get the storage adapter user
+   * @returns {*}
+   */
+  getStorageAdapterUser() {
+    return this.user;
   }
 
   /** */

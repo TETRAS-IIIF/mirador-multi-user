@@ -35,6 +35,7 @@ interface MiradorViewerProps {
   viewer: any;
   // Mirador use Plugin that allow to change state of Mirador
   useEditionPlugins: boolean;
+  user: any;
 }
 
 const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
@@ -48,7 +49,10 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
       HandleSetIsRunning,
       language,
       useEditionPlugins,
+      user,
     } = props;
+
+    console.log("MiradorViewer user", user);
 
     const viewerRef = useRef<HTMLDivElement | null>(null);
     const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
@@ -70,7 +74,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
           id: viewerRef.current.id,
           annotation: {
             adapter: (canvasId: string) =>
-              new MMUAdapter(project.id, `${canvasId}/annotationPage`),
+              new MMUAdapter(project.id, `${canvasId}/annotationPage`, user),
             // adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
             exportLocalStorageAnnotations: false,
           },
