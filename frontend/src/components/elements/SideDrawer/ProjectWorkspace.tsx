@@ -58,6 +58,7 @@ export function ProjectWorkspace({
           ref={myRef}
           HandleSetIsRunning={HandleSetIsRunning}
           useEditionPlugins={isEditor}
+          user={user}
         />
       </Grid>
     </SidePanelManifest>
