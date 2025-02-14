@@ -87,6 +87,22 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
           },
           language: language,
           projectId: project.id,
+          themes: {
+            light: {
+              typography: {
+                formSectionTitle: {
+                  color: "rgb(25, 103, 210);",
+                },
+              },
+            },
+            dark: {
+              typography: {
+                formSectionTitle: {
+                  color: "rgb(25, 103, 210);",
+                },
+              },
+            },
+          },
         };
 
         let loadingMiradorViewer;
