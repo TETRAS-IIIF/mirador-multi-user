@@ -18,6 +18,7 @@ import "./style/mirador.css";
 import { Project } from "../projects/types/types.ts";
 import MMUAdapter from "./adapter/MMUAdapter";
 import ManifestListTools from "mirador-mltools-plugin-mmu/es/index.js";
+import { User } from "../auth/types/types.ts";
 
 interface MiradorViewerHandle {
   setViewer: () => IState;
@@ -35,7 +36,7 @@ interface MiradorViewerProps {
   viewer: any;
   // Mirador use Plugin that allow to change state of Mirador
   useEditionPlugins: boolean;
-  user: any;
+  user: User;
 }
 
 const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
@@ -51,8 +52,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
       useEditionPlugins,
       user,
     } = props;
-
-    console.log("MiradorViewer user", user);
 
     const viewerRef = useRef<HTMLDivElement | null>(null);
     const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
@@ -74,7 +73,11 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
           id: viewerRef.current.id,
           annotation: {
             adapter: (canvasId: string) =>
-              new MMUAdapter(project.id, `${canvasId}/annotationPage`, user),
+              new MMUAdapter(
+                project.id,
+                `${canvasId}/annotationPage`,
+                user.name,
+              ),
             // adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
             exportLocalStorageAnnotations: false,
           },
