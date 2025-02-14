@@ -28,10 +28,10 @@
     "json-edit-react": "^1.17.1",
     "manifest-editor": "^1.0.2",
     "manifesto.js": "^4.2.21",
-    "mirador": "npm:mirador-video@^1.0.17",
-    "mirador-annotation-editor": "^1.0.82",
-    "mirador-annotation-editor-video": "^0.0.51",
-    "mirador-mltools-plugin-mmu": "^0.0.16",
+    "mirador": "npm:arvest-mv@^1.0.17",
+    "mirador-annotation-editor": "npm:arvest-maev@^1.0.81",
+    "mirador-annotation-editor-video": "npm:arvest-maev-wrapper@^0.0.50",
+    "mirador-mltools-plugin-mmu": "npm:arvest-ml-tools@^0.0.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-favicon": "^2.0.7",
@@ -63,10 +63,10 @@
   },
   "overrides": {
     "mirador-annotation-editor": {
-      "mirador": "npm:mirador-video@^1.0.17"
+      "mirador": "npm:arvest-mv@^1.0.17"
     },
     "mirador-mltools-plugin-mmu": {
-      "mirador": "npm:mirador-video@^1.0.17"
+      "mirador": "npm:arvest-mv@^1.0.17"
     }
   }
 }
