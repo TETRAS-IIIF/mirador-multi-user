@@ -137,7 +137,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
             annotation: {
               ...miradorState.config.annotation,
               adapter: (canvasId: string) =>
-                new MMUAdapter(project.id, `${canvasId}/annotationPage`),
+                new MMUAdapter(project.id, `${canvasId}/annotationPage`, user.name),
             },
           };
           const miradorStateWithAdapter = {
