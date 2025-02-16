@@ -62,10 +62,10 @@
   },
   "overrides": {
     "mirador-annotation-editor": {
-      "mirador": "npm:arvest-mv@^1.0.17"
+      "mirador": "npm:mirador-video@^1.0.17"
     },
     "mirador-mltools-plugin-mmu": {
-      "mirador": "npm:arvest-mv@^1.0.17"
+      "mirador": "npm:mirador-video@^1.0.17"
     }
   }
 }
