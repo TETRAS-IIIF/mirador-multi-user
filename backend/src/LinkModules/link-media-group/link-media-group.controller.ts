@@ -18,7 +18,6 @@ import { AuthGuard } from '../../auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
-import { fileFilterMedia } from '../../BaseEntities/media/utils/fileFilterMedia';
 import { SharpPipeInterceptor } from '../../utils/Custom_pipes/sharp.pipe';
 import { mediaOrigin } from '../../enum/origins';
 import { MediaLinkInterceptor } from '../../utils/Custom_pipes/media-link.pipe';
@@ -30,8 +29,8 @@ import { ActionType } from '../../enum/actions';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Media } from '../../BaseEntities/media/entities/media.entity';
-import { mediaTypes } from '../../enum/mediaTypes';
 import { UPLOAD_FOLDER } from '../../utils/constants';
+import { fileFilterMedia } from '../../BaseEntities/media/utils/fileFilterMedia';
 
 @ApiBearerAuth()
 @Controller('link-media-group')
@@ -79,9 +78,9 @@ export class LinkMediaGroupController {
       description: 'your media description',
       user_group: userGroup,
       path: `${file.filename}`,
-      hash: `${(req as any).generatedHash}`,
+      hash: req.generatedHash ? `${(req as any).generatedHash}` : null,
       origin: mediaOrigin.UPLOAD,
-      mediaTypes: mediaTypes.IMAGE,
+      mediaTypes: req.fileType,
     };
     return await this.linkMediaGroupService.createMedia(mediaToCreate);
   }

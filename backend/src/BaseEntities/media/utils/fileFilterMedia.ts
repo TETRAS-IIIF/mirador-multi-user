@@ -1,18 +1,32 @@
 import { UnsupportedMediaTypeException } from '@nestjs/common';
 
 export const fileFilterMedia = (req, file, callback) => {
-  // TODO the check must be done on the MIME type. Here on file.mimetype field
+  // MIME types to exclude (video and audio)
+  const excludedMimeTypes = ['video/', 'audio/'];
 
-  console.log(parseInt(process.env.MAX_UPLOAD_SIZE, 10));
-  if (
-    !file.originalname.match(
-      /\.(jpg|jpeg|png|webp|gif|bmp|tiff|svg|ico|jfif|heic|heif)$/i,
-    )
-  ) {
+  // File extensions to exclude (video and audio)
+  const excludedExtensions =
+    /\.(mp4|mov|avi|wmv|flv|mkv|webm|mpg|mpeg|3gp|ogg|ogv|m4v|mp3|wav|aac|flac|m4a|wma)$/i;
+
+  // Check if the MIME type starts with an excluded type
+  if (excludedMimeTypes.some((type) => file.mimetype.startsWith(type))) {
     return callback(
-      new UnsupportedMediaTypeException('Only image files are allowed!'),
+      new UnsupportedMediaTypeException(
+        'Audio and video files are not allowed!',
+      ),
       false,
     );
   }
+
+  // Check if the file extension matches any excluded formats
+  if (excludedExtensions.test(file.originalname)) {
+    return callback(
+      new UnsupportedMediaTypeException(
+        'Audio and video files are not allowed!',
+      ),
+      false,
+    );
+  }
+
   callback(null, true);
 };
