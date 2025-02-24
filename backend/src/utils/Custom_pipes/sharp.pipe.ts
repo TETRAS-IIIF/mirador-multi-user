@@ -11,6 +11,7 @@ import { createWriteStream } from 'fs';
 import { join } from 'path';
 import { generateAlphanumericSHA1Hash } from '../hashGenerator';
 import { THUMBNAIL_FILE_SUFFIX, UPLOAD_FOLDER } from '../constants';
+import { isImage } from '../checkTypes/isImage';
 
 @Injectable()
 export class SharpPipeInterceptor implements NestInterceptor {
@@ -20,7 +21,8 @@ export class SharpPipeInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
     const file = request.file;
-
+    const isThsAnImage = isImage(request.file);
+    console.log('isThsAnImage :', isThsAnImage);
     if (file) {
       const filePath = file.path;
       return sharp(filePath)

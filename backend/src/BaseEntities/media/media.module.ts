@@ -4,11 +4,11 @@ import { MediaController } from './media.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Media } from './entities/media.entity';
 import { LinkMediaGroup } from '../../LinkModules/link-media-group/entities/link-media-group.entity';
-import { Tag } from "../tag/entities/tag.entity";
+import { Tag } from '../tag/entities/tag.entity';
 
 @Module({
   exports: [MediaService],
-  imports: [TypeOrmModule.forFeature([Media, LinkMediaGroup,Tag])],
+  imports: [TypeOrmModule.forFeature([Media, LinkMediaGroup, Tag])],
   controllers: [MediaController],
   providers: [MediaService],
 })
