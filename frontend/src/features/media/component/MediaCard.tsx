@@ -11,6 +11,9 @@ import { LinkUserGroup } from "../../user-group/types/types.ts";
 import { useTranslation } from "react-i18next";
 import { Grid } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import placeholder from "../../../assets/Placeholder.svg";
+import videoPlaceHolder from "../../../assets/video_placeholder.webp";
+import otherPlaceHolder from "../../../assets/other_placeholder.webp";
 
 interface IMediaCardProps {
   media: Media;
@@ -65,6 +68,23 @@ export const MediaCard = ({
   handleRemoveMediaFromList,
 }: IMediaCardProps) => {
   const { t } = useTranslation();
+  console.log("media", media);
+  const thumbnailUrl = (): string | null => {
+    if (media.mediaTypes === MediaTypes.IMAGE) {
+      return media.hash
+        ? `${caddyUrl}/${media.hash}/thumbnail.webp`
+        : placeholder;
+    }
+    if (media.mediaTypes === MediaTypes.VIDEO) {
+      return media.hash
+        ? `${caddyUrl}/${media.hash}/thumbnail.webp`
+        : videoPlaceHolder;
+    }
+    if (media.mediaTypes === MediaTypes.OTHER) {
+      return otherPlaceHolder;
+    }
+    return null;
+  };
   return (
     <MMUCard
       objectTypes={ObjectTypes.MEDIA}
@@ -129,11 +149,7 @@ export const MediaCard = ({
       searchModalEditItem={handleLookingForUserGroups}
       setItemList={setGroupList}
       setItemToAdd={setUserToAdd}
-      thumbnailUrl={
-        media.hash && media.mediaTypes != MediaTypes.OTHER
-          ? `${caddyUrl}/${media.hash}/thumbnail.webp`
-          : null
-      }
+      thumbnailUrl={thumbnailUrl()}
       updateItem={HandleUpdateMedia}
       handleSelectorChange={handleChangeRights}
       getGroupByOption={getGroupByOption}
