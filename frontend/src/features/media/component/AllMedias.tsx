@@ -155,9 +155,9 @@ export const AllMedias = ({
       if (!event.target.files || event.target.files.length === 0) return;
 
       const file = event.target.files[0];
-
+      console.log("is valid : ", isValidFileForUpload(file));
       if (!isValidFileForUpload(file)) {
-        toast.error(t("error_image_type"));
+        toast.error(t("unsupportedMedia"));
         return;
       }
       if (isFileSizeUnderLimit(file)) {

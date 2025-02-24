@@ -193,7 +193,7 @@
   "tooltipCopyLink": "Copier le lien",
   "tooltipMediaLink": "Copier le lien du média",
   "tooltipSnapshotButton": "Générer un aperçu du projet",
-  "unsupportedMedia": "Type de média non pris en charge. Pour télécharger des vidéos, utilisez YouTube, PeerTube ou fournissez une URL de média.",
+  "unsupportedMedia": "Type de média non pris en charge. Pour télécharger des vidéos ou de l'audio, utilisez YouTube, PeerTube ou fournissez une URL de média.",
   "urlIsNotValid": "L'URL n'est pas valide",
   "userSuccessfullyUpdated": "Utilisateur mis à jour avec succès",
   "users": "Utilisateurs",
