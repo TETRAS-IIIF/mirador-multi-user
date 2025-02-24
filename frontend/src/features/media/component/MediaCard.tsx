@@ -1,4 +1,4 @@
-import { Media } from "../types/types.ts";
+import { Media, MediaTypes } from "../types/types.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { ObjectTypes } from "../../tag/type.ts";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
@@ -130,7 +130,9 @@ export const MediaCard = ({
       setItemList={setGroupList}
       setItemToAdd={setUserToAdd}
       thumbnailUrl={
-        media.hash ? `${caddyUrl}/${media.hash}/thumbnail.webp` : null
+        media.hash && media.mediaTypes != MediaTypes.OTHER
+          ? `${caddyUrl}/${media.hash}/thumbnail.webp`
+          : null
       }
       updateItem={HandleUpdateMedia}
       handleSelectorChange={handleChangeRights}
