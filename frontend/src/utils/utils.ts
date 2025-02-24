@@ -8,8 +8,9 @@ const isImageFile = (file: File) => {
   );
 };
 
-const maxUploadSize = import.meta.env.VITE_MAX_UPLOAD_SIZE * 1024 * 1024;
+const maxUploadSize =
+  parseInt(import.meta.env.VITE_MAX_UPLOAD_SIZE, 10) * 1024 * 1024;
 
 export const isFileSizeUnderLimit = (file: File) => {
-  return file.size <= maxUploadSize;
+  return file.size >= maxUploadSize;
 };
