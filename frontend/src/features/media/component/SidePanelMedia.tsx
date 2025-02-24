@@ -19,7 +19,6 @@ import {
   SyntheticEvent,
   useCallback,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import toast from "react-hot-toast";
@@ -39,6 +38,7 @@ import { a11yProps } from "../../../components/elements/SideBar/allyProps.tsx";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import ImageIcon from "@mui/icons-material/Image";
 import { useTranslation } from "react-i18next";
+import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
 
 const CustomImageItem = styled(ImageListItem)({
   position: "relative",
@@ -100,6 +100,7 @@ const MEDIA_TYPES_TABS = {
   ALL: 0,
   VIDEO: 1,
   IMAGE: 2,
+  OTHER: 3,
 };
 
 export const SidePanelMedia = ({
@@ -116,7 +117,8 @@ export const SidePanelMedia = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [mediaTabShown, setMediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
-
+  const [sortField, setSortField] = useState<keyof Media>("title");
+  const [sortOrder, setSortOrder] = useState("asc");
   const itemsPerPage = 9;
 
   const { t } = useTranslation();
@@ -130,37 +132,71 @@ export const SidePanelMedia = ({
     }
   };
 
-  const isInFilter = (media: Media) => {
-    if (mediaFilter) {
-      return media.title.includes(mediaFilter);
-    } else {
-      return true;
-    }
-  };
+  // const isInFilter = (media: Media) => {
+  //   if (mediaFilter) {
+  //     return media.title.includes(mediaFilter);
+  //   } else {
+  //     return true;
+  //   }
+  // };
 
   useEffect(() => {
     fetchMediaForUser();
   }, []);
 
-  const currentPageData = useMemo(() => {
-    const filteredAndSortedItems = [...medias]
-      .filter((media) => {
-        if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-          return media.mediaTypes === MediaTypes.VIDEO;
-        } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-          return media.mediaTypes === MediaTypes.IMAGE;
-        }
-        return true;
-      })
-      .filter((media) => isInFilter(media));
-    // Paginate the filtered and sorted items
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return filteredAndSortedItems.slice(start, end);
-  }, [currentPage, medias, mediaTabShown, mediaFilter]);
+  const filterByMediaType = (medias: Media[]) => {
+    if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
+      return medias.filter((media) => media.mediaTypes === MediaTypes.VIDEO);
+    } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
+      return medias.filter((media) => media.mediaTypes === MediaTypes.IMAGE);
+    } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
+      return medias.filter((media) => media.mediaTypes === MediaTypes.OTHER);
+    } else if (mediaTabShown === MEDIA_TYPES_TABS.ALL) {
+      return medias;
+    }
+    return [];
+  };
 
-  const totalPages = Math.ceil(medias.length / itemsPerPage);
+  // const currentPageData = useMemo(() => {
+  //   const filteredAndSortedItems = [...medias]
+  //     .filter((media) => {
+  //       if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
+  //         return media.mediaTypes === MediaTypes.VIDEO;
+  //       } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
+  //         return media.mediaTypes === MediaTypes.IMAGE;
+  //       }
+  //       return true;
+  //     })
+  //     .filter((media) => isInFilter(media));
+  //   // Paginate the filtered and sorted items
+  //   const start = (currentPage - 1) * itemsPerPage;
+  //   const end = start + itemsPerPage;
+  //   return filteredAndSortedItems.slice(start, end);
+  // }, [currentPage, medias, mediaTabShown, mediaFilter]);
 
+  const currentPageData = useCurrentPageData({
+    currentPage,
+    sortField,
+    sortOrder,
+    items: medias,
+    itemsPerPage,
+    filter: mediaFilter,
+    customSortFunction: filterByMediaType,
+  });
+  console.log("mediaTabShown", mediaTabShown);
+  console.log("currentPageData", currentPageData);
+  const totalPages = Math.ceil(
+    medias.filter((media) => {
+      if (mediaTabShown === 1) {
+        return media.mediaTypes === MediaTypes.VIDEO;
+      } else if (mediaTabShown === 2) {
+        return media.mediaTypes === MediaTypes.IMAGE;
+      } else if (mediaTabShown === 3) {
+        return media.mediaTypes === MediaTypes.OTHER;
+      }
+      return true;
+    }).length / itemsPerPage,
+  );
   const toggleDrawer = () => {
     setOpen();
   };
@@ -204,6 +240,7 @@ export const SidePanelMedia = ({
     document.getElementById("file-upload")!.click();
   };
 
+  console.log("currentPageData.length", currentPageData.length);
   return (
     <Grid container>
       {display && (
@@ -255,11 +292,12 @@ export const SidePanelMedia = ({
           <Tabs
             value={mediaTabShown}
             onChange={handleChangeTab}
-            aria-label="basic tabs example"
+            aria-label="tabs"
           >
-            <Tab label="All" {...a11yProps(0)} />
-            <Tab label="Videos" {...a11yProps(1)} />
-            <Tab label="Images" {...a11yProps(2)} />
+            <Tab label={t("All")} {...a11yProps(0)} />
+            <Tab label={t("Videos")} {...a11yProps(1)} />
+            <Tab label={t("Images")} {...a11yProps(2)} />
+            <Tab label={t("other")} {...a11yProps(3)} />
           </Tabs>
 
           {currentPageData.length > 0 ? (

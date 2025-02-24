@@ -100,7 +100,7 @@ export const AllMedias = ({
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
-  const [mediaTabShown, setmediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
+  const [mediaTabShown, setMediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
   const [sortField, setSortField] = useState<keyof Media>("title");
   const [sortOrder, setSortOrder] = useState("asc");
   const { t } = useTranslation();
@@ -110,7 +110,7 @@ export const AllMedias = ({
   }, []);
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
-    setmediaTabShown(newValue);
+    setMediaTabShown(newValue);
     setCurrentPage(1);
   };
 
@@ -149,6 +149,8 @@ export const AllMedias = ({
         return media.mediaTypes === MediaTypes.VIDEO;
       } else if (mediaTabShown === 2) {
         return media.mediaTypes === MediaTypes.IMAGE;
+      } else if (mediaTabShown === 3) {
+        return media.mediaTypes === MediaTypes.OTHER;
       }
       return true;
     }).length / itemsPerPage,
