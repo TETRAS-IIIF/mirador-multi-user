@@ -84,6 +84,7 @@ const MEDIA_TYPES_TABS = {
   ALL: 0,
   VIDEO: 1,
   IMAGE: 2,
+  OTHER: 3,
 };
 
 export const AllMedias = ({
@@ -124,6 +125,8 @@ export const AllMedias = ({
       return medias.filter((media) => media.mediaTypes === MediaTypes.VIDEO);
     } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
       return medias.filter((media) => media.mediaTypes === MediaTypes.IMAGE);
+    } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
+      return medias.filter((media) => media.mediaTypes === MediaTypes.OTHER);
     } else if (mediaTabShown === MEDIA_TYPES_TABS.ALL) {
       return medias;
     }
@@ -361,6 +364,7 @@ export const AllMedias = ({
                 <Tab label={t("All")} {...a11yProps(0)} />
                 <Tab label={t("Videos")} {...a11yProps(1)} />
                 <Tab label={t("Images")} {...a11yProps(2)} />
+                <Tab label={t("other")} {...a11yProps(3)} />
               </Tabs>
             </Box>
           </Grid>
