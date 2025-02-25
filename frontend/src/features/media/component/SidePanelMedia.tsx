@@ -5,8 +5,6 @@ import {
   Grid,
   IconButton,
   ImageList,
-  ImageListItem,
-  ImageListItemBar,
   styled,
   Tab,
   Tabs,
@@ -35,20 +33,9 @@ import { PaginationControls } from "../../../components/elements/Pagination.tsx"
 import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
 import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
 import { a11yProps } from "../../../components/elements/SideBar/allyProps.tsx";
-import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
-import ImageIcon from "@mui/icons-material/Image";
 import { useTranslation } from "react-i18next";
 import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
-
-const CustomImageItem = styled(ImageListItem)({
-  position: "relative",
-  "&:hover img": {
-    opacity: 0.4,
-  },
-  "&:hover .overlayButton": {
-    opacity: 1,
-  },
-});
+import { ImageBox } from "./ImageBox.tsx";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -60,16 +47,6 @@ const VisuallyHiddenInput = styled("input")({
   left: 0,
   whiteSpace: "nowrap",
   width: 1,
-});
-
-const CustomButton = styled(Button)({
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  textAlign: "center",
-  opacity: 0,
-  transition: "opacity 0.3s ease",
 });
 
 const ToggleButton = styled(IconButton)(({ open }: { open: boolean }) => ({
@@ -120,7 +97,7 @@ export const SidePanelMedia = ({
   const [sortField, setSortField] = useState<keyof Media>("title");
   const [sortOrder, setSortOrder] = useState("asc");
   const itemsPerPage = 9;
-
+  console.log("medias", medias);
   const { t } = useTranslation();
 
   const handleCopyToClipBoard = async (path: string) => {
@@ -132,47 +109,26 @@ export const SidePanelMedia = ({
     }
   };
 
-  // const isInFilter = (media: Media) => {
-  //   if (mediaFilter) {
-  //     return media.title.includes(mediaFilter);
-  //   } else {
-  //     return true;
-  //   }
-  // };
-
   useEffect(() => {
     fetchMediaForUser();
-  }, []);
+  }, [open]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [mediaTabShown, mediaFilter]);
 
   const filterByMediaType = (medias: Media[]) => {
-    if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-      return medias.filter((media) => media.mediaTypes === MediaTypes.VIDEO);
-    } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-      return medias.filter((media) => media.mediaTypes === MediaTypes.IMAGE);
-    } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
-      return medias.filter((media) => media.mediaTypes === MediaTypes.OTHER);
-    } else if (mediaTabShown === MEDIA_TYPES_TABS.ALL) {
-      return medias;
+    switch (mediaTabShown) {
+      case MEDIA_TYPES_TABS.VIDEO:
+        return medias.filter((media) => media.mediaTypes === MediaTypes.VIDEO);
+      case MEDIA_TYPES_TABS.IMAGE:
+        return medias.filter((media) => media.mediaTypes === MediaTypes.IMAGE);
+      case MEDIA_TYPES_TABS.OTHER:
+        return medias.filter((media) => media.mediaTypes === MediaTypes.OTHER);
+      default:
+        return medias;
     }
-    return [];
   };
-
-  // const currentPageData = useMemo(() => {
-  //   const filteredAndSortedItems = [...medias]
-  //     .filter((media) => {
-  //       if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-  //         return media.mediaTypes === MediaTypes.VIDEO;
-  //       } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-  //         return media.mediaTypes === MediaTypes.IMAGE;
-  //       }
-  //       return true;
-  //     })
-  //     .filter((media) => isInFilter(media));
-  //   // Paginate the filtered and sorted items
-  //   const start = (currentPage - 1) * itemsPerPage;
-  //   const end = start + itemsPerPage;
-  //   return filteredAndSortedItems.slice(start, end);
-  // }, [currentPage, medias, mediaTabShown, mediaFilter]);
 
   const currentPageData = useCurrentPageData({
     currentPage,
@@ -183,8 +139,7 @@ export const SidePanelMedia = ({
     filter: mediaFilter,
     customSortFunction: filterByMediaType,
   });
-  console.log("mediaTabShown", mediaTabShown);
-  console.log("currentPageData", currentPageData);
+
   const totalPages = Math.ceil(
     medias.filter((media) => {
       if (mediaTabShown === 1) {
@@ -239,7 +194,8 @@ export const SidePanelMedia = ({
   const handleButtonClick = () => {
     document.getElementById("file-upload")!.click();
   };
-
+  console.log("mediaTabShown", mediaTabShown);
+  console.log("currentPageData", currentPageData);
   console.log("currentPageData.length", currentPageData.length);
   return (
     <Grid container>
@@ -299,75 +255,31 @@ export const SidePanelMedia = ({
             <Tab label={t("Images")} {...a11yProps(2)} />
             <Tab label={t("other")} {...a11yProps(3)} />
           </Tabs>
-
-          {currentPageData.length > 0 ? (
+          {!medias.length && (
+            <Grid container justifyContent={"center"}>
+              <Typography variant="h6" component="h2">
+                {t("noMediaYet")}
+              </Typography>
+            </Grid>
+          )}
+          {medias.length === 0 ? (
+            <Grid container justifyContent="center">
+              <Typography variant="h6" component="h2">
+                {t("noMediaYet")}
+              </Typography>
+            </Grid>
+          ) : currentPageData.length > 0 ? (
             <ImageList
               sx={{ minWidth: 500, padding: 1, width: 500 }}
               cols={3}
               rowHeight={164}
             >
               {currentPageData.map((media) => (
-                <CustomImageItem
-                  key={media.hash}
-                  sx={{ position: "relative", width: 150, height: 150 }}
-                >
-                  <Box
-                    component="img"
-                    src={`${caddyUrl}/${media.hash}/thumbnail.webp`}
-                    alt={media.title}
-                    loading="lazy"
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      "@media(min-resolution: 2dppx)": {
-                        width: "100%",
-                        height: "100%",
-                      },
-                    }}
-                  />
-                  <ImageListItemBar
-                    title={media.title}
-                    sx={{
-                      position: "absolute",
-                      bottom: 0,
-                      color: "white",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: 8,
-                      right: 8,
-                      color: "white",
-                      backgroundColor: "rgba(0, 0, 0, 0.5)",
-                      padding: "4px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {media.mediaTypes === MediaTypes.VIDEO ? (
-                      <OndemandVideoIcon />
-                    ) : (
-                      <ImageIcon />
-                    )}
-                  </Box>
-                  <CustomButton
-                    className="overlayButton"
-                    disableRipple
-                    onClick={
-                      media.path
-                        ? () =>
-                            handleCopyToClipBoard(
-                              `${caddyUrl}/${media.hash}/${media.path}`,
-                            )
-                        : () => handleCopyToClipBoard(`${media.url}`)
-                    }
-                  >
-                    Copy path to clipboard
-                  </CustomButton>
-                </CustomImageItem>
+                <ImageBox
+                  media={media}
+                  caddyUrl={caddyUrl}
+                  handleCopyToClipBoard={handleCopyToClipBoard}
+                />
               ))}
             </ImageList>
           ) : (

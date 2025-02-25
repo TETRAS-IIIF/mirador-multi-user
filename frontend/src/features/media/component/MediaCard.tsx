@@ -68,7 +68,6 @@ export const MediaCard = ({
   handleRemoveMediaFromList,
 }: IMediaCardProps) => {
   const { t } = useTranslation();
-  console.log("media", media);
   const thumbnailUrl = (): string | null => {
     if (media.mediaTypes === MediaTypes.IMAGE) {
       return media.hash
