@@ -1,18 +1,16 @@
 import {
-  Column, CreateDateColumn,
+  Column,
+  CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn
-} from "typeorm";
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { IsEnum, IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../../LinkModules/link-group-project/entities/link-group-project.entity';
 import { LinkMediaGroup } from '../../../LinkModules/link-media-group/entities/link-media-group.entity';
 import { UserGroupTypes } from '../../../enum/user-group-types';
 import { LinkUserGroup } from '../../../LinkModules/link-user-group/entities/link-user-group.entity';
 import { LinkManifestGroup } from '../../../LinkModules/link-manifest-group/entities/link-manifest-group.entity';
-import { Tag } from '../../tag/entities/tag.entity';
 import { LinkMetadataFormatGroup } from '../../../LinkModules/link-metadata-format-group/entities/link-metadata-format-group.entity';
 
 @Entity()
@@ -62,10 +60,6 @@ export class UserGroup {
     (linkMetadataFormatGroup) => linkMetadataFormatGroup.user_group,
   )
   linkMetadataFormatGroup: LinkMetadataFormatGroup[];
-
-  @ManyToOne(() => Tag)
-  @JoinColumn({ name: 'tagId' })
-  tag: Tag;
 
   @CreateDateColumn({
     type: 'timestamp',

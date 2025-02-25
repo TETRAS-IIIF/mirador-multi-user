@@ -1,15 +1,14 @@
 import {
   Column,
   CreateDateColumn,
-  Entity, JoinColumn, ManyToOne,
+  Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
+  UpdateDateColumn,
+} from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkManifestGroup } from '../../../LinkModules/link-manifest-group/entities/link-manifest-group.entity';
 import { manifestOrigin } from '../../../enum/origins';
-import { Tag } from "../../tag/entities/tag.entity";
 
 @Entity()
 export class Manifest {
@@ -68,8 +67,4 @@ export class Manifest {
     (linkManifestGroup) => linkManifestGroup.manifest,
   )
   linkManifestGroup: LinkManifestGroup;
-
-  @ManyToOne(() => Tag)
-  @JoinColumn({ name: 'tagId' })
-  tag: Tag;
 }

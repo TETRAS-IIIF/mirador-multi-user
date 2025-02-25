@@ -19,8 +19,6 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { EmailServerModule } from './utils/email/email.module';
 import { CustomLogger } from './utils/Logger/CustomLogger.service';
 import { LinkManifestGroupModule } from './LinkModules/link-manifest-group/link-manifest-group.module';
-import { TagModule } from './BaseEntities/tag/tag.module';
-import { TaggingModule } from './LinkModules/tagging/tagging.module';
 import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
 import { UserManagementModule } from './user-management/user-management.module';
 import { MetadataFormatModule } from './BaseEntities/metadata-format/metadata-format.module';
@@ -80,8 +78,6 @@ import { AnnotationPageModule } from './BaseEntities/annotation-page/annotation-
     LinkManifestGroupModule,
     ManifestModule,
     EmailServerModule,
-    TagModule,
-    TaggingModule,
     EmailConfirmationModule,
     UserManagementModule,
     MetadataFormatModule,
