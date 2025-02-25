@@ -11,8 +11,8 @@ export class EmailConfirmationService {
 
   public async confirmEmail(email: string) {
     const user = await this.usersService.getByEmail(email);
-    if (user.isEmailConfirmed) {
-      throw new BadRequestException('Email already confirmed');
+    if (user.isEmailConfirmed && user.termsValidatedAt) {
+      throw new BadRequestException('Email and terms already confirmed');
     }
     await this.usersService.validTermsForUser(email);
     await this.usersService.markEmailAsConfirmed(email);

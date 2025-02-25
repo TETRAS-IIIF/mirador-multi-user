@@ -158,16 +158,23 @@ export class LinkUserGroupService {
   }
 
   public async sendConfirmationLink(email: string, language: string) {
-    const user = await this.userService.findOneByMail(email);
-    if (user.isEmailConfirmed) {
-      throw new BadRequestException('Email already confirmed');
+    try {
+      const user = await this.userService.findOneByMail(email);
+      if (user.isEmailConfirmed && user.termsValidatedAt) {
+        throw new BadRequestException('Email and terms already confirmed');
+      }
+      await this.emailService.sendConfirmationEmail({
+        to: user.mail,
+        subject: 'Account creation',
+        userName: user.name,
+        language: language,
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'An error occurred while resending the user mail',
+      );
     }
-    await this.emailService.sendConfirmationEmail({
-      to: user.mail,
-      subject: 'Account creation',
-      userName: user.name,
-      language: language,
-    });
   }
 
   async createUserGroup(

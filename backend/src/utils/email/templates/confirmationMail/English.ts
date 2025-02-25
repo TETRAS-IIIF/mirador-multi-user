@@ -6,7 +6,7 @@ export const confirmationEmailTemplateEnglish = (data: {
 <html>
 <div>
 <p>Welcome to ${process.env.INSTANCE_NAME} ${data.name}!<br/><br/> 
-To confirm your email address, click here: <a href="${data.url}">${data.url}</a></p>
+To confirm your email address and validate terms, click here: <a href="${data.url}">${data.url}</a></p>
 <br/><br/>
 Thanks <br/>
 The ${process.env.INSTANCE_NAME} team
