@@ -45,6 +45,7 @@ export enum MediaTypes {
   VIDEO = "video",
   IMAGE = "image",
   AUDIO = "audio",
+  OTHER = "other",
 }
 
 export type YoutubeVideoJson = {
