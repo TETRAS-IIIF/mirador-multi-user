@@ -2,6 +2,9 @@ import { Box, Button, ImageListItemBar, styled } from "@mui/material";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import ImageIcon from "@mui/icons-material/Image";
 import { Media, MediaTypes } from "../types/types";
+import placeholder from "../../../assets/Placeholder.svg";
+import videoPlaceHolder from "../../../assets/video_placeholder.webp";
+import otherPlaceHolder from "../../../assets/other_placeholder.webp";
 
 const CustomImageItem = styled("div")({
   position: "relative",
@@ -36,11 +39,27 @@ export const ImageBox = ({
   caddyUrl,
   handleCopyToClipBoard,
 }: ImageBoxProps) => {
+  const thumbnailUrl = (): string | undefined => {
+    if (media.mediaTypes === MediaTypes.IMAGE) {
+      return media.hash
+        ? `${caddyUrl}/${media.hash}/thumbnail.webp`
+        : placeholder;
+    }
+    if (media.mediaTypes === MediaTypes.VIDEO) {
+      return media.hash
+        ? `${caddyUrl}/${media.hash}/thumbnail.webp`
+        : videoPlaceHolder;
+    }
+    if (media.mediaTypes === MediaTypes.OTHER) {
+      return otherPlaceHolder;
+    }
+    return undefined;
+  };
   return (
     <CustomImageItem key={media.id}>
       <Box
         component="img"
-        src={`${caddyUrl}/${media.hash}/thumbnail.webp`}
+        src={thumbnailUrl()}
         alt={media.title}
         loading="lazy"
         sx={{

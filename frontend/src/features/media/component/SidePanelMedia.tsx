@@ -94,8 +94,8 @@ export const SidePanelMedia = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [mediaTabShown, setMediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
-  const [sortField, setSortField] = useState<keyof Media>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortField] = useState<keyof Media>("title");
+  const [sortOrder] = useState("asc");
   const itemsPerPage = 9;
   console.log("medias", medias);
   const { t } = useTranslation();
