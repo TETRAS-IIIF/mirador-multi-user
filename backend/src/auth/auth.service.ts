@@ -46,6 +46,7 @@ export class AuthService {
           sub: user.id,
           user: user.name,
           isEmailConfirmed: user.isEmailConfirmed,
+          termsValidatedAt: user.termsValidatedAt,
         };
 
         return {
@@ -68,6 +69,7 @@ export class AuthService {
         sub: user.id,
         user: user.name,
         isEmailConfirmed: user.isEmailConfirmed,
+        termsValidatedAt: user.termsValidatedAt,
       };
 
       return {
@@ -169,11 +171,9 @@ export class AuthService {
   async findProfile(id: number) {
     try {
       const user = await this.usersService.findOne(id);
-
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
-
       return {
         id: user.id,
         mail: user.mail,

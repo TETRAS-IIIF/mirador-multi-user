@@ -33,6 +33,7 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
+    console.log('profile requested')
     return this.authService.findProfile(req.user.sub);
   }
 
