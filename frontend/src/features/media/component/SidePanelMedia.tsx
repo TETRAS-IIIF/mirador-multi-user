@@ -97,7 +97,6 @@ export const SidePanelMedia = ({
   const [sortField] = useState<keyof Media>("title");
   const [sortOrder] = useState("asc");
   const itemsPerPage = 9;
-  console.log("medias", medias);
   const { t } = useTranslation();
 
   const handleCopyToClipBoard = async (path: string) => {
@@ -194,9 +193,6 @@ export const SidePanelMedia = ({
   const handleButtonClick = () => {
     document.getElementById("file-upload")!.click();
   };
-  console.log("mediaTabShown", mediaTabShown);
-  console.log("currentPageData", currentPageData);
-  console.log("currentPageData.length", currentPageData.length);
   return (
     <Grid container>
       {display && (

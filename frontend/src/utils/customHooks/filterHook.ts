@@ -35,7 +35,6 @@ export const useCurrentPageData = ({
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
 
-    console.log("filteredAndSortedItems", filteredAndSortedItems);
     return filteredAndSortedItems.slice(start, end);
   }, [
     items,

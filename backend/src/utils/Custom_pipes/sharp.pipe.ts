@@ -39,7 +39,6 @@ export class SharpPipeInterceptor implements NestInterceptor {
       }
       // Handle base64-encoded file in request.body
       else if (request.body.file) {
-        console.log('elseif');
         const base64File = request.body.file;
         const matches = base64File.match(/^data:(.+);base64,(.+)$/);
 
