@@ -1,14 +1,17 @@
-import { Button, Grid } from "@mui/material";
+import { Button, Checkbox, FormControlLabel, Grid, Link } from '@mui/material';
 import { confirmationMail } from "../api/confirmationMail.ts";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Layout } from "./layout.tsx";
 import { useTranslation } from "react-i18next";
 import storage from "../../../utils/storage.ts";
+import { Link as RouterLink } from "react-router-dom";
+import { useState } from 'react';
 
 export const MailConfirmation = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Use hooks at the top level
+  const navigate = useNavigate();
+  const [checked, setChecked] = useState(false);
   const { t } = useTranslation();
   const handleConfirmMail = async () => {
     // Extract token from the URL
@@ -39,12 +42,32 @@ export const MailConfirmation = () => {
     }
   };
 
+  const handleCheckBox = () => {
+    setChecked(!checked);
+  }
+
   return (
     <Layout title={t("mail-confirmation-title")}>
-      <Grid item>
-        <Button variant="contained" color="primary" onClick={handleConfirmMail}>
+      <Grid item container flexDirection="column" justifyContent="center" alignItems="center">
+        <Grid item>
+          <FormControlLabel
+            required
+            control={<Checkbox onChange={handleCheckBox}/>}
+            label={
+            <>
+                {t("accept_terms")}
+                <Link component={RouterLink} to="/terms" target="_blank">
+                  {t("terms")}
+                </Link>
+            </>
+            }
+          />
+        </Grid>
+        <Grid item>
+        <Button variant="contained" color="primary" onClick={handleConfirmMail} disabled={!checked}>
           {t("confirm-mail")}
         </Button>
+        </Grid>
       </Grid>
     </Layout>
   );

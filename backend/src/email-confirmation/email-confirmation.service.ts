@@ -14,6 +14,7 @@ export class EmailConfirmationService {
     if (user.isEmailConfirmed) {
       throw new BadRequestException('Email already confirmed');
     }
+    await this.usersService.validTermsForUser(email);
     await this.usersService.markEmailAsConfirmed(email);
   }
 

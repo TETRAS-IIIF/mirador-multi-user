@@ -9,7 +9,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { QueryFailedError, Repository } from 'typeorm';
+import { QueryFailedError, Repository, UpdateResult } from 'typeorm';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
@@ -111,6 +111,23 @@ export class UsersService {
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new NotFoundException(`User not found :${id}`);
+    }
+  }
+
+  async validTermsForUser(mail: string): Promise<UpdateResult> {
+    try {
+      return this.userRepository.update(
+        { mail },
+        {
+          termsValidatedAt: new Date().toISOString(),
+        },
+      );
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'an error occurred while validating terms :',
+        error,
+      );
     }
   }
 
