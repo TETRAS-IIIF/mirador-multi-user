@@ -84,6 +84,7 @@ const MEDIA_TYPES_TABS = {
   ALL: 0,
   VIDEO: 1,
   IMAGE: 2,
+  OTHER: 3,
 };
 
 export const AllMedias = ({
@@ -99,7 +100,7 @@ export const AllMedias = ({
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
-  const [mediaTabShown, setmediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
+  const [mediaTabShown, setMediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
   const [sortField, setSortField] = useState<keyof Media>("title");
   const [sortOrder, setSortOrder] = useState("asc");
   const { t } = useTranslation();
@@ -109,7 +110,7 @@ export const AllMedias = ({
   }, []);
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
-    setmediaTabShown(newValue);
+    setMediaTabShown(newValue);
     setCurrentPage(1);
   };
 
@@ -124,6 +125,8 @@ export const AllMedias = ({
       return medias.filter((media) => media.mediaTypes === MediaTypes.VIDEO);
     } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
       return medias.filter((media) => media.mediaTypes === MediaTypes.IMAGE);
+    } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
+      return medias.filter((media) => media.mediaTypes === MediaTypes.OTHER);
     } else if (mediaTabShown === MEDIA_TYPES_TABS.ALL) {
       return medias;
     }
@@ -146,6 +149,8 @@ export const AllMedias = ({
         return media.mediaTypes === MediaTypes.VIDEO;
       } else if (mediaTabShown === 2) {
         return media.mediaTypes === MediaTypes.IMAGE;
+      } else if (mediaTabShown === 3) {
+        return media.mediaTypes === MediaTypes.OTHER;
       }
       return true;
     }).length / itemsPerPage,
@@ -155,9 +160,8 @@ export const AllMedias = ({
       if (!event.target.files || event.target.files.length === 0) return;
 
       const file = event.target.files[0];
-
       if (!isValidFileForUpload(file)) {
-        toast.error(t("error_image_type"));
+        toast.error(t("unsupportedMedia"));
         return;
       }
       if (isFileSizeUnderLimit(file)) {
@@ -362,6 +366,7 @@ export const AllMedias = ({
                 <Tab label={t("All")} {...a11yProps(0)} />
                 <Tab label={t("Videos")} {...a11yProps(1)} />
                 <Tab label={t("Images")} {...a11yProps(2)} />
+                <Tab label={t("other")} {...a11yProps(3)} />
               </Tabs>
             </Box>
           </Grid>

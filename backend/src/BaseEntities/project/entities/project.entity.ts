@@ -42,6 +42,12 @@ export class Project {
   @Column({ type: 'timestamp', nullable: true })
   lockedAt: Date;
 
+  @Column({ nullable: true })
+  noteTemplate: string;
+
+  @Column({ type: 'json', nullable: true })
+  tags: string[];
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
