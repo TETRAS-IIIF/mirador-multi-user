@@ -8,7 +8,7 @@ import {
   Select,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SelectChangeEvent } from "@mui/material/Select";
 
@@ -72,7 +72,7 @@ export const NoteTemplate = ({
     setEditorContent(selected ? selected.content : "");
   };
 
-  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
   };
 
