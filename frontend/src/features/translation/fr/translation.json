@@ -177,6 +177,7 @@
   "submit": "Envoyer",
   "successCopy": "Chemin copié dans le presse-papier",
   "successResetPassword": "Un lien de réinitialisation du mot de passe a été envoyé à votre e-mail.",
+  "templates": "templates",
   "thumbnailMissing": "Aperçu manquant",
   "thumbnailUrl": "URL de l'aperçu",
   "title": "titre",
@@ -195,6 +196,7 @@
   "tooltipCopyLink": "Copier le lien",
   "tooltipMediaLink": "Copier le lien du média",
   "tooltipSnapshotButton": "Générer un aperçu du projet",
+  "updateTemplate": "Mettre à jour le Template",
   "unsupportedMedia": "Type de média non pris en charge. Pour télécharger des vidéos ou de l'audio, utilisez YouTube, PeerTube ou fournissez une URL de média.",
   "urlIsNotValid": "L'URL n'est pas valide",
   "userSuccessfullyUpdated": "Utilisateur mis à jour avec succès",
@@ -202,5 +204,6 @@
   "user_already_exists": "Un utilisateur avec cet email ou ce nom existe déjà.",
   "welcome": "Bienvenue sur {{instanceName}}",
   "yes": "Oui",
-  "yourAccount": "Votre compte"
+  "yourAccount": "Votre compte",
+  "yourTextHere": "Votre texte ici"
 }

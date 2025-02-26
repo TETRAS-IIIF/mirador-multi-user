@@ -640,13 +640,28 @@ export const MMUModalEdit = <
           <Grid
             container
             item
+            spacing={1}
+            flexDirection="column"
             sx={{
               minHeight: "55px",
               height: "400px",
               overflowY: "auto",
             }}
           >
-            <NoteTemplate />
+            <Grid item>
+              <NoteTemplate
+                templates={[
+                  {
+                    title: "Test",
+                    content: "toto",
+                  },
+                  {
+                    title: "Test2",
+                    content: "dsdsqdsqd",
+                  },
+                ]}
+              />
+            </Grid>
           </Grid>
         </CustomTabPanel>
         {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && (

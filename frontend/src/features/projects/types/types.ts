@@ -16,6 +16,8 @@ export type Project = {
   lockedByUserId: number;
   lockedAt: Date;
   share?: string;
+  noteTemplate?: string[];
+  tags?: string[];
 };
 
 export type ProjectGroup = {
