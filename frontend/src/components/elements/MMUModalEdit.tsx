@@ -54,6 +54,7 @@ import { Selector } from "../Selector.tsx";
 import { useTranslation } from "react-i18next";
 import { NoteTemplate } from "./CustomizationEditModal/NoteTemplate.tsx";
 import { Project, Template } from "../../features/projects/types/types.ts";
+import { TagMaker } from "./TagsFactory/TagMaker.tsx";
 
 interface ModalItemProps<T, G> {
   item: T;
@@ -441,6 +442,9 @@ export const MMUModalEdit = <
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t("templates")} {...a11yProps(4)} />
         )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("tags")} {...a11yProps(5)} />
+        )}
       </Tabs>
       <Grid item container flexDirection="column">
         <CustomTabPanel value={tabValue} index={0}>
@@ -643,11 +647,24 @@ export const MMUModalEdit = <
             }}
           >
             <Grid item sx={{ height: "100%" }}>
-              <NoteTemplate
-                templates={item.templates ? item.templates : []}
-                project={item as unknown as Project}
-                rights={rights}
-              />
+              <NoteTemplate project={item as unknown as Project} />
+            </Grid>
+          </Grid>
+        </CustomTabPanel>
+        <CustomTabPanel value={tabValue} index={5}>
+          <Grid
+            container
+            item
+            spacing={1}
+            flexDirection="column"
+            sx={{
+              minHeight: "55px",
+              height: "400px",
+              overflowY: "auto",
+            }}
+          >
+            <Grid item sx={{ height: "100%" }}>
+              <TagMaker />
             </Grid>
           </Grid>
         </CustomTabPanel>
