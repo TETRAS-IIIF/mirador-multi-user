@@ -79,6 +79,8 @@ export const NoteTemplate = ({
     setEditorContent("");
   };
 
+  console.log("templates", templates);
+
   return (
     <Grid container spacing={2} flexDirection="column">
       <Grid item container spacing={1} alignItems="center">
@@ -90,7 +92,6 @@ export const NoteTemplate = ({
               value={selectedTemplate ? selectedTemplate.title : ""}
               label={t("templates")}
               onChange={handleSelectTemplate}
-              displayEmpty
             >
               {templates.map((temp) => (
                 <MenuItem key={temp.title} value={temp.title}>
