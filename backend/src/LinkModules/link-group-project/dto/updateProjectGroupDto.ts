@@ -12,4 +12,6 @@ export class UpdateProjectGroupDto {
   rights?: GroupProjectRights;
   @ApiProperty()
   group?: UserGroup;
+  @ApiProperty()
+  noteTemplate: any;
 }

@@ -16,7 +16,7 @@ export type Project = {
   lockedByUserId: number;
   lockedAt: Date;
   share?: string;
-  noteTemplate?: string[];
+  noteTemplate?: Template[];
   tags?: string[];
 };
 export type Template = {
@@ -41,6 +41,7 @@ export type ProjectGroupUpdateDto = {
     title: string;
     userWorkspace: IState;
     ownerId?: number;
+    noteTemplate?: Template[];
   };
   rights?: ItemsRights;
   group?: UserGroup;

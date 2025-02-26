@@ -285,7 +285,7 @@ const MMUCard = <
             </Grid>
           </CardActions>
           <MMUModal
-            width={800}
+            width={1000}
             openModal={openModal}
             setOpenModal={HandleOpenModal}
             children={

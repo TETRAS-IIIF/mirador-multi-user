@@ -11,18 +11,19 @@ import {
 import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { Template } from "../../../features/projects/types/types.ts";
+import { Project, Template } from "../../../features/projects/types/types.ts";
+import { updateProject } from "../../../features/projects/api/updateProject.ts";
 
 interface NoteTemplateProps {
-  templates: Template[];
+  project: Project;
 }
 
-export const NoteTemplate = ({
-  templates: initialTemplates,
-}: NoteTemplateProps) => {
+export const NoteTemplate = ({ project }: NoteTemplateProps) => {
   const { t } = useTranslation();
 
-  const [templates, setTemplates] = useState<Template[]>(initialTemplates);
+  const [templates, setTemplates] = useState<Template[]>(
+    project.noteTemplate ? project.noteTemplate : [],
+  );
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
     templates.length > 0 ? templates[0] : null,
   );
@@ -39,22 +40,48 @@ export const NoteTemplate = ({
   const handleTemplateContent = (newTextValue: string) => {
     setEditorContent(newTextValue);
   };
-
-  const handleUpdateTemplate = () => {
+  const handleUpdateTemplate = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { rights, ...userProject } = project;
     if (isNewTemplate) {
+      const updatedTemplateList = [...templates];
+      updatedTemplateList.push({
+        title,
+        content: editorContent,
+      });
+      await updateProject({
+        id: project.id,
+        project: {
+          ...userProject,
+          noteTemplate: updatedTemplateList,
+        },
+      });
       setTemplates((prevTemplates) => [
         ...prevTemplates,
         { title, content: editorContent },
       ]);
       setIsNewTemplate(false);
     } else {
-      setTemplates((prevTemplates) =>
-        prevTemplates.map((temp) =>
-          temp.title === selectedTemplate?.title
-            ? { ...temp, title, content: editorContent }
-            : temp,
-        ),
+      const updatedTemplateList = [...templates];
+      const index = updatedTemplateList.findIndex(
+        (temp) => temp.title === selectedTemplate?.title,
       );
+      if (index !== -1) {
+        updatedTemplateList[index] = {
+          ...updatedTemplateList[index],
+          title,
+          content: editorContent,
+        };
+      }
+      await updateProject({
+        id: userProject.id,
+        project: {
+          ...userProject,
+          noteTemplate: updatedTemplateList,
+        },
+      });
+
+      setTemplates(updatedTemplateList);
     }
   };
 
@@ -79,10 +106,13 @@ export const NoteTemplate = ({
     setEditorContent("");
   };
 
-  console.log("templates", templates);
-
   return (
-    <Grid container spacing={2} flexDirection="column">
+    <Grid
+      container
+      spacing={2}
+      flexDirection="column"
+      sx={{ height: "100%", display: "flex" }}
+    >
       <Grid item container spacing={1} alignItems="center">
         <Grid item xs={9}>
           <FormControl fullWidth>
@@ -113,7 +143,13 @@ export const NoteTemplate = ({
       </Grid>
 
       {(selectedTemplate || isNewTemplate) && (
-        <>
+        <Grid
+          item
+          container
+          flexDirection="column"
+          spacing={1}
+          sx={{ flex: 1, display: "flex", height: "100%" }}
+        >
           <Grid item>
             <TextField
               fullWidth
@@ -122,13 +158,13 @@ export const NoteTemplate = ({
               onChange={handleTitleChange}
             />
           </Grid>
-          <Grid item>
+          <Grid item sx={{ flexGrow: 1, minHeight: "200px" }}>
             <TextEditor
               textHtml={editorContent}
               updateText={handleTemplateContent}
             />
           </Grid>
-          <Grid item>
+          <Grid item sx={{ mt: "auto" }}>
             <Button
               color="primary"
               variant="contained"
@@ -137,7 +173,7 @@ export const NoteTemplate = ({
               {t("updateTemplate")}
             </Button>
           </Grid>
-        </>
+        </Grid>
       )}
     </Grid>
   );

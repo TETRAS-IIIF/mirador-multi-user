@@ -202,6 +202,8 @@ export class LinkGroupProjectService {
 
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
+      console.log('dto');
+      console.log(dto);
       let projectToReturn;
       if (dto.rights && dto.group) {
         await this.UpdateRelation(dto.project.id, dto.group.id, dto.rights);
