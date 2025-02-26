@@ -5,7 +5,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 // https://vitejs.dev/config/
 export default defineConfig({
   define: {
-    global: "window", // 👈 Define `global` for browser usage
+    global: "window",
   },
   plugins: [
     {
