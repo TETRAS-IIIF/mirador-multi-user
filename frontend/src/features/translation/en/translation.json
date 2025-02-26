@@ -40,6 +40,7 @@
   "createdAt": "created at",
   "created_at": "creation date",
   "creator": "Creator",
+  "customization": "Customization",
   "defaultProjectTitle": "new project",
   "delete": "DELETE",
   "deleteConfirmation": "Are you sure you want to delete <b>{{itemName}}</b>? This action is <b>irreversible</b>.",

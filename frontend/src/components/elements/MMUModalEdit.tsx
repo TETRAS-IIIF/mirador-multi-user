@@ -52,6 +52,7 @@ import { fetchManifest } from "../../features/manifest/api/fetchManifest.ts";
 import { updateManifestJson } from "../../features/manifest/api/updateManifestJson.ts";
 import { Selector } from "../Selector.tsx";
 import { useTranslation } from "react-i18next";
+import { NoteTemplate } from "./CustomizationEditModal/NoteTemplate.tsx";
 
 interface ModalItemProps<T, G> {
   item: T;
@@ -435,6 +436,9 @@ export const MMUModalEdit = <
             item.origin !== manifestOrigin.LINK)) && (
           <Tab label={t("advancedEdit")} {...a11yProps(3)} />
         )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("customization")} {...a11yProps(4)} />
+        )}
       </Tabs>
       <Grid item container flexDirection="column">
         <CustomTabPanel value={tabValue} index={0}>
@@ -632,6 +636,19 @@ export const MMUModalEdit = <
               </Grid>
             </CustomTabPanel>
           )}
+        <CustomTabPanel value={tabValue} index={4}>
+          <Grid
+            container
+            item
+            sx={{
+              minHeight: "55px",
+              height: "400px",
+              overflowY: "auto",
+            }}
+          >
+            <NoteTemplate />
+          </Grid>
+        </CustomTabPanel>
         {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && (
           <Grid
             item

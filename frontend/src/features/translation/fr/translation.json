@@ -41,6 +41,7 @@
   "createdAt": "Créé le",
   "created_at": "Date de création",
   "creator": "Créateur",
+  "customization": "Customisation",
   "defaultProjectTitle": "Nouveau projet",
   "delete": "SUPPRIMER",
   "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer <b>{{itemName}}</b>? Cette action est <b>irréversible</b>.",

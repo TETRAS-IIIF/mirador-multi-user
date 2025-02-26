@@ -23,6 +23,7 @@
     "@types/node": "^20.12.7",
     "cron": "^3.2.1",
     "dayjs": "^1.11.13",
+    "draft-js": "^0.11.7",
     "i18next": "^24.1.2",
     "iiif-manifest-editor": "^1.0.3",
     "json-edit-react": "^1.17.1",
@@ -33,6 +34,7 @@
     "mirador-mltools-plugin-mmu": "^0.0.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-draft-wysiwyg": "^1.15.0",
     "react-favicon": "^2.0.7",
     "react-hook-form": "^7.51.3",
     "react-hot-toast": "^2.4.1",
@@ -50,6 +52,7 @@
   "devDependencies": {
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@types/react-draft-wysiwyg": "^1.13.8",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
