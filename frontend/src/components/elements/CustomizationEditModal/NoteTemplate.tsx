@@ -40,15 +40,15 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
   const handleTemplateContent = (newTextValue: string) => {
     setEditorContent(newTextValue);
   };
+
   const handleUpdateTemplate = async () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { rights, ...userProject } = project;
     if (isNewTemplate) {
-      const updatedTemplateList = [...templates];
-      updatedTemplateList.push({
-        title,
-        content: editorContent,
-      });
+      const updatedTemplateList = [
+        ...templates,
+        { title, content: editorContent },
+      ];
       await updateProject({
         id: project.id,
         project: {
@@ -56,23 +56,14 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
           noteTemplate: updatedTemplateList,
         },
       });
-      setTemplates((prevTemplates) => [
-        ...prevTemplates,
-        { title, content: editorContent },
-      ]);
+      setTemplates(updatedTemplateList);
       setIsNewTemplate(false);
     } else {
-      const updatedTemplateList = [...templates];
-      const index = updatedTemplateList.findIndex(
-        (temp) => temp.title === selectedTemplate?.title,
+      const updatedTemplateList = templates.map((temp) =>
+        temp.title === selectedTemplate?.title
+          ? { ...temp, title, content: editorContent }
+          : temp,
       );
-      if (index !== -1) {
-        updatedTemplateList[index] = {
-          ...updatedTemplateList[index],
-          title,
-          content: editorContent,
-        };
-      }
       await updateProject({
         id: userProject.id,
         project: {
@@ -80,9 +71,30 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
           noteTemplate: updatedTemplateList,
         },
       });
-
       setTemplates(updatedTemplateList);
     }
+  };
+
+  const handleDeleteTemplate = async () => {
+    if (!selectedTemplate) return;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { rights, ...userProject } = project;
+    const updatedTemplateList = templates.filter(
+      (temp) => temp.title !== selectedTemplate.title,
+    );
+
+    await updateProject({
+      id: userProject.id,
+      project: {
+        ...userProject,
+        noteTemplate: updatedTemplateList,
+      },
+    });
+
+    setTemplates(updatedTemplateList);
+    setSelectedTemplate(null);
+    setTitle("");
+    setEditorContent("");
   };
 
   const handleSelectTemplate = (event: SelectChangeEvent<string>) => {
@@ -90,7 +102,6 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
       templates.find((temp) => temp.title === event.target.value) || null;
     setSelectedTemplate(selected);
     setIsNewTemplate(false);
-
     setTitle(selected ? selected.title : "");
     setEditorContent(selected ? selected.content : "");
   };
@@ -164,7 +175,22 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
               updateText={handleTemplateContent}
             />
           </Grid>
-          <Grid item sx={{ mt: "auto" }}>
+          <Grid
+            item
+            sx={{
+              mt: "auto",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <Button
+              color="error"
+              variant="contained"
+              onClick={handleDeleteTemplate}
+              disabled={!selectedTemplate}
+            >
+              {t("deleteTemplate")}
+            </Button>
             <Button
               color="primary"
               variant="contained"
