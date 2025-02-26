@@ -71,6 +71,8 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
         HandleSetIsRunning();
         const config = {
           id: viewerRef.current.id,
+          templates: project.noteTemplate,
+          tags: project.tags,
           annotation: {
             adapter: (canvasId: string) =>
               new MMUAdapter(
