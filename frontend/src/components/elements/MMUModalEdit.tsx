@@ -53,6 +53,7 @@ import { updateManifestJson } from "../../features/manifest/api/updateManifestJs
 import { Selector } from "../Selector.tsx";
 import { useTranslation } from "react-i18next";
 import { NoteTemplate } from "./CustomizationEditModal/NoteTemplate.tsx";
+import { Template } from "../../features/projects/types/types.ts";
 
 interface ModalItemProps<T, G> {
   item: T;
@@ -113,6 +114,7 @@ export const MMUModalEdit = <
     path?: string;
     userWorkspace?: Record<string, string>;
     rights?: ItemsRights;
+    templates?: Template[];
   },
   G extends { title: string },
 >({
@@ -649,18 +651,7 @@ export const MMUModalEdit = <
             }}
           >
             <Grid item>
-              <NoteTemplate
-                templates={[
-                  {
-                    title: "Test",
-                    content: "toto",
-                  },
-                  {
-                    title: "Test2",
-                    content: "dsdsqdsqd",
-                  },
-                ]}
-              />
+              <NoteTemplate templates={item.templates ? item.templates : []} />
             </Grid>
           </Grid>
         </CustomTabPanel>

@@ -11,11 +11,7 @@ import {
 import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SelectChangeEvent } from "@mui/material/Select";
-
-interface Template {
-  title: string;
-  content: string;
-}
+import { Template } from "../../../features/projects/types/types.ts";
 
 interface NoteTemplateProps {
   templates: Template[];

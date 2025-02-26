@@ -19,7 +19,10 @@ export type Project = {
   noteTemplate?: string[];
   tags?: string[];
 };
-
+export type Template = {
+  title: string;
+  content: string;
+};
 export type ProjectGroup = {
   id: number;
   rights: ItemsRights;
