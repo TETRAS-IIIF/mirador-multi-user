@@ -119,7 +119,7 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
       container
       spacing={2}
       flexDirection="column"
-      sx={{ height: "100%", display: "flex" }}
+      sx={{ display: "flex", marginTop: 1 }}
     >
       <Grid
         item
@@ -128,15 +128,15 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
         alignItems="center"
         flexDirection="column"
       >
-        <Grid item container>
-          <Grid
-            item
-            container
-            xs={9}
-            flexDirection="column"
-            sx={{ width: "100%" }}
-          >
-            <FormControl fullWidth>
+        <Grid
+          item
+          container
+          flexDirection="row"
+          alignItems="center"
+          spacing={1}
+        >
+          <Grid item>
+            <FormControl sx={{ width: "400px" }}>
               <InputLabel id="template-select-label">
                 {t("templates")}
               </InputLabel>
@@ -154,7 +154,7 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={3} display="flex" justifyContent="flex-end">
+          <Grid item>
             <Button
               color="primary"
               variant="outlined"
@@ -181,10 +181,7 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
                 onChange={handleTitleChange}
               />
             </Grid>
-            <Grid
-              item
-              sx={{ flexGrow: 1, minHeight: "200px", maxHeight: "400px" }}
-            >
+            <Grid item sx={{ minHeight: "200px", maxHeight: "400px" }}>
               <TextEditor
                 textHtml={editorContent}
                 updateText={handleTemplateContent}
