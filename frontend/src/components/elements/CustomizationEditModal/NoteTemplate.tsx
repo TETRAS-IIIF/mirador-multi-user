@@ -224,7 +224,7 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
               variant="contained"
               onClick={handleUpdateTemplate}
             >
-              {t("updateTemplate")}
+              {!selectedTemplate ? t("createTemplate") : t("updateTemplate")}
             </Button>
           </Grid>
         </Grid>

@@ -43,6 +43,7 @@
   "createNewTemplate": "Create new template",
   "creator": "Creator",
   "customization": "Customization",
+  "createTemplate": "Create Template",
   "defaultProjectTitle": "new project",
   "delete": "DELETE",
   "deleteConfirmation": "Are you sure you want to delete <b>{{itemName}}</b>? This action is <b>irreversible</b>.",
