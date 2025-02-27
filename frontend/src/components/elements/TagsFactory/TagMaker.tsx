@@ -48,7 +48,9 @@ export const TagMaker = ({ project }: TagMakerProps) => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-      <Box sx={{ display: "flex", gap: 1 }}>
+      <Box
+        sx={{ display: "flex", gap: 1, justifyContent: "center", marginTop: 2 }}
+      >
         <TextField
           label="Add a tag"
           variant="outlined"
@@ -67,7 +69,7 @@ export const TagMaker = ({ project }: TagMakerProps) => {
         </Button>
       </Box>
 
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1, maxWidth: "100%" }}>
         {tags.map((tag, index) => (
           <Chip
             key={index}
@@ -75,6 +77,12 @@ export const TagMaker = ({ project }: TagMakerProps) => {
             onDelete={() => handleDeleteTag(tag)}
             color="primary"
             variant="outlined"
+            sx={{
+              maxWidth: 600,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
           />
         ))}
       </Box>
