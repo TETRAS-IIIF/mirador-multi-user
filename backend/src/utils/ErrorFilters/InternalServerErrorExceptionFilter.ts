@@ -28,7 +28,7 @@ export class InternalServerErrorFilter implements ExceptionFilter {
     console.error('Internal server error:', exception.message);
 
     try {
-      const user = await this.userService.findOne(request.user);
+      const user = await this.userService.findOne(request.user.sub);
       await this.emailService.sendInternalServerErrorNotification({
         message: exception.message,
         url: request.url,
