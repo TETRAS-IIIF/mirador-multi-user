@@ -2,6 +2,7 @@ import { ChangeEvent, KeyboardEvent, useState } from "react";
 import { Box, Button, Chip, TextField } from "@mui/material";
 import { updateProject } from "../../../features/projects/api/updateProject.ts";
 import { Project } from "../../../features/projects/types/types.ts";
+import { useTranslation } from "react-i18next";
 
 interface TagMakerProps {
   project: Project;
@@ -10,6 +11,7 @@ interface TagMakerProps {
 export const TagMaker = ({ project }: TagMakerProps) => {
   const [tags, setTags] = useState<string[]>(project.tags ? project.tags : []);
   const [inputValue, setInputValue] = useState("");
+  const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { rights, ...userProject } = project;
 
@@ -52,7 +54,7 @@ export const TagMaker = ({ project }: TagMakerProps) => {
         sx={{ display: "flex", gap: 1, justifyContent: "center", marginTop: 2 }}
       >
         <TextField
-          label="Add a tag"
+          label={t("addTag")}
           variant="outlined"
           value={inputValue}
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -65,7 +67,7 @@ export const TagMaker = ({ project }: TagMakerProps) => {
           onClick={handleAddTag}
           disabled={!inputValue.trim()}
         >
-          Add Tag
+          {t("addTag")}
         </Button>
       </Box>
 

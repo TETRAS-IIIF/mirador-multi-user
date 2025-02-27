@@ -56,7 +56,6 @@ loadLanguage(detectedLng);
 export const availableLanguages = [
   { code: "en", label: "English" },
   { code: "fr", label: "Français" },
-  { code: "es", label: "Español" },
 ];
 
 export { loadLanguage };
