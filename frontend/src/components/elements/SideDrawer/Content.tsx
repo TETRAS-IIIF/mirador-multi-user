@@ -112,6 +112,8 @@ export function Content({
             user={user}
             userProjects={userProjects}
             fetchProjects={fetchProjects}
+            fetchManifestForUser={fetchManifestForUser}
+            manifests={manifests}
           />
         )}
       {user &&

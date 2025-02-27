@@ -98,7 +98,7 @@ export const SidePanelMedia = ({
   const [sortOrder] = useState("asc");
   const itemsPerPage = 9;
   const { t } = useTranslation();
-
+  console.log("side panel media");
   const handleCopyToClipBoard = async (path: string) => {
     try {
       await navigator.clipboard.writeText(path);
