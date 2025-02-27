@@ -45,7 +45,6 @@ services:
       DB_PASS: ${DB_PASS}
       DB_DATABASE: ${DB_DATABASE}
       DB_USER: ${DB_USER}
-      DB_PORT: ${DB_EXPOSE_PORT}
       SMTP_DOMAIN: ${SMTP_DOMAIN}
       SMTP_USER: ${SMTP_USER}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
