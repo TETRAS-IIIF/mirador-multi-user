@@ -13,5 +13,7 @@ export class UpdateProjectGroupDto {
   @ApiProperty()
   group?: UserGroup;
   @ApiProperty()
-  noteTemplate: any;
+  noteTemplate?: any;
+  @ApiProperty()
+  tags?: string[];
 }

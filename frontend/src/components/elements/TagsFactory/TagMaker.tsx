@@ -1,26 +1,49 @@
 import { ChangeEvent, KeyboardEvent, useState } from "react";
 import { Box, Button, Chip, TextField } from "@mui/material";
+import { updateProject } from "../../../features/projects/api/updateProject.ts";
+import { Project } from "../../../features/projects/types/types.ts";
 
-export const TagMaker = () => {
-  const [tags, setTags] = useState<string[]>([]);
+interface TagMakerProps {
+  project: Project;
+}
+
+export const TagMaker = ({ project }: TagMakerProps) => {
+  const [tags, setTags] = useState<string[]>(project.tags ? project.tags : []);
   const [inputValue, setInputValue] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { rights, ...userProject } = project;
 
-  const handleAddTag = () => {
+  const handleAddTag = async () => {
     if (inputValue.trim() !== "" && !tags.includes(inputValue.trim())) {
+      await updateProject({
+        id: userProject.id,
+        project: {
+          ...userProject,
+          tags: [...tags, inputValue.trim()],
+        },
+      });
       setTags([...tags, inputValue.trim()]);
-      setInputValue(""); // Clear input
+      setInputValue("");
     }
   };
 
-  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      handleAddTag();
+      await handleAddTag();
     }
   };
 
-  const handleDeleteTag = (tagToDelete: string) => {
-    setTags(tags.filter((tag) => tag !== tagToDelete));
+  const handleDeleteTag = async (tagToDelete: string) => {
+    const updatedListOfTags = tags.filter((tag) => tag !== tagToDelete);
+    await updateProject({
+      id: userProject.id,
+      project: {
+        ...userProject,
+        tags: [...updatedListOfTags],
+      },
+    });
+    setTags(updatedListOfTags);
   };
 
   return (

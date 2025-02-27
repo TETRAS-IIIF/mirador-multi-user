@@ -664,7 +664,7 @@ export const MMUModalEdit = <
             }}
           >
             <Grid item sx={{ height: "100%" }}>
-              <TagMaker />
+              <TagMaker project={item as unknown as Project} />
             </Grid>
           </Grid>
         </CustomTabPanel>

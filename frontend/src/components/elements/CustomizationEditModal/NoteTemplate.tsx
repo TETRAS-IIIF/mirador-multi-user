@@ -20,6 +20,8 @@ interface NoteTemplateProps {
 
 export const NoteTemplate = ({ project }: NoteTemplateProps) => {
   const { t } = useTranslation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { rights, ...userProject } = project;
 
   const [templates, setTemplates] = useState<Template[]>(
     project.noteTemplate ? project.noteTemplate : [],
@@ -42,8 +44,6 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
   };
 
   const handleUpdateTemplate = async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { rights, ...userProject } = project;
     if (isNewTemplate) {
       const updatedTemplateList = [
         ...templates,
@@ -77,12 +77,9 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
 
   const handleDeleteTemplate = async () => {
     if (!selectedTemplate) return;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { rights, ...userProject } = project;
     const updatedTemplateList = templates.filter(
       (temp) => temp.title !== selectedTemplate.title,
     );
-
     await updateProject({
       id: userProject.id,
       project: {

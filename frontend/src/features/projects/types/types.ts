@@ -42,6 +42,7 @@ export type ProjectGroupUpdateDto = {
     userWorkspace: IState;
     ownerId?: number;
     noteTemplate?: Template[];
+    tags?: string[];
   };
   rights?: ItemsRights;
   group?: UserGroup;
