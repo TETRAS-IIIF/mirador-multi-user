@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
   Param,
   Patch,
   Post,
@@ -17,7 +16,6 @@ import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { AuthGuard } from '../../auth/auth.guard';
 import { CreateUserGroupDto } from '../../BaseEntities/user-group/dto/create-user-group.dto';
-import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import { ActionType } from '../../enum/actions';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { LinkGroupProject } from '../link-group-project/entities/link-group-project.entity';
@@ -81,17 +79,18 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.getAccessForUserToGroup(userId, groupId);
   }
 
-  @ApiOperation({ summary: 'Create a user' })
-  @ApiOkResponse({
-    description: 'The user creation route',
-    type: CreateUserDto,
-    isArray: false,
-  })
-  @Post('/user')
-  @HttpCode(201)
-  async createUser(@Body() createUserDto: CreateUserDto) {
-    return await this.linkUserGroupService.createUser(createUserDto);
-  }
+  //TODO: This is commented for Houston first Implementation, this should be uncomented for allowing user to create account
+  // @ApiOperation({ summary: 'Create a user' })
+  // @ApiOkResponse({
+  //   description: 'The user creation route',
+  //   type: CreateUserDto,
+  //   isArray: false,
+  // })
+  // @Post('/user')
+  // @HttpCode(201)
+  // async createUser(@Body() createUserDto: CreateUserDto) {
+  //   return await this.linkUserGroupService.createUser(createUserDto);
+  // }
 
   @ApiOperation({ summary: 'Create a group' })
   @ApiOkResponse({

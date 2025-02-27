@@ -42,7 +42,7 @@ export const Landing = () => {
         alignItems="center"
       >
         <Grid item>
-          <Button variant="contained" onClick={HandleSignIn}>
+          <Button variant="contained" onClick={HandleSignIn} disabled={true}>
             {t("create-account")}
           </Button>
         </Grid>
