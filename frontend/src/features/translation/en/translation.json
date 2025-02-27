@@ -19,6 +19,7 @@
   },
   "add": "ADD",
   "addNewCanvas": "Add new canvas",
+  "addTag": "Add a Tag",
   "admin": "Admin",
   "advancedEdit": "Advanced Edit",
   "areYouSureDuplicate": "Are you sure you want to duplicate",
@@ -39,7 +40,10 @@
   "createProjectTitle": "CREATE PROJECT",
   "createdAt": "created at",
   "created_at": "creation date",
+  "createNewTemplate": "Create new template",
   "creator": "Creator",
+  "customization": "Customization",
+  "createTemplate": "Create Template",
   "defaultProjectTitle": "new project",
   "delete": "DELETE",
   "deleteConfirmation": "Are you sure you want to delete <b>{{itemName}}</b>? This action is <b>irreversible</b>.",
@@ -176,6 +180,8 @@
   "submit": "Submit",
   "successCopy": "path copied to clipboard",
   "successResetPassword": "A password reset link has been sent to your email.",
+  "tags": "Tags",
+  "templates": "templates",
   "thumbnailMissing": "Thumbnail is missing",
   "thumbnailUrl": "Thumbnail Url",
   "title": "title",
@@ -194,6 +200,7 @@
   "tooltipCopyLink": "Copy Link",
   "tooltipMediaLink": "Copy media's link",
   "tooltipSnapshotButton": "Generate project snapshot",
+  "updateTemplate": "Update template",
   "unsupportedMedia": "Unsupported media type. To upload videos or audios, use YouTube, PeerTube, or provide a media URL.",
   "urlIsNotValid": "URL is not valid",
   "userSuccessfullyUpdated": "user successfully updated",
@@ -201,5 +208,6 @@
   "user_already_exists": "a user with this email or username already exists",
   "welcome": "Welcome to {{instanceName}}",
   "yes": "Yes",
-  "yourAccount": "Your account"
+  "yourAccount": "Your account",
+  "yourTextHere": "Your text here"
 }

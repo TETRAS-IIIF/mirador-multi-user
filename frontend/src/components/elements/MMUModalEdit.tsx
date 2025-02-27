@@ -52,6 +52,9 @@ import { fetchManifest } from "../../features/manifest/api/fetchManifest.ts";
 import { updateManifestJson } from "../../features/manifest/api/updateManifestJson.ts";
 import { Selector } from "../Selector.tsx";
 import { useTranslation } from "react-i18next";
+import { NoteTemplate } from "./CustomizationEditModal/NoteTemplate.tsx";
+import { Project, Template } from "../../features/projects/types/types.ts";
+import { TagMaker } from "./TagsFactory/TagMaker.tsx";
 
 interface ModalItemProps<T, G> {
   item: T;
@@ -112,6 +115,7 @@ export const MMUModalEdit = <
     path?: string;
     userWorkspace?: Record<string, string>;
     rights?: ItemsRights;
+    templates?: Template[];
   },
   G extends { title: string },
 >({
@@ -420,7 +424,7 @@ export const MMUModalEdit = <
   }
 
   return (
-    <Grid container sx={{ maxHeight: 600 }}>
+    <Grid container>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
         <Tab label={t("general")} {...a11yProps(0)} />
         <Tab
@@ -434,6 +438,12 @@ export const MMUModalEdit = <
           (objectTypes === ObjectTypes.MANIFEST &&
             item.origin !== manifestOrigin.LINK)) && (
           <Tab label={t("advancedEdit")} {...a11yProps(3)} />
+        )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("templates")} {...a11yProps(4)} />
+        )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("tags")} {...a11yProps(5)} />
         )}
       </Tabs>
       <Grid item container flexDirection="column">
@@ -541,14 +551,6 @@ export const MMUModalEdit = <
                 fullWidth
               />
             </Grid>
-            {/*<Grid*/}
-            {/*item*/}
-            {/*container*/}
-            {/*justifyContent="flex-end"*/}
-            {/*alignItems="center"*/}
-            {/*>*/}
-            {/*  <TaggingForm objectTypes={objectTypes} object={item}/>*/}
-            {/*</Grid>*/}
           </Grid>
         </CustomTabPanel>
         {rights !== ItemsRights.READER &&
@@ -632,6 +634,40 @@ export const MMUModalEdit = <
               </Grid>
             </CustomTabPanel>
           )}
+        <CustomTabPanel value={tabValue} index={4}>
+          <Grid
+            container
+            item
+            spacing={1}
+            flexDirection="column"
+            sx={{
+              minHeight: "55px",
+              height: "600px",
+              overflowY: "auto",
+            }}
+          >
+            <Grid item sx={{ height: "100%" }}>
+              <NoteTemplate project={item as unknown as Project} />
+            </Grid>
+          </Grid>
+        </CustomTabPanel>
+        <CustomTabPanel value={tabValue} index={5}>
+          <Grid
+            container
+            item
+            spacing={1}
+            flexDirection="column"
+            sx={{
+              minHeight: "55px",
+              height: "400px",
+              overflowY: "auto",
+            }}
+          >
+            <Grid item sx={{ height: "100%" }}>
+              <TagMaker project={item as unknown as Project} />
+            </Grid>
+          </Grid>
+        </CustomTabPanel>
         {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && (
           <Grid
             item
@@ -642,7 +678,7 @@ export const MMUModalEdit = <
           >
             <Grid item container xs={5} spacing={3}>
               <Grid item>
-                {rights === ItemsRights.ADMIN && (
+                {rights === ItemsRights.ADMIN && tabValue === 0 && (
                   <Tooltip title={t("deleteItem")}>
                     <Button
                       color="error"
@@ -657,6 +693,7 @@ export const MMUModalEdit = <
               <Grid item>
                 {(rights === ItemsRights.ADMIN ||
                   rights === ItemsRights.EDITOR) &&
+                  tabValue === 0 &&
                   duplicateItem && (
                     <Tooltip title={t("duplicate")}>
                       <Button

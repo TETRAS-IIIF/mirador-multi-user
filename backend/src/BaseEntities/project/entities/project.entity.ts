@@ -2,15 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Timestamp,
 } from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../../LinkModules/link-group-project/entities/link-group-project.entity';
-import { Tag } from '../../tag/entities/tag.entity';
 
 @Entity()
 export class Project {
@@ -46,6 +42,12 @@ export class Project {
   @Column({ type: 'timestamp', nullable: true })
   lockedAt: Date;
 
+  @Column({ type: 'json', nullable: true })
+  noteTemplate: string[];
+
+  @Column({ type: 'json', nullable: true })
+  tags: string[];
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
@@ -60,8 +62,4 @@ export class Project {
     },
   )
   linkGroupProjectsIds: LinkGroupProject[];
-
-  @ManyToOne(() => Tag)
-  @JoinColumn({ name: 'tagId' })
-  tag: Tag;
 }

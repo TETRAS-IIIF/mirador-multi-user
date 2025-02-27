@@ -15,8 +15,7 @@ export const updateProject = async (project: ProjectGroupUpdateDto) => {
         body: JSON.stringify(project),
       },
     );
-    const toReturn = await response.json();
-    return toReturn;
+    return await response.json();
   } catch (error) {
     throw error;
   }

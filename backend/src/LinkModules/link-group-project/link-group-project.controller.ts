@@ -200,19 +200,6 @@ export class LinkGroupProjectController {
     );
   }
 
-  //TODO: Check if this routes is usefull
-  // @UseGuards(AuthGuard)
-  // @Get('/project/:projectId/:userGroupId')
-  // getProjectForUser(
-  //   @Param('projectId') projectId: number,
-  //   @Param('userGroupId') userGroupId: number,
-  // ) {
-  //   return this.linkGroupProjectService.getProjectRightForUser(
-  //     projectId,
-  //     userGroupId,
-  //   );
-  // }
-
   @ApiOperation({
     summary: 'Search for a project that a specific group can access',
   })

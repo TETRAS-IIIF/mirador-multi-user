@@ -39,6 +39,7 @@
     "react-i18next": "^15.2.0",
     "react-player": "^2.16.0",
     "react-query-auth": "^2.3.0",
+    "react-quill": "^2.0.0",
     "react-router-dom": "^6.23.0",
     "styled-components": "^6.1.8",
     "typescript": "^5.4.5",
@@ -50,6 +51,7 @@
   "devDependencies": {
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@types/react-draft-wysiwyg": "^1.13.8",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
