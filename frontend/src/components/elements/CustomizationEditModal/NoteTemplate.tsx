@@ -58,6 +58,10 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
       });
       setTemplates(updatedTemplateList);
       setIsNewTemplate(false);
+      const updatedSelectedTemplate =
+        updatedTemplateList.find((temp) => temp.title === title) || null;
+
+      setSelectedTemplate(updatedSelectedTemplate);
     } else {
       const updatedTemplateList = templates.map((temp) =>
         temp.title === selectedTemplate?.title
@@ -72,6 +76,11 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
         },
       });
       setTemplates(updatedTemplateList);
+
+      const updatedSelectedTemplate =
+        updatedTemplateList.find((temp) => temp.title === title) || null;
+
+      setSelectedTemplate(updatedSelectedTemplate);
     }
   };
 
