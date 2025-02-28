@@ -97,9 +97,9 @@ export const AllProjects = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<keyof Project>("title");
   const [sortOrder, setSortOrder] = useState("asc");
-
+  const [openSidePanel, setOpenSidePanel] = useState(false);
   const { t } = useTranslation();
-
+  console.log("manifests", manifests);
   const itemsPerPage = 10;
 
   const toggleSortOrder = () => {
@@ -177,6 +177,7 @@ export const AllProjects = ({
 
   const HandleOpenModal = useCallback(
     (projectId: number) => {
+      console.log("toto");
       const newModalProjectId =
         openModalProjectId === projectId ? null : projectId;
       setOpenModalProjectId(newModalProjectId);
@@ -299,11 +300,15 @@ export const AllProjects = ({
     }
   };
 
-  console.log("toto");
+  const handleSetOpenSidePanel = () => {
+    setOpenSidePanel(!openSidePanel);
+  };
 
   return (
     <>
       <SidePanel
+        open={openSidePanel && !!openModalProjectId}
+        setOpen={handleSetOpenSidePanel}
         medias={medias}
         manifests={manifests}
         userPersonalGroup={userPersonalGroup!}

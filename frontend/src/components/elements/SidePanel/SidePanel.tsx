@@ -1,5 +1,5 @@
-import { Box, Drawer, Grid, IconButton, styled } from "@mui/material";
-import { ReactNode, useState } from "react";
+import { Box, Drawer, IconButton, styled } from "@mui/material";
+import { ReactNode, useEffect, useState } from "react";
 import { CloseButton } from "../SideBar/CloseButton.tsx";
 import { OpenButton } from "../SideBar/OpenButton.tsx";
 import { useTranslation } from "react-i18next";
@@ -72,7 +72,6 @@ export const SidePanel = ({
   const [openMedia, setOpenMedia] = useState(false);
   const [openManifest, setOpenManifest] = useState(false);
   const { t } = useTranslation();
-
   const handleSetOpenMedia = () => {
     setOpenMedia(!openMedia);
     setOpenManifest(false);
@@ -83,13 +82,28 @@ export const SidePanel = ({
     setOpenMedia(false);
   };
 
+  const handleOpenPanel = () => {
+    setOpenMedia(!openMedia);
+    setOpenManifest(false);
+  };
+
+  useEffect(() => {
+    console.log("display", display);
+    if (!display) {
+      setOpenManifest(false);
+      setOpenMedia(false);
+    }
+    console.log("RERENDER");
+  }, [display]);
+  console.log("openManifest", openManifest);
+  console.log("openMedia", openMedia);
   return (
-    <Grid container>
+    <>
       {display && (
         <>
           <ToggleButton
             open={openMedia || openManifest}
-            onClick={handleSetOpenMedia}
+            onClick={handleOpenPanel}
           >
             {openMedia || openManifest ? (
               <CloseButton text={t("")} />
@@ -97,7 +111,8 @@ export const SidePanel = ({
               <OpenButton text={t("")} />
             )}
           </ToggleButton>
-          {(openMedia || openManifest) && (
+
+          {(openMedia || openManifest) && open && (
             <>
               <ToggleMediaButton
                 open={openMedia}
@@ -110,6 +125,7 @@ export const SidePanel = ({
                   <OpenButton text={t("Media")} />
                 )}
               </ToggleMediaButton>
+
               <ToggleManifestButton
                 open={openManifest}
                 shift={openMedia}
@@ -125,7 +141,8 @@ export const SidePanel = ({
           )}
         </>
       )}
-      {openMedia && (
+
+      {openMedia && display && (
         <Drawer
           open={openMedia}
           anchor="right"
@@ -146,7 +163,8 @@ export const SidePanel = ({
           />
         </Drawer>
       )}
-      {openManifest && (
+
+      {openManifest && display && (
         <Drawer
           open={openManifest}
           anchor="right"
@@ -166,6 +184,7 @@ export const SidePanel = ({
           />
         </Drawer>
       )}
+
       <Box
         sx={{
           flexGrow: 1,
@@ -176,6 +195,6 @@ export const SidePanel = ({
       >
         {children}
       </Box>
-    </Grid>
+    </>
   );
 };

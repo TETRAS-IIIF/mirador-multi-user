@@ -30,7 +30,6 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { UpdateGroup } from "../api/updateGroup.ts";
 import { GetAllGroupUsers } from "../api/getAllGroupUsers.ts";
 import { ListItem } from "../../../components/types.ts";
-import { ContentSidePanelMedia } from "../../media/component/ContentSidePanelMedia.tsx";
 import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
@@ -42,6 +41,8 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { leavingGroup } from "../api/leavingGroup.ts";
 import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
+import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
+import { Manifest } from "../../manifest/types/types.ts";
 
 interface allGroupsProps {
   user: User;
@@ -50,6 +51,8 @@ interface allGroupsProps {
   userPersonalGroup: UserGroup;
   fetchGroups: () => void;
   groups: UserGroup[];
+  manifests: Manifest[];
+  fetchManifestForUser: () => void;
 }
 
 export const AllGroups = ({
@@ -59,6 +62,8 @@ export const AllGroups = ({
   userPersonalGroup,
   fetchGroups,
   groups,
+  manifests,
+  fetchManifestForUser,
 }: allGroupsProps) => {
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] =
     useState(false);
@@ -69,7 +74,6 @@ export const AllGroups = ({
   >([]);
   const [groupFilter, setGroupFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [openSidePanel, setOpenSidePanel] = useState(false);
   const [sortField, setSortField] = useState<keyof UserGroup>("title");
   const [sortOrder, setSortOrder] = useState("asc");
 
@@ -181,10 +185,6 @@ export const AllGroups = ({
     await removeAccessToGroup(groupId, userToRemoveId);
   };
 
-  const handleSetOpenSidePanel = () => {
-    setOpenSidePanel(!openSidePanel);
-  };
-
   const handleLeaveGroup = async (groupId: number) => {
     await leavingGroup(groupId);
     return fetchGroups();
@@ -192,14 +192,14 @@ export const AllGroups = ({
 
   return (
     <>
-      <ContentSidePanelMedia
-        open={openSidePanel && !!openModalGroupId}
-        setOpen={handleSetOpenSidePanel}
-        display={!!openModalGroupId}
-        fetchMediaForUser={fetchMediaForUser}
+      <SidePanel
         medias={medias}
-        user={user}
+        manifests={manifests}
         userPersonalGroup={userPersonalGroup!}
+        user={user}
+        fetchMediaForUser={fetchMediaForUser}
+        fetchManifestForUser={fetchManifestForUser}
+        display={!!openModalGroupId}
       >
         <Grid item container flexDirection="column">
           <Grid
@@ -327,7 +327,7 @@ export const AllGroups = ({
             toggleModalGroupCreation={toggleModalGroupCreation}
           />
         </Grid>
-      </ContentSidePanelMedia>
+      </SidePanel>
     </>
   );
 };

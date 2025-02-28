@@ -133,6 +133,8 @@ export function Content({
           fetchGroups={fetchGroups}
           groups={groups}
           medias={medias}
+          manifests={manifests}
+          fetchManifestForUser={fetchManifestForUser}
           setMedias={setMedias}
           user={user}
           userPersonalGroup={userPersonalGroup}
