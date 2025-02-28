@@ -1,7 +1,13 @@
-import { ContentSidePanelManifest } from "../../../features/manifest/component/ContentSidePanelManifest.tsx";
 import { Grid } from "@mui/material";
 import MiradorViewer from "../../../features/mirador/Mirador";
-import { ItemsRights } from "../../../features/user-group/types/types";
+import {
+  ItemsRights,
+  UserGroup,
+} from "../../../features/user-group/types/types";
+import { SidePanel } from "../SidePanel/SidePanel.tsx";
+import { Media } from "../../../features/media/types/types.ts";
+import { Manifest } from "../../../features/manifest/types/types.ts";
+import { User } from "../../../features/auth/types/types.ts";
 
 interface ProjectWorkspaceProps {
   HandleSetIsRunning: () => void;
@@ -11,11 +17,13 @@ interface ProjectWorkspaceProps {
   myRef: any;
   projectSelected: any;
   saveMiradorState: (state: any) => void;
-  user: any;
-  userPersonalGroup: any;
+  user: User;
+  userPersonalGroup: UserGroup;
   viewer: any;
   setViewer: (viewer: any) => void;
-  manifests: any;
+  manifests: Manifest[];
+  medias: Media[];
+  fetchMediaForUser: () => void;
 }
 
 export function ProjectWorkspace({
@@ -31,14 +39,18 @@ export function ProjectWorkspace({
   viewer,
   setViewer,
   manifests,
+  medias,
+  fetchMediaForUser,
 }: ProjectWorkspaceProps) {
   const isEditor = projectSelected.rights !== ItemsRights.READER;
 
   return (
-    <ContentSidePanelManifest
+    <SidePanel
+      medias={medias}
       manifests={manifests}
       userPersonalGroup={userPersonalGroup!}
       user={user}
+      fetchMediaForUser={fetchMediaForUser}
       fetchManifestForUser={fetchManifestForUser}
       display={true}
     >
@@ -61,6 +73,6 @@ export function ProjectWorkspace({
           user={user}
         />
       </Grid>
-    </ContentSidePanelManifest>
+    </SidePanel>
   );
 }

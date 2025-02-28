@@ -92,6 +92,8 @@ export function Content({
           user={user}
           userPersonalGroup={userPersonalGroup}
           viewer={viewer}
+          fetchMediaForUser={fetchMediaForUser}
+          medias={medias}
         />
       )}
       {user &&

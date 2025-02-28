@@ -273,6 +273,7 @@ export const AllProjects = ({
     }
   };
 
+  //TODO remove this declaration and pass this function with props or create customHook
   const fetchMediaForUser = async () => {
     const medias = await getUserGroupMedias(userPersonalGroup!.id);
     setMedias(medias);
