@@ -17,11 +17,12 @@ import { UserGroup } from "../../../features/user-group/types/types.ts";
 import { User } from "../../../features/auth/types/types.ts";
 import { Media } from "../../../features/media/types/types.ts";
 import { Manifest } from "../../../features/manifest/types/types.ts";
+import { ContentSidePanelMedia } from "../../../features/media/component/ContentSidePanelMedia.tsx";
 
 const ToggleMediaButton = styled(IconButton)<{ open: boolean }>(({ open }) => ({
   position: "fixed",
   top: "80px",
-  right: open ? 450 : -50,
+  right: open ? 460 : -50,
   zIndex: 9999,
   transition: "right 0.3s ease",
   "&:hover": {
@@ -32,8 +33,8 @@ const ToggleMediaButton = styled(IconButton)<{ open: boolean }>(({ open }) => ({
 const ToggleManifestButton = styled(IconButton)<{ open: boolean }>(
   ({ open }) => ({
     position: "fixed",
-    top: "130px",
-    right: open ? 450 : -50,
+    top: "200px",
+    right: open ? 460 : -70,
     zIndex: 9999,
     transition: "right 0.3s ease",
     "&:hover": {
@@ -43,7 +44,7 @@ const ToggleManifestButton = styled(IconButton)<{ open: boolean }>(
 );
 
 interface SidePanelProps {
-  media: Media[];
+  medias: Media[];
   manifest: Manifest[];
   children: ReactNode;
   userPersonalGroup: UserGroup;
@@ -54,14 +55,14 @@ interface SidePanelProps {
 }
 
 export const SidePanel = ({
-  media,
+  medias,
   manifest,
   children,
-  userPersonalGroup,
-  user,
   fetchMediaForUser,
   fetchManifestForUser,
   display,
+  user,
+  userPersonalGroup,
 }: SidePanelProps) => {
   const [openMedia, setOpenMedia] = useState(false);
   const [openManifest, setOpenManifest] = useState(false);
@@ -78,7 +79,7 @@ export const SidePanel = ({
     currentPage: 1,
     sortField: "title",
     sortOrder: "asc",
-    items: media,
+    items: medias,
     itemsPerPage,
     filter,
   });
@@ -91,15 +92,26 @@ export const SidePanel = ({
     itemsPerPage,
     filter,
   });
-  console.log("ttoto");
+
+  const handleSetOpenMedia = () => {
+    setOpenMedia(!openMedia);
+    setOpenManifest(false);
+  };
+
+  const handleSetOpenManifest = () => {
+    setOpenManifest(!openManifest);
+    setOpenMedia(false);
+  };
+
+  const handleButtonClick = () => {
+    document.getElementById("file-upload")!.click();
+  };
+
   return (
     <Grid container>
       {display && (
         <>
-          <ToggleMediaButton
-            open={openMedia}
-            onClick={() => setOpenMedia(!openMedia)}
-          >
+          <ToggleMediaButton open={openMedia} onClick={handleSetOpenMedia}>
             {openMedia ? (
               <CloseButton text={t("Media")} />
             ) : (
@@ -108,7 +120,7 @@ export const SidePanel = ({
           </ToggleMediaButton>
           <ToggleManifestButton
             open={openManifest}
-            onClick={() => setOpenManifest(!openManifest)}
+            onClick={handleSetOpenManifest}
           >
             {openManifest ? (
               <CloseButton text={t("Manifests")} />
@@ -119,31 +131,24 @@ export const SidePanel = ({
         </>
       )}
       {openMedia && (
-        <Drawer open={openMedia} anchor="right" variant="persistent">
-          <Grid
-            container
-            spacing={1}
-            sx={{ padding: "20px" }}
-            alignItems="center"
-          >
-            <Grid item>
-              <SearchBar label={t("search")} setFilter={setFilter} />
-            </Grid>
-          </Grid>
-          <ImageList
-            sx={{ minWidth: 500, padding: 1, width: 500 }}
-            cols={3}
-            rowHeight={164}
-          >
-            {mediaPageData.map((item) => (
-              <ImageListItem key={item.id}>
-                <img
-                  src={item.thumbnailUrl || "placeholder.png"}
-                  alt={item.title}
-                />
-              </ImageListItem>
-            ))}
-          </ImageList>
+        <Drawer
+          open={openMedia}
+          anchor="right"
+          variant="persistent"
+          sx={{ position: "relative", zIndex: 9999 }}
+          ModalProps={{
+            BackdropProps: {
+              style: { backgroundColor: "transparent" },
+            },
+          }}
+        >
+          <ContentSidePanelMedia
+            medias={medias}
+            open={openMedia}
+            fetchMediaForUser={fetchMediaForUser}
+            user={user}
+            userPersonalGroup={userPersonalGroup}
+          />
         </Drawer>
       )}
       {openManifest && (

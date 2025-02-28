@@ -30,7 +30,7 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { UpdateGroup } from "../api/updateGroup.ts";
 import { GetAllGroupUsers } from "../api/getAllGroupUsers.ts";
 import { ListItem } from "../../../components/types.ts";
-import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
+import { ContentSidePanelMedia } from "../../media/component/ContentSidePanelMedia.tsx";
 import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
@@ -192,7 +192,7 @@ export const AllGroups = ({
 
   return (
     <>
-      <SidePanelMedia
+      <ContentSidePanelMedia
         open={openSidePanel && !!openModalGroupId}
         setOpen={handleSetOpenSidePanel}
         display={!!openModalGroupId}
@@ -327,7 +327,7 @@ export const AllGroups = ({
             toggleModalGroupCreation={toggleModalGroupCreation}
           />
         </Grid>
-      </SidePanelMedia>
+      </ContentSidePanelMedia>
     </>
   );
 };

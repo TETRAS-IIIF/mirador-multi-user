@@ -28,7 +28,7 @@ import toast from "react-hot-toast";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import CreateIcon from "@mui/icons-material/Create";
 import { ManifestCreationForm } from "./ManifestCreationForm.tsx";
-import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
+import { ContentSidePanelMedia } from "../../media/component/ContentSidePanelMedia.tsx";
 import { Media } from "../../media/types/types.ts";
 import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -379,7 +379,7 @@ export const AllManifests = ({
 
   return (
     <>
-      <SidePanelMedia
+      <ContentSidePanelMedia
         open={openSidePanel && !!openModalManifestId}
         setOpen={handleSetOpenSidePanel}
         display={!!openModalManifestId}
@@ -588,7 +588,7 @@ export const AllManifests = ({
               flexDirection="column"
               sx={{ marginBottom: "70px", width: "100%" }}
             >
-              <SidePanelMedia
+              <ContentSidePanelMedia
                 display={true}
                 medias={medias}
                 userPersonalGroup={userPersonalGroup}
@@ -601,7 +601,7 @@ export const AllManifests = ({
                   handleSubmit={handleSubmitManifestCreationForm}
                   t={t}
                 />
-              </SidePanelMedia>
+              </ContentSidePanelMedia>
             </Grid>
           )}
           <Grid>
@@ -621,7 +621,7 @@ export const AllManifests = ({
             />
           )}
         </Grid>
-      </SidePanelMedia>
+      </ContentSidePanelMedia>
     </>
   );
 };
