@@ -88,15 +88,11 @@ export const SidePanel = ({
   };
 
   useEffect(() => {
-    console.log("display", display);
     if (!display) {
       setOpenManifest(false);
       setOpenMedia(false);
     }
-    console.log("RERENDER");
   }, [display]);
-  console.log("openManifest", openManifest);
-  console.log("openMedia", openMedia);
   return (
     <>
       {display && (
@@ -112,7 +108,7 @@ export const SidePanel = ({
             )}
           </ToggleButton>
 
-          {(openMedia || openManifest) && open && (
+          {(openMedia || openManifest) && (
             <>
               <ToggleMediaButton
                 open={openMedia}

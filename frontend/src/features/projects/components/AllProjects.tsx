@@ -124,6 +124,7 @@ export const AllProjects = ({
   useEffect(() => {
     fetchProjects();
     fetchUserPersonalGroup();
+    fetchManifestForUser();
   }, [openModalProjectId]);
 
   const deleteUserProject = async (projectId: number) => {
@@ -300,15 +301,9 @@ export const AllProjects = ({
     }
   };
 
-  const handleSetOpenSidePanel = () => {
-    setOpenSidePanel(!openSidePanel);
-  };
-
   return (
     <>
       <SidePanel
-        open={openSidePanel && !!openModalProjectId}
-        setOpen={handleSetOpenSidePanel}
         medias={medias}
         manifests={manifests}
         userPersonalGroup={userPersonalGroup!}
