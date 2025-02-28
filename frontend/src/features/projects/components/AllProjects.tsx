@@ -98,7 +98,6 @@ export const AllProjects = ({
   const [sortField, setSortField] = useState<keyof Project>("title");
   const [sortOrder, setSortOrder] = useState("asc");
   const { t } = useTranslation();
-  console.log("manifests", manifests);
   const itemsPerPage = 10;
 
   const toggleSortOrder = () => {
@@ -177,7 +176,6 @@ export const AllProjects = ({
 
   const HandleOpenModal = useCallback(
     (projectId: number) => {
-      console.log("toto");
       const newModalProjectId =
         openModalProjectId === projectId ? null : projectId;
       setOpenModalProjectId(newModalProjectId);
