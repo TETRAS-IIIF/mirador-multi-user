@@ -13,8 +13,8 @@ import { ContentSidePanelManifest } from "../../../features/manifest/component/C
 const ToggleMediaButton = styled(IconButton)<{ open: boolean; shift: boolean }>(
   ({ open, shift }) => ({
     position: "fixed",
-    top: "80px",
-    right: open ? 360 : shift ? 360 : -50, // Shift right when manifest is open
+    top: "130px",
+    right: open ? 360 : shift ? 360 : -50,
     zIndex: 9999,
     transition: "right 0.3s ease",
     "&:hover": {
@@ -23,13 +23,24 @@ const ToggleMediaButton = styled(IconButton)<{ open: boolean; shift: boolean }>(
   }),
 );
 
+const ToggleButton = styled(IconButton)<{ open: boolean }>(({ open }) => ({
+  position: "fixed",
+  top: "40px",
+  right: open ? 400 : 0,
+  zIndex: 9999,
+  transition: "right 0.3s ease",
+  "&:hover": {
+    backgroundColor: "transparent",
+  },
+}));
+
 const ToggleManifestButton = styled(IconButton)<{
   open: boolean;
   shift: boolean;
 }>(({ open, shift }) => ({
   position: "fixed",
-  top: "200px",
-  right: open ? 335 : shift ? 335 : -70, // Shift right when media is open
+  top: "250px",
+  right: open ? 335 : shift ? 335 : -70,
   zIndex: 9999,
   transition: "right 0.3s ease",
   "&:hover": {
@@ -76,28 +87,42 @@ export const SidePanel = ({
     <Grid container>
       {display && (
         <>
-          <ToggleMediaButton
-            open={openMedia}
-            shift={openManifest}
+          <ToggleButton
+            open={openMedia || openManifest}
             onClick={handleSetOpenMedia}
           >
-            {openMedia ? (
-              <CloseButton text={t("Media")} />
+            {openMedia || openManifest ? (
+              <CloseButton text={t("")} />
             ) : (
-              <OpenButton text={t("Media")} />
+              <OpenButton text={t("")} />
             )}
-          </ToggleMediaButton>
-          <ToggleManifestButton
-            open={openManifest}
-            shift={openMedia}
-            onClick={handleSetOpenManifest}
-          >
-            {openManifest ? (
-              <CloseButton text={t("Manifests")} />
-            ) : (
-              <OpenButton text={t("Manifests")} />
-            )}
-          </ToggleManifestButton>
+          </ToggleButton>
+          {(openMedia || openManifest) && (
+            <>
+              <ToggleMediaButton
+                open={openMedia}
+                shift={openManifest}
+                onClick={handleSetOpenMedia}
+              >
+                {openMedia ? (
+                  <CloseButton text={t("Media")} />
+                ) : (
+                  <OpenButton text={t("Media")} />
+                )}
+              </ToggleMediaButton>
+              <ToggleManifestButton
+                open={openManifest}
+                shift={openMedia}
+                onClick={handleSetOpenManifest}
+              >
+                {openManifest ? (
+                  <CloseButton text={t("Manifests")} />
+                ) : (
+                  <OpenButton text={t("Manifests")} />
+                )}
+              </ToggleManifestButton>
+            </>
+          )}
         </>
       )}
       {openMedia && (
