@@ -310,7 +310,7 @@ export const AllProjects = ({
     <>
       <SidePanel
         medias={medias}
-        manifest={manifests}
+        manifests={manifests}
         userPersonalGroup={userPersonalGroup!}
         user={user}
         fetchMediaForUser={fetchMediaForUser}

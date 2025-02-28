@@ -1,4 +1,4 @@
-import { SidePanelManifest } from "../../../features/manifest/component/SidePanelManifest";
+import { ContentSidePanelManifest } from "../../../features/manifest/component/ContentSidePanelManifest.tsx";
 import { Grid } from "@mui/material";
 import MiradorViewer from "../../../features/mirador/Mirador";
 import { ItemsRights } from "../../../features/user-group/types/types";
@@ -35,7 +35,7 @@ export function ProjectWorkspace({
   const isEditor = projectSelected.rights !== ItemsRights.READER;
 
   return (
-    <SidePanelManifest
+    <ContentSidePanelManifest
       manifests={manifests}
       userPersonalGroup={userPersonalGroup!}
       user={user}
@@ -61,6 +61,6 @@ export function ProjectWorkspace({
           user={user}
         />
       </Grid>
-    </SidePanelManifest>
+    </ContentSidePanelManifest>
   );
 }

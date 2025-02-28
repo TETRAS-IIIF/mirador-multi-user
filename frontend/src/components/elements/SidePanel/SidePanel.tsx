@@ -1,23 +1,14 @@
-import {
-  Box,
-  Drawer,
-  Grid,
-  IconButton,
-  ImageList,
-  ImageListItem,
-  styled,
-} from "@mui/material";
+import { Box, Drawer, Grid, IconButton, styled } from "@mui/material";
 import { ReactNode, useEffect, useState } from "react";
-import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
 import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
 import { useTranslation } from "react-i18next";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
 import { UserGroup } from "../../../features/user-group/types/types.ts";
 import { User } from "../../../features/auth/types/types.ts";
 import { Media } from "../../../features/media/types/types.ts";
 import { Manifest } from "../../../features/manifest/types/types.ts";
 import { ContentSidePanelMedia } from "../../../features/media/component/ContentSidePanelMedia.tsx";
+import { ContentSidePanelManifest } from "../../../features/manifest/component/ContentSidePanelManifest.tsx";
 
 const ToggleMediaButton = styled(IconButton)<{ open: boolean }>(({ open }) => ({
   position: "fixed",
@@ -34,7 +25,7 @@ const ToggleManifestButton = styled(IconButton)<{ open: boolean }>(
   ({ open }) => ({
     position: "fixed",
     top: "200px",
-    right: open ? 460 : -70,
+    right: open ? 335 : -70,
     zIndex: 9999,
     transition: "right 0.3s ease",
     "&:hover": {
@@ -45,7 +36,7 @@ const ToggleManifestButton = styled(IconButton)<{ open: boolean }>(
 
 interface SidePanelProps {
   medias: Media[];
-  manifest: Manifest[];
+  manifests: Manifest[];
   children: ReactNode;
   userPersonalGroup: UserGroup;
   user: User;
@@ -56,7 +47,7 @@ interface SidePanelProps {
 
 export const SidePanel = ({
   medias,
-  manifest,
+  manifests,
   children,
   fetchMediaForUser,
   fetchManifestForUser,
@@ -75,24 +66,6 @@ export const SidePanel = ({
     if (openManifest) fetchManifestForUser();
   }, [openMedia, openManifest]);
 
-  const mediaPageData = useCurrentPageData({
-    currentPage: 1,
-    sortField: "title",
-    sortOrder: "asc",
-    items: medias,
-    itemsPerPage,
-    filter,
-  });
-
-  const manifestPageData = useCurrentPageData({
-    currentPage: 1,
-    sortField: "title",
-    sortOrder: "asc",
-    items: manifest,
-    itemsPerPage,
-    filter,
-  });
-
   const handleSetOpenMedia = () => {
     setOpenMedia(!openMedia);
     setOpenManifest(false);
@@ -101,10 +74,6 @@ export const SidePanel = ({
   const handleSetOpenManifest = () => {
     setOpenManifest(!openManifest);
     setOpenMedia(false);
-  };
-
-  const handleButtonClick = () => {
-    document.getElementById("file-upload")!.click();
   };
 
   return (
@@ -152,31 +121,23 @@ export const SidePanel = ({
         </Drawer>
       )}
       {openManifest && (
-        <Drawer open={openManifest} anchor="right" variant="persistent">
-          <Grid
-            container
-            spacing={1}
-            sx={{ padding: "20px" }}
-            alignItems="center"
-          >
-            <Grid item>
-              <SearchBar label={t("search")} setFilter={setFilter} />
-            </Grid>
-          </Grid>
-          <ImageList
-            sx={{ minWidth: 500, padding: 1, width: 500 }}
-            cols={3}
-            rowHeight={164}
-          >
-            {manifestPageData.map((item) => (
-              <ImageListItem key={item.id}>
-                <img
-                  src={item.thumbnailUrl || "placeholder.png"}
-                  alt={item.title}
-                />
-              </ImageListItem>
-            ))}
-          </ImageList>
+        <Drawer
+          open={openManifest}
+          anchor="right"
+          variant="persistent"
+          sx={{ position: "relative", zIndex: 9999 }}
+          ModalProps={{
+            BackdropProps: {
+              style: { backgroundColor: "transparent" },
+            },
+          }}
+        >
+          <ContentSidePanelManifest
+            user={user}
+            userPersonalGroup={userPersonalGroup}
+            manifests={manifests}
+            fetchManifestForUser={fetchManifestForUser}
+          />
         </Drawer>
       )}
       <Box
