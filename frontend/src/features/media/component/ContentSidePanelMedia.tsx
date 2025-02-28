@@ -73,7 +73,7 @@ export const ContentSidePanelMedia = ({
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [sortField] = useState<keyof Media>("title");
   const [sortOrder] = useState("asc");
-  const itemsPerPage = 9;
+  const itemsPerPage = 6;
   const { t } = useTranslation();
   const handleCopyToClipBoard = async (path: string) => {
     try {
@@ -170,32 +170,35 @@ export const ContentSidePanelMedia = ({
   return (
     <>
       <Grid
-        item
         container
-        spacing={1}
-        sx={{ padding: "20px", width: "510px" }}
+        spacing={2}
+        sx={{ padding: "20px" }}
         alignItems="center"
+        flexDirection="row"
       >
         <Grid item>
           <SearchBar label={t("search")} setFilter={setMediaFilter} />
         </Grid>
         <Grid item>
-          <Tooltip title="Upload Media">
-            <Button onClick={handleButtonClick} variant="contained">
-              {" "}
-              <UploadFileIcon />
-            </Button>
-          </Tooltip>
-        </Grid>
-        <Grid item>
-          <Tooltip title="Link Media">
-            <Button
-              variant="contained"
-              onClick={() => setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)}
-            >
-              <AddLinkIcon />
-            </Button>
-          </Tooltip>
+          <Grid container direction="column" spacing={1}>
+            <Grid item>
+              <Tooltip title="Upload Media">
+                <Button onClick={handleButtonClick} variant="contained">
+                  <UploadFileIcon />
+                </Button>
+              </Tooltip>
+            </Grid>
+            <Grid item>
+              <Tooltip title="Link Media">
+                <Button
+                  variant="contained"
+                  onClick={() => setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)}
+                >
+                  <AddLinkIcon />
+                </Button>
+              </Tooltip>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
       <Tabs value={mediaTabShown} onChange={handleChangeTab} aria-label="tabs">
@@ -219,9 +222,9 @@ export const ContentSidePanelMedia = ({
         </Grid>
       ) : currentPageData.length > 0 ? (
         <ImageList
-          sx={{ minWidth: 500, padding: 1, width: 500 }}
-          cols={3}
-          rowHeight={164}
+          sx={{ minWidth: 400, padding: 1, width: 400 }}
+          cols={2}
+          rowHeight={200}
         >
           {currentPageData.map((media) => (
             <ImageBox

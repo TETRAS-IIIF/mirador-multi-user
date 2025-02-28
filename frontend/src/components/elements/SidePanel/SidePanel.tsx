@@ -10,22 +10,11 @@ import { Manifest } from "../../../features/manifest/types/types.ts";
 import { ContentSidePanelMedia } from "../../../features/media/component/ContentSidePanelMedia.tsx";
 import { ContentSidePanelManifest } from "../../../features/manifest/component/ContentSidePanelManifest.tsx";
 
-const ToggleMediaButton = styled(IconButton)<{ open: boolean }>(({ open }) => ({
-  position: "fixed",
-  top: "80px",
-  right: open ? 460 : -50,
-  zIndex: 9999,
-  transition: "right 0.3s ease",
-  "&:hover": {
-    backgroundColor: "transparent",
-  },
-}));
-
-const ToggleManifestButton = styled(IconButton)<{ open: boolean }>(
-  ({ open }) => ({
+const ToggleMediaButton = styled(IconButton)<{ open: boolean; shift: boolean }>(
+  ({ open, shift }) => ({
     position: "fixed",
-    top: "200px",
-    right: open ? 335 : -70,
+    top: "80px",
+    right: open ? 360 : shift ? 360 : -50, // Shift right when manifest is open
     zIndex: 9999,
     transition: "right 0.3s ease",
     "&:hover": {
@@ -33,6 +22,20 @@ const ToggleManifestButton = styled(IconButton)<{ open: boolean }>(
     },
   }),
 );
+
+const ToggleManifestButton = styled(IconButton)<{
+  open: boolean;
+  shift: boolean;
+}>(({ open, shift }) => ({
+  position: "fixed",
+  top: "200px",
+  right: open ? 335 : shift ? 335 : -70, // Shift right when media is open
+  zIndex: 9999,
+  transition: "right 0.3s ease",
+  "&:hover": {
+    backgroundColor: "transparent",
+  },
+}));
 
 interface SidePanelProps {
   medias: Media[];
@@ -73,7 +76,11 @@ export const SidePanel = ({
     <Grid container>
       {display && (
         <>
-          <ToggleMediaButton open={openMedia} onClick={handleSetOpenMedia}>
+          <ToggleMediaButton
+            open={openMedia}
+            shift={openManifest}
+            onClick={handleSetOpenMedia}
+          >
             {openMedia ? (
               <CloseButton text={t("Media")} />
             ) : (
@@ -82,6 +89,7 @@ export const SidePanel = ({
           </ToggleMediaButton>
           <ToggleManifestButton
             open={openManifest}
+            shift={openMedia}
             onClick={handleSetOpenManifest}
           >
             {openManifest ? (
