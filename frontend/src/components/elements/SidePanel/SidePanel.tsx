@@ -1,7 +1,7 @@
 import { Box, Drawer, Grid, IconButton, styled } from "@mui/material";
-import { ReactNode, useEffect, useState } from "react";
-import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
-import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
+import { ReactNode, useState } from "react";
+import { CloseButton } from "../SideBar/CloseButton.tsx";
+import { OpenButton } from "../SideBar/OpenButton.tsx";
 import { useTranslation } from "react-i18next";
 import { UserGroup } from "../../../features/user-group/types/types.ts";
 import { User } from "../../../features/auth/types/types.ts";
@@ -57,14 +57,7 @@ export const SidePanel = ({
 }: SidePanelProps) => {
   const [openMedia, setOpenMedia] = useState(false);
   const [openManifest, setOpenManifest] = useState(false);
-  const [filter, setFilter] = useState<string | null>(null);
   const { t } = useTranslation();
-  const itemsPerPage = 9;
-
-  useEffect(() => {
-    if (openMedia) fetchMediaForUser();
-    if (openManifest) fetchManifestForUser();
-  }, [openMedia, openManifest]);
 
   const handleSetOpenMedia = () => {
     setOpenMedia(!openMedia);

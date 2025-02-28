@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Grid,
-  IconButton,
   ImageList,
   ImageListItem,
   ImageListItemBar,
@@ -12,11 +11,7 @@ import {
 } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import {
-  Manifest,
-  ManifestGroupRights,
-  manifestOrigin,
-} from "../types/types.ts";
+import { Manifest, ManifestGroupRights } from "../types/types.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
@@ -24,8 +19,8 @@ import AddLinkIcon from "@mui/icons-material/AddLink";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
 import { linkManifest } from "../api/linkManifest.ts";
-import placeholder from "../../../assets/Placeholder.svg";
 import { useTranslation } from "react-i18next";
+import { useFetchThumbnails } from "../customHooks/useFetchManifestThumbnails.ts";
 
 const CustomButton = styled(Button)({
   position: "absolute",
@@ -36,17 +31,6 @@ const CustomButton = styled(Button)({
   opacity: 0,
   transition: "opacity 0.3s ease",
 });
-
-const ToggleButton = styled(IconButton)(({ open }: { open: boolean }) => ({
-  position: "fixed",
-  top: 100,
-  right: open ? 340 : -60,
-  zIndex: 9999,
-  transition: "right 0.3s ease",
-  "&:hover": {
-    backgroundColor: "transparent",
-  },
-}));
 
 const StyledImageListItem = styled(ImageListItem)({
   position: "relative",
@@ -72,7 +56,7 @@ export const ContentSidePanelManifest = ({
 }: PopUpManifestProps) => {
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
+
   const itemsPerPage = 6;
   const [manifestFilter, setManifestFilter] = useState<string | null>(null);
 
@@ -94,6 +78,9 @@ export const ContentSidePanelManifest = ({
     const end = start + itemsPerPage;
     return filteredAndSortedItems.slice(start, end);
   }, [currentPage, itemsPerPage, manifests, manifestFilter]);
+
+  const { thumbnailUrls, fetchThumbnails } =
+    useFetchThumbnails(currentPageData);
 
   const totalPages = Math.ceil(manifests.length / itemsPerPage);
 
@@ -141,43 +128,6 @@ export const ContentSidePanelManifest = ({
     },
     [fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup],
   );
-
-  const fetchThumbnails = useCallback(async () => {
-    const urls: string[] = await Promise.all(
-      currentPageData.map(async (manifest) => {
-        if (manifest.thumbnailUrl) {
-          return manifest.thumbnailUrl;
-        }
-
-        let manifestUrl = "";
-        if (manifest.origin === manifestOrigin.UPLOAD) {
-          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`; // TODO This must be tested
-        } else if (manifest.origin === manifestOrigin.LINK) {
-          manifestUrl = manifest.path;
-        } else if (manifest.origin === manifestOrigin.CREATE) {
-          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.path}`;
-        } else {
-          return placeholder;
-        }
-        try {
-          const manifestResponse = await fetch(manifestUrl);
-          const manifestFetched = await manifestResponse.json();
-          if (manifestFetched.thumbnail) {
-            return manifestFetched.thumbnail["@id"];
-          } else if (manifestFetched.items[0].thumbnail[0].id) {
-            return manifestFetched.items[0].thumbnail[0].id;
-          } else {
-            return placeholder;
-          }
-        } catch (error) {
-          console.error("Error fetching manifest:", error);
-          return placeholder;
-        }
-      }),
-    );
-
-    setThumbnailUrls(urls);
-  }, [currentPageData, caddyUrl]);
 
   useEffect(() => {
     fetchThumbnails();
