@@ -97,7 +97,6 @@ export const AllProjects = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<keyof Project>("title");
   const [sortOrder, setSortOrder] = useState("asc");
-  const [openSidePanel, setOpenSidePanel] = useState(false);
   const { t } = useTranslation();
   console.log("manifests", manifests);
   const itemsPerPage = 10;
