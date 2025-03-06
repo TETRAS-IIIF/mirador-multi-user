@@ -1,4 +1,3 @@
-import toast from 'react-hot-toast';
 import storage from './storage.ts';
 
 /**
@@ -20,7 +19,7 @@ export const fetchBackendAPIConnected = async (
     options,
   );
   if (response.status === 401) {
-    toast.error("You have been disconnected");
+    // Redirect to root page to fallback on login page if user is disconnected
     window.location.assign(window.location.origin);
   }
 
