@@ -299,8 +299,6 @@ export const AllProjects = ({
     }
   };
 
-  console.log("userProjects", userProjects);
-
   return (
     <>
       <SidePanelMedia
