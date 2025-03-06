@@ -20,7 +20,7 @@ If you want custom demo (like specific Mirador plugins or config) please contact
 
 ## Installation DEV (Docker)
 
-- `git clone git@github.com:SCENE-CE/mirador-multi-user.git`
+- `git clone git@github.com:TETRAS-IIIF/mirador-multi-user.git`
 - `cd mirador-multi-user`
 - `cp .env.dev.sample .env`
 - `nvm use`
@@ -44,7 +44,7 @@ Now you can access :
 
 - ## Installation PROD (Docker)
 
-- `git clone git@github.com:SCENE-CE/mirador-multi-user.git`
+- `git clone git@github.com:TETRAS-IIIF/mirador-multi-user.git`
 - `cd mirador-multi-user`
 - `cp .env.prod.sample .env`. 
 
@@ -62,7 +62,7 @@ In an other terminal, run following commands to generate the database
 
 ## Wiki 
 
-https://github.com/SCENE-CE/mirador-multi-user/wiki 
+https://github.com/TETRAS-IIIF/mirador-multi-user/wiki 
 
 ## Maintainers
 
