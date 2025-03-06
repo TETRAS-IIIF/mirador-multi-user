@@ -7,6 +7,8 @@
 // See docker-compose.yml file for more details
 export const UPLOAD_FOLDER = './upload';
 
+export const LOGS_FOLDER = './logs';
+
 // Default snapshot file name
 export const DEFAULT_PROJECT_SNAPSHOT_FILE_NAME = 'workspace.json';
 

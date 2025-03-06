@@ -2,6 +2,7 @@
 .idea/
 frontend/src/config/config.ts
 backend/upload/
+backend/logs/
 backend/migrations/*
 mariaDB/data/*
 .env
