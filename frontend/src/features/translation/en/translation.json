@@ -141,6 +141,8 @@
   "pathNotCopiedToClipboard": "Path not copied to clipboard",
   "placeholderProject": "My project",
   "project": "Projects",
+  "projectSaved": "Project {{projectTitle}} saved",
+  "projectSavedFailed": "Project {{projectTitle}} failed to save",
   "projectSnapshotUrl": "Project snapshot URL",
   "projectTitle": "My projects",
   "removeProjectFromList": "Remove project from list",
