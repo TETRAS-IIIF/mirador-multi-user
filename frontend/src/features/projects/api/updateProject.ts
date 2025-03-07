@@ -1,6 +1,7 @@
 import { ProjectGroupUpdateDto } from "../types/types";
 import { fetchBackendAPIConnected } from "../../../utils/fetchBackendAPI.ts";
 import toast from "react-hot-toast";
+import { t } from "i18next";
 
 export const updateProject = async (project: ProjectGroupUpdateDto) => {
   return await fetchBackendAPIConnected(
@@ -13,10 +14,12 @@ export const updateProject = async (project: ProjectGroupUpdateDto) => {
       body: JSON.stringify(project),
     },
     () => {
-      toast.success(`Project ${project.project.title} saved`); // TODO Trad
+      toast.success(t("projectSaved", { projectTitle: project.project.title }));
     },
     () => {
-      toast.error(`Failed to save ${project.project.title}`); // TODO Trad
+      toast.error(
+        t("projectSavedFailed", { projectTitle: project.project.title }),
+      );
     },
   );
 };

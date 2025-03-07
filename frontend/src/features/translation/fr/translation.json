@@ -143,6 +143,8 @@
   "pathNotCopiedToClipboard": "Le lien n'a pas pu être copié dans le presse-papier",
   "placeholderProject": "Mon projet",
   "project": "Projets",
+  "projectSaved": "Projet {{projectTitle}} sauvegardé",
+  "projectSavedFailed": "{{projectTitle}} n'a pu être sauvegardé",
   "projectSnapshotUrl": "URL de l'aperçu du projet",
   "projectTitle": "Mes projets",
   "register": "S'INSCRIRE",
