@@ -40,6 +40,7 @@ services:
     build: ./backend
     volumes:
       - ./$HTTP_FOLDER:/upload
+      - ./logs:/logs
     environment:
       DB_HOST: ${DB_HOST}
       DB_PASS: ${DB_PASS}

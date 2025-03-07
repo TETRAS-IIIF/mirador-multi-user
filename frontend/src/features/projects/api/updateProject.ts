@@ -1,23 +1,25 @@
-import storage from "../../../utils/storage.ts";
 import { ProjectGroupUpdateDto } from "../types/types";
+import { fetchBackendAPIConnected } from "../../../utils/fetchBackendAPI.ts";
+import toast from "react-hot-toast";
+import { t } from "i18next";
 
 export const updateProject = async (project: ProjectGroupUpdateDto) => {
-  const token = storage.getToken();
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/link-group-project/updateProject`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(project),
+  return await fetchBackendAPIConnected(
+    `link-group-project/updateProject`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
-    const toReturn = await response.json();
-    return toReturn;
-  } catch (error) {
-    throw error;
-  }
+      body: JSON.stringify(project),
+    },
+    () => {
+      toast.success(t("projectSaved", { projectTitle: project.project.title }));
+    },
+    () => {
+      toast.error(
+        t("projectSavedFailed", { projectTitle: project.project.title }),
+      );
+    },
+  );
 };

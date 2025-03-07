@@ -53,10 +53,14 @@ export class AuthService {
           access_token: await this.jwtService.signAsync(payload),
         };
       }
+
       const user = await this.usersService.findOneByMail(mail);
+
+      // No user found with this email
       if (!user) {
-        throw new ForbiddenException();
+        throw new UnauthorizedException();
       }
+
       const isMatch = await bcrypt.compare(pass, user.password);
 
       if (!isMatch) {
@@ -76,14 +80,16 @@ export class AuthService {
         access_token: await this.jwtService.signAsync(payload),
       };
     } catch (error) {
+      const logger = new CustomLogger();
+      logger.debug('Error on auth/login ' + error.message);
       if (error instanceof UnauthorizedException) {
         throw error;
+      } else {
+        this.logger.error(error.message, error.stack);
+        throw new InternalServerErrorException(
+          'An error occurred while signing in',
+        );
       }
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        `an error occurred`,
-        error.message,
-      );
     }
   }
 
