@@ -28,8 +28,8 @@
     "json-edit-react": "^1.17.1",
     "manifest-editor": "^1.0.2",
     "manifesto.js": "^4.2.21",
-    "mirador": "npm:arvest-mv@^1.0.18",
-    "mirador-annotation-editor": "npm:arvest-maev@^1.0.85",
+    "mirador": "npm:arvest-mv@^1.0.20",
+    "mirador-annotation-editor": "npm:arvest-maev@^1.0.86",
     "mirador-mltools-plugin-mmu": "npm:arvest-ml-tools@^0.0.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -62,10 +62,10 @@
   },
   "overrides": {
     "mirador-annotation-editor": {
-      "mirador": "npm:arvest-mv@^1.0.18"
+      "mirador": "npm:arvest-mv@^1.0.20"
     },
     "mirador-mltools-plugin-mmu": {
-      "mirador": "npm:arvest-mv@^1.0.18"
+      "mirador": "npm:arvest-mv@^1.0.20"
     }
   }
 }
