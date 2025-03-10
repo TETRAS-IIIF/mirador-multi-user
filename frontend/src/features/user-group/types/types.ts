@@ -28,6 +28,7 @@ export type UserGroup = {
   rights?: ItemsRights;
   thumbnailUrl?: string;
   created_at: Dayjs;
+  shared?: boolean;
 };
 
 export type CreateGroupDto = {

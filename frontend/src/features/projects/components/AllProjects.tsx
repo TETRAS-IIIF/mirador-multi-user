@@ -130,7 +130,7 @@ export const AllProjects = ({
 
   const updateUserProject = async (projectUpdated: Project) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { rights, share, ...projectToUpdate } = projectUpdated;
+    const { rights, share, shared, ...projectToUpdate } = projectUpdated;
     let updatedProject: ProjectGroupUpdateDto;
     if (rights) {
       updatedProject = {

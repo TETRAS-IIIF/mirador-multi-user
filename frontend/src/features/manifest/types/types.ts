@@ -17,6 +17,7 @@ export type Manifest = {
   rights?: ManifestGroupRights;
   url: string;
   share?: string;
+  shared?:boolean;
 };
 
 export type updateManifestJsonDto = {

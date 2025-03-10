@@ -16,6 +16,7 @@ export type Project = {
   lockedByUserId: number;
   lockedAt: Date;
   share?: string;
+  shared: boolean;
 };
 
 export type ProjectGroup = {
@@ -39,6 +40,7 @@ export type ProjectGroupUpdateDto = {
   };
   rights?: ItemsRights;
   group?: UserGroup;
+  shared?:boolean;
 };
 export type CreateProjectDto = {
   title: string;
