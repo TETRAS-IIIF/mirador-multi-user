@@ -380,8 +380,6 @@ export const SideDrawer = ({
     setMedias(uniqueMedias);
   };
 
-  console.log('medias',medias)
-
   const initializedWorkspace = async () => {
     await fetchUserPersonalGroup();
     await fetchGroups();

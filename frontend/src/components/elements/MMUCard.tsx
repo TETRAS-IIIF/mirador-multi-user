@@ -161,7 +161,6 @@ const MMUCard = <
     setOpenRemoveItemFromListModal(!openRemoveItemFromListModal);
   };
 
-  console.log('shared',item.shared)
   return (
     <Card>
       <Grid
