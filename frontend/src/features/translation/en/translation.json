@@ -168,6 +168,7 @@
   "selectItemToast": "select an item in the list",
   "settings": "Settings",
   "share": "Share",
+  "shared": "This have been shared by another user",
   "share-project-error-message": "The project has been shared by a group. You must leave the group to remove the project from the list.",
   "share-manifest-error-message": "The manifest has been shared by a group. You must leave the group to remove the manifest from the list.",
   "share-media-error-message": "The media has been shared by a group. You must leave the group to remove the media from the list.",
