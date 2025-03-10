@@ -275,6 +275,7 @@ export const AllMedias = ({
     eventValue: string,
     mediaId: number,
   ) => {
+    console.log('updateAccessToMedia')
     await updateAccessToMedia(
       mediaId,
       group.id,

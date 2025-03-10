@@ -248,6 +248,8 @@ export class LinkMediaGroupService {
 
   async removeAccesToMedia(mediaId: number, userGroupId: number) {
     try {
+      console.log('mediaId:', mediaId)
+      console.log('userGroupId:', userGroupId)
       const userGroupMedias = await this.findAllMediaByUserGroupId(userGroupId);
       const mediaToRemove = userGroupMedias.find(
         (userGroupMedia) => userGroupMedia.id == mediaId,
@@ -321,23 +323,23 @@ export class LinkMediaGroupService {
     rights: MediaGroupRights,
   ) {
     try {
-      const linkMediaGroupToUpdate = await this.linkMediaGroupRepository.find({
-        where: {
-          media: { id: mediaId },
-          user_group: { id: groupId },
-        },
-      });
-      const linkMediaGroup = this.linkMediaGroupRepository.create({
-        ...linkMediaGroupToUpdate[0],
-        rights: rights,
-      });
-      const toReturn = await this.linkMediaGroupRepository.upsert(
-        linkMediaGroup,
-        {
-          conflictPaths: ['rights', 'media', 'user_group'],
-        },
+      const linkMediaGroupToUpdate =
+        await this.linkMediaGroupRepository.findOne({
+          where: {
+            media: { id: mediaId },
+            user_group: { id: groupId },
+          },
+        });
+
+      if (!linkMediaGroupToUpdate) {
+        throw new NotFoundException('no matching LinkMediaGroup found');
+      }
+
+      linkMediaGroupToUpdate.rights = rights;
+
+      return await this.linkMediaGroupRepository.save(
+        linkMediaGroupToUpdate,
       );
-      return toReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(

@@ -17,13 +17,14 @@ export const updateAccessToMedia = async (
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          manifestId: mediaId,
+          mediaId: mediaId,
           userGroupId: userGroupId,
           rights: rights,
         }),
       },
     );
     const toReturn = await response.json();
+    console.log("toReturn",toReturn);
     return toReturn;
   } catch (error) {
     throw error;
