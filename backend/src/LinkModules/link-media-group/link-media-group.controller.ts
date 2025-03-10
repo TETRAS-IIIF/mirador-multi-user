@@ -173,7 +173,6 @@ export class LinkMediaGroupController {
     @Req() request,
   ) {
     const { mediaId, userGroupId, rights } = updateMediaGroupRelationDto;
-
     return await this.linkMediaGroupService.checkPolicies(
       request.metadata.action,
       request.user.sub,

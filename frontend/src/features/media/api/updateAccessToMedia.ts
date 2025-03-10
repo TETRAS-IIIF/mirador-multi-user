@@ -1,5 +1,5 @@
-import { MediaGroupRights } from "../types/types.ts";
-import storage from "../../../utils/storage.ts";
+import { MediaGroupRights } from '../types/types.ts';
+import storage from '../../../utils/storage.ts';
 
 export const updateAccessToMedia = async (
   mediaId: number,
@@ -23,9 +23,7 @@ export const updateAccessToMedia = async (
         }),
       },
     );
-    const toReturn = await response.json();
-    console.log("toReturn",toReturn);
-    return toReturn;
+    return await response.json();
   } catch (error) {
     throw error;
   }
