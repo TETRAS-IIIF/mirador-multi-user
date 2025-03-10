@@ -1,9 +1,10 @@
-import { Manifest } from "../types/types.ts";
-import storage from "../../../utils/storage.ts";
+import { Manifest } from '../types/types.ts';
+import storage from '../../../utils/storage.ts';
 
 export const updateManifest = async (manifest: Manifest) => {
   const token = storage.getToken();
-  const { json, ...manifestToUpdate } = manifest;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { json, shared, ...manifestToUpdate } = manifest;
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest`,
@@ -16,8 +17,7 @@ export const updateManifest = async (manifest: Manifest) => {
         body: JSON.stringify(manifestToUpdate),
       },
     );
-    const toReturn = await response.json();
-    return toReturn;
+    return await response.json();
   } catch (error) {
     throw error;
   }

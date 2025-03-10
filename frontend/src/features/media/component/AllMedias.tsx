@@ -210,8 +210,7 @@ export const AllMedias = ({
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { share, ...mediaDto } = mediaToUpdate;
-      await updateMedia(mediaDto);
+      await updateMedia(mediaToUpdate);
       const updatedListOfMedias = medias.filter(function (media) {
         return media.id != mediaToUpdate.id;
       });

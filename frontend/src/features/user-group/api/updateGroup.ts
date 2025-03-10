@@ -4,6 +4,8 @@ import { UserGroup } from "../types/types.ts";
 export const UpdateGroup = async (
   updateData: Partial<UserGroup>,
 ): Promise<UserGroup[]> => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {shared, ...updateGroupDto} = updateData;
   try {
     const token = storage.getToken();
     const response = await fetch(
@@ -14,7 +16,7 @@ export const UpdateGroup = async (
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updateData),
+        body: JSON.stringify(updateGroupDto),
       },
     );
     return await response.json();

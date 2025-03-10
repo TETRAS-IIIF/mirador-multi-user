@@ -249,7 +249,7 @@ export const SideDrawer = ({
       projectToUpdate.userWorkspace = miradorViewer!;
       if (projectToUpdate) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { rights, share, ...projectWithoutRights } = projectToUpdate;
+        const { rights, share,shared, ...projectWithoutRights } = projectToUpdate;
         await updateProject({ project: projectWithoutRights });
       }
     } else {
