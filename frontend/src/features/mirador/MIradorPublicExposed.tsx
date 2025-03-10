@@ -32,6 +32,9 @@ export const MiradorPublicExposed = () => {
                 new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
               exportLocalStorageAnnotations: false, // display annotation JSON export button
             },
+            annotations: {
+              htmlSanitizationRuleSet: "liberal",
+            },
           };
 
           let loadingMiradorViewer;
