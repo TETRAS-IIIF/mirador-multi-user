@@ -268,6 +268,7 @@ export const AllMedias = ({
     userGroupId: number,
     mediaId: number,
   ) => {
+    console.log('mediaId',mediaId)
     await removeAccessToMedia(mediaId, userGroupId);
   };
   const handleChangeRights = async (

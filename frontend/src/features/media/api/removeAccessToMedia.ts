@@ -2,6 +2,7 @@ import storage from "../../../utils/storage.ts";
 
 export const removeAccessToMedia = async (mediaId: number, groupId: number) => {
   const token = storage.getToken();
+  console.log('removeAccessToMedia', mediaId);
   const response = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/link-media-group/media/${mediaId}/${groupId}`,
     {
