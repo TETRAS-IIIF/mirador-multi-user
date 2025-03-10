@@ -213,9 +213,9 @@ export class LinkMediaGroupController {
       request.user.sub,
       mediaId,
       async () => {
-        return await this.linkMediaGroupService.removeAccesToMedia(
-          groupId,
+        return await this.linkMediaGroupService.removeAccessToMedia(
           mediaId,
+          groupId,
         );
       },
     );

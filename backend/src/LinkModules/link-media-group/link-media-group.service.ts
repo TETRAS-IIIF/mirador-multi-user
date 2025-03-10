@@ -246,7 +246,7 @@ export class LinkMediaGroupService {
     }
   }
 
-  async removeAccesToMedia(mediaId: number, userGroupId: number) {
+  async removeAccessToMedia(mediaId: number, userGroupId: number) {
     try {
       const userGroupMedias = await this.findAllMediaByUserGroupId(userGroupId);
       const mediaToRemove = userGroupMedias.find(
@@ -321,23 +321,23 @@ export class LinkMediaGroupService {
     rights: MediaGroupRights,
   ) {
     try {
-      const linkMediaGroupToUpdate = await this.linkMediaGroupRepository.find({
-        where: {
-          media: { id: mediaId },
-          user_group: { id: groupId },
-        },
-      });
-      const linkMediaGroup = this.linkMediaGroupRepository.create({
-        ...linkMediaGroupToUpdate[0],
-        rights: rights,
-      });
-      const toReturn = await this.linkMediaGroupRepository.upsert(
-        linkMediaGroup,
-        {
-          conflictPaths: ['rights', 'media', 'user_group'],
-        },
+      const linkMediaGroupToUpdate =
+        await this.linkMediaGroupRepository.findOne({
+          where: {
+            media: { id: mediaId },
+            user_group: { id: groupId },
+          },
+        });
+
+      if (!linkMediaGroupToUpdate) {
+        throw new NotFoundException('no matching LinkMediaGroup found');
+      }
+
+      linkMediaGroupToUpdate.rights = rights;
+
+      return await this.linkMediaGroupRepository.save(
+        linkMediaGroupToUpdate,
       );
-      return toReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -392,7 +392,6 @@ export class LinkMediaGroupService {
     try {
       const userPersonalGroup =
         await this.groupService.findUserPersonalGroup(userId);
-
       const linkEntity = await this.getHighestRightForManifest(
         userPersonalGroup.id,
         manifestId,
@@ -444,7 +443,7 @@ export class LinkMediaGroupService {
     try {
       const personalGroup =
         await this.groupService.findUserPersonalGroup(userId);
-      return await this.removeAccesToMedia(mediaId, personalGroup.id);
+      return await this.removeAccessToMedia(mediaId, personalGroup.id);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
