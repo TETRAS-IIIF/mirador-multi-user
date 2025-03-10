@@ -168,6 +168,7 @@
   "selectItemToast": "Sélectionnez un élément dans la liste",
   "settings": "Paramètres",
   "share": "Partager",
+  "shared": "Ceci a été partagé par un autre utilisateur",
   "share-project-error-message": "Le projet a été partagé par un groupe, vous devez quitter le groupe pour supprimer le projet de la liste.",
   "share-manifest-error-message": "Le manifest a été partagé par un groupe, vous devez quitter le groupe pour supprimer le manifest de la liste.",
   "share-media-error-message": "Le media a été partagé par un groupe, vous devez quitter le groupe pour supprimer le media de la liste.",

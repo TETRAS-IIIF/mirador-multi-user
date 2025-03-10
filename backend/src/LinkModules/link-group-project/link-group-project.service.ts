@@ -417,12 +417,14 @@ export class LinkGroupProjectService {
               ...groupProject.project,
               rights: groupProject.rights,
               share: 'group',
+              shared: Number(groupProject.project.ownerId) !== Number(userId),
             };
           }
           if (groupProject.user_group.type === UserGroupTypes.PERSONAL) {
             project = {
               ...groupProject.project,
               rights: groupProject.rights,
+              shared: Number(groupProject.project.ownerId) !== Number(userId),
             };
           }
 

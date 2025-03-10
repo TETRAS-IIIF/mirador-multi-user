@@ -275,6 +275,7 @@ export class LinkMediaGroupService {
       return request.map((linkGroup: LinkMediaGroup) => ({
         ...linkGroup.media,
         rights: linkGroup.rights,
+        shared: Number(linkGroup.media.idCreator) !== Number(id),
       }));
     } catch (error) {
       this.logger.error(error.message, error.stack);

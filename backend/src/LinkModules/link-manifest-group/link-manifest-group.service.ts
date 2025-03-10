@@ -345,6 +345,7 @@ export class LinkManifestGroupService {
       return request.map((linkGroup: LinkManifestGroup) => ({
         ...linkGroup.manifest,
         rights: linkGroup.rights,
+        shared: Number(linkGroup.manifest.idCreator) !== Number(id),
       }));
     } catch (error) {
       this.logger.error(error.message, error.stack);
