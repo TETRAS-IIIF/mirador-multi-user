@@ -209,17 +209,14 @@ export class LinkMediaGroupController {
     @Param('groupId') groupId: number,
     @Req() request,
   ) {
-    console.log('mediaId:',mediaId);
-    console.log('groupId:',groupId);
-    console.log('request user:',request.user);
     return await this.linkMediaGroupService.checkPolicies(
       request.metadata.action,
       request.user.sub,
       mediaId,
       async () => {
         return await this.linkMediaGroupService.removeAccessToMedia(
-          groupId,
           mediaId,
+          groupId,
         );
       },
     );

@@ -248,8 +248,6 @@ export class LinkMediaGroupService {
 
   async removeAccessToMedia(mediaId: number, userGroupId: number) {
     try {
-      console.log('mediaId:', mediaId)
-      console.log('userGroupId:', userGroupId)
       const userGroupMedias = await this.findAllMediaByUserGroupId(userGroupId);
       const mediaToRemove = userGroupMedias.find(
         (userGroupMedia) => userGroupMedia.id == mediaId,
@@ -374,7 +372,6 @@ export class LinkMediaGroupService {
       },
       relations: ['media', 'user_group'],
     });
-    console.log(linkEntities)
     if (linkEntities.length === 0) {
       return;
     }
@@ -392,18 +389,14 @@ export class LinkMediaGroupService {
     manifestId: number,
     callback: (linkEntity: LinkMediaGroup) => any,
   ) {
-    console.log('check policies')
     try {
       const userPersonalGroup =
         await this.groupService.findUserPersonalGroup(userId);
-      console.log('userPersonalGroup:',userPersonalGroup);
-      console.log('userPersonalGroup id :',userPersonalGroup.id);
       const linkEntity = await this.getHighestRightForManifest(
         userPersonalGroup.id,
         manifestId,
       );
 
-      console.log('linkEntity:',linkEntity)
       if (!linkEntity) {
         return new ForbiddenException(
           'User does not have access to this media or the media does not exist',
