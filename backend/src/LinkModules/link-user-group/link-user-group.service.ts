@@ -370,6 +370,7 @@ export class LinkUserGroupService {
         groupsToReturn.push({
           ...group.user_group,
           rights: group.rights,
+          shared: Number(group.user_group.ownerId) !== Number(userId),
         });
       }
       return groupsToReturn;
