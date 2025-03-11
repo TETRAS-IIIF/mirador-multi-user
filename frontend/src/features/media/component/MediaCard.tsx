@@ -133,9 +133,6 @@ export const MediaCard = ({
       searchModalEditItem={handleLookingForUserGroups}
       setItemList={setGroupList}
       setItemToAdd={setUserToAdd}
-      thumbnailUrl={
-        media.hash ? `${caddyUrl}/${media.hash}/thumbnail.webp` : null
-      }
       updateItem={HandleUpdateMedia}
       handleSelectorChange={handleChangeRights}
       getGroupByOption={getGroupByOption}

@@ -30,6 +30,7 @@ export type UserGroup = {
   thumbnailUrl?: string;
   created_at: Dayjs;
   shared?: boolean;
+  updated_at:Dayjs;
 };
 
 export type CreateGroupDto = {

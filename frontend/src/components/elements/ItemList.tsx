@@ -1,16 +1,16 @@
-import { Divider, Grid, IconButton, Typography } from '@mui/material';
-import { ListItem } from '../types.ts';
-import { BigSpinner } from './spinner.tsx';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { SearchBar } from './SearchBar.tsx';
-import { MMUToolTip } from './MMUTootlTip.tsx';
-import { UserGroupTypes } from '../../features/user-group/types/types.ts';
-import PersonIcon from '@mui/icons-material/Person';
-import GroupsIcon from '@mui/icons-material/Groups';
-import { ShareLink } from './shareLink.tsx';
-import { ObjectTypes } from '../../features/tag/type.ts';
-import { useTranslation } from 'react-i18next';
+import { Divider, Grid, IconButton, Typography } from "@mui/material";
+import { ListItem } from "../types.ts";
+import { LoadingSpinner } from "./loadingSpinner.tsx";
+import { Dispatch, ReactNode, SetStateAction } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { SearchBar } from "./SearchBar.tsx";
+import { MMUToolTip } from "./MMUTootlTip.tsx";
+import { UserGroupTypes } from "../../features/user-group/types/types.ts";
+import PersonIcon from "@mui/icons-material/Person";
+import GroupsIcon from "@mui/icons-material/Groups";
+import { ShareLink } from "./shareLink.tsx";
+import { ObjectTypes } from "../../features/tag/type.ts";
+import { useTranslation } from "react-i18next";
 
 interface IProjectUserGroup<G, T> {
   items: ListItem[];
@@ -149,7 +149,7 @@ export const ItemList = <
                   </Grid>
                 </Grid>
               ) : (
-                <BigSpinner />
+                <LoadingSpinner />
               ),
             )}
         </Grid>

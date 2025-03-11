@@ -154,6 +154,7 @@ export const SidePanelManifest = ({
     [fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup],
   );
 
+  //TODO : refacto this to use customHooks useFetchThumbnailUrl and move StyledImageListItem into his own component
   const fetchThumbnails = useCallback(async () => {
     const urls: string[] = await Promise.all(
       currentPageData.map(async (manifest) => {
@@ -163,7 +164,7 @@ export const SidePanelManifest = ({
 
         let manifestUrl = "";
         if (manifest.origin === manifestOrigin.UPLOAD) {
-          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`; // TODO This must be tested
+          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`;
         } else if (manifest.origin === manifestOrigin.LINK) {
           manifestUrl = manifest.path;
         } else if (manifest.origin === manifestOrigin.CREATE) {

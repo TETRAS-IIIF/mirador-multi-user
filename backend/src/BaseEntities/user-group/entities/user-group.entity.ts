@@ -4,8 +4,8 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn
-} from "typeorm";
+  PrimaryGeneratedColumn, UpdateDateColumn,
+} from 'typeorm';
 import { IsEnum, IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../../LinkModules/link-group-project/entities/link-group-project.entity';
 import { LinkMediaGroup } from '../../../LinkModules/link-media-group/entities/link-media-group.entity';
@@ -72,4 +72,11 @@ export class UserGroup {
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
   created_at: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  public updated_at: Date;
 }

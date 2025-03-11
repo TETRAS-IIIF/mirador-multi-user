@@ -56,7 +56,11 @@ import {
   isFileSizeUnderLimit,
   isValidFileForUpload,
 } from "../../../utils/utils.ts";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -100,8 +104,8 @@ export const AllMedias = ({
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
   const [mediaTabShown, setmediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
-  const [sortField, setSortField] = useState<keyof Media>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortField, setSortField] = useState<keyof Media>(UPDATED_AT);
+  const [sortOrder, setSortOrder] = useState("desc");
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -160,7 +164,7 @@ export const AllMedias = ({
         toast.error(t("error_image_type"));
         return;
       }
-      if (isFileSizeUnderLimit(file)) {
+      if (!isFileSizeUnderLimit(file)) {
         toast.error(
           t("fileTooLarge", {
             maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
@@ -168,7 +172,6 @@ export const AllMedias = ({
         );
         return;
       }
-
       // Proceed with media creation
       await createMedia(
         {
@@ -387,7 +390,7 @@ export const AllMedias = ({
               <SortItemSelector<Media>
                 sortField={sortField}
                 setSortField={setSortField}
-                fields={["title", "created_at"]}
+                fields={[TITLE, UPDATED_AT]}
               />
             </Grid>
             <Grid item>
@@ -423,8 +426,9 @@ export const AllMedias = ({
                 currentPageData.map((media : Media) => (
                   <Grid item key={media.id}>
                     <MediaCard
+                      media={{ ...media, thumbnailUrl : media.hash ? `${caddyUrl}/${media.hash}/thumbnail.webp` : null
+                      }}
                       ownerId={media.idCreator}
-                      media={media}
                       getAllMediaGroups={getAllMediaGroups}
                       getOptionLabel={getOptionLabel}
                       getGroupByOption={getGroupByOption}

@@ -54,7 +54,11 @@ import { SortItemSelector } from "../../../components/elements/sortItemSelector.
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { removeProjectFromList } from "../api/removeProjectFromList.ts";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
 
 interface AllProjectsProps {
   user: User;
@@ -91,8 +95,8 @@ export const AllProjects = ({
   const [projectFilter, setProjectFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [openSidePanel, setOpenSidePanel] = useState(false);
-  const [sortField, setSortField] = useState<keyof Project>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortField, setSortField] = useState<keyof Project>(UPDATED_AT);
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const { t } = useTranslation();
 
@@ -343,7 +347,7 @@ export const AllProjects = ({
                   <SortItemSelector<Project>
                     sortField={sortField}
                     setSortField={setSortField}
-                    fields={["title", "created_at"]}
+                    fields={[TITLE, UPDATED_AT]}
                   />
                 </Grid>
                 <Grid item>
