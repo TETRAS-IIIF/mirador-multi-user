@@ -1,6 +1,6 @@
 import { Divider, Grid, IconButton, Typography } from "@mui/material";
 import { ListItem } from "../types.ts";
-import { BigSpinner } from "./spinner.tsx";
+import { LoadingSpinner } from "./loadingSpinner.tsx";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { SearchBar } from "./SearchBar.tsx";
@@ -141,7 +141,7 @@ export const ItemList = <
                   </Grid>
                 </Grid>
               ) : (
-                <BigSpinner />
+                <LoadingSpinner />
               ),
             )}
         </Grid>

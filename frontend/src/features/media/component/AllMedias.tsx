@@ -164,7 +164,7 @@ export const AllMedias = ({
         toast.error(t("error_image_type"));
         return;
       }
-      if (isFileSizeUnderLimit(file)) {
+      if (!isFileSizeUnderLimit(file)) {
         toast.error(
           t("fileTooLarge", {
             maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
@@ -172,7 +172,6 @@ export const AllMedias = ({
         );
         return;
       }
-
       // Proceed with media creation
       await createMedia(
         {
@@ -426,7 +425,8 @@ export const AllMedias = ({
                 currentPageData.map((media) => (
                   <Grid item key={media.id}>
                     <MediaCard
-                      media={media}
+                      media={{ ...media, thumbnailUrl : media.hash ? `${caddyUrl}/${media.hash}/thumbnail.webp` : null
+                      }}
                       getAllMediaGroups={getAllMediaGroups}
                       getOptionLabel={getOptionLabel}
                       getGroupByOption={getGroupByOption}

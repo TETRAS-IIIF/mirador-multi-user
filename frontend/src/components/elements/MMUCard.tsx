@@ -31,11 +31,12 @@ import { ObjectTypes } from "../../features/tag/type.ts";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import ImageIcon from "@mui/icons-material/Image";
 import { useTranslation } from "react-i18next";
-import placeholder from "../../assets/Placeholder.svg";
 import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
 import { ModalButton } from "./ModalButton.tsx";
 import CancelIcon from "@mui/icons-material/Cancel";
-import ShareIcon from "@mui/icons-material/Share";
+import ShareIcon from '@mui/icons-material/Share';
+import useFetchThumbnailsUrl from '../../utils/customHooks/useFetchThumbnailsUrl.ts';
+import { LoadingSpinner } from './loadingSpinner.tsx';
 
 interface IMMUCardProps<T, X> {
   id: number;
@@ -81,14 +82,17 @@ interface IMMUCardProps<T, X> {
 
 const MMUCard = <
   T extends {
-    id: number;
     created_at: Dayjs;
-    snapShotHash?: string;
+    hash?: string;
+    id: number;
     mediaTypes?: MediaTypes;
     origin?: manifestOrigin | mediaOrigin;
-    title?: string;
+    path?: string;
     share?: string;
     shared?: boolean;
+    snapShotHash?: string;
+    thumbnailUrl?: string;
+    title?: string;
     updated_at: Dayjs;
   },
   X extends { id: number },
@@ -114,7 +118,6 @@ const MMUCard = <
   removeAccessListItemFunction,
   setItemList,
   searchBarLabel,
-  thumbnailUrl,
   metadata,
   isGroups,
   objectTypes,
@@ -125,6 +128,7 @@ const MMUCard = <
   const [searchInput, setSearchInput] = useState<string>("");
   const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
     useState(false);
+  const [isLoading,thumbnailUrl] = useFetchThumbnailsUrl({ item })
   const { t, i18n } = useTranslation();
   const handleRemoveAccessListItem = async (accessItemId: number) => {
     if (removeAccessListItemFunction) {
@@ -181,17 +185,21 @@ const MMUCard = <
           justifyContent="flex-start"
           spacing={2}
         >
-          <Grid item xs={12} sm={4}>
-            <img
-              src={thumbnailUrl ? thumbnailUrl : placeholder}
-              alt={t("thumbnailMissing")}
-              style={{
-                height: 100,
-                width: 150,
-                objectFit: "contain",
-                marginLeft: "10px",
-              }}
-            />
+          <Grid item  xs={12} sm={4}>
+            {isLoading ? (
+              <LoadingSpinner/>
+            ):(
+              <img
+                src={thumbnailUrl as string}
+                alt={t("thumbnailMissing")}
+                style={{
+                  height: 100,
+                  width: 150,
+                  objectFit: "contain",
+                  marginLeft: "10px",
+                }}
+              />
+            )}
           </Grid>
           <Grid item xs={12} sm={1}>
             {item.shared && (
@@ -297,7 +305,7 @@ const MMUCard = <
                   objectTypes={objectTypes}
                   isGroups={isGroups}
                   metadata={metadata ? metadata : undefined}
-                  thumbnailUrl={thumbnailUrl}
+                  thumbnailUrl={thumbnailUrl as string}
                   HandleOpenModalEdit={HandleOpenModal}
                   description={description}
                   searchBarLabel={searchBarLabel ? searchBarLabel : ""}
