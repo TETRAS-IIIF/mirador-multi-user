@@ -48,7 +48,7 @@ export const useCurrentPageData = ({
 
 const isInFilter = (item: any, filter: string | null) => {
   if (filter) {
-    return item.title.includes(filter);
+    return item.title.toLowerCase().includes(filter.toLowerCase());
   } else {
     return true;
   }
