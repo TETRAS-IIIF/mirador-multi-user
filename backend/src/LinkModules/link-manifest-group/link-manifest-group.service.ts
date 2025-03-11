@@ -88,7 +88,6 @@ export class LinkManifestGroupService {
   async addManifestToGroup(addManifestToGroupDto: AddManifestToGroupDto) {
     const { userGroupId, manifestId } = addManifestToGroupDto;
     try {
-      console.log(addManifestToGroupDto)
       const manifestsForGroup = [];
       const manifest = await this.manifestService.findOne(manifestId);
       const group = await this.groupService.findOne(userGroupId);
@@ -97,7 +96,7 @@ export class LinkManifestGroupService {
           `Project with id ${manifestId} not found`,
         );
       }
-      const creation= await this.create({
+      const creation = await this.create({
         rights: addManifestToGroupDto.rights
           ? addManifestToGroupDto.rights
           : ManifestGroupRights.READER,
@@ -105,7 +104,6 @@ export class LinkManifestGroupService {
         manifest: manifest,
       });
 
-      console.log(creation);
       const groupForManifest = await this.getAllManifestsGroup(manifestId);
       manifestsForGroup.push(groupForManifest);
       return manifestsForGroup;
