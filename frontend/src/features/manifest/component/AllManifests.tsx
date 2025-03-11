@@ -345,8 +345,12 @@ export const AllManifests = ({
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
       type: projectGroup.user_group.type,
+      personalOwnerGroupId: projectGroup.user_group.ownerId
     }));
   }, [groupList]);
+
+  console.log('groupList',groupList)
+  console.log('listOfGroup',listOfGroup)
 
   const handleChangeRights = async (
     group: ListItem,
@@ -485,9 +489,10 @@ export const AllManifests = ({
                 flexDirection="column"
                 sx={{ marginBottom: "70px" }}
               >
-                {currentPageData.map((manifest, index) => (
+                {currentPageData.map((manifest : Manifest, index) => (
                   <Grid item key={manifest.id}>
                     <MMUCard
+                      ownerId={manifest.idCreator}
                       objectTypes={ObjectTypes.MANIFEST}
                       AddAccessListItemFunction={handleGrantAccess}
                       DefaultButton={

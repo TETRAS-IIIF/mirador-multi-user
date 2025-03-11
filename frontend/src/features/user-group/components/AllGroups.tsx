@@ -174,9 +174,11 @@ export const AllGroups = ({
       id: userPersonalGroup.user.id,
       title: userPersonalGroup.user.name,
       rights: userPersonalGroup.rights,
+      personalOwnerGroupId:userPersonalGroup.personalOwnerGroupId,
     }));
   }, [userPersonalGroupList]);
 
+console.log("userPersonalGroupList",userPersonalGroupList);
   const handleRemoveUser = async (groupId: number, userToRemoveId: number) => {
     await removeAccessToGroup(groupId, userToRemoveId);
   };
@@ -259,9 +261,10 @@ export const AllGroups = ({
             )}
             {groups.length > 0 &&
               (currentPageData.length > 0 ? (
-                currentPageData.map((group) => (
+                currentPageData.map((group:UserGroup) => (
                   <Grid item key={group.id}>
                     <MMUCard
+                      ownerId={group.ownerId}
                       objectTypes={ObjectTypes.GROUP}
                       isGroups={true}
                       thumbnailUrl={

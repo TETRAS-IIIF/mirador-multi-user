@@ -19,7 +19,9 @@ export const getAllMediaGroups = async (
       throw new Error(`Error in getALlMediaGroups: ${response.statusText}`);
     }
 
-    return await response.json();
+    const toreturn =  await response.json();
+    console.log('toreturn',toreturn);
+    return toreturn;
   } catch (error) {
     console.error("Error in getALlMediaGroups:", error);
     return [];

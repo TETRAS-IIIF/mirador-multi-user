@@ -17,6 +17,7 @@ export type LinkUserGroup = {
   rights: ItemsRights;
   user: User;
   user_group: UserGroup;
+  personalOwnerGroupId?:number
 };
 
 export type UserGroup = {

@@ -76,6 +76,7 @@ interface IMMUCardProps<T, X> {
     manifestId: number,
     share: string | undefined,
   ) => Promise<void> | void;
+  ownerId:number;
 }
 
 const MMUCard = <
@@ -119,7 +120,9 @@ const MMUCard = <
   getGroupByOption,
   duplicateItem,
   handleRemoveFromList,
+                    ownerId,
 }: IMMUCardProps<T, X>) => {
+
   const [searchInput, setSearchInput] = useState<string>("");
   const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
     useState(false);
@@ -316,6 +319,7 @@ const MMUCard = <
                   rights={rights}
                   handleDeleteAccessListItem={handleRemoveAccessListItem}
                   duplicateItem={duplicateItem}
+                  ownerId={ownerId}
                 />
               </>
             }

@@ -42,6 +42,7 @@ interface IMediaCardProps {
     mediaId: number,
     share: string | undefined,
   ) => void;
+  ownerId:number
 }
 
 export const MediaCard = ({
@@ -63,10 +64,13 @@ export const MediaCard = ({
   handleChangeRights,
   getGroupByOption,
   handleRemoveMediaFromList,
+                            ownerId,
 }: IMediaCardProps) => {
   const { t } = useTranslation();
+
   return (
     <MMUCard
+      ownerId={ownerId}
       objectTypes={ObjectTypes.MEDIA}
       AddAccessListItemFunction={handleGrantAccess}
       DefaultButton={

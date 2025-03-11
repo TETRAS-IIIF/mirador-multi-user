@@ -240,6 +240,7 @@ export const AllMedias = ({
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
       type: projectGroup.user_group.type,
+      personalOwnerGroupId: projectGroup.user_group.ownerId
     }));
   }, [groupList]);
 
@@ -419,9 +420,10 @@ export const AllMedias = ({
           <Grid container spacing={2} direction="column">
             {medias.length > 0 &&
               (currentPageData.length > 0 ? (
-                currentPageData.map((media) => (
+                currentPageData.map((media : Media) => (
                   <Grid item key={media.id}>
                     <MediaCard
+                      ownerId={media.idCreator}
                       media={media}
                       getAllMediaGroups={getAllMediaGroups}
                       getOptionLabel={getOptionLabel}

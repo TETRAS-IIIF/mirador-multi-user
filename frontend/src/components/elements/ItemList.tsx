@@ -26,6 +26,7 @@ interface IProjectUserGroup<G, T> {
   item: T;
   snapShotHash: string;
   objectTypes: ObjectTypes;
+  ownerId:number
 }
 
 export const ItemList = <
@@ -44,6 +45,7 @@ export const ItemList = <
   getGroupByOption,
   item,
   objectTypes,
+  ownerId
 }: IProjectUserGroup<G, T>): JSX.Element => {
   const { t } = useTranslation();
   return (
@@ -100,7 +102,7 @@ export const ItemList = <
         </Grid>
         <Grid item container flexDirection="column" spacing={1}>
           {items &&
-            items.map((item) =>
+            items.filter((listItem)=> listItem.personalOwnerGroupId !== ownerId).map((item) =>
               item ? (
                 <Grid
                   key={item.id}
