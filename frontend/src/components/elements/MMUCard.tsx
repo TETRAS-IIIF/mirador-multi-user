@@ -34,9 +34,9 @@ import { useTranslation } from "react-i18next";
 import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
 import { ModalButton } from "./ModalButton.tsx";
 import CancelIcon from "@mui/icons-material/Cancel";
-import ShareIcon from '@mui/icons-material/Share';
-import useFetchThumbnailsUrl from '../../utils/customHooks/useFetchThumbnailsUrl.ts';
-import { LoadingSpinner } from './loadingSpinner.tsx';
+import ShareIcon from "@mui/icons-material/Share";
+import useFetchThumbnailsUrl from "../../utils/customHooks/useFetchThumbnailsUrl.ts";
+import { LoadingSpinner } from "./loadingSpinner.tsx";
 
 interface IMMUCardProps<T, X> {
   id: number;
@@ -78,7 +78,7 @@ interface IMMUCardProps<T, X> {
     manifestId: number,
     share: string | undefined,
   ) => Promise<void> | void;
-  ownerId:number;
+  ownerId: number;
 }
 
 const MMUCard = <
@@ -98,40 +98,39 @@ const MMUCard = <
   },
   X extends { id: number },
 >({
-  id,
-  rights,
-  description,
-  HandleOpenModal,
-  openModal,
+  ownerId,
+  AddAccessListItemFunction,
   DefaultButton,
   EditorButton,
-  itemLabel,
-  handleSelectorChange,
-  getAccessToItem,
-  listOfItem,
+  HandleOpenModal,
   deleteItem,
-  getOptionLabel,
-  AddAccessListItemFunction,
-  item,
-  updateItem,
-  setItemToAdd,
-  searchModalEditItem,
-  removeAccessListItemFunction,
-  setItemList,
-  searchBarLabel,
-  metadata,
-  isGroups,
-  objectTypes,
-  getGroupByOption,
+  description,
   duplicateItem,
+  getAccessToItem,
+  getGroupByOption,
+  getOptionLabel,
   handleRemoveFromList,
-                    ownerId,
+  handleSelectorChange,
+  id,
+  isGroups,
+  item,
+  itemLabel,
+  listOfItem,
+  metadata,
+  objectTypes,
+  openModal,
+  removeAccessListItemFunction,
+  rights,
+  searchBarLabel,
+  searchModalEditItem,
+  setItemList,
+  setItemToAdd,
+  updateItem,
 }: IMMUCardProps<T, X>) => {
-
   const [searchInput, setSearchInput] = useState<string>("");
   const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
     useState(false);
-  const [isLoading,thumbnailUrl] = useFetchThumbnailsUrl({ item })
+  const [isLoading, thumbnailUrl] = useFetchThumbnailsUrl({ item });
   const { t, i18n } = useTranslation();
   const handleRemoveAccessListItem = async (accessItemId: number) => {
     if (removeAccessListItemFunction) {
@@ -188,10 +187,10 @@ const MMUCard = <
           justifyContent="flex-start"
           spacing={2}
         >
-          <Grid item  xs={12} sm={4}>
+          <Grid item xs={12} sm={4}>
             {isLoading ? (
-              <LoadingSpinner/>
-            ):(
+              <LoadingSpinner />
+            ) : (
               <img
                 src={thumbnailUrl as string}
                 alt={t("thumbnailMissing")}
