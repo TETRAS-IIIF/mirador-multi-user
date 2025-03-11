@@ -422,7 +422,8 @@ export const AllMedias = ({
                 currentPageData.map((media) => (
                   <Grid item key={media.id}>
                     <MediaCard
-                      media={media}
+                      media={{ ...media, thumbnailUrl : media.hash ? `${caddyUrl}/${media.hash}/thumbnail.webp` : null
+                      }}
                       getAllMediaGroups={getAllMediaGroups}
                       getOptionLabel={getOptionLabel}
                       getGroupByOption={getGroupByOption}

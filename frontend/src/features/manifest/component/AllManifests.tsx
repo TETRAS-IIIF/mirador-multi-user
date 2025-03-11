@@ -48,7 +48,6 @@ import { updateAccessToManifest } from "../api/updateAccessToManifest.ts";
 import { ObjectTypes } from "../../tag/type.ts";
 import { useTranslation } from "react-i18next";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
-import placeholder from "../../../assets/Placeholder.svg";
 import { IIIFResource, ManifestResource } from "manifesto.js";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -93,7 +92,6 @@ export const AllManifests = ({
   );
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false);
   const [manifestFilter, setManifestFilter] = useState<string | null>(null);
-  const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [userGroupSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
@@ -101,7 +99,6 @@ export const AllManifests = ({
   const [openSidePanel, setOpenSidePanel] = useState(false);
   const [sortField, setSortField] = useState<keyof Manifest>("title");
   const [sortOrder, setSortOrder] = useState("asc");
-
   const { t } = useTranslation();
 
   const itemsPerPage = 10;
@@ -177,44 +174,7 @@ export const AllManifests = ({
     },
   ];
 
-  const fetchThumbnails = useCallback(async () => {
-    const urls: string[] = await Promise.all(
-      currentPageData.map(async (manifest) => {
-        if (manifest.thumbnailUrl) {
-          return manifest.thumbnailUrl;
-        }
-        let manifestUrl = "";
-        if (manifest.origin === manifestOrigin.UPLOAD) {
-          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`;
-        } else if (manifest.origin === manifestOrigin.LINK) {
-          manifestUrl = manifest.path;
-        } else if (manifest.origin === manifestOrigin.CREATE) {
-          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.path}`;
-        } else {
-          return placeholder;
-        }
-        try {
-          const manifestResponse = await fetch(manifestUrl);
-          const manifestFetched = await manifestResponse.json();
-          if (manifestFetched.thumbnail) {
-            return manifestFetched.thumbnail["@id"];
-          } else if (manifestFetched.items[0].thumbnail[0].id) {
-            return manifestFetched.items[0].thumbnail[0].id;
-          } else {
-            return placeholder;
-          }
-        } catch (error) {
-          console.error("Error fetching manifest:", error);
-          return placeholder;
-        }
-      }),
-    );
-
-    setThumbnailUrls(urls);
-  }, [currentPageData, caddyUrl]);
-
   useEffect(() => {
-    fetchThumbnails();
     fetchManifestForUser();
   }, []);
 
@@ -485,7 +445,7 @@ export const AllManifests = ({
                 flexDirection="column"
                 sx={{ marginBottom: "70px" }}
               >
-                {currentPageData.map((manifest, index) => (
+                {currentPageData.map((manifest) => (
                   <Grid item key={manifest.id}>
                     <MMUCard
                       objectTypes={ObjectTypes.MANIFEST}
@@ -560,7 +520,6 @@ export const AllManifests = ({
                       searchModalEditItem={handleLookingForUserGroups}
                       setItemToAdd={setUserToAdd}
                       setItemList={setGroupList}
-                      thumbnailUrl={thumbnailUrls[index]}
                       updateItem={handleUpdateManifest}
                       handleSelectorChange={handleChangeRights}
                       handleRemoveFromList={() =>
