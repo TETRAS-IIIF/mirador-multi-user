@@ -289,6 +289,8 @@ export const SideDrawer = ({
   const fetchProjects = useCallback(async () => {
     try {
       const projects = await getUserAllProjects(user.id);
+
+      console.log('projects', projects)
       const rightsOrder = [
         ItemsRights.READER,
         ItemsRights.EDITOR,

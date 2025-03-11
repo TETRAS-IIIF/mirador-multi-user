@@ -299,6 +299,7 @@ export const AllProjects = ({
     }
   };
 
+  console.log(currentPageData)
   return (
     <>
       <SidePanelMedia

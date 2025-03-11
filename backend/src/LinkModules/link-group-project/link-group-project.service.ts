@@ -403,42 +403,43 @@ export class LinkGroupProjectService {
     try {
       const usersGroups =
         await this.linkUserGroupService.findALlGroupsForUser(userId);
-      let projects: Project[] = [];
+      const projectsMap: Map<
+        number,
+        Project & { rights: string; share?: string }
+      > = new Map();
+
+      const rightsPriority = { admin: 3, editor: 2, reader: 1 };
 
       for (const usersGroup of usersGroups) {
         const groupProjects = await this.findAllGroupProjectByUserGroupId(
           usersGroup.id,
         );
 
-        const userProjects = groupProjects.map((groupProject) => {
-          let project;
-          if (groupProject.user_group.type === UserGroupTypes.MULTI_USER) {
-            project = {
-              ...groupProject.project,
-              rights: groupProject.rights,
+        for (const groupProject of groupProjects) {
+          const projectId = groupProject.project.id;
+          const currentRights = rightsPriority[groupProject.rights] || 0;
+
+          const existingProject = projectsMap.get(projectId);
+
+          const projectData = {
+            ...groupProject.project,
+            rights: groupProject.rights,
+            shared: Number(groupProject.project.ownerId) !== Number(userId),
+            ...(groupProject.user_group.type === UserGroupTypes.MULTI_USER && {
               share: 'group',
-              shared: Number(groupProject.project.ownerId) !== Number(userId),
-            };
-          }
-          if (groupProject.user_group.type === UserGroupTypes.PERSONAL) {
-            project = {
-              ...groupProject.project,
-              rights: groupProject.rights,
-              shared: Number(groupProject.project.ownerId) !== Number(userId),
-            };
-          }
+            }),
+          };
 
-          return project;
-        });
-
-        projects = projects.concat(
-          userProjects.filter(
-            (project) => !projects.some((p) => p.id === project.id),
-          ),
-        );
+          if (
+            !existingProject ||
+            currentRights > rightsPriority[existingProject.rights]
+          ) {
+            projectsMap.set(projectId, projectData);
+          }
+        }
       }
 
-      return projects;
+      return Array.from(projectsMap.values());
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
