@@ -315,12 +315,14 @@ export const AllManifests = ({
   };
 
   const handleGrantAccess = async (manifestId: number) => {
+    console.log('userToAdd',userToAdd)
     if (userToAdd == null) {
       toast.error("select an item in the list");
     }
     const linkUserGroupToAdd = userGroupSearch.find(
       (linkUserGroup) => linkUserGroup.user_group.id === userToAdd!.id,
     );
+    console.log('linkUserGroupToAdd',linkUserGroupToAdd)
     await grantAccessToManifest({
       manifestId: manifestId,
       userGroupId: linkUserGroupToAdd!.user_group.id,
