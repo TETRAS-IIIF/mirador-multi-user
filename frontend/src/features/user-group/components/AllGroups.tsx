@@ -41,7 +41,11 @@ import { SortItemSelector } from "../../../components/elements/sortItemSelector.
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { leavingGroup } from "../api/leavingGroup.ts";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
 
 interface allGroupsProps {
   user: User;
@@ -70,7 +74,7 @@ export const AllGroups = ({
   const [groupFilter, setGroupFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [openSidePanel, setOpenSidePanel] = useState(false);
-  const [sortField, setSortField] = useState<keyof UserGroup>("updated_at");
+  const [sortField, setSortField] = useState<keyof UserGroup>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState("desc");
 
   const { t } = useTranslation();
@@ -224,7 +228,7 @@ export const AllGroups = ({
               <SortItemSelector<UserGroup>
                 sortField={sortField}
                 setSortField={setSortField}
-                fields={["title", "updated_at"]}
+                fields={[TITLE, UPDATED_AT]}
               />
             </Grid>
             <Grid item>

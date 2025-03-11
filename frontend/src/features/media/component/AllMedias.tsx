@@ -56,7 +56,11 @@ import {
   isFileSizeUnderLimit,
   isValidFileForUpload,
 } from "../../../utils/utils.ts";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -100,7 +104,7 @@ export const AllMedias = ({
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
   const [mediaTabShown, setmediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
-  const [sortField, setSortField] = useState<keyof Media>("updated_at");
+  const [sortField, setSortField] = useState<keyof Media>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState("desc");
   const { t } = useTranslation();
 
@@ -386,7 +390,7 @@ export const AllMedias = ({
               <SortItemSelector<Media>
                 sortField={sortField}
                 setSortField={setSortField}
-                fields={["title", "updated_at"]}
+                fields={[TITLE, UPDATED_AT]}
               />
             </Grid>
             <Grid item>
