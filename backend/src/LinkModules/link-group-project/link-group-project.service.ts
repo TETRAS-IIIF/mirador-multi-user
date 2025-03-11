@@ -450,17 +450,26 @@ export class LinkGroupProjectService {
   }
 
   async getHighestRightForProject(userId: number, projectId: number) {
-    const userGroups =
+    const userPersonalGroup: UserGroup =
+      await this.groupService.findUserPersonalGroup(userId);
+
+    const userGroups: UserGroup[] =
       await this.linkUserGroupService.findALlGroupsForUser(userId);
-    const linkEntities = await this.linkGroupProjectRepository.find({
-      where: {
-        user_group: { id: In(userGroups.map((group) => group.id)) },
-        project: { id: projectId },
-      },
-      relations: ['project', 'user_group'],
-    });
+    const allGroups = [...userGroups, userPersonalGroup];
+    let linkEntities = [];
+    for (const group of allGroups) {
+      const linkGroups = await this.linkGroupProjectRepository.find({
+        where: {
+          user_group: { id: group.id },
+          project: { id: projectId },
+        },
+        relations: ['project', 'user_group'],
+      });
+      linkEntities = linkEntities.concat(linkGroups);
+    }
+
     if (linkEntities.length === 0) {
-      return;
+      return null;
     }
 
     return linkEntities.reduce((prev, current) => {

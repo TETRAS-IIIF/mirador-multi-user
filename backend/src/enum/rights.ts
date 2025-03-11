@@ -22,4 +22,4 @@ export enum ManifestGroupRights {
   EDITOR = 'editor',
 }
 
-export const PROJECT_RIGHTS_PRIORITY = { Admin: 3, Editor: 2, Reader: 1 };
+export const PROJECT_RIGHTS_PRIORITY = { admin: 3, editor: 2, reader: 1 };

@@ -14,7 +14,7 @@ import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
 import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
 import { MediaService } from '../../BaseEntities/media/media.service';
-import { MediaGroupRights } from '../../enum/rights';
+import { MediaGroupRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { CreateMediaDto } from '../../BaseEntities/media/dto/create-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
@@ -396,14 +396,11 @@ export class LinkMediaGroupService {
       return null;
     }
 
-    const rightsPriority = { admin: 3, editor: 2, reader: 1 };
-
     return linkEntities.reduce((prev, current) => {
-      const prevRight = rightsPriority[prev.rights] || 0;
-      const currentRight = rightsPriority[current.rights] || 0;
-
+      const prevRight = PROJECT_RIGHTS_PRIORITY[prev.rights] || 0;
+      const currentRight = PROJECT_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
-    }, linkEntities[0]);
+    });
   }
 
   async checkPolicies(

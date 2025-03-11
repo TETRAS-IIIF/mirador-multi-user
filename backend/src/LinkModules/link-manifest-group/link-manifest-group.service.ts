@@ -10,7 +10,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Repository } from 'typeorm';
-import { ManifestGroupRights } from '../../enum/rights';
+import { ManifestGroupRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
@@ -443,14 +443,11 @@ export class LinkManifestGroupService {
       return null;
     }
 
-    const rightsPriority = { admin: 3, editor: 2, reader: 1 };
-
     return linkEntities.reduce((prev, current) => {
-      const prevRight = rightsPriority[prev.rights] || 0;
-      const currentRight = rightsPriority[current.rights] || 0;
-
+      const prevRight = PROJECT_RIGHTS_PRIORITY[prev.rights] || 0;
+      const currentRight = PROJECT_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
-    }, linkEntities[0]);
+    });
   }
 
   async checkPolicies(
