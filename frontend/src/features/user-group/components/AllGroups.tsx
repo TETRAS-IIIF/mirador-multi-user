@@ -178,7 +178,6 @@ export const AllGroups = ({
     }));
   }, [userPersonalGroupList]);
 
-console.log("userPersonalGroupList",userPersonalGroupList);
   const handleRemoveUser = async (groupId: number, userToRemoveId: number) => {
     await removeAccessToGroup(groupId, userToRemoveId);
   };

@@ -1,5 +1,5 @@
-import { ProjectGroup } from "../../projects/types/types.ts";
-import storage from "../../../utils/storage.ts";
+import { ProjectGroup } from '../../projects/types/types.ts';
+import storage from '../../../utils/storage.ts';
 
 export const getAllMediaGroups = async (
   mediaId: number,
@@ -19,9 +19,7 @@ export const getAllMediaGroups = async (
       throw new Error(`Error in getALlMediaGroups: ${response.statusText}`);
     }
 
-    const toreturn =  await response.json();
-    console.log('toreturn',toreturn);
-    return toreturn;
+    return await response.json();
   } catch (error) {
     console.error("Error in getALlMediaGroups:", error);
     return [];

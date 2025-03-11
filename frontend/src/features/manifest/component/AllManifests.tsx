@@ -349,8 +349,6 @@ export const AllManifests = ({
     }));
   }, [groupList]);
 
-  console.log('groupList',groupList)
-  console.log('listOfGroup',listOfGroup)
 
   const handleChangeRights = async (
     group: ListItem,
