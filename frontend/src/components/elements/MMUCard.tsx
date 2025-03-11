@@ -88,6 +88,7 @@ const MMUCard = <
     title?: string;
     share?: string;
     shared?:boolean
+    updated_at: Dayjs;
   },
   X extends { id: number },
 >({
@@ -161,6 +162,7 @@ const MMUCard = <
     setOpenRemoveItemFromListModal(!openRemoveItemFromListModal);
   };
 
+  console.log("updated at : ",item.updated_at)
   return (
     <Card>
       <Grid
@@ -241,9 +243,9 @@ const MMUCard = <
             </Tooltip>
           </Grid>
           <Grid item xs={12} sm={1}>
-            {item.created_at && (
+            {item.updated_at && (
               <Tooltip
-                title={dayjs(item.created_at)
+                title={dayjs(item.updated_at)
                   .locale(i18n.language)
                   .format("LLLL")
                   .toString()}
@@ -257,7 +259,7 @@ const MMUCard = <
                     maxWidth: "200px",
                   }}
                 >
-                  {dayjs(item.created_at)
+                  {dayjs(item.updated_at)
                     .locale(i18n.language)
                     .format("ddd, D MMM")}
                 </Typography>

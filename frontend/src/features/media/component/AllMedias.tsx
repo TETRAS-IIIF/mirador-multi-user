@@ -386,7 +386,7 @@ export const AllMedias = ({
               <SortItemSelector<Media>
                 sortField={sortField}
                 setSortField={setSortField}
-                fields={["title", "created_at"]}
+                fields={["title", "updated_at"]}
               />
             </Grid>
             <Grid item>

@@ -60,7 +60,7 @@ const sortItem = (sortField: keyof any, items: any[], sortOrder: string) => {
     const bValue = b[sortField];
     let comparison = 0;
 
-    if (sortField === "created_at") {
+    if (sortField === "updated_at") {
       const aDate = dayjs.isDayjs(aValue) ? aValue : dayjs(aValue);
       const bDate = dayjs.isDayjs(bValue) ? bValue : dayjs(bValue);
       comparison = aDate.valueOf() - bDate.valueOf();

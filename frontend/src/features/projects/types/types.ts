@@ -17,6 +17,7 @@ export type Project = {
   lockedAt: Date;
   share?: string;
   shared: boolean;
+  updated_at: Dayjs
 };
 
 export type ProjectGroup = {
