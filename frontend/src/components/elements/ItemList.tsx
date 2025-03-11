@@ -49,9 +49,6 @@ export const ItemList = <
 }: IProjectUserGroup<G, T>): JSX.Element => {
   const { t } = useTranslation();
 
-  console.log("ownerId", ownerId)
-  console.log(items)
-  console.log(items[0].personalOwnerGroupId !== ownerId)
   return (
     <Grid
       container
