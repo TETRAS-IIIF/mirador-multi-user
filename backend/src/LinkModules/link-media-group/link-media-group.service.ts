@@ -366,7 +366,7 @@ export class LinkMediaGroupService {
     }
   }
 
-  async getHighestRightForManifest(userId: number, mediaId: number) {
+  async getHighestRightForMedia(userId: number, mediaId: number) {
     const userPersonalGroup: UserGroup =
       await this.groupService.findUserPersonalGroup(userId);
 
@@ -396,7 +396,7 @@ export class LinkMediaGroupService {
       return null;
     }
 
-    const rightsPriority = { admin: 3, editor: 2, reader: 1 }; // Ensure all lowercase
+    const rightsPriority = { admin: 3, editor: 2, reader: 1 };
 
     return linkEntities.reduce((prev, current) => {
       const prevRight = rightsPriority[prev.rights] || 0;
@@ -413,13 +413,7 @@ export class LinkMediaGroupService {
     callback: (linkEntity: LinkMediaGroup) => any,
   ) {
     try {
-      const linkEntity = await this.getHighestRightForManifest(
-        userId,
-        manifestId,
-      );
-
-      console.log('linkEntity');
-      console.log(linkEntity);
+      const linkEntity = await this.getHighestRightForMedia(userId, manifestId);
 
       if (!linkEntity) {
         throw new ForbiddenException(

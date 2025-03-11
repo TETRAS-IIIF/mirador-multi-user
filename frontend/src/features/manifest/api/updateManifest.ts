@@ -4,7 +4,7 @@ import storage from '../../../utils/storage.ts';
 export const updateManifest = async (manifest: Manifest) => {
   const token = storage.getToken();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { json, shared, ...manifestToUpdate } = manifest;
+  const { json, shared,share, ...manifestToUpdate } = manifest;
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest`,

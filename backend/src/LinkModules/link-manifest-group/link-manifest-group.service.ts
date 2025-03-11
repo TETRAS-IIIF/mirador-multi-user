@@ -26,6 +26,7 @@ import { UpdateManifestJsonDto } from './dto/UpdateManifestJsonDto';
 import * as path from 'node:path';
 import { manifestOrigin } from '../../enum/origins';
 import { UPLOAD_FOLDER } from '../../utils/constants';
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 
 @Injectable()
 export class LinkManifestGroupService {
@@ -36,6 +37,7 @@ export class LinkManifestGroupService {
     private readonly linkManifestGroupRepository: Repository<LinkManifestGroup>,
     private readonly manifestService: ManifestService,
     private readonly groupService: UserGroupService,
+    private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
 
   async createManifest(createManifestDto) {
@@ -411,23 +413,44 @@ export class LinkManifestGroupService {
     }
   }
 
-  async getHighestRightForManifest(groupId: number, manifestId: number) {
-    const linkEntities = await this.linkManifestGroupRepository.find({
-      where: {
-        user_group: { id: groupId },
-        manifest: { id: manifestId },
-      },
-      relations: ['manifest', 'user_group'],
-    });
-    if (linkEntities.length === 0) {
+  async getHighestRightForManifest(userId: number, manifestId: number) {
+
+    const userPersonalGroup: UserGroup =
+      await this.groupService.findUserPersonalGroup(userId);
+
+    const userGroups: UserGroup[] =
+      await this.linkUserGroupService.findALlGroupsForUser(userId);
+
+    const allGroups = [...userGroups, userPersonalGroup];
+
+    if (allGroups.length === 0) {
       return;
     }
-    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
+    let linkEntities = [];
+
+    for (const group of allGroups) {
+      const linkGroups = await this.linkManifestGroupRepository.find({
+        where: {
+          user_group: { id: group.id },
+          manifest: { id: manifestId },
+        },
+        relations: ['manifest', 'user_group'],
+      });
+      linkEntities = linkEntities.concat(linkGroups);
+    }
+
+    if (linkEntities.length === 0) {
+      return null;
+    }
+
+    const rightsPriority = { admin: 3, editor: 2, reader: 1 };
+
     return linkEntities.reduce((prev, current) => {
       const prevRight = rightsPriority[prev.rights] || 0;
       const currentRight = rightsPriority[current.rights] || 0;
+
       return currentRight > prevRight ? current : prev;
-    });
+    }, linkEntities[0]);
   }
 
   async checkPolicies(
@@ -437,11 +460,8 @@ export class LinkManifestGroupService {
     callback: (linkEntity: LinkManifestGroup) => any,
   ) {
     try {
-      const userPersonalGroup =
-        await this.groupService.findUserPersonalGroup(userId);
-
       const linkEntity = await this.getHighestRightForManifest(
-        userPersonalGroup.id,
+        userId,
         manifestId,
       );
 
