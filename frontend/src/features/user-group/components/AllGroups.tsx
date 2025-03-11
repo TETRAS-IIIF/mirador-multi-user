@@ -70,8 +70,8 @@ export const AllGroups = ({
   const [groupFilter, setGroupFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [openSidePanel, setOpenSidePanel] = useState(false);
-  const [sortField, setSortField] = useState<keyof UserGroup>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortField, setSortField] = useState<keyof UserGroup>("updated_at");
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const { t } = useTranslation();
 

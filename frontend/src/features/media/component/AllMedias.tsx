@@ -100,8 +100,8 @@ export const AllMedias = ({
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
   const [mediaTabShown, setmediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
-  const [sortField, setSortField] = useState<keyof Media>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortField, setSortField] = useState<keyof Media>("updated_at");
+  const [sortOrder, setSortOrder] = useState("desc");
   const { t } = useTranslation();
 
   useEffect(() => {

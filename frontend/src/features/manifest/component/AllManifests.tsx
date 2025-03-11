@@ -99,8 +99,8 @@ export const AllManifests = ({
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [openSidePanel, setOpenSidePanel] = useState(false);
-  const [sortField, setSortField] = useState<keyof Manifest>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortField, setSortField] = useState<keyof Manifest>("updated_at");
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const { t } = useTranslation();
 
