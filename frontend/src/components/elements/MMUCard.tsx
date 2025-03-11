@@ -35,7 +35,8 @@ import placeholder from "../../assets/Placeholder.svg";
 import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
 import { ModalButton } from "./ModalButton.tsx";
 import CancelIcon from "@mui/icons-material/Cancel";
-import ShareIcon from '@mui/icons-material/Share';
+import ShareIcon from "@mui/icons-material/Share";
+
 interface IMMUCardProps<T, X> {
   id: number;
   rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
@@ -87,7 +88,7 @@ const MMUCard = <
     origin?: manifestOrigin | mediaOrigin;
     title?: string;
     share?: string;
-    shared?:boolean
+    shared?: boolean;
     updated_at: Dayjs;
   },
   X extends { id: number },
@@ -162,7 +163,6 @@ const MMUCard = <
     setOpenRemoveItemFromListModal(!openRemoveItemFromListModal);
   };
 
-  console.log("updated at : ",item.updated_at)
   return (
     <Card>
       <Grid
@@ -193,13 +193,13 @@ const MMUCard = <
               }}
             />
           </Grid>
-            <Grid item xs={12} sm={1}>
-          {item.shared && (
-            <Tooltip title={t('shared')}>
-              <ShareIcon/>
-            </Tooltip>
-          )}
-            </Grid>
+          <Grid item xs={12} sm={1}>
+            {item.shared && (
+              <Tooltip title={t("shared")}>
+                <ShareIcon />
+              </Tooltip>
+            )}
+          </Grid>
           {objectTypes === ObjectTypes.MEDIA &&
             item.mediaTypes === MediaTypes.VIDEO && (
               <Grid item xs={12} sm={1}>
