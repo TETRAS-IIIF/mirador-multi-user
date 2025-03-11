@@ -22,6 +22,8 @@ import { join } from 'path';
 import * as fs from 'fs';
 import { ActionType } from '../../enum/actions';
 import { mediaOrigin } from '../../enum/origins';
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
+import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
 
 @Injectable()
 export class LinkMediaGroupService {
@@ -31,6 +33,7 @@ export class LinkMediaGroupService {
     @InjectRepository(LinkMediaGroup)
     private readonly linkMediaGroupRepository: Repository<LinkMediaGroup>,
     private readonly groupService: UserGroupService,
+    private readonly linkUserGroupService: LinkUserGroupService,
     @Inject(forwardRef(() => MediaService))
     private readonly mediaService: MediaService,
   ) {}
@@ -336,9 +339,7 @@ export class LinkMediaGroupService {
 
       linkMediaGroupToUpdate.rights = rights;
 
-      return await this.linkMediaGroupRepository.save(
-        linkMediaGroupToUpdate,
-      );
+      return await this.linkMediaGroupRepository.save(linkMediaGroupToUpdate);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -365,23 +366,44 @@ export class LinkMediaGroupService {
     }
   }
 
-  async getHighestRightForManifest(groupId: number, mediaId: number) {
-    const linkEntities = await this.linkMediaGroupRepository.find({
-      where: {
-        user_group: { id: groupId },
-        media: { id: mediaId },
-      },
-      relations: ['media', 'user_group'],
-    });
-    if (linkEntities.length === 0) {
+  async getHighestRightForManifest(userId: number, mediaId: number) {
+    const userPersonalGroup: UserGroup =
+      await this.groupService.findUserPersonalGroup(userId);
+
+    const userGroups: UserGroup[] =
+      await this.linkUserGroupService.findALlGroupsForUser(userId);
+
+    const allGroups = [...userGroups, userPersonalGroup];
+
+    if (allGroups.length === 0) {
       return;
     }
-    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
+
+    let linkEntities = [];
+    for (const group of allGroups) {
+      const linkGroups = await this.linkMediaGroupRepository.find({
+        where: {
+          user_group: { id: group.id },
+          media: { id: mediaId },
+        },
+        relations: ['media', 'user_group'],
+      });
+
+      linkEntities = linkEntities.concat(linkGroups);
+    }
+
+    if (linkEntities.length === 0) {
+      return null;
+    }
+
+    const rightsPriority = { admin: 3, editor: 2, reader: 1 }; // Ensure all lowercase
+
     return linkEntities.reduce((prev, current) => {
       const prevRight = rightsPriority[prev.rights] || 0;
       const currentRight = rightsPriority[current.rights] || 0;
+
       return currentRight > prevRight ? current : prev;
-    });
+    }, linkEntities[0]);
   }
 
   async checkPolicies(
@@ -391,15 +413,16 @@ export class LinkMediaGroupService {
     callback: (linkEntity: LinkMediaGroup) => any,
   ) {
     try {
-      const userPersonalGroup =
-        await this.groupService.findUserPersonalGroup(userId);
       const linkEntity = await this.getHighestRightForManifest(
-        userPersonalGroup.id,
+        userId,
         manifestId,
       );
 
+      console.log('linkEntity');
+      console.log(linkEntity);
+
       if (!linkEntity) {
-        return new ForbiddenException(
+        throw new ForbiddenException(
           'User does not have access to this media or the media does not exist',
         );
       }
