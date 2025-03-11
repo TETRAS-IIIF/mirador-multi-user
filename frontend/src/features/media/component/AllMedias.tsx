@@ -57,7 +57,6 @@ import {
   isValidFileForUpload,
 } from "../../../utils/utils.ts";
 import {
-  TITLE,
   UPDATED_AT,
   useCurrentPageData,
 } from "../../../utils/customHooks/filterHook.ts";
@@ -243,7 +242,7 @@ export const AllMedias = ({
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
       type: projectGroup.user_group.type,
-      personalOwnerGroupId: projectGroup.user_group.ownerId
+      personalOwnerGroupId: projectGroup.user_group.ownerId,
     }));
   }, [groupList]);
 
@@ -390,7 +389,7 @@ export const AllMedias = ({
               <SortItemSelector<Media>
                 sortField={sortField}
                 setSortField={setSortField}
-                fields={[TITLE, UPDATED_AT]}
+                fields={["title", "created_at"]}
               />
             </Grid>
             <Grid item>
@@ -423,10 +422,14 @@ export const AllMedias = ({
           <Grid container spacing={2} direction="column">
             {medias.length > 0 &&
               (currentPageData.length > 0 ? (
-                currentPageData.map((media : Media) => (
+                currentPageData.map((media: Media) => (
                   <Grid item key={media.id}>
                     <MediaCard
-                      media={{ ...media, thumbnailUrl : media.hash ? `${caddyUrl}/${media.hash}/thumbnail.webp` : null
+                      media={{
+                        ...media,
+                        thumbnailUrl: media.hash
+                          ? `${caddyUrl}/${media.hash}/thumbnail.webp`
+                          : undefined,
                       }}
                       ownerId={media.idCreator}
                       getAllMediaGroups={getAllMediaGroups}
