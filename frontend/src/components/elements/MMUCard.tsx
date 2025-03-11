@@ -37,6 +37,7 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import ShareIcon from '@mui/icons-material/Share';
 import useFetchThumbnailsUrl from '../../utils/customHooks/useFetchThumbnailsUrl.ts';
 import { LoadingSpinner } from './loadingSpinner.tsx';
+
 interface IMMUCardProps<T, X> {
   id: number;
   rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
@@ -81,17 +82,18 @@ interface IMMUCardProps<T, X> {
 
 const MMUCard = <
   T extends {
-    id: number;
     created_at: Dayjs;
+    hash?: string;
+    id: number;
     mediaTypes?: MediaTypes;
     origin?: manifestOrigin | mediaOrigin;
-    snapShotHash?: string;
-    title?: string;
+    path?: string;
     share?: string;
     shared?: boolean;
+    snapShotHash?: string;
     thumbnailUrl?: string;
-    hash?: string;
-    path?: string;
+    title?: string;
+    updated_at: Dayjs;
   },
   X extends { id: number },
 >({
@@ -199,13 +201,13 @@ const MMUCard = <
               />
             )}
           </Grid>
-            <Grid item xs={12} sm={1}>
-          {item.shared && (
-            <Tooltip title={t('shared')}>
-              <ShareIcon/>
-            </Tooltip>
-          )}
-            </Grid>
+          <Grid item xs={12} sm={1}>
+            {item.shared && (
+              <Tooltip title={t("shared")}>
+                <ShareIcon />
+              </Tooltip>
+            )}
+          </Grid>
           {objectTypes === ObjectTypes.MEDIA &&
             item.mediaTypes === MediaTypes.VIDEO && (
               <Grid item xs={12} sm={1}>
@@ -249,9 +251,9 @@ const MMUCard = <
             </Tooltip>
           </Grid>
           <Grid item xs={12} sm={1}>
-            {item.created_at && (
+            {item.updated_at && (
               <Tooltip
-                title={dayjs(item.created_at)
+                title={dayjs(item.updated_at)
                   .locale(i18n.language)
                   .format("LLLL")
                   .toString()}
@@ -265,7 +267,7 @@ const MMUCard = <
                     maxWidth: "200px",
                   }}
                 >
-                  {dayjs(item.created_at)
+                  {dayjs(item.updated_at)
                     .locale(i18n.language)
                     .format("ddd, D MMM")}
                 </Typography>

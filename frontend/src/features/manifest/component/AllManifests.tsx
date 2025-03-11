@@ -53,7 +53,11 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { removeManifestFromList } from "../api/removeManifestFromList.ts";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -97,8 +101,9 @@ export const AllManifests = ({
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [openSidePanel, setOpenSidePanel] = useState(false);
-  const [sortField, setSortField] = useState<keyof Manifest>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortField, setSortField] = useState<keyof Manifest>(UPDATED_AT);
+  const [sortOrder, setSortOrder] = useState("desc");
+
   const { t } = useTranslation();
 
   const itemsPerPage = 10;
@@ -387,7 +392,7 @@ export const AllManifests = ({
                   <SortItemSelector<Manifest>
                     sortField={sortField}
                     setSortField={setSortField}
-                    fields={["title", "created_at"]}
+                    fields={[TITLE, UPDATED_AT]}
                   />
                 </Grid>
                 <Grid item>
