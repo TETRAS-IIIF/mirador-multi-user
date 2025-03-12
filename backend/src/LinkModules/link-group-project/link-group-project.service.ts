@@ -218,14 +218,20 @@ export class LinkGroupProjectService {
     try {
       let projectToReturn;
       if (dto.rights && dto.group) {
+        console.log('rights')
         await this.UpdateRelation(dto.project.id, dto.group.id, dto.rights);
         await this.projectService.update(dto.project.id, dto.project);
         projectToReturn = await this.getProjectRelations(dto.id);
+        console.log('projectToReturn')
+        console.log(projectToReturn)
       } else {
+        console.log('else')
         projectToReturn = await this.projectService.update(
           dto.project.id,
           dto.project,
         );
+        console.log('projectToReturn')
+        console.log(projectToReturn)
       }
       return projectToReturn;
     } catch (error) {

@@ -222,8 +222,10 @@ export const MMUModalEdit = <
   }
 
   const handleUpdateItem = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { rights ,...dataUpdated } = item
     const itemToUpdate = {
-      ...(item as T),
+      ...(dataUpdated as T),
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
       description: newItemDescription,
@@ -235,13 +237,14 @@ export const MMUModalEdit = <
     ) {
       await createMetadataForItem(
         objectTypes!,
-        item.id,
+        dataUpdated.id,
         selectedMetadataFormat!.title,
         selectedMetadataData,
-        item.ownerId!
+        dataUpdated.ownerId!
       );
     }
     if (updateItem) {
+      console.log('itemToUpdate',itemToUpdate)
       updateItem(itemToUpdate);
     }
   };
