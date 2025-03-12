@@ -116,9 +116,9 @@ export const SidePanel = ({
                 onClick={handleSetOpenMedia}
               >
                 {openMedia ? (
-                  <CloseButton text={t("Media")} />
+                  <CloseButton text={t("Media")} isSelected={openMedia} />
                 ) : (
-                  <OpenButton text={t("Media")} />
+                  <OpenButton text={t("Media")} isSelected={openMedia} />
                 )}
               </ToggleMediaButton>
 
@@ -128,9 +128,12 @@ export const SidePanel = ({
                 onClick={handleSetOpenManifest}
               >
                 {openManifest ? (
-                  <CloseButton text={t("Manifests")} />
+                  <CloseButton
+                    text={t("Manifests")}
+                    isSelected={openManifest}
+                  />
                 ) : (
-                  <OpenButton text={t("Manifests")} />
+                  <OpenButton text={t("Manifests")} isSelected={openManifest} />
                 )}
               </ToggleManifestButton>
             </>
