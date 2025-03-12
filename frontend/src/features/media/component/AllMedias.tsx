@@ -57,6 +57,7 @@ import {
   isValidFileForUpload,
 } from "../../../utils/utils.ts";
 import {
+  TITLE,
   UPDATED_AT,
   useCurrentPageData,
 } from "../../../utils/customHooks/filterHook.ts";
