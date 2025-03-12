@@ -107,7 +107,10 @@ export class LinkGroupProjectService {
     }
   }
 
-  async duplicateProject(projectId: number): Promise<LinkGroupProject> {
+  async duplicateProject(
+    projectId: number,
+    userId: number,
+  ): Promise<LinkGroupProject> {
     try {
       const originalProject = await this.linkGroupProjectRepository.findOne({
         where: { project: { id: projectId } },
@@ -118,7 +121,7 @@ export class LinkGroupProjectService {
       }
       return await this.createProject({
         title: originalProject.project.title,
-        ownerId: originalProject.project.ownerId,
+        ownerId: userId,
         metadata: originalProject.project.metadata,
       });
     } catch (error) {

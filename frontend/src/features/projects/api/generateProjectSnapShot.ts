@@ -1,6 +1,6 @@
 import storage from "../../../utils/storage.ts";
 
-export const getGroupsAccessToProject = async (projectId: number) => {
+export const generateSnapShotUrl = async (projectId: number) => {
   const token = storage.getToken();
 
   try {
