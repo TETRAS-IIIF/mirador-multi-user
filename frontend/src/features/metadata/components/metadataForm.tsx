@@ -174,9 +174,6 @@ export const MetadataForm = <T extends { id: number }>({
                   <Grid container spacing={2}>
                     {selectedMetadataFormat &&
                       selectedMetadataFormat.metadata
-                        .filter((field, index) =>
-                          !(index === 0 && field.label.toLowerCase() === "example metadata")
-                        )
                         .filter(shouldDisplayField)
                         .map((field) => (
                           <MetadataField

@@ -1,5 +1,4 @@
 export const dublinCoreMetadata = {
-  "example metadata": "",
   Title: "",
   Description: "",
   Creator: "",
