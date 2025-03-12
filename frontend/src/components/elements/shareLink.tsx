@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ModalButton } from "./ModalButton.tsx";
 import RotateRightIcon from "@mui/icons-material/RotateRight";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { getGroupsAccessToProject } from "../../features/projects/api/generateProjectSnapShot.ts";
+import { generateSnapShotUrl } from "../../features/projects/api/generateProjectSnapShot.ts";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { IFrameGenerator } from "../../features/projects/components/IFrameGenerator.tsx";
@@ -33,7 +33,7 @@ export const ShareLink = ({ itemId, snapShotHash }: IShareLinkProps) => {
   };
 
   const handleGenerateSnapshot = async () => {
-    const snapShotUrl = await getGroupsAccessToProject(itemId);
+    const snapShotUrl = await generateSnapShotUrl(itemId);
     fetchManifestInfo(snapShotUrl.snapShotHash);
     setProjectSnapshotURL(
       `${baseUrl}/mirador/${snapShotUrl.snapShotHash}/workspace.json`,
