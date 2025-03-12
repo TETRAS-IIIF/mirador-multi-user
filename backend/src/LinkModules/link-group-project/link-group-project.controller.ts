@@ -277,7 +277,10 @@ export class LinkGroupProjectController {
       request.user.sub,
       projectId,
       async () => {
-        return this.linkGroupProjectService.duplicateProject(projectId);
+        return this.linkGroupProjectService.duplicateProject(
+          projectId,
+          request.user.sub,
+        );
       },
     );
   }
