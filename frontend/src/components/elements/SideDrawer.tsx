@@ -249,7 +249,8 @@ export const SideDrawer = ({
       projectToUpdate.userWorkspace = miradorViewer!;
       if (projectToUpdate) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { rights, share,shared, ...projectWithoutRights } = projectToUpdate;
+        const { rights, share, shared, ...projectWithoutRights } =
+          projectToUpdate;
         await updateProject({ project: projectWithoutRights });
       }
     } else {
@@ -290,7 +291,6 @@ export const SideDrawer = ({
     try {
       const projects = await getUserAllProjects(user.id);
 
-      console.log('projects', projects)
       const rightsOrder = [
         ItemsRights.READER,
         ItemsRights.EDITOR,
