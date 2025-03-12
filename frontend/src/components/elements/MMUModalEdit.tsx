@@ -107,6 +107,7 @@ type MetadataArray = MetadataFormat[];
 
 export const MMUModalEdit = <
   T extends {
+    title: string;
     id: number;
     origin?: manifestOrigin | mediaOrigin;
     created_at: Dayjs;
@@ -115,7 +116,7 @@ export const MMUModalEdit = <
     path?: string;
     userWorkspace?: Record<string, string>;
     rights?: ItemsRights;
-    templates?: Template[];
+    noteTemplate?: Template[];
   },
   G extends { title: string },
 >({
@@ -168,6 +169,10 @@ export const MMUModalEdit = <
     jsonElementToEditInAdvancedEditor,
     setJsonElementToEditInAdvancedEditor,
   ] = useState<Record<string, string> | undefined>();
+
+  const [updatedTemplateList, setUpdatedTemplateList] = useState<
+    Template[] | undefined
+  >(item.noteTemplate ? item.noteTemplate : undefined);
   const user = useUser();
   const { t } = useTranslation();
 
@@ -223,12 +228,18 @@ export const MMUModalEdit = <
   }
 
   const handleUpdateItem = async () => {
-    const itemToUpdate = {
+    let itemToUpdate = {
       ...(item as T),
+      description: newItemDescription,
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
-      description: newItemDescription,
     };
+    if (updatedTemplateList) {
+      itemToUpdate = {
+        ...itemToUpdate,
+        noteTemplate: updatedTemplateList,
+      };
+    }
     if (
       objectTypes !== ObjectTypes.GROUP &&
       objectTypes &&
@@ -414,6 +425,15 @@ export const MMUModalEdit = <
           }!,
         );
       }
+    }
+  };
+
+  const handleUpdateTemplate = async () => {
+    if (updateItem) {
+      updateItem({
+        ...item,
+        noteTemplate: updatedTemplateList,
+      });
     }
   };
 
@@ -647,7 +667,11 @@ export const MMUModalEdit = <
             }}
           >
             <Grid item sx={{ height: "100%" }}>
-              <NoteTemplate project={item as unknown as Project} />
+              <NoteTemplate
+                project={item as unknown as Project}
+                handleUpdateTemplate={handleUpdateTemplate}
+                setUpdatedTemplateList={setUpdatedTemplateList}
+              />
             </Grid>
           </Grid>
         </CustomTabPanel>
