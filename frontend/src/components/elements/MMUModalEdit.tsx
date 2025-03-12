@@ -244,7 +244,6 @@ export const MMUModalEdit = <
       );
     }
     if (updateItem) {
-      console.log('itemToUpdate',itemToUpdate)
       updateItem(itemToUpdate);
     }
   };
