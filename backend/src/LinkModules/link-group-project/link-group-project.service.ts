@@ -8,7 +8,7 @@ import { CreateLinkGroupProjectDto } from './dto/create-link-group-project.dto';
 import { UpdateLinkGroupProjectDto } from './dto/update-link-group-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
 import { GroupProjectRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
@@ -419,8 +419,6 @@ export class LinkGroupProjectService {
         Project & { rights: string; share?: string }
       > = new Map();
 
-      const rightsPriority = { admin: 3, editor: 2, reader: 1 };
-
       for (const usersGroup of usersGroups) {
         const groupProjects = await this.findAllGroupProjectByUserGroupId(
           usersGroup.id,
@@ -428,7 +426,8 @@ export class LinkGroupProjectService {
 
         for (const groupProject of groupProjects) {
           const projectId = groupProject.project.id;
-          const currentRights = rightsPriority[groupProject.rights] || 0;
+          const currentRights =
+            PROJECT_RIGHTS_PRIORITY[groupProject.rights] || 0;
 
           const existingProject = projectsMap.get(projectId);
 
@@ -443,7 +442,7 @@ export class LinkGroupProjectService {
 
           if (
             !existingProject ||
-            currentRights > rightsPriority[existingProject.rights]
+            currentRights > PROJECT_RIGHTS_PRIORITY[existingProject.rights]
           ) {
             projectsMap.set(projectId, projectData);
           }
