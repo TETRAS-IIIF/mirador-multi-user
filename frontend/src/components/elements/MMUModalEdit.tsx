@@ -220,7 +220,6 @@ export const MMUModalEdit = <
   }
 
   const handleUpdateItem = async () => {
-    console.log('item',item)
     const itemToUpdate = {
       ...(item as T),
       thumbnailUrl: newItemThumbnailUrl,
