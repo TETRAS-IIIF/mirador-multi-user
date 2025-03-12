@@ -98,13 +98,14 @@ export class LinkManifestGroupService {
           `Project with id ${manifestId} not found`,
         );
       }
-      await this.create({
+      const creation = await this.create({
         rights: addManifestToGroupDto.rights
           ? addManifestToGroupDto.rights
           : ManifestGroupRights.READER,
         user_group: group,
         manifest: manifest,
       });
+
       const groupForManifest = await this.getAllManifestsGroup(manifestId);
       manifestsForGroup.push(groupForManifest);
       return manifestsForGroup;

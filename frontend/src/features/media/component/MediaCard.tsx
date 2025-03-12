@@ -42,6 +42,7 @@ interface IMediaCardProps {
     mediaId: number,
     share: string | undefined,
   ) => void;
+  ownerId:number
 }
 
 export const MediaCard = ({
@@ -63,10 +64,13 @@ export const MediaCard = ({
   handleChangeRights,
   getGroupByOption,
   handleRemoveMediaFromList,
+                            ownerId,
 }: IMediaCardProps) => {
   const { t } = useTranslation();
+
   return (
     <MMUCard
+      ownerId={ownerId}
       objectTypes={ObjectTypes.MEDIA}
       AddAccessListItemFunction={handleGrantAccess}
       DefaultButton={
@@ -129,9 +133,6 @@ export const MediaCard = ({
       searchModalEditItem={handleLookingForUserGroups}
       setItemList={setGroupList}
       setItemToAdd={setUserToAdd}
-      thumbnailUrl={
-        media.hash ? `${caddyUrl}/${media.hash}/thumbnail.webp` : null
-      }
       updateItem={HandleUpdateMedia}
       handleSelectorChange={handleChangeRights}
       getGroupByOption={getGroupByOption}

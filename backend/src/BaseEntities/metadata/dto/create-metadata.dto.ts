@@ -5,4 +5,5 @@ export class CreateMetadataDto {
   objectId: number;
   metadataFormatTitle: string;
   metadata: any;
+  ownerId: number
 }

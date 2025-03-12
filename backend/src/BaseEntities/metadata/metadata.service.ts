@@ -21,16 +21,16 @@ export class MetadataService {
     private readonly linkMetadataFormatGroup: LinkMetadataFormatGroupService,
   ) {}
 
-  async create(createMetadataDto: CreateMetadataDto, userId: number) {
+  async create(createMetadataDto: CreateMetadataDto) {
     try {
       const format =
         await this.linkMetadataFormatGroup.findMetadataFormatWithTitle(
           createMetadataDto.metadataFormatTitle,
-          userId,
+          createMetadataDto.ownerId,
         );
       if (!format) {
         throw new NotFoundException(
-          `Metadata format with title '${createMetadataDto.metadataFormatTitle}' not found for user ID ${userId}.`,
+          `Metadata format with title '${createMetadataDto.metadataFormatTitle}' not found for user ID ${createMetadataDto.ownerId}.`,
         );
       }
 

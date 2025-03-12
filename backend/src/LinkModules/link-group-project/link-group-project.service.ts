@@ -129,10 +129,21 @@ export class LinkGroupProjectService {
 
   async getProjectRelations(projectId: number) {
     try {
-      return await this.linkGroupProjectRepository.find({
+      const listOfGroups = await this.linkGroupProjectRepository.find({
         where: { project: { id: projectId } },
         relations: ['user_group'],
       });
+
+      return await Promise.all(
+        listOfGroups.map(async (group) => {
+          const personalOwnerGroup =
+            await this.groupService.findUserPersonalGroup(
+              group.user_group.ownerId,
+            );
+
+          return { ...group, personalOwnerGroupId: personalOwnerGroup.id };
+        }),
+      );
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);

@@ -17,9 +17,11 @@ export type Project = {
   lockedAt: Date;
   share?: string;
   shared: boolean;
+  updated_at: Dayjs
 };
 
 export type ProjectGroup = {
+  personalOwnerGroupId?: number;
   id: number;
   rights: ItemsRights;
   user_group: UserGroup;
