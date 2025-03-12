@@ -113,6 +113,7 @@ export const MMUModalEdit = <
     path?: string;
     userWorkspace?: Record<string, string>;
     rights?: ItemsRights;
+    ownerId?: number
   },
   G extends { title: string },
 >({
@@ -237,6 +238,7 @@ export const MMUModalEdit = <
         item.id,
         selectedMetadataFormat!.title,
         selectedMetadataData,
+        item.ownerId!
       );
     }
     if (updateItem) {

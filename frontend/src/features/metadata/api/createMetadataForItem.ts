@@ -6,6 +6,7 @@ export const createMetadataForItem = async (
   objectId: number,
   metadataFormatTitle: string,
   metadata: any,
+  ownerId: number,
 ) => {
   const token = storage.getToken();
   try {
@@ -22,6 +23,7 @@ export const createMetadataForItem = async (
           objectId: objectId,
           metadataFormatTitle: metadataFormatTitle,
           metadata: metadata,
+          ownerId:ownerId,
         }),
       },
     );
