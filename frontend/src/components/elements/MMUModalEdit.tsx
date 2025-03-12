@@ -117,6 +117,7 @@ export const MMUModalEdit = <
     userWorkspace?: Record<string, string>;
     rights?: ItemsRights;
     noteTemplate?: Template[];
+    tags?: string[];
   },
   G extends { title: string },
 >({
@@ -173,6 +174,7 @@ export const MMUModalEdit = <
   const [updatedTemplateList, setUpdatedTemplateList] = useState<
     Template[] | undefined
   >(item.noteTemplate ? item.noteTemplate : undefined);
+
   const user = useUser();
   const { t } = useTranslation();
 
@@ -436,6 +438,14 @@ export const MMUModalEdit = <
       });
     }
   };
+  const handleUpdateTags = async (updatedTagList: string[]) => {
+    if (updateItem) {
+      updateItem({
+        ...item,
+        tags: updatedTagList,
+      });
+    }
+  };
 
   function isValidUrl(string: string) {
     const pattern =
@@ -688,7 +698,10 @@ export const MMUModalEdit = <
             }}
           >
             <Grid item sx={{ height: "100%" }}>
-              <TagMaker project={item as unknown as Project} />
+              <TagMaker
+                project={item as unknown as Project}
+                handleUpdateTags={handleUpdateTags}
+              />
             </Grid>
           </Grid>
         </CustomTabPanel>

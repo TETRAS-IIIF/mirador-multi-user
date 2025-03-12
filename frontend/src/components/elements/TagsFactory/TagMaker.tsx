@@ -1,30 +1,23 @@
 import { ChangeEvent, KeyboardEvent, useState } from "react";
 import { Box, Button, Chip, TextField } from "@mui/material";
-import { updateProject } from "../../../features/projects/api/updateProject.ts";
 import { Project } from "../../../features/projects/types/types.ts";
 import { useTranslation } from "react-i18next";
 
 interface TagMakerProps {
   project: Project;
+  handleUpdateTags: (tags: string[]) => void;
 }
 
-export const TagMaker = ({ project }: TagMakerProps) => {
+export const TagMaker = ({ project, handleUpdateTags }: TagMakerProps) => {
   const [tags, setTags] = useState<string[]>(project.tags ? project.tags : []);
   const [inputValue, setInputValue] = useState("");
   const { t } = useTranslation();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { rights, ...userProject } = project;
 
   const handleAddTag = async () => {
     if (inputValue.trim() !== "" && !tags.includes(inputValue.trim())) {
-      await updateProject({
-        id: userProject.id,
-        project: {
-          ...userProject,
-          tags: [...tags, inputValue.trim()],
-        },
-      });
-      setTags([...tags, inputValue.trim()]);
+      const updatedListOfTags = [...tags, inputValue.trim()];
+      handleUpdateTags(updatedListOfTags);
+      setTags(updatedListOfTags);
       setInputValue("");
     }
   };
@@ -38,13 +31,7 @@ export const TagMaker = ({ project }: TagMakerProps) => {
 
   const handleDeleteTag = async (tagToDelete: string) => {
     const updatedListOfTags = tags.filter((tag) => tag !== tagToDelete);
-    await updateProject({
-      id: userProject.id,
-      project: {
-        ...userProject,
-        tags: [...updatedListOfTags],
-      },
-    });
+    handleUpdateTags(updatedListOfTags);
     setTags(updatedListOfTags);
   };
 
