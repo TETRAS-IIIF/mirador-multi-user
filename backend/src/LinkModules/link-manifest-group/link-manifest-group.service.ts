@@ -98,7 +98,7 @@ export class LinkManifestGroupService {
           `Project with id ${manifestId} not found`,
         );
       }
-      const creation = await this.create({
+      await this.create({
         rights: addManifestToGroupDto.rights
           ? addManifestToGroupDto.rights
           : ManifestGroupRights.READER,
@@ -128,24 +128,6 @@ export class LinkManifestGroupService {
       );
     }
   }
-
-  async getManifestForUser(userGroupId: number, manifestId: number) {
-    try {
-      const manifest =
-        await this.findAllManifestGroupByUserGroupId(userGroupId);
-      const toReturn = manifest.find(
-        (linkGroupManifest) => linkGroupManifest.manifest.id == manifestId,
-      );
-      return toReturn.manifest;
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      return new InternalServerErrorException(
-        'An error occurred while getting manifest for user group',
-        error.message,
-      );
-    }
-  }
-
   async updateManifest(updateManifestDto: UpdateManifestDto) {
     try {
       return await this.manifestService.update(
@@ -158,16 +140,6 @@ export class LinkManifestGroupService {
         `an error occurred while updating manifest with id ${updateManifestDto.id}`,
         error.message,
       );
-    }
-  }
-
-  private readJsonFile(filePath: string): any {
-    try {
-      const absolutePath = path.resolve(filePath);
-      const fileContent = fs.readFileSync(absolutePath, 'utf-8');
-      return JSON.parse(fileContent);
-    } catch (error) {
-      throw new Error(`Error reading file at ${filePath}: ${error.message}`);
     }
   }
 
@@ -272,7 +244,7 @@ export class LinkManifestGroupService {
     }
   }
 
-  async removeAccesToManifest(manifestId: number, userGroupId: number) {
+  async removeAccessToManifest(manifestId: number, userGroupId: number) {
     try {
       const userGroupManifests =
         await this.findAllManifestByUserGroupId(userGroupId);
@@ -296,18 +268,6 @@ export class LinkManifestGroupService {
     }
   }
 
-  async findAll() {
-    try {
-      return await this.linkManifestGroupRepository.find();
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        'An error occurred while finding linkMediaGroups',
-        error,
-      );
-    }
-  }
-
   async findAllUserGroupByManifestId(manifestId: number) {
     try {
       const request = await this.linkManifestGroupRepository.find({
@@ -319,22 +279,6 @@ export class LinkManifestGroupService {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while finding all User Group for Manifest with id ${manifestId}, ${error.message}`,
-      );
-    }
-  }
-
-  async findAllManifestGroupByUserGroupId(userGroupId: number) {
-    try {
-      const request = await this.linkManifestGroupRepository.find({
-        where: { user_group: { id: userGroupId } },
-        relations: ['manifest'],
-      });
-      return request;
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        `an error occurred while finding all ManifestGroupByUserGroupId with userGroupId : ${userGroupId}`,
-        error.message,
       );
     }
   }
@@ -509,7 +453,7 @@ export class LinkManifestGroupService {
     try {
       const personalGroup =
         await this.groupService.findUserPersonalGroup(userId);
-      return await this.removeAccesToManifest(manifestId, personalGroup.id);
+      return await this.removeAccessToManifest(manifestId, personalGroup.id);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);

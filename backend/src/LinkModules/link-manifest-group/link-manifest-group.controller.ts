@@ -278,10 +278,10 @@ export class LinkManifestGroupController {
   }
 
   @ApiOperation({ summary: 'remove access to a manifest' })
-  @SetMetadata('action', ActionType.DELETE)
+  @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Delete('/manifest/:manifestId/:groupId')
-  async deleteManifestById(
+  async removeManifestGroupLink(
     @Param('manifestId') manifestId: number,
     @Param('groupId') groupId: number,
     @Req() request,
@@ -291,9 +291,9 @@ export class LinkManifestGroupController {
       request.user.sub,
       manifestId,
       async () => {
-        return await this.linkManifestGroupService.removeAccesToManifest(
-          groupId,
+        return await this.linkManifestGroupService.removeAccessToManifest(
           manifestId,
+          groupId,
         );
       },
     );

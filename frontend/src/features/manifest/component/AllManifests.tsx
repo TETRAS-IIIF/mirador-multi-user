@@ -58,6 +58,7 @@ import {
   UPDATED_AT,
   useCurrentPageData,
 } from "../../../utils/customHooks/filterHook.ts";
+import { removeManifestToGroup } from '../api/removeManifestToGroup.ts';
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -343,6 +344,13 @@ export const AllManifests = ({
     }
   };
 
+  const handleRemoveAccess = async (
+    manifestId: number,
+    groupId: number,
+  ) => {
+    await removeManifestToGroup(manifestId,groupId);
+  };
+
   return (
     <>
       <SidePanelMedia
@@ -535,6 +543,7 @@ export const AllManifests = ({
                       setItemList={setGroupList}
                       setItemToAdd={setUserToAdd}
                       updateItem={handleUpdateManifest}
+                      removeAccessListItemFunction={handleRemoveAccess}
                     />
                   </Grid>
                 ))}
