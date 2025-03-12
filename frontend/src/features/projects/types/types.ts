@@ -21,6 +21,7 @@ export type Project = {
 };
 
 export type ProjectGroup = {
+  personalOwnerGroupId?: number;
   id: number;
   rights: ItemsRights;
   user_group: UserGroup;

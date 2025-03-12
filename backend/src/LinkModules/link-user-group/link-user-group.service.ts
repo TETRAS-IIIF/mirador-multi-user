@@ -345,10 +345,18 @@ export class LinkUserGroupService {
 
   async findAllUsersForGroup(groupId: number) {
     try {
-      return await this.linkUserGroupRepository.find({
+      const usersInGroup = await this.linkUserGroupRepository.find({
         where: { user_group: { id: groupId } },
-        relations: ['user'],
+        relations: ['user', 'user_group'],
       });
+
+      return await Promise.all(
+        usersInGroup.map(async (userGroup) => {
+          const personalOwnerGroup =
+            await this.groupService.findUserPersonalGroup(userGroup.user.id);
+          return { ...userGroup, personalOwnerGroupId: personalOwnerGroup.id };
+        }),
+      );
     } catch (error) {
       throw new InternalServerErrorException(
         `an error occurred while trying to find users for this group ${groupId}`,

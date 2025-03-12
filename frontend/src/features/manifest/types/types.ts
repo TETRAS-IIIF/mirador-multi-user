@@ -11,13 +11,13 @@ export type Manifest = {
   title: string;
   origin: manifestOrigin;
   path: string;
-  updated_at: Date;
+  updated_at: Dayjs;
   thumbnailUrl?: string;
   metadata: Record<string, string>;
   rights?: ManifestGroupRights;
   url: string;
   share?: string;
-  shared?:boolean;
+  shared?: boolean;
 };
 
 export type updateManifestJsonDto = {

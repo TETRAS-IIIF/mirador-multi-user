@@ -26,6 +26,7 @@ interface IProjectUserGroup<G, T> {
   item: T;
   snapShotHash: string;
   objectTypes: ObjectTypes;
+  ownerId:number
 }
 
 export const ItemList = <
@@ -44,8 +45,10 @@ export const ItemList = <
   getGroupByOption,
   item,
   objectTypes,
+  ownerId
 }: IProjectUserGroup<G, T>): JSX.Element => {
   const { t } = useTranslation();
+
   return (
     <Grid
       container
@@ -111,31 +114,36 @@ export const ItemList = <
                   alignItems="center"
                   justifyContent="spaceBetween"
                 >
-                  <Grid item container xs={8}>
-                    <Grid item sx={{ flexGrow: 1 }}>
+                  <Grid item container xs={8} alignItems="center" spacing={2} justifyContent="space-between">
+                    <Grid item>
                       <Typography>{item.title}</Typography>
                     </Grid>
-                    <Grid item>
-                      {item.type === UserGroupTypes.PERSONAL && <PersonIcon />}
-                      {item.type === UserGroupTypes.MULTI_USER && (
-                        <GroupsIcon />
-                      )}
-                      {item.type !== UserGroupTypes.PERSONAL &&
-                        item.type !== UserGroupTypes.MULTI_USER && (
-                          <PersonIcon />
-                        )}
-                    </Grid>
                   </Grid>
-                  {children && <Grid item>{children(item)}</Grid>}
                   <Grid item>
-                    <IconButton
-                      onClick={() => removeItem(item.id)}
-                      aria-label="delete"
-                      color="error"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    {item.type === UserGroupTypes.PERSONAL && <PersonIcon />}
+                    {item.type === UserGroupTypes.MULTI_USER && (
+                      <GroupsIcon />
+                    )}
+                    {item.type !== UserGroupTypes.PERSONAL &&
+                      item.type !== UserGroupTypes.MULTI_USER && (
+                        <PersonIcon />
+                      )}
                   </Grid>
+                  {(item.personalOwnerGroupId !== ownerId || item.type === UserGroupTypes.MULTI_USER) && <Grid item>{children!(item)}</Grid>}
+                  {
+                    (item.personalOwnerGroupId !== ownerId || item.type === UserGroupTypes.MULTI_USER) && (
+                      <Grid item>
+                        <IconButton
+                          onClick={() => removeItem(item.id)}
+                          aria-label="delete"
+                          color="error"
+                          disabled={item.personalOwnerGroupId === ownerId && item.type !== UserGroupTypes.MULTI_USER }
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Grid>
+                    )
+                  }
                   <Grid item xs={12} sx={{ mb: "5px" }}>
                     <Divider />
                   </Grid>

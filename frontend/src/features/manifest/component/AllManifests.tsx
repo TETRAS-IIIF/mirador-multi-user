@@ -310,6 +310,7 @@ export const AllManifests = ({
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
       type: projectGroup.user_group.type,
+      personalOwnerGroupId: projectGroup.user_group.ownerId,
     }));
   }, [groupList]);
 
@@ -450,9 +451,10 @@ export const AllManifests = ({
                 flexDirection="column"
                 sx={{ marginBottom: "70px" }}
               >
-                {currentPageData.map((manifest) => (
+                {currentPageData.map((manifest: Manifest) => (
                   <Grid item key={manifest.id}>
                     <MMUCard
+                      ownerId={manifest.idCreator}
                       objectTypes={ObjectTypes.MANIFEST}
                       AddAccessListItemFunction={handleGrantAccess}
                       DefaultButton={
@@ -512,8 +514,15 @@ export const AllManifests = ({
                       deleteItem={handleDeleteManifest}
                       description={manifest.description}
                       getAccessToItem={getAllManifestGroups}
-                      getOptionLabel={getOptionLabel}
                       getGroupByOption={getGroupByOption}
+                      getOptionLabel={getOptionLabel}
+                      handleSelectorChange={handleChangeRights}
+                      handleRemoveFromList={() =>
+                        handleRemoveManifestFromList(
+                          manifest.id,
+                          manifest.share ? manifest.share : undefined,
+                        )
+                      }
                       id={manifest.id}
                       item={manifest}
                       itemLabel={manifest.title}
@@ -523,16 +532,9 @@ export const AllManifests = ({
                       rights={manifest.rights!}
                       searchBarLabel={t("searchLabel")}
                       searchModalEditItem={handleLookingForUserGroups}
-                      setItemToAdd={setUserToAdd}
                       setItemList={setGroupList}
+                      setItemToAdd={setUserToAdd}
                       updateItem={handleUpdateManifest}
-                      handleSelectorChange={handleChangeRights}
-                      handleRemoveFromList={() =>
-                        handleRemoveManifestFromList(
-                          manifest.id,
-                          manifest.share ? manifest.share : undefined,
-                        )
-                      }
                     />
                   </Grid>
                 ))}

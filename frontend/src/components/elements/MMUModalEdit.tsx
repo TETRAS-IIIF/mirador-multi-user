@@ -80,6 +80,7 @@ interface ModalItemProps<T, G> {
   isGroups?: boolean;
   objectTypes?: ObjectTypes;
   getGroupByOption?: (option: any) => string;
+  ownerId:number;
 }
 
 type MetadataFormat = {
@@ -139,6 +140,7 @@ export const MMUModalEdit = <
   getGroupByOption,
   duplicateItem,
   objectTypes,
+  ownerId,
 }: ModalItemProps<T, G>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
@@ -578,6 +580,7 @@ export const MMUModalEdit = <
                   setSearchInput={setSearchInput}
                   handleGetOptionLabel={handleGetOtpionLabel}
                   getGroupByOption={getGroupByOption}
+                  ownerId={ownerId}
                 >
                   {(accessListItem) => (
                     <Selector

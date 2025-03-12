@@ -245,6 +245,7 @@ export const AllProjects = ({
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
       type: projectGroup.user_group.type,
+      personalOwnerGroupId: projectGroup.personalOwnerGroupId
     }));
   }, [groupList]);
 
@@ -386,6 +387,7 @@ export const AllProjects = ({
                     currentPageData.map((projectUser) => (
                       <Grid item key={projectUser.id}>
                         <MMUCard
+                          ownerId={projectUser.ownerId}
                           duplicateItem={handleDuplicateProject}
                           objectTypes={ObjectTypes.PROJECT}
                           thumbnailUrl={
