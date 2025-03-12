@@ -30,12 +30,12 @@ import dayjs, { Dayjs } from "dayjs";
 import { ObjectTypes } from "../../features/tag/type.ts";
 import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
 import ImageIcon from "@mui/icons-material/Image";
-import DocumentScannerIcon from "@mui/icons-material/DocumentScanner";
 import { useTranslation } from "react-i18next";
 import placeholder from "../../assets/Placeholder.svg";
 import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
 import { ModalButton } from "./ModalButton.tsx";
 import CancelIcon from "@mui/icons-material/Cancel";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 interface IMMUCardProps<T, X> {
   id: number;
@@ -206,7 +206,7 @@ const MMUCard = <
           {objectTypes === ObjectTypes.MEDIA &&
             item.mediaTypes === MediaTypes.OTHER && (
               <Grid item xs={12} sm={1}>
-                <DocumentScannerIcon />
+                <AttachFileIcon />
               </Grid>
             )}
           <Grid item xs={12} sm={2}>
