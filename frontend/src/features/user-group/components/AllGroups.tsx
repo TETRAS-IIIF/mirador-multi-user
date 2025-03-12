@@ -184,6 +184,7 @@ export const AllGroups = ({
 
   const handleRemoveUser = async (groupId: number, userToRemoveId: number) => {
     await removeAccessToGroup(groupId, userToRemoveId);
+    fetchGroups()
   };
 
   const handleSetOpenSidePanel = () => {
