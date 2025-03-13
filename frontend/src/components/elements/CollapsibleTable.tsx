@@ -13,16 +13,7 @@ import {
 import { Row } from "./Row.tsx";
 import { ReactNode, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-
-interface RowData {
-  value: ReactNode;
-  align?: "right" | "left" | "center";
-}
-
-interface RowProps {
-  id: number;
-  data: RowData[];
-}
+import { RowProps } from "../../features/projects/types/types.ts";
 
 interface Column {
   label: string;
@@ -33,8 +24,9 @@ interface Column {
 interface CollapsibleTableProps {
   columns: Column[];
   rows: RowProps[];
-  renderExpandableContent?: (row: RowProps) => ReactNode;
+  renderExpandableContent?: (data: RowProps) => ReactNode;
   onActionClick?: (row: RowProps) => void;
+  labelButton: string;
 }
 
 export default function CollapsibleTable({
@@ -42,6 +34,7 @@ export default function CollapsibleTable({
   rows,
   renderExpandableContent,
   onActionClick,
+  labelButton,
 }: CollapsibleTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -133,9 +126,14 @@ export default function CollapsibleTable({
           <TableBody>
             {sortedRows.map((row) => (
               <Row
+                labelButton={labelButton}
                 key={row.id}
                 row={row}
-                renderExpandableContent={renderExpandableContent}
+                renderExpandableContent={
+                  renderExpandableContent
+                    ? () => renderExpandableContent(row)
+                    : undefined
+                }
                 onActionClick={onActionClick}
               />
             ))}

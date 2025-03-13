@@ -2,23 +2,10 @@ import { Grid } from "@mui/material";
 import CollapsibleTable from "../../../components/elements/CollapsibleTable.tsx";
 import { getAllUsers } from "../api/getAllUsers.ts";
 import { User } from "../../auth/types/types.ts";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { initiateImpersonation } from "../api/initiateImpersonation.ts";
 import { useTranslation } from "react-i18next";
-
-interface RowData {
-  value: ReactNode;
-  align?: "right" | "left" | "center";
-}
-
-interface RowProps {
-  id: number;
-  data: RowData[];
-}
-
-function renderExpandableContent(row: RowProps) {
-  return <div>Extra details for {row.data[0].value}</div>;
-}
+import { RowProps } from "../../projects/types/types.ts";
 
 export const AdminPanel = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -49,7 +36,7 @@ export const AdminPanel = () => {
     return users.map((user) => ({
       id: user.id,
       data: [
-        { value: user.id, align: "left" as const },
+        { value: String(user.id), align: "left" as const },
         { value: user.mail, align: "left" as const },
         { value: user.name, align: "left" as const },
         { value: user._isAdmin ? "Yes" : "No", align: "center" as const },
@@ -74,8 +61,8 @@ export const AdminPanel = () => {
       <CollapsibleTable
         columns={columns}
         rows={rows}
-        renderExpandableContent={renderExpandableContent}
         onActionClick={handleActionClick}
+        labelButton={t("impersonate")}
       />
     </Grid>
   );

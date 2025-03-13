@@ -33,8 +33,8 @@ export class Project {
   @Column({ type: 'json', nullable: true })
   metadata: any;
 
-  @Column({ nullable: true })
-  snapShotHash: string;
+  @Column({ type: 'json', nullable: true })
+  snapShotHash: string[];
 
   @Column({ nullable: true })
   lockedByUserId: number;

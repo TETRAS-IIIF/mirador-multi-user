@@ -18,6 +18,12 @@ export type Project = {
   share?: string;
   noteTemplate?: Template[];
   tags?: string[];
+  snapShots: SnapShot[];
+};
+
+export type SnapShot = {
+  title: string;
+  snapShotHash: string;
 };
 export type Template = {
   title: string;
@@ -57,4 +63,15 @@ export type CreateProjectDto = {
 export type LockProjectDto = {
   projectId: number;
   lock: boolean;
+};
+
+export type RowData = {
+  value: string;
+  align?: "left" | "right" | "center";
+};
+
+export type RowProps = {
+  id: number;
+  itemId?: number;
+  data: RowData[];
 };

@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Box,
   Button,
   Collapse,
   IconButton,
@@ -9,27 +8,20 @@ import {
 } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-
-interface RowData {
-  value: React.ReactNode;
-  align?: "right" | "left" | "center";
-}
-
-interface RowProps {
-  id: number;
-  data: RowData[];
-}
+import { RowProps } from "../../features/projects/types/types.ts";
 
 interface SingleRowProps {
   row: RowProps;
-  renderExpandableContent?: (row: RowProps) => React.ReactNode;
+  renderExpandableContent?: (row: RowProps) => React.ReactNode | undefined;
   onActionClick?: (row: RowProps) => void;
+  labelButton: string;
 }
 
 export function Row({
   row,
   renderExpandableContent,
   onActionClick,
+  labelButton,
 }: SingleRowProps) {
   const [open, setOpen] = React.useState(false);
   const { t } = useTranslation();
@@ -57,16 +49,14 @@ export function Row({
             color="primary"
             onClick={() => onActionClick?.(row)}
           >
-            {t("impersonate")}
+            {t(labelButton)}
           </Button>
         </TableCell>
       </TableRow>
       {renderExpandableContent && (
         <TableRow>
           <TableCell colSpan={row.data.length + 2}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box>{renderExpandableContent(row)}</Box>
-            </Collapse>
+            <Collapse in={open}>{renderExpandableContent(row)}</Collapse>
           </TableCell>
         </TableRow>
       )}

@@ -751,7 +751,7 @@ export const MMUModalEdit = <
               flexDirection="row"
               alignItems="center"
               spacing={2}
-              sx={{ width: "auto" }}
+              sx={{ width: "auto", marginTop: "1px" }}
             >
               <Grid item>
                 <Button

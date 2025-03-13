@@ -7,7 +7,7 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   id: number;
 
   @IsOptional()
-  snapShotHash?: string;
+  snapShotHash?: string[];
 
   lockedByUserId?: number;
 

@@ -58,14 +58,23 @@ export const ItemList = <
     >
       <Grid container item spacing={2} sx={{ marginTop: "10px" }}>
         {objectTypes === ObjectTypes.PROJECT && (
-          <Grid container item alignItems="center" spacing={2}>
-            <Grid item>
+          <Grid
+            container
+            item
+            alignItems="center"
+            spacing={2}
+            flexDirection="column"
+            sx={{ width: "100%" }}
+          >
+            <Grid item sx={{ width: "100%" }}>
               <Typography variant="h5">{t("snapshot")}</Typography>
             </Grid>
-            <ShareLink
-              itemId={item.id}
-              snapShotHash={item.snapShotHash ? item.snapShotHash : ""}
-            />
+            <Grid item sx={{ width: "100%", margin: "10px" }}>
+              <ShareLink
+                itemId={item.id}
+                snapShotHash={item.snapShotHash ? item.snapShotHash : ""}
+              />
+            </Grid>
           </Grid>
         )}
         <Grid container item alignItems="center" spacing={2}>
