@@ -8,11 +8,7 @@ interface ISnapShopListProps {
   itemId: number;
 }
 
-export const SnapShotList = ({
-  snapShots,
-  handleCopyToClipboard,
-  itemId,
-}: ISnapShopListProps) => {
+export const SnapShotList = ({ snapShots, itemId }: ISnapShopListProps) => {
   const createRowData = (
     value: string,
     align: "left" | "right" | "center" = "left",
@@ -24,7 +20,8 @@ export const SnapShotList = ({
   const snapshotRows: RowProps[] = snapShots.map((snap, index) => ({
     id: index,
     itemId: itemId,
-    data: [createRowData(snap.title), createRowData(snap.snapShotHash)],
+    data: [createRowData(snap.title)],
+    snapShotHash: snap.snapShotHash,
   }));
 
   const createColumn = (
@@ -37,18 +34,13 @@ export const SnapShotList = ({
     align,
   });
 
-  const columns = [
-    createColumn("Title", "title"),
-    createColumn("Hash", "snapShotHash"),
-  ];
+  const columns = [createColumn("Title", "title")];
 
   return (
     <>
       <CollapsibleTable
-        labelButton={"Link To Snap Shot"}
         columns={columns}
         rows={snapshotRows}
-        onActionClick={handleCopyToClipboard}
         renderExpandableContent={SnapshotExpendableContent}
       />
     </>

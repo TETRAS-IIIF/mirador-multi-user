@@ -74,4 +74,5 @@ export type RowProps = {
   id: number;
   itemId?: number;
   data: RowData[];
+  snapShotHash?: string;
 };

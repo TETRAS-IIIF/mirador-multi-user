@@ -26,6 +26,8 @@ import { LinkMetadataFormatGroupModule } from './LinkModules/link-metadata-forma
 import { MetadataModule } from './BaseEntities/metadata/metadata.module';
 import { ImpersonationModule } from './impersonation/impersonation.module';
 import { AnnotationPageModule } from './BaseEntities/annotation-page/annotation-page.module';
+import { SnapshotModule } from './BaseEntities/snapshot/snapshot.module';
+import { SnapshotService } from './BaseEntities/snapshot/snapshot.service';
 
 @Module({
   imports: [
@@ -85,6 +87,7 @@ import { AnnotationPageModule } from './BaseEntities/annotation-page/annotation-
     MetadataModule,
     ImpersonationModule,
     AnnotationPageModule,
+    SnapshotModule,
   ],
   controllers: [AppController],
   providers: [
@@ -93,6 +96,7 @@ import { AnnotationPageModule } from './BaseEntities/annotation-page/annotation-
       provide: Logger,
       useClass: CustomLogger,
     },
+    SnapshotService,
   ],
 })
 export class AppModule {}

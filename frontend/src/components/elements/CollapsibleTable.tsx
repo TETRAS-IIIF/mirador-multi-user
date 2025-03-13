@@ -26,7 +26,7 @@ interface CollapsibleTableProps {
   rows: RowProps[];
   renderExpandableContent?: (data: RowProps) => ReactNode;
   onActionClick?: (row: RowProps) => void;
-  labelButton: string;
+  labelButton?: string;
 }
 
 export default function CollapsibleTable({
@@ -120,7 +120,9 @@ export default function CollapsibleTable({
                   )}
                 </TableCell>
               ))}
-              <TableCell align="center">{t("actions")}</TableCell>
+              {onActionClick && (
+                <TableCell align="center">{t("actions")}</TableCell>
+              )}
             </TableRow>
           </TableHead>
           <TableBody>

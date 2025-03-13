@@ -14,7 +14,7 @@ interface SingleRowProps {
   row: RowProps;
   renderExpandableContent?: (row: RowProps) => React.ReactNode | undefined;
   onActionClick?: (row: RowProps) => void;
-  labelButton: string;
+  labelButton?: string;
 }
 
 export function Row({
@@ -43,15 +43,17 @@ export function Row({
             {cell.value}
           </TableCell>
         ))}
-        <TableCell align="center">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => onActionClick?.(row)}
-          >
-            {t(labelButton)}
-          </Button>
-        </TableCell>
+        {labelButton && (
+          <TableCell align="center">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => onActionClick?.(row)}
+            >
+              {t(labelButton)}
+            </Button>
+          </TableCell>
+        )}
       </TableRow>
       {renderExpandableContent && (
         <TableRow>

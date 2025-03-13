@@ -14,7 +14,7 @@ export const SnapshotExpendableContent = (data: RowProps) => {
   const baseUrl =
     window.location.origin + window.location.pathname.split("/app")[0];
   const [projectSnapshotURL, setProjectSnapshotURL] = useState(
-    `${baseUrl}/mirador/${data.data[1].value}/workspace.json`,
+    `${baseUrl}/mirador/${data.snapShotHash}/workspace.json`,
   );
   const [generatedAt, setGeneratedAt] = useState<null | string>(null);
 
@@ -33,7 +33,7 @@ export const SnapshotExpendableContent = (data: RowProps) => {
     }
   };
   const handleGenerateSnapshot = async () => {
-    const snapShotUrl = await generateSnapshot(data.itemId);
+    const snapShotUrl = await generateSnapshot(data.itemId!);
     fetchManifestInfo(snapShotUrl.snapShotHash);
     setProjectSnapshotURL(
       `${baseUrl}/mirador/${snapShotUrl.snapShotHash}/workspace.json`,

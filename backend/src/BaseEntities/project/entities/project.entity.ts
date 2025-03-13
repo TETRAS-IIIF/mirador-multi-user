@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../../LinkModules/link-group-project/entities/link-group-project.entity';
+import { Snapshot } from '../../snapshot/entities/snapshot.entity';
 
 @Entity()
 export class Project {
@@ -32,9 +33,6 @@ export class Project {
 
   @Column({ type: 'json', nullable: true })
   metadata: any;
-
-  @Column({ type: 'json', nullable: true })
-  snapShotHash: string[];
 
   @Column({ nullable: true })
   lockedByUserId: number;
@@ -62,4 +60,10 @@ export class Project {
     },
   )
   linkGroupProjectsIds: LinkGroupProject[];
+
+  @OneToMany(() => Snapshot, (snapshot) => snapshot.project, {
+    cascade: ['remove'],
+    onDelete: 'CASCADE',
+  })
+  snapshots: Snapshot[];
 }

@@ -542,7 +542,7 @@ export class LinkGroupProjectService {
       );
       await this.projectService.update(projectId, {
         id: projectId,
-        snapShotHash: [hash],
+        snapShotHash: [{ hash: hash, generatedAt: Date.now().toString() }],
       });
       return {
         snapShotHash: `${hash}`,
