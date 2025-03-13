@@ -53,9 +53,9 @@ export default function useFetchThumbnailsUrl({ item }: IUseFetchThumbnailsUrlPa
         const response = await fetch(manifestUrl);
         const data = await response.json();
 
-        if (data.thumbnail) {
+        if (data.thumbnail && !isEmpty(data.thumbnail)) {
           setState({ url: data.thumbnail["@id"], isLoading: false });
-        } else if (data.items?.[0]?.thumbnail?.[0]?.id) {
+        } else if (data.items?.[0]?.thumbnail?.[0]?.id && !isEmpty(data.items?.[0]?.thumbnail?.[0])) {
           setState({ url: data.items[0].thumbnail[0].id, isLoading: false });
         } else {
           setState({ url: placeholder, isLoading: false });
@@ -70,4 +70,15 @@ export default function useFetchThumbnailsUrl({ item }: IUseFetchThumbnailsUrlPa
   }, [item]);
 
   return [state.isLoading, state.url];
+}
+
+
+function isEmpty(obj:any) {
+  for (const prop in obj) {
+    if (Object.hasOwn(obj, prop)) {
+      return false;
+    }
+  }
+
+  return true;
 }
