@@ -1,14 +1,20 @@
-import { RowData, RowProps, SnapShot } from "../types/types.ts";
+import { RowData, RowProps, Snapshot } from "../types/types.ts";
 import CollapsibleTable from "../../../components/elements/CollapsibleTable.tsx";
 import { SnapshotExpendableContent } from "./SnapshotExpendableContent.tsx";
 
 interface ISnapShopListProps {
-  snapShots: SnapShot[];
-  handleCopyToClipboard: () => void;
+  snapShots: Snapshot[];
   itemId: number;
+  UpdateSnapshot: (snapshotId: number) => void;
+  setSnapshotTitle: (projectId: number, title: string) => void;
 }
 
-export const SnapShotList = ({ snapShots, itemId }: ISnapShopListProps) => {
+export const SnapShotList = ({
+  snapShots,
+  itemId,
+  UpdateSnapshot,
+  setSnapshotTitle,
+}: ISnapShopListProps) => {
   const createRowData = (
     value: string,
     align: "left" | "right" | "center" = "left",
@@ -21,7 +27,7 @@ export const SnapShotList = ({ snapShots, itemId }: ISnapShopListProps) => {
     id: index,
     itemId: itemId,
     data: [createRowData(snap.title)],
-    snapShotHash: snap.snapShotHash,
+    snapShotHash: snap.hash,
   }));
 
   const createColumn = (
@@ -41,7 +47,13 @@ export const SnapShotList = ({ snapShots, itemId }: ISnapShopListProps) => {
       <CollapsibleTable
         columns={columns}
         rows={snapshotRows}
-        renderExpandableContent={SnapshotExpendableContent}
+        renderExpandableContent={(row) => (
+          <SnapshotExpendableContent
+            data={row}
+            UpdateSnapshot={UpdateSnapshot}
+            setSnapshotTitle={setSnapshotTitle}
+          />
+        )}
       />
     </>
   );

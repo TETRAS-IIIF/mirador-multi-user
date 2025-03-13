@@ -1,52 +1,42 @@
 import { Button, Grid, TextField } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { generateSnapshot } from "../api/generateProjectSnapShot.ts";
-import { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import toast from "react-hot-toast";
 import { IFrameGenerator } from "./IFrameGenerator.tsx";
 import { RowProps } from "../types/types.ts";
+import { useState } from "react";
 
-export const SnapshotExpendableContent = (data: RowProps) => {
+interface ISnapshotExpendableContent {
+  data: RowProps;
+  UpdateSnapshot: (snapshotId: number) => void;
+  setSnapshotTitle: (projectId: number, title: string) => void;
+}
+
+export const SnapshotExpendableContent = ({
+  data,
+  UpdateSnapshot,
+  setSnapshotTitle,
+}: ISnapshotExpendableContent) => {
   const { t } = useTranslation();
-  console.log("data", data);
+  const [localTitleState, setLocalTitleState] = useState<string>(
+    String(data.data[0]?.value),
+  );
   const baseUrl =
     window.location.origin + window.location.pathname.split("/app")[0];
-  const [projectSnapshotURL, setProjectSnapshotURL] = useState(
-    `${baseUrl}/mirador/${data.snapShotHash}/workspace.json`,
-  );
-  const [generatedAt, setGeneratedAt] = useState<null | string>(null);
-
-  const fetchManifestInfo = async (hash: string) => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_CADDY_URL}/${hash}/workspace.json`,
-      );
-      if (!response.ok) throw new Error("Failed to fetch manifest info");
-      const miradorWorkspace = await response.json();
-      const date = new Date(miradorWorkspace.generated_at);
-      const formattedDate = date.toLocaleString();
-      setGeneratedAt(formattedDate);
-    } catch (error) {
-      console.error("Error fetching manifest info:", error);
-    }
-  };
-  const handleGenerateSnapshot = async () => {
-    const snapShotUrl = await generateSnapshot(data.itemId!);
-    fetchManifestInfo(snapShotUrl.snapShotHash);
-    setProjectSnapshotURL(
-      `${baseUrl}/mirador/${snapShotUrl.snapShotHash}/workspace.json`,
-    );
-  };
+  const snapshotUrl = `${baseUrl}/mirador/${data.snapShotHash}/workspace.json`;
 
   const handleCopyToClipboard = async () => {
-    if (generatedAt) {
-      await navigator.clipboard.writeText(projectSnapshotURL);
-      toast.success(t("toastSuccessSnapshot"));
-    } else {
-      toast.error(t("toastErrorSnapshot"));
-    }
+    await navigator.clipboard.writeText(snapshotUrl);
+    toast.success(t("toastSuccessSnapshot"));
+  };
+
+  const handleUpdateSnapshot = async (
+    projectId: number,
+    eventValue: string,
+  ) => {
+    setLocalTitleState(eventValue);
+    setSnapshotTitle(projectId, eventValue);
   };
 
   return (
@@ -63,19 +53,21 @@ export const SnapshotExpendableContent = (data: RowProps) => {
           <TextField
             type="text"
             label={t("title")}
-            onChange={() => console.log("toto")}
+            onChange={(e) => handleUpdateSnapshot(data.itemId!, e.target.value)}
             variant="outlined"
             fullWidth
-            defaultValue={String(data.data[0]?.value || "")}
+            defaultValue={localTitleState}
           />
         </Grid>
         <Grid item xs>
           <TextField
             label={t("projectSnapshotUrl")}
-            value={projectSnapshotURL}
+            value={snapshotUrl}
             disabled
             fullWidth
-            helperText={generatedAt ? `Snapshot taken at ${generatedAt}` : null}
+            helperText={
+              data.generatedAt ? `Snapshot taken at ${data.generatedAt}` : null
+            }
           />
         </Grid>
       </Grid>
@@ -84,7 +76,7 @@ export const SnapshotExpendableContent = (data: RowProps) => {
           <Button
             color="primary"
             variant="contained"
-            onClick={handleGenerateSnapshot}
+            onClick={() => UpdateSnapshot(data.id)}
           >
             {t("generate_snapshot")}
           </Button>
@@ -98,7 +90,7 @@ export const SnapshotExpendableContent = (data: RowProps) => {
           />
         </Grid>
         <Grid item>
-          <IFrameGenerator snapshotUrl={projectSnapshotURL} />
+          <IFrameGenerator snapshotUrl={snapshotUrl} />
         </Grid>
       </Grid>
     </Grid>

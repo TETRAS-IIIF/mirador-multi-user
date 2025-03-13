@@ -278,6 +278,7 @@ export class LinkGroupProjectController {
     @Body() createSnapshotDto: CreateSnapshotDto,
     @Req() request,
   ) {
+    createSnapshotDto.creatorId = request.user.sub;
     return await this.linkGroupProjectService.checkPolicies(
       request.metadata.action,
       request.user.sub,

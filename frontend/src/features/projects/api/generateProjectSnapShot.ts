@@ -1,20 +1,28 @@
 import storage from "../../../utils/storage.ts";
 
-export const generateSnapshot = async (projectId: number) => {
+interface IdtoProjectSnapshotProps {
+  title: string;
+  hash: string;
+  projectId: number;
+}
+
+export const generateSnapshot = async (
+  dtoProjectSnapsot: IdtoProjectSnapshotProps,
+) => {
   const token = storage.getToken();
 
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/link-group-project/snapshot/${projectId}`,
+      `${import.meta.env.VITE_BACKEND_URL}/link-group-project/snapshot/`,
       {
-        method: "GET",
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify(dtoProjectSnapsot),
       },
     );
-    const toreturn = await response.json();
-    return toreturn;
+    return await response.json();
   } catch (error) {
     console.error("Error in snapshot generation:", error);
   }

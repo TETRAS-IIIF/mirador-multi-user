@@ -1,24 +1,43 @@
 import { Grid } from "@mui/material";
 import { SnapShotList } from "../../features/projects/components/SnapShotList.tsx";
-import { SnapShot } from "../../features/projects/types/types.ts";
+import { Snapshot } from "../../features/projects/types/types.ts";
+import { useState } from "react";
+import { generateSnapshot } from "../../features/projects/api/generateProjectSnapShot.ts";
 
 interface IShareLinkProps {
   itemId: number;
-  snapShots: SnapShot[];
+  snapShots: Snapshot[];
 }
 
 export const ShareLink = ({ itemId, snapShots }: IShareLinkProps) => {
-  const fetchManifestInfo = async (hash: string) => {
-    try {
-      const response = await fetch(
-        `${import.meta.env.VITE_CADDY_URL}/${hash}/workspace.json`,
-      );
-      if (!response.ok) throw new Error("Failed to fetch manifest info");
-      const miradorWorkspace = await response.json();
-      const date = new Date(miradorWorkspace.generated_at);
-    } catch (error) {
-      console.error("Error fetching manifest info:", error);
+  const [snapShotsState, setSnapShotsState] = useState<Snapshot[]>(snapShots); // Store snapshots with updates
+  const UpdateSnapshot = async (snapshotId: number) => {
+    const snapshotToUpdate = snapShotsState.find(
+      (snapShot) => snapshotId === snapShot.id,
+    );
+    if (snapshotToUpdate) {
+      const updatedSnapshots: Snapshot[] = await generateSnapshot({
+        title: snapshotToUpdate.title,
+        hash: snapshotToUpdate.hash,
+        projectId: itemId,
+      });
+      setSnapShotsState(updatedSnapshots);
+    } else {
+      throw new Error("unable to update snapshot");
     }
+  };
+
+  const handleUpdateSnapshotTitle = async (
+    projectId: number,
+    snapshotTitle: string,
+  ) => {
+    setSnapShotsState((prevSnapshots) =>
+      prevSnapshots.map((snapshot) =>
+        snapshot.project.id === projectId
+          ? { ...snapshot, title: snapshotTitle }
+          : snapshot,
+      ),
+    );
   };
 
   return (
@@ -40,9 +59,11 @@ export const ShareLink = ({ itemId, snapShots }: IShareLinkProps) => {
                     title: "dummyTitle",
                     snapShotHash: "randomDummyHash",
                   },
-                ] as never[] as SnapShot[]
+                ] as never[] as Snapshot[]
               }
               itemId={itemId}
+              UpdateSnapshot={UpdateSnapshot}
+              setSnapshotTitle={handleUpdateSnapshotTitle}
             />
           </Grid>
         </Grid>

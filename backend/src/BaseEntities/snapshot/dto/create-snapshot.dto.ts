@@ -12,7 +12,7 @@ export class CreateSnapshotDto {
 
   @ApiProperty()
   @IsNumber()
-  creatorId: number;
+  creatorId?: number;
 
   @ApiProperty()
   @IsNumber()

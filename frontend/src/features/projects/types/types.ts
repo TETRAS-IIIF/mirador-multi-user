@@ -18,13 +18,9 @@ export type Project = {
   share?: string;
   noteTemplate?: Template[];
   tags?: string[];
-  snapShots: SnapShot[];
+  snapShots: Snapshot[];
 };
 
-export type SnapShot = {
-  title: string;
-  snapShotHash: string;
-};
 export type Template = {
   title: string;
   content: string;
@@ -75,4 +71,16 @@ export type RowProps = {
   itemId?: number;
   data: RowData[];
   snapShotHash?: string;
+  generatedAt?: Date;
+  title?: string;
+};
+
+export type Snapshot = {
+  id: number;
+  title: string;
+  hash: string;
+  creatorId: number;
+  createdAt: Date;
+  updatedAt: Date;
+  project: Project;
 };

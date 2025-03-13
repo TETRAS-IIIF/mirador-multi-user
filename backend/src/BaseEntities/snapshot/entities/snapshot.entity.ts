@@ -20,6 +20,10 @@ export class Snapshot {
   title: string;
 
   @Column()
+  @IsString()
+  hash: string;
+
+  @Column()
   @IsNumber()
   creatorId: number;
 
