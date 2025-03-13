@@ -28,7 +28,7 @@ export const IFrameGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
   };
   return (
     snapshotUrl && (
-      <Box mt={2}>
+      <Box>
         <Button
           variant="contained"
           startIcon={<CodeIcon />}

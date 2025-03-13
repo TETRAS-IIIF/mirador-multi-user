@@ -36,6 +36,7 @@ import { ModalConfirmDelete } from "../../features/projects/components/ModalConf
 import { ModalButton } from "./ModalButton.tsx";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import { Snapshot } from "../../features/projects/types/types.ts";
 
 interface IMMUCardProps<T, X> {
   id: number;
@@ -77,13 +78,20 @@ interface IMMUCardProps<T, X> {
     manifestId: number,
     share: string | undefined,
   ) => Promise<void> | void;
+  handleCreateSnapshot?: (projectId: number) => void;
+  updateSnapshot?: (
+    snapshotTitle: string,
+    projectId: number,
+    snapshotId: number,
+  ) => void;
+  handleDeleteSnapshot?: (snapshotId: number, projectId: number) => void;
 }
 
 const MMUCard = <
   T extends {
     id: number;
     created_at: Dayjs;
-    snapShotHash?: string;
+    snapshots?: Snapshot[];
     mediaTypes?: MediaTypes;
     origin?: manifestOrigin | mediaOrigin;
     title?: string;
@@ -119,6 +127,9 @@ const MMUCard = <
   getGroupByOption,
   duplicateItem,
   handleRemoveFromList,
+  handleCreateSnapshot,
+  updateSnapshot,
+  handleDeleteSnapshot,
 }: IMMUCardProps<T, X>) => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
@@ -291,6 +302,9 @@ const MMUCard = <
             children={
               <>
                 <MMUModalEdit
+                  handleDeleteSnapshot={handleDeleteSnapshot}
+                  updateSnapshot={updateSnapshot}
+                  handleCreateSnapshot={handleCreateSnapshot}
                   objectTypes={objectTypes}
                   isGroups={isGroups}
                   metadata={metadata ? metadata : undefined}

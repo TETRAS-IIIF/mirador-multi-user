@@ -18,7 +18,9 @@ export type Project = {
   share?: string;
   noteTemplate?: Template[];
   tags?: string[];
+  snapShots: Snapshot[];
 };
+
 export type Template = {
   title: string;
   content: string;
@@ -57,4 +59,29 @@ export type CreateProjectDto = {
 export type LockProjectDto = {
   projectId: number;
   lock: boolean;
+};
+
+export type RowData = {
+  value: string;
+  align?: "left" | "right" | "center";
+};
+
+export type RowProps = {
+  id: number;
+  itemId?: number;
+  data: RowData[];
+  snapShotHash?: string;
+  generatedAt?: Date;
+  title?: string;
+  snapshotId?: number;
+};
+
+export type Snapshot = {
+  id: number;
+  title: string;
+  hash: string;
+  creator: string;
+  createdAt: Date;
+  updated_at: Date;
+  project: Project;
 };
