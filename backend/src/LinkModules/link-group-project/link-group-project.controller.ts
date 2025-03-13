@@ -27,6 +27,7 @@ import {
 } from '@nestjs/swagger';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { LockProjectDto } from './dto/lockProjectDto';
+import { CreateSnapshotDto } from '../../BaseEntities/snapshot/dto/create-snapshot.dto';
 
 @ApiBearerAuth()
 @Controller('link-group-project')
@@ -272,10 +273,20 @@ export class LinkGroupProjectController {
   @ApiOperation({ summary: 'Create project snapshot' })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
-  @Get('/snapshot/:projectId')
-  async generateSnapshot(@Param('projectId') projectId: number) {
-    return await this.linkGroupProjectService.generateProjectSnapshot(
-      projectId,
+  @Post('/snapshot/')
+  async generateSnapshot(
+    @Body() createSnapshotDto: CreateSnapshotDto,
+    @Req() request,
+  ) {
+    return await this.linkGroupProjectService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      createSnapshotDto.projectId,
+      async () => {
+        return await this.linkGroupProjectService.generateProjectSnapshot(
+          createSnapshotDto,
+        );
+      },
     );
   }
 

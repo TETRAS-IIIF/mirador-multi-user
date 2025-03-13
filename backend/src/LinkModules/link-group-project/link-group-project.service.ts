@@ -22,13 +22,15 @@ import { LinkUserGroupService } from '../link-user-group/link-user-group.service
 import { Project } from '../../BaseEntities/project/entities/project.entity';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { ActionType } from '../../enum/actions';
-import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
-import * as fs from 'fs';
+import { UserGroupTypes } from '../../enum/user-group-types';
+import { SnapshotService } from '../../BaseEntities/snapshot/snapshot.service';
+import { CreateSnapshotDto } from '../../BaseEntities/snapshot/dto/create-snapshot.dto';
 import {
   DEFAULT_PROJECT_SNAPSHOT_FILE_NAME,
   UPLOAD_FOLDER,
 } from '../../utils/constants';
-import { UserGroupTypes } from '../../enum/user-group-types';
+import * as fs from 'node:fs';
+import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -40,6 +42,7 @@ export class LinkGroupProjectService {
     private readonly projectService: ProjectService,
     private readonly groupService: UserGroupService,
     private readonly linkUserGroupService: LinkUserGroupService,
+    private readonly snapshotService: SnapshotService,
   ) {}
 
   async create(createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
@@ -521,11 +524,16 @@ export class LinkGroupProjectService {
     }
   }
 
-  async generateProjectSnapshot(projectId: number) {
+  async generateProjectSnapshot(createSnapshotDto: CreateSnapshotDto) {
     try {
-      const project = await this.projectService.findOne(projectId);
+      const snapShot =
+        await this.snapshotService.createSnapshot(createSnapshotDto);
+
+      const project = await this.projectService.findOne(
+        createSnapshotDto.projectId,
+      );
       const hash = generateAlphanumericSHA1Hash(
-        `${project.title}${Date.now().toString()}`,
+        `${createSnapshotDto.title}${Date.now().toString()}`,
       );
       const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 
@@ -540,13 +548,7 @@ export class LinkGroupProjectService {
         JSON.stringify(workspaceData, null, 2),
         'utf-8',
       );
-      await this.projectService.update(projectId, {
-        id: projectId,
-        snapShotHash: [{ hash: hash, generatedAt: Date.now().toString() }],
-      });
-      return {
-        snapShotHash: `${hash}`,
-      };
+      return snapShot;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(`an error occurred`, error);
