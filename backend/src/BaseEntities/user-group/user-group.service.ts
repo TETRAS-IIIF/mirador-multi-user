@@ -73,14 +73,8 @@ export class UserGroupService {
 
   async updateGroup(updateData: UpdateUserGroupDto) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { rights, ...data } = updateData;
-
-      if (
-        rights !== User_UserGroupRights.ADMIN &&
-        rights !== User_UserGroupRights.EDITOR
-      ) {
-        throw new UnauthorizedException('You are not allowed to do this.');
-      }
 
       const userGroup = await this.userGroupRepository.findOne({
         where: { id: updateData.id },
