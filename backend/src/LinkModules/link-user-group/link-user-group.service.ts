@@ -190,6 +190,7 @@ export class LinkUserGroupService {
         userId: createUserGroupDto.user.id,
         user_groupId: userGroup.id,
       });
+
       return userGroup;
     } catch (error) {
       this.logger.error(error.message, error.stack);
