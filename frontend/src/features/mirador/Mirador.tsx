@@ -83,6 +83,9 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
             // adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
             exportLocalStorageAnnotations: false,
           },
+          annotations: {
+            htmlSanitizationRuleSet: "liberal",
+          },
           workspace: {
             isWorkspaceAddVisible: true,
             removeResourceButton: true,
@@ -125,17 +128,11 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
             project.title,
           );
         }
-        // TODO : this is a workaround for scroll issue but it should be removed
-        let configWorkaround = loadingMiradorViewer.store.getState();
-        //this get the catalog from the project and inject it into workaroundconfig
-        configWorkaround = {
-          ...configWorkaround,
-          catalog: miradorState?.catalog ? miradorState.catalog : [],
-        };
+
         // Load state only if it is not empty
         if (loadingMiradorViewer && project.id && miradorState) {
           const configWithAdapter = {
-            ...configWorkaround.config,
+            ...miradorState.config,
             annotation: {
               ...miradorState.config.annotation,
               adapter: (canvasId: string) =>
@@ -147,7 +144,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
             },
           };
           const miradorStateWithAdapter = {
-            ...configWorkaround,
+            ...miradorState,
             config: {
               ...configWithAdapter,
             },

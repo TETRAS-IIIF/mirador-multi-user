@@ -5,12 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { ManifestModule } from '../../BaseEntities/manifest/manifest.module';
 import { UserGroupModule } from '../../BaseEntities/user-group/user-group.module';
+import { LinkUserGroupModule } from '../link-user-group/link-user-group.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([LinkManifestGroup]),
     ManifestModule,
     UserGroupModule,
+    LinkUserGroupModule,
   ],
   controllers: [LinkManifestGroupController],
   providers: [LinkManifestGroupService],

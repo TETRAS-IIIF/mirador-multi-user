@@ -19,6 +19,7 @@ export const GetAllGroupUsers = async (groupId: number) => {
     return toReturn.map((group: UserGroup) => ({
       ...group,
       created_at: dayjs(group.created_at),
+      updated_at:dayjs(group.updated_at)
     }));
   } catch (error) {
     throw error;

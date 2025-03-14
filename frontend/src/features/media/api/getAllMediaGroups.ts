@@ -1,5 +1,5 @@
-import { ProjectGroup } from "../../projects/types/types.ts";
-import storage from "../../../utils/storage.ts";
+import { ProjectGroup } from '../../projects/types/types.ts';
+import storage from '../../../utils/storage.ts';
 
 export const getAllMediaGroups = async (
   mediaId: number,

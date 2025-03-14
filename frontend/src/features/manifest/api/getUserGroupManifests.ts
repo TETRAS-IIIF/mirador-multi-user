@@ -1,4 +1,4 @@
-import { Manifest } from "../../manifest/types/types.ts";
+import { Manifest } from '../types/types.ts';
 import storage from "../../../utils/storage.ts";
 import dayjs from "dayjs";
 
@@ -17,8 +17,9 @@ export const getUserGroupManifests = async (
     },
   );
   const manifests = await response.json();
-  return manifests.map((manifest: any) => ({
+  return manifests.map((manifest: Manifest) => ({
     ...manifest,
     created_at: dayjs(manifest.created_at),
+    updated_at: dayjs(manifest.updated_at),
   }));
 };

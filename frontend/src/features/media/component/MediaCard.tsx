@@ -45,47 +45,35 @@ interface IMediaCardProps {
     mediaId: number,
     share: string | undefined,
   ) => void;
+  ownerId:number
 }
 
 export const MediaCard = ({
-  media,
-  handleGrantAccess,
   HandleCopyToClipBoard,
-  HandleOpenModal,
   HandleDeleteMedia,
+  HandleOpenModal,
+  HandleUpdateMedia,
+  caddyUrl,
   getAllMediaGroups,
+  getGroupByOption,
   getOptionLabel,
-  listOfGroup,
-  openModalMediaId,
-  handleRemoveAccessToMedia,
+  handleChangeRights,
+  handleGrantAccess,
   handleLookingForUserGroups,
+  handleRemoveAccessToMedia,
+  handleRemoveMediaFromList,
+  listOfGroup,
+  media,
+  openModalMediaId,
+  ownerId,
   setGroupList,
   setUserToAdd,
-  caddyUrl,
-  HandleUpdateMedia,
-  handleChangeRights,
-  getGroupByOption,
-  handleRemoveMediaFromList,
 }: IMediaCardProps) => {
   const { t } = useTranslation();
-  const thumbnailUrl = (): string | null => {
-    if (media.mediaTypes === MediaTypes.IMAGE) {
-      return media.hash
-        ? `${caddyUrl}/${media.hash}/thumbnail.webp`
-        : placeholder;
-    }
-    if (media.mediaTypes === MediaTypes.VIDEO) {
-      return media.hash
-        ? `${caddyUrl}/${media.hash}/thumbnail.webp`
-        : videoPlaceHolder;
-    }
-    if (media.mediaTypes === MediaTypes.OTHER) {
-      return otherPlaceHolder;
-    }
-    return null;
-  };
+
   return (
     <MMUCard
+      ownerId={ownerId}
       objectTypes={ObjectTypes.MEDIA}
       AddAccessListItemFunction={handleGrantAccess}
       DefaultButton={
@@ -148,7 +136,6 @@ export const MediaCard = ({
       searchModalEditItem={handleLookingForUserGroups}
       setItemList={setGroupList}
       setItemToAdd={setUserToAdd}
-      thumbnailUrl={thumbnailUrl()}
       updateItem={HandleUpdateMedia}
       handleSelectorChange={handleChangeRights}
       getGroupByOption={getGroupByOption}

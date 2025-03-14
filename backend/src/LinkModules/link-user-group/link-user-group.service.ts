@@ -158,16 +158,23 @@ export class LinkUserGroupService {
   }
 
   public async sendConfirmationLink(email: string, language: string) {
-    const user = await this.userService.findOneByMail(email);
-    if (user.isEmailConfirmed) {
-      throw new BadRequestException('Email already confirmed');
+    try {
+      const user = await this.userService.findOneByMail(email);
+      if (user.isEmailConfirmed && user.termsValidatedAt) {
+        throw new BadRequestException('Email and terms already confirmed');
+      }
+      await this.emailService.sendConfirmationEmail({
+        to: user.mail,
+        subject: 'Account creation',
+        userName: user.name,
+        language: language,
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'An error occurred while resending the user mail',
+      );
     }
-    await this.emailService.sendConfirmationEmail({
-      to: user.mail,
-      subject: 'Account creation',
-      userName: user.name,
-      language: language,
-    });
   }
 
   async createUserGroup(
@@ -183,6 +190,7 @@ export class LinkUserGroupService {
         userId: createUserGroupDto.user.id,
         user_groupId: userGroup.id,
       });
+
       return userGroup;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -338,10 +346,18 @@ export class LinkUserGroupService {
 
   async findAllUsersForGroup(groupId: number) {
     try {
-      return await this.linkUserGroupRepository.find({
+      const usersInGroup = await this.linkUserGroupRepository.find({
         where: { user_group: { id: groupId } },
-        relations: ['user'],
+        relations: ['user', 'user_group'],
       });
+
+      return await Promise.all(
+        usersInGroup.map(async (userGroup) => {
+          const personalOwnerGroup =
+            await this.groupService.findUserPersonalGroup(userGroup.user.id);
+          return { ...userGroup, personalOwnerGroupId: personalOwnerGroup.id };
+        }),
+      );
     } catch (error) {
       throw new InternalServerErrorException(
         `an error occurred while trying to find users for this group ${groupId}`,
@@ -363,6 +379,7 @@ export class LinkUserGroupService {
         groupsToReturn.push({
           ...group.user_group,
           rights: group.rights,
+          shared: Number(group.user_group.ownerId) !== Number(userId),
         });
       }
       return groupsToReturn;

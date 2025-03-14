@@ -73,24 +73,29 @@ export class UserGroupService {
 
   async updateGroup(updateData: UpdateUserGroupDto) {
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { rights, ...data } = updateData;
-      if (
-        rights === User_UserGroupRights.ADMIN ||
-        rights === User_UserGroupRights.EDITOR
-      ) {
-        await this.userGroupRepository.update(updateData.id, {
-          ...data,
-        });
-      } else {
-        throw new UnauthorizedException('you are not allowed to do this.');
-      }
-      return await this.userGroupRepository.find({
+
+      const userGroup = await this.userGroupRepository.findOne({
+        where: { id: updateData.id },
+      });
+
+      if (!userGroup)
+        throw new NotFoundException(
+          `User group with ID ${updateData.id} not found`,
+        );
+
+      Object.assign(userGroup, data);
+
+      await this.userGroupRepository.save(userGroup);
+
+      return this.userGroupRepository.find({
         where: { id: updateData.id },
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        `An error occurred while updating group with id : ${updateData.id}`,
+        `An error occurred while updating group with id: ${updateData.id}`,
       );
     }
   }

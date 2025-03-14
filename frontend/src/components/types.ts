@@ -9,6 +9,7 @@ export type ListItem = {
   title?: string;
   rights?: ItemsRights;
   type?: UserGroupTypes;
+  personalOwnerGroupId?:number;
 };
 
 export type ItemOwner = {

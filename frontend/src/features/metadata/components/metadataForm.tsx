@@ -55,6 +55,7 @@ export const MetadataForm = <T extends { id: number }>({
   const [generatingFields, setGeneratingFields] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+
   const handleInputChange = useCallback(
     (term: string, value: string | null | undefined) => {
       const newValue = value ?? "";

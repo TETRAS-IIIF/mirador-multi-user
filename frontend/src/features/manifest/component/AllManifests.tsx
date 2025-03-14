@@ -52,6 +52,12 @@ import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { removeManifestFromList } from "../api/removeManifestFromList.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
+import { removeManifestToGroup } from '../api/removeManifestToGroup.ts';
 import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
 import { useFetchThumbnails } from "../customHooks/useFetchManifestThumbnails.ts";
 import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
@@ -97,7 +103,7 @@ export const AllManifests = ({
   const [userGroupSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
-  const [sortField, setSortField] = useState<keyof Manifest>("title");
+  const [sortField, setSortField] = useState<keyof Manifest>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState("asc");
 
   const { t } = useTranslation();
@@ -179,7 +185,6 @@ export const AllManifests = ({
     useFetchThumbnails(currentPageData);
 
   useEffect(() => {
-    fetchThumbnails();
     fetchManifestForUser();
   }, []);
 
@@ -310,6 +315,7 @@ export const AllManifests = ({
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
       type: projectGroup.user_group.type,
+      personalOwnerGroupId: projectGroup.user_group.ownerId,
     }));
   }, [groupList]);
 
@@ -337,6 +343,13 @@ export const AllManifests = ({
       toast.success(t("removedManifestFromList"));
       fetchManifestForUser();
     }
+  };
+
+  const handleRemoveAccess = async (
+    manifestId: number,
+    groupId: number,
+  ) => {
+    await removeManifestToGroup(manifestId,groupId);
   };
 
   return (
@@ -389,7 +402,7 @@ export const AllManifests = ({
                   <SortItemSelector<Manifest>
                     sortField={sortField}
                     setSortField={setSortField}
-                    fields={["title", "created_at"]}
+                    fields={[TITLE, UPDATED_AT]}
                   />
                 </Grid>
                 <Grid item>
@@ -447,9 +460,10 @@ export const AllManifests = ({
                 flexDirection="column"
                 sx={{ marginBottom: "70px" }}
               >
-                {currentPageData.map((manifest, index) => (
+                {currentPageData.map((manifest: Manifest) => (
                   <Grid item key={manifest.id}>
                     <MMUCard
+                      ownerId={manifest.idCreator}
                       objectTypes={ObjectTypes.MANIFEST}
                       AddAccessListItemFunction={handleGrantAccess}
                       DefaultButton={
@@ -509,8 +523,15 @@ export const AllManifests = ({
                       deleteItem={handleDeleteManifest}
                       description={manifest.description}
                       getAccessToItem={getAllManifestGroups}
-                      getOptionLabel={getOptionLabel}
                       getGroupByOption={getGroupByOption}
+                      getOptionLabel={getOptionLabel}
+                      handleSelectorChange={handleChangeRights}
+                      handleRemoveFromList={() =>
+                        handleRemoveManifestFromList(
+                          manifest.id,
+                          manifest.share ? manifest.share : undefined,
+                        )
+                      }
                       id={manifest.id}
                       item={manifest}
                       itemLabel={manifest.title}
@@ -520,17 +541,10 @@ export const AllManifests = ({
                       rights={manifest.rights!}
                       searchBarLabel={t("searchLabel")}
                       searchModalEditItem={handleLookingForUserGroups}
-                      setItemToAdd={setUserToAdd}
                       setItemList={setGroupList}
-                      thumbnailUrl={thumbnailUrls[index]}
+                      setItemToAdd={setUserToAdd}
                       updateItem={handleUpdateManifest}
-                      handleSelectorChange={handleChangeRights}
-                      handleRemoveFromList={() =>
-                        handleRemoveManifestFromList(
-                          manifest.id,
-                          manifest.share ? manifest.share : undefined,
-                        )
-                      }
+                      removeAccessListItemFunction={handleRemoveAccess}
                     />
                   </Grid>
                 ))}

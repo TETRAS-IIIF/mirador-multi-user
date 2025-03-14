@@ -61,39 +61,40 @@ import {
 import { TagMaker } from "./TagsFactory/TagMaker.tsx";
 
 interface ModalItemProps<T> {
-  item: T;
-  itemLabel: string;
-  updateItem?: (newItem: T) => void;
+  HandleOpenModalEdit: () => void;
   deleteItem?: (itemId: number) => void;
+  description: string;
   duplicateItem?: (itemId: number) => void;
-  handleDeleteAccessListItem: (itemId: number) => void;
-  searchModalEditItem?: (partialString: string) => Promise<any[]> | any[];
+  fetchData: () => Promise<void>;
+  getGroupByOption?: (option: any) => string;
   getOptionLabel?: (option: { title: string }, searchInput: string) => string;
+  handleAddAccessListItem: () => void;
+  handleCreateSnapshot?: (projectId: number) => void;
+  handleDeleteAccessListItem: (itemId: number) => void;
+  handleDeleteSnapshot?: (snapshotId: number, projectId: number) => void;
   handleSelectorChange: (
     listItem: ListItem,
   ) => (event: SelectChangeEvent) => Promise<void>;
-  fetchData: () => Promise<void>;
+  isGroups?: boolean;
+  item: T;
+  itemLabel: string;
   listOfItem?: ListItem[];
-  setItemToAdd?: Dispatch<SetStateAction<{ title: string } | null>>;
-  handleAddAccessListItem: () => void;
-  setSearchInput: Dispatch<SetStateAction<string>>;
-  searchInput: string;
+  metadata?: Record<string, string>;
+  objectTypes?: ObjectTypes;
+  ownerId:number;
   rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
   searchBarLabel: string;
-  description: string;
-  HandleOpenModalEdit: () => void;
+  searchInput: string;
+  searchModalEditItem?: (partialString: string) => Promise<any[]> | any[];
+  setItemToAdd?: Dispatch<SetStateAction<{ title: string } | null>>;
+  setSearchInput: Dispatch<SetStateAction<string>>;
   thumbnailUrl?: string | null;
-  metadata?: Record<string, string>;
-  isGroups?: boolean;
-  objectTypes?: ObjectTypes;
-  getGroupByOption?: (option: any) => string;
-  handleCreateSnapshot?: (projectId: number) => void;
+  updateItem?: (newItem: T) => void;
   updateSnapshot?: (
     snapshotTitle: string,
     projectId: number,
     snapshotId: number,
   ) => void;
-  handleDeleteSnapshot?: (snapshotId: number, projectId: number) => void;
 }
 
 type MetadataFormat = {
@@ -118,46 +119,48 @@ type MetadataArray = MetadataFormat[];
 
 export const MMUModalEdit = <
   T extends {
-    title?: string;
-    id: number;
-    origin?: manifestOrigin | mediaOrigin;
     created_at: Dayjs;
-    snapshots?: Snapshot[];
     hash?: string;
-    path?: string;
-    userWorkspace?: Record<string, string>;
-    rights?: ItemsRights;
+    id: number;
     noteTemplate?: Template[];
+    origin?: manifestOrigin | mediaOrigin;
+    ownerId?: number
+    path?: string;
+    rights?: ItemsRights;
+    snapshots?: Snapshot[];
     tags?: string[];
+    title?: string;
+    userWorkspace?: Record<string, string>;
   },
 >({
-  itemLabel,
-  setItemToAdd,
-  item,
-  updateItem,
+  HandleOpenModalEdit,
   deleteItem,
-  searchModalEditItem,
-  getOptionLabel,
-  handleSelectorChange,
+  description,
+  duplicateItem,
   fetchData,
-  listOfItem,
+  getGroupByOption,
+  getOptionLabel,
   handleAddAccessListItem,
-  setSearchInput,
-  searchInput,
+  handleCreateSnapshot,
+  handleDeleteAccessListItem,
+  handleDeleteSnapshot,
+  handleSelectorChange,
+  isGroups,
+  item,
+  itemLabel,
+  listOfItem,
+  metadata,
+  objectTypes,
+  ownerId,
   rights,
   searchBarLabel,
-  handleDeleteAccessListItem,
-  description,
-  HandleOpenModalEdit,
+  searchInput,
+  searchModalEditItem,
+  setItemToAdd,
+  setSearchInput,
   thumbnailUrl,
-  metadata,
-  isGroups,
-  getGroupByOption,
-  duplicateItem,
-  objectTypes,
-  handleCreateSnapshot,
+  updateItem,
   updateSnapshot,
-  handleDeleteSnapshot,
 }: ModalItemProps<T>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
@@ -243,12 +246,16 @@ export const MMUModalEdit = <
   }
 
   const handleUpdateItem = async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { rights ,...dataUpdated } = item
+
     let itemToUpdate = {
-      ...(item as T),
+      ...(dataUpdated as T),
       description: newItemDescription,
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
     };
+
     if (updatedTemplateList) {
       itemToUpdate = {
         ...itemToUpdate,
@@ -262,9 +269,10 @@ export const MMUModalEdit = <
     ) {
       await createMetadataForItem(
         objectTypes!,
-        item.id,
+        dataUpdated.id,
         selectedMetadataFormat!.title,
         selectedMetadataData,
+        dataUpdated.ownerId!
       );
     }
     if (updateItem) {
@@ -611,21 +619,22 @@ export const MMUModalEdit = <
                 }}
               >
                 <ItemList
-                  handleDeleteSnapshot={handleDeleteSnapshot}
-                  updateSnapshot={updateSnapshot}
-                  handleCreateSnapshot={handleCreateSnapshot}
-                  item={item}
-                  objectTypes={objectTypes!}
-                  snapShots={item.snapshots ? item.snapshots : []}
+                  getGroupByOption={getGroupByOption}
                   handleAddAccessListItem={handleAddAccessListItem}
-                  setItemToAdd={setItemToAdd}
-                  items={listOfItem}
+                  handleCreateSnapshot={handleCreateSnapshot}
+                  handleDeleteSnapshot={handleDeleteSnapshot}
+                  handleGetOptionLabel={handleGetOtpionLabel}
                   handleSearchModalEditItem={handleSearchModalEditItem}
+                  item={item}
+                  items={listOfItem}
+                  objectTypes={objectTypes!}
+                  ownerId={ownerId}
                   removeItem={handleDeleteAccessListItem}
                   searchBarLabel={searchBarLabel}
+                  setItemToAdd={setItemToAdd}
                   setSearchInput={setSearchInput}
-                  handleGetOptionLabel={handleGetOtpionLabel}
-                  getGroupByOption={getGroupByOption}
+                  snapShots={item.snapshots ? item.snapshots : []}
+                  updateSnapshot={updateSnapshot}
                 >
                   {(accessListItem) => (
                     <Selector

@@ -8,7 +8,7 @@ import { CreateLinkGroupProjectDto } from './dto/create-link-group-project.dto';
 import { UpdateLinkGroupProjectDto } from './dto/update-link-group-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
 import { GroupProjectRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
@@ -110,7 +110,10 @@ export class LinkGroupProjectService {
     }
   }
 
-  async duplicateProject(projectId: number): Promise<LinkGroupProject> {
+  async duplicateProject(
+    projectId: number,
+    userId: number,
+  ): Promise<LinkGroupProject> {
     try {
       const originalProject = await this.linkGroupProjectRepository.findOne({
         where: { project: { id: projectId } },
@@ -121,7 +124,7 @@ export class LinkGroupProjectService {
       }
       return await this.createProject({
         title: originalProject.project.title,
-        ownerId: originalProject.project.ownerId,
+        ownerId: userId,
         metadata: originalProject.project.metadata,
       });
     } catch (error) {
@@ -132,10 +135,21 @@ export class LinkGroupProjectService {
 
   async getProjectRelations(projectId: number) {
     try {
-      return await this.linkGroupProjectRepository.find({
+      const listOfGroups = await this.linkGroupProjectRepository.find({
         where: { project: { id: projectId } },
         relations: ['user_group'],
       });
+
+      return await Promise.all(
+        listOfGroups.map(async (group) => {
+          const personalOwnerGroup =
+            await this.groupService.findUserPersonalGroup(
+              group.user_group.ownerId,
+            );
+
+          return { ...group, personalOwnerGroupId: personalOwnerGroup.id };
+        }),
+      );
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
@@ -406,40 +420,42 @@ export class LinkGroupProjectService {
     try {
       const usersGroups =
         await this.linkUserGroupService.findALlGroupsForUser(userId);
-      let projects: Project[] = [];
+      const projectsMap: Map<
+        number,
+        Project & { rights: string; share?: string }
+      > = new Map();
 
       for (const usersGroup of usersGroups) {
         const groupProjects = await this.findAllGroupProjectByUserGroupId(
           usersGroup.id,
         );
 
-        const userProjects = groupProjects.map((groupProject) => {
-          let project;
-          if (groupProject.user_group.type === UserGroupTypes.MULTI_USER) {
-            project = {
-              ...groupProject.project,
-              rights: groupProject.rights,
+        for (const groupProject of groupProjects) {
+          const projectId = groupProject.project.id;
+          const currentRights =
+            PROJECT_RIGHTS_PRIORITY[groupProject.rights] || 0;
+
+          const existingProject = projectsMap.get(projectId);
+
+          const projectData = {
+            ...groupProject.project,
+            rights: groupProject.rights,
+            shared: Number(groupProject.project.ownerId) !== Number(userId),
+            ...(groupProject.user_group.type === UserGroupTypes.MULTI_USER && {
               share: 'group',
-            };
-          }
-          if (groupProject.user_group.type === UserGroupTypes.PERSONAL) {
-            project = {
-              ...groupProject.project,
-              rights: groupProject.rights,
-            };
-          }
+            }),
+          };
 
-          return project;
-        });
-
-        projects = projects.concat(
-          userProjects.filter(
-            (project) => !projects.some((p) => p.id === project.id),
-          ),
-        );
+          if (
+            !existingProject ||
+            currentRights > PROJECT_RIGHTS_PRIORITY[existingProject.rights]
+          ) {
+            projectsMap.set(projectId, projectData);
+          }
+        }
       }
 
-      return projects;
+      return Array.from(projectsMap.values());
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -450,17 +466,26 @@ export class LinkGroupProjectService {
   }
 
   async getHighestRightForProject(userId: number, projectId: number) {
-    const userGroups =
+    const userPersonalGroup: UserGroup =
+      await this.groupService.findUserPersonalGroup(userId);
+
+    const userGroups: UserGroup[] =
       await this.linkUserGroupService.findALlGroupsForUser(userId);
-    const linkEntities = await this.linkGroupProjectRepository.find({
-      where: {
-        user_group: { id: In(userGroups.map((group) => group.id)) },
-        project: { id: projectId },
-      },
-      relations: ['project', 'user_group'],
-    });
+    const allGroups = [...userGroups, userPersonalGroup];
+    let linkEntities = [];
+    for (const group of allGroups) {
+      const linkGroups = await this.linkGroupProjectRepository.find({
+        where: {
+          user_group: { id: group.id },
+          project: { id: projectId },
+        },
+        relations: ['project', 'user_group'],
+      });
+      linkEntities = linkEntities.concat(linkGroups);
+    }
+
     if (linkEntities.length === 0) {
-      return;
+      return null;
     }
 
     return linkEntities.reduce((prev, current) => {

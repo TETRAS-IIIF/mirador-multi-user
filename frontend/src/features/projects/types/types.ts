@@ -4,21 +4,23 @@ import { ItemsRights, UserGroup } from "../../user-group/types/types.ts";
 import { Dayjs } from "dayjs";
 
 export type Project = {
+  created_at: Dayjs;
+  description: string;
   id: number;
-  title: string;
-  userWorkspace: IState;
+  lockedAt: Date;
+  lockedByUserId: number;
+  metadata: Record<string, string>;
+  noteTemplate?: Template[];
   owner: User;
   rights?: ItemsRights;
-  description: string;
-  thumbnailUrl?: string;
-  metadata: Record<string, string>;
-  created_at: Dayjs;
-  lockedByUserId: number;
-  lockedAt: Date;
   share?: string;
-  noteTemplate?: Template[];
-  tags?: string[];
+  shared: boolean;
   snapShots: Snapshot[];
+  tags?: string[];
+  thumbnailUrl?: string;
+  title: string;
+  updated_at: Dayjs
+  userWorkspace: IState;
 };
 
 export type Template = {
@@ -26,6 +28,7 @@ export type Template = {
   content: string;
 };
 export type ProjectGroup = {
+  personalOwnerGroupId?: number;
   id: number;
   rights: ItemsRights;
   user_group: UserGroup;
@@ -48,6 +51,7 @@ export type ProjectGroupUpdateDto = {
   };
   rights?: ItemsRights;
   group?: UserGroup;
+  shared?:boolean;
 };
 export type CreateProjectDto = {
   title: string;

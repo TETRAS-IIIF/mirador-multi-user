@@ -20,6 +20,7 @@ export const getUserAllProjects = async (userPersonalGroupId: number) => {
     return projectData.map((project: any) => ({
       ...project,
       created_at: dayjs(project.created_at),
+      updated_at: dayjs(project.updated_at),
     }));
   } catch (error) {
     throw error;

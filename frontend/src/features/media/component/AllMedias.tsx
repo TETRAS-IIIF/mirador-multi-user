@@ -56,7 +56,11 @@ import {
   isFileSizeUnderLimit,
   isValidFileForUpload,
 } from "../../../utils/utils.ts";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -101,8 +105,8 @@ export const AllMedias = ({
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
   const [mediaTabShown, setMediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
-  const [sortField, setSortField] = useState<keyof Media>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortField, setSortField] = useState<keyof Media>(UPDATED_AT);
+  const [sortOrder, setSortOrder] = useState("desc");
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -145,11 +149,11 @@ export const AllMedias = ({
 
   const totalPages = Math.ceil(
     medias.filter((media) => {
-      if (mediaTabShown === 1) {
+      if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
         return media.mediaTypes === MediaTypes.VIDEO;
-      } else if (mediaTabShown === 2) {
+      } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
         return media.mediaTypes === MediaTypes.IMAGE;
-      } else if (mediaTabShown === 3) {
+      } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
         return media.mediaTypes === MediaTypes.OTHER;
       }
       return true;
@@ -164,7 +168,7 @@ export const AllMedias = ({
         toast.error(t("unsupportedMedia"));
         return;
       }
-      if (isFileSizeUnderLimit(file)) {
+      if (!isFileSizeUnderLimit(file)) {
         toast.error(
           t("fileTooLarge", {
             maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
@@ -172,7 +176,6 @@ export const AllMedias = ({
         );
         return;
       }
-
       // Proceed with media creation
       await createMedia(
         {
@@ -213,9 +216,7 @@ export const AllMedias = ({
 
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { share, ...mediaDto } = mediaToUpdate;
-      await updateMedia(mediaDto);
+      await updateMedia(mediaToUpdate);
       const updatedListOfMedias = medias.filter(function (media) {
         return media.id != mediaToUpdate.id;
       });
@@ -245,6 +246,7 @@ export const AllMedias = ({
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
       type: projectGroup.user_group.type,
+      personalOwnerGroupId: projectGroup.user_group.ownerId,
     }));
   }, [groupList]);
 
@@ -269,10 +271,11 @@ export const AllMedias = ({
   };
 
   const handleRemoveAccessToMedia = async (
-    userGroupId: number,
     mediaId: number,
+    userGroupId: number,
   ) => {
     await removeAccessToMedia(mediaId, userGroupId);
+    fetchMediaForUser()
   };
   const handleChangeRights = async (
     group: ListItem,
@@ -392,7 +395,7 @@ export const AllMedias = ({
               <SortItemSelector<Media>
                 sortField={sortField}
                 setSortField={setSortField}
-                fields={["title", "created_at"]}
+                fields={[TITLE, UPDATED_AT]}
               />
             </Grid>
             <Grid item>
@@ -425,10 +428,16 @@ export const AllMedias = ({
           <Grid container spacing={2} direction="column">
             {medias.length > 0 &&
               (currentPageData.length > 0 ? (
-                currentPageData.map((media) => (
+                currentPageData.map((media: Media) => (
                   <Grid item key={media.id}>
                     <MediaCard
-                      media={media}
+                      media={{
+                        ...media,
+                        thumbnailUrl: media.hash
+                          ? `${caddyUrl}/${media.hash}/thumbnail.webp`
+                          : undefined,
+                      }}
+                      ownerId={media.idCreator}
                       getAllMediaGroups={getAllMediaGroups}
                       getOptionLabel={getOptionLabel}
                       getGroupByOption={getGroupByOption}

@@ -25,6 +25,9 @@ export const MiradorManifestExposed = () => {
             manifestId: manifestURL,
           },
         ],
+        annotations: {
+          htmlSanitizationRuleSet: "liberal",
+        },
       };
       let loadingMiradorViewer;
 

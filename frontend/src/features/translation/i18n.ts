@@ -37,7 +37,7 @@ const loadLanguage = async (lng: string): Promise<void> => {
     }
   }
 
-  const availableLocales = ["en", "fr", "es"];
+  const availableLocales = ["en", "fr"];
   const localeToSet = availableLocales.includes(lng) ? lng : "en";
 
   dayjs.locale(localeToSet);

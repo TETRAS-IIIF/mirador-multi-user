@@ -43,6 +43,11 @@ import { leavingGroup } from "../api/leavingGroup.ts";
 import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
 import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
 import { Manifest } from "../../manifest/types/types.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
 
 interface allGroupsProps {
   user: User;
@@ -74,8 +79,9 @@ export const AllGroups = ({
   >([]);
   const [groupFilter, setGroupFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortField, setSortField] = useState<keyof UserGroup>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+
+  const [sortField, setSortField] = useState<keyof UserGroup>(UPDATED_AT);
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const { t } = useTranslation();
 
@@ -178,11 +184,13 @@ export const AllGroups = ({
       id: userPersonalGroup.user.id,
       title: userPersonalGroup.user.name,
       rights: userPersonalGroup.rights,
+      personalOwnerGroupId:userPersonalGroup.personalOwnerGroupId,
     }));
   }, [userPersonalGroupList]);
 
   const handleRemoveUser = async (groupId: number, userToRemoveId: number) => {
     await removeAccessToGroup(groupId, userToRemoveId);
+    fetchGroups()
   };
 
   const handleLeaveGroup = async (groupId: number) => {
@@ -193,13 +201,13 @@ export const AllGroups = ({
   return (
     <>
       <SidePanel
-        medias={medias}
-        manifests={manifests}
-        userPersonalGroup={userPersonalGroup!}
-        user={user}
-        fetchMediaForUser={fetchMediaForUser}
-        fetchManifestForUser={fetchManifestForUser}
         display={!!openModalGroupId}
+        fetchManifestForUser={fetchManifestForUser}
+        fetchMediaForUser={fetchMediaForUser}
+        manifests={manifests}
+        medias={medias}
+        user={user}
+        userPersonalGroup={userPersonalGroup!}
       >
         <Grid item container flexDirection="column">
           <Grid
@@ -224,7 +232,7 @@ export const AllGroups = ({
               <SortItemSelector<UserGroup>
                 sortField={sortField}
                 setSortField={setSortField}
-                fields={["title", "created_at"]}
+                fields={[TITLE, UPDATED_AT]}
               />
             </Grid>
             <Grid item>
@@ -259,9 +267,10 @@ export const AllGroups = ({
             )}
             {groups.length > 0 &&
               (currentPageData.length > 0 ? (
-                currentPageData.map((group) => (
+                currentPageData.map((group:UserGroup) => (
                   <Grid item key={group.id}>
                     <MMUCard
+                      ownerId={group.ownerId}
                       objectTypes={ObjectTypes.GROUP}
                       isGroups={true}
                       thumbnailUrl={

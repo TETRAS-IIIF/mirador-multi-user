@@ -19,8 +19,8 @@ export class MetadataController {
   @ApiOperation({ summary: 'InitMetadataForObject' })
   @UseGuards(AuthGuard)
   @Post()
-  create(@Body() createMetadataDto: CreateMetadataDto, @Req() request) {
-    return this.metadataService.create(createMetadataDto, request.user.sub);
+  create(@Body() createMetadataDto: CreateMetadataDto) {
+    return this.metadataService.create(createMetadataDto);
   }
 
   @ApiOperation({ summary: 'GetMetadataForObject' })

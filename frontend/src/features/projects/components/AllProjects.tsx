@@ -59,6 +59,11 @@ import { Manifest } from "../../manifest/types/types.ts";
 import { generateSnapshot } from "../api/generateProjectSnapShot.ts";
 import { updateSnapshot } from "../api/updateSnapshot.ts";
 import { deleteSnapshot } from "../api/deleteSnapshot.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
 
 interface AllProjectsProps {
   user: User;
@@ -98,8 +103,9 @@ export const AllProjects = ({
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
   const [projectFilter, setProjectFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortField, setSortField] = useState<keyof Project>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortField, setSortField] = useState<keyof Project>(UPDATED_AT);
+  const [sortOrder, setSortOrder] = useState("desc");
+
   const { t } = useTranslation();
   const itemsPerPage = 10;
 
@@ -136,7 +142,7 @@ export const AllProjects = ({
 
   const updateUserProject = async (projectUpdated: Project) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { rights, share, ...projectToUpdate } = projectUpdated;
+    const { rights, share, shared, ...projectToUpdate } = projectUpdated;
     let updatedProject: ProjectGroupUpdateDto;
     if (rights) {
       updatedProject = {
@@ -247,6 +253,7 @@ export const AllProjects = ({
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
       type: projectGroup.user_group.type,
+      personalOwnerGroupId: projectGroup.personalOwnerGroupId
     }));
   }, [groupList]);
 
@@ -374,7 +381,7 @@ export const AllProjects = ({
                   <SortItemSelector<Project>
                     sortField={sortField}
                     setSortField={setSortField}
-                    fields={["title", "created_at"]}
+                    fields={[TITLE, UPDATED_AT]}
                   />
                 </Grid>
                 <Grid item>
@@ -414,6 +421,7 @@ export const AllProjects = ({
                     currentPageData.map((projectUser) => (
                       <Grid item key={projectUser.id}>
                         <MMUCard
+                          ownerId={projectUser.ownerId}
                           handleDeleteSnapshot={handleDeleteSnapshot}
                           updateSnapshot={UpdateSnapshot}
                           handleCreateSnapshot={handleCreateSnapshot}

@@ -57,4 +57,7 @@ export class User {
   @Index()
   @Column({ nullable: true })
   lastConnectedAt: Date;
+
+  @Column({ nullable: true })
+  termsValidatedAt: Date;
 }

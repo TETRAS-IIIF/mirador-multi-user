@@ -14,7 +14,6 @@ import {
 import IState from "../../features/mirador/interface/IState.ts";
 import { getUserAllProjects } from "../../features/projects/api/getUserAllProjects.ts";
 import { createProject } from "../../features/projects/api/createProject.ts";
-import toast from "react-hot-toast";
 import { User } from "../../features/auth/types/types.ts";
 import { Media, MediaGroupRights } from "../../features/media/types/types.ts";
 import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
@@ -250,9 +249,9 @@ export const SideDrawer = ({
       projectToUpdate.userWorkspace = miradorViewer!;
       if (projectToUpdate) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { rights, share, ...projectWithoutRights } = projectToUpdate;
+        const { rights, share, shared, ...projectWithoutRights } =
+          projectToUpdate;
         await updateProject({ project: projectWithoutRights });
-        toast.success(`Project ${projectWithoutRights.title} saved`); // TODO Trad
       }
     } else {
       const project: CreateProjectDto = {
@@ -291,6 +290,7 @@ export const SideDrawer = ({
   const fetchProjects = useCallback(async () => {
     try {
       const projects = await getUserAllProjects(user.id);
+
       const rightsOrder = [
         ItemsRights.READER,
         ItemsRights.EDITOR,
