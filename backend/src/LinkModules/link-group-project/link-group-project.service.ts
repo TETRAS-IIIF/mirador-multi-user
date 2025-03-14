@@ -598,6 +598,7 @@ export class LinkGroupProjectService {
       const snapshotToDelete = await this.snapshotService.findOne(snapshotId);
       const uploadPath = `${UPLOAD_FOLDER}/${snapshotToDelete.hash}`;
       const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
+      //TODO: remove file located at uploadPath generate rights error on filesystem
       fs.unlinkSync(workspaceJsonPath);
       return await this.snapshotService.deleteSnapshot(snapshotId);
     } catch (error) {
