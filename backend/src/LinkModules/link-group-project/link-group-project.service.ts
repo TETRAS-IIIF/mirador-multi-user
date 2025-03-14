@@ -595,6 +595,10 @@ export class LinkGroupProjectService {
 
   async deleteSnapshot(snapshotId: number) {
     try {
+      const snapshotToDelete = await this.snapshotService.findOne(snapshotId);
+      const uploadPath = `${UPLOAD_FOLDER}/${snapshotToDelete.hash}`;
+      const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
+      fs.unlinkSync(workspaceJsonPath);
       return await this.snapshotService.deleteSnapshot(snapshotId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
