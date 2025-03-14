@@ -57,9 +57,7 @@ import {
   UPDATED_AT,
   useCurrentPageData,
 } from "../../../utils/customHooks/filterHook.ts";
-import { removeManifestToGroup } from '../api/removeManifestToGroup.ts';
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
-import { useFetchThumbnails } from "../customHooks/useFetchManifestThumbnails.ts";
+import { removeManifestToGroup } from "../api/removeManifestToGroup.ts";
 import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
 
 const VisuallyHiddenInput = styled("input")({
@@ -180,9 +178,6 @@ export const AllManifests = ({
       onClick: () => setModalLinkManifestIsOpen(!modalLinkManifestIsOpen),
     },
   ];
-
-  const { thumbnailUrls, fetchThumbnails } =
-    useFetchThumbnails(currentPageData);
 
   useEffect(() => {
     fetchManifestForUser();
@@ -345,11 +340,8 @@ export const AllManifests = ({
     }
   };
 
-  const handleRemoveAccess = async (
-    manifestId: number,
-    groupId: number,
-  ) => {
-    await removeManifestToGroup(manifestId,groupId);
+  const handleRemoveAccess = async (manifestId: number, groupId: number) => {
+    await removeManifestToGroup(manifestId, groupId);
   };
 
   return (

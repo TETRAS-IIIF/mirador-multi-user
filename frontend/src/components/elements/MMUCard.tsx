@@ -135,7 +135,6 @@ const MMUCard = <
   searchModalEditItem,
   setItemList,
   setItemToAdd,
-  thumbnailUrl,
   updateItem,
   updateSnapshot,
 }: IMMUCardProps<T, X>) => {

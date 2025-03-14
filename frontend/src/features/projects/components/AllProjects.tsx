@@ -53,7 +53,6 @@ import { SortItemSelector } from "../../../components/elements/sortItemSelector.
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { removeProjectFromList } from "../api/removeProjectFromList.ts";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
 import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
 import { Manifest } from "../../manifest/types/types.ts";
 import { generateSnapshot } from "../api/generateProjectSnapShot.ts";
@@ -253,7 +252,7 @@ export const AllProjects = ({
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
       type: projectGroup.user_group.type,
-      personalOwnerGroupId: projectGroup.personalOwnerGroupId
+      personalOwnerGroupId: projectGroup.personalOwnerGroupId,
     }));
   }, [groupList]);
 
