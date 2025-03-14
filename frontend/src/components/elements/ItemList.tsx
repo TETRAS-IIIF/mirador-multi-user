@@ -1,4 +1,4 @@
-import { Divider, Grid, IconButton, Typography } from "@mui/material";
+import { Button, Divider, Grid, IconButton, Typography } from "@mui/material";
 import { ListItem } from "../types.ts";
 import { BigSpinner } from "./spinner.tsx";
 import { Dispatch, ReactNode, SetStateAction } from "react";
@@ -11,6 +11,7 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import { ShareLink } from "./shareLink.tsx";
 import { ObjectTypes } from "../../features/tag/type.ts";
 import { useTranslation } from "react-i18next";
+import { Snapshot } from "../../features/projects/types/types.ts";
 
 interface IProjectUserGroup<G, T> {
   items: ListItem[];
@@ -18,19 +19,26 @@ interface IProjectUserGroup<G, T> {
   removeItem: (itemId: number) => void;
   setSearchInput: Dispatch<SetStateAction<string>>;
   handleSearchModalEditItem: (partialString: string) => Promise<any[]> | any[];
-  handleGetOptionLabel: (option: G) => string;
+  handleGetOptionLabel: (option: { title: string }) => string;
   setItemToAdd?: Dispatch<SetStateAction<G | null>>;
   handleAddAccessListItem: () => void;
   searchBarLabel: string;
   getGroupByOption?: (option: any) => string;
   item: T;
-  snapShotHash: string;
+  snapShots: Snapshot[];
   objectTypes: ObjectTypes;
+  handleCreateSnapshot?: (projectId: number) => void;
+  updateSnapshot?: (
+    snapshotTitle: string,
+    projectId: number,
+    snapshotId: number,
+  ) => void;
+  handleDeleteSnapshot?: (snapshotId: number, projectId: number) => void;
 }
 
 export const ItemList = <
   G extends { title: string },
-  T extends { id: number; snapShotHash?: string },
+  T extends { id: number; snapshots?: Snapshot[] },
 >({
   items,
   children,
@@ -44,6 +52,9 @@ export const ItemList = <
   getGroupByOption,
   item,
   objectTypes,
+  handleCreateSnapshot,
+  updateSnapshot,
+  handleDeleteSnapshot,
 }: IProjectUserGroup<G, T>): JSX.Element => {
   const { t } = useTranslation();
   return (
@@ -66,13 +77,25 @@ export const ItemList = <
             flexDirection="column"
             sx={{ width: "100%" }}
           >
-            <Grid item sx={{ width: "100%" }}>
-              <Typography variant="h5">{t("snapshot")}</Typography>
+            <Grid item container sx={{ width: "100%" }} spacing={1}>
+              <Grid item>
+                <Typography variant="h5">{t("snapshot")}</Typography>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="contained"
+                  onClick={() => handleCreateSnapshot!(item.id)}
+                >
+                  {t("create_snapshot")}
+                </Button>
+              </Grid>
             </Grid>
             <Grid item sx={{ width: "100%", margin: "10px" }}>
               <ShareLink
+                handleDeleteSnapshot={handleDeleteSnapshot!}
                 itemId={item.id}
-                snapShotHash={item.snapShotHash ? item.snapShotHash : ""}
+                snapShots={item.snapshots ? item.snapshots : []}
+                updateSnapshot={updateSnapshot!}
               />
             </Grid>
           </Grid>

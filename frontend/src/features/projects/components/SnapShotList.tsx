@@ -5,15 +5,19 @@ import { SnapshotExpendableContent } from "./SnapshotExpendableContent.tsx";
 interface ISnapShopListProps {
   snapShots: Snapshot[];
   itemId: number;
-  UpdateSnapshot: (snapshotId: number) => void;
-  setSnapshotTitle: (projectId: number, title: string) => void;
+  updateSnapshot: (
+    snapshotTitle: string,
+    projectId: number,
+    snapshotId: number,
+  ) => void;
+  handleDeleteSnapshot: (snapshotId: number, projectId: number) => void;
 }
 
 export const SnapShotList = ({
   snapShots,
   itemId,
-  UpdateSnapshot,
-  setSnapshotTitle,
+  updateSnapshot,
+  handleDeleteSnapshot,
 }: ISnapShopListProps) => {
   const createRowData = (
     value: string,
@@ -28,6 +32,7 @@ export const SnapShotList = ({
     itemId: itemId,
     data: [createRowData(snap.title)],
     snapShotHash: snap.hash,
+    snapshotId: snap.id,
   }));
 
   const createColumn = (
@@ -50,8 +55,8 @@ export const SnapShotList = ({
         renderExpandableContent={(row) => (
           <SnapshotExpendableContent
             data={row}
-            UpdateSnapshot={UpdateSnapshot}
-            setSnapshotTitle={setSnapshotTitle}
+            updateSnapshot={updateSnapshot}
+            handleDeleteSnapshot={handleDeleteSnapshot}
           />
         )}
       />

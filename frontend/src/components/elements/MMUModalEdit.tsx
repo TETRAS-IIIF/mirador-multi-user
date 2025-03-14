@@ -53,10 +53,14 @@ import { updateManifestJson } from "../../features/manifest/api/updateManifestJs
 import { Selector } from "../Selector.tsx";
 import { useTranslation } from "react-i18next";
 import { NoteTemplate } from "./CustomizationEditModal/NoteTemplate.tsx";
-import { Project, Template } from "../../features/projects/types/types.ts";
+import {
+  Project,
+  Snapshot,
+  Template,
+} from "../../features/projects/types/types.ts";
 import { TagMaker } from "./TagsFactory/TagMaker.tsx";
 
-interface ModalItemProps<T, G> {
+interface ModalItemProps<T> {
   item: T;
   itemLabel: string;
   updateItem?: (newItem: T) => void;
@@ -64,13 +68,13 @@ interface ModalItemProps<T, G> {
   duplicateItem?: (itemId: number) => void;
   handleDeleteAccessListItem: (itemId: number) => void;
   searchModalEditItem?: (partialString: string) => Promise<any[]> | any[];
-  getOptionLabel?: (option: G, searchInput: string) => string;
+  getOptionLabel?: (option: { title: string }, searchInput: string) => string;
   handleSelectorChange: (
     listItem: ListItem,
   ) => (event: SelectChangeEvent) => Promise<void>;
   fetchData: () => Promise<void>;
   listOfItem?: ListItem[];
-  setItemToAdd?: Dispatch<SetStateAction<G | null>>;
+  setItemToAdd?: Dispatch<SetStateAction<{ title: string } | null>>;
   handleAddAccessListItem: () => void;
   setSearchInput: Dispatch<SetStateAction<string>>;
   searchInput: string;
@@ -83,6 +87,13 @@ interface ModalItemProps<T, G> {
   isGroups?: boolean;
   objectTypes?: ObjectTypes;
   getGroupByOption?: (option: any) => string;
+  handleCreateSnapshot?: (projectId: number) => void;
+  updateSnapshot?: (
+    snapshotTitle: string,
+    projectId: number,
+    snapshotId: number,
+  ) => void;
+  handleDeleteSnapshot?: (snapshotId: number, projectId: number) => void;
 }
 
 type MetadataFormat = {
@@ -107,11 +118,11 @@ type MetadataArray = MetadataFormat[];
 
 export const MMUModalEdit = <
   T extends {
-    title: string;
+    title?: string;
     id: number;
     origin?: manifestOrigin | mediaOrigin;
     created_at: Dayjs;
-    snapShotHash?: string;
+    snapshots?: Snapshot[];
     hash?: string;
     path?: string;
     userWorkspace?: Record<string, string>;
@@ -119,7 +130,6 @@ export const MMUModalEdit = <
     noteTemplate?: Template[];
     tags?: string[];
   },
-  G extends { title: string },
 >({
   itemLabel,
   setItemToAdd,
@@ -145,7 +155,10 @@ export const MMUModalEdit = <
   getGroupByOption,
   duplicateItem,
   objectTypes,
-}: ModalItemProps<T, G>) => {
+  handleCreateSnapshot,
+  updateSnapshot,
+  handleDeleteSnapshot,
+}: ModalItemProps<T>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
   const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
@@ -342,7 +355,7 @@ export const MMUModalEdit = <
     }
   }, []);
 
-  const handleGetOtpionLabel = (option: G) => {
+  const handleGetOtpionLabel = (option: { title: string }) => {
     return getOptionLabel ? getOptionLabel(option, searchInput) : "";
   };
   const handleSearchModalEditItem = (query: string) => {
@@ -598,9 +611,12 @@ export const MMUModalEdit = <
                 }}
               >
                 <ItemList
+                  handleDeleteSnapshot={handleDeleteSnapshot}
+                  updateSnapshot={updateSnapshot}
+                  handleCreateSnapshot={handleCreateSnapshot}
                   item={item}
                   objectTypes={objectTypes!}
-                  snapShotHash={item.snapShotHash ? item.snapShotHash : ""}
+                  snapShots={item.snapshots ? item.snapshots : []}
                   handleAddAccessListItem={handleAddAccessListItem}
                   setItemToAdd={setItemToAdd}
                   items={listOfItem}

@@ -9,14 +9,18 @@ import { useState } from "react";
 
 interface ISnapshotExpendableContent {
   data: RowProps;
-  UpdateSnapshot: (snapshotId: number) => void;
-  setSnapshotTitle: (projectId: number, title: string) => void;
+  updateSnapshot: (
+    snapshotTitle: string,
+    projectId: number,
+    snapshotId: number,
+  ) => void;
+  handleDeleteSnapshot: (snapshotId: number, projectId: number) => void;
 }
 
 export const SnapshotExpendableContent = ({
   data,
-  UpdateSnapshot,
-  setSnapshotTitle,
+  updateSnapshot,
+  handleDeleteSnapshot,
 }: ISnapshotExpendableContent) => {
   const { t } = useTranslation();
   const [localTitleState, setLocalTitleState] = useState<string>(
@@ -31,12 +35,16 @@ export const SnapshotExpendableContent = ({
     toast.success(t("toastSuccessSnapshot"));
   };
 
-  const handleUpdateSnapshot = async (
-    projectId: number,
-    eventValue: string,
-  ) => {
+  const handleUpdateSnapshot = async () => {
+    updateSnapshot(localTitleState, data.itemId!, data.snapshotId!);
+  };
+
+  const handleUpdateTitle = async (eventValue: string) => {
     setLocalTitleState(eventValue);
-    setSnapshotTitle(projectId, eventValue);
+  };
+
+  const deleteSnapshot = () => {
+    handleDeleteSnapshot(data.snapshotId!, data.itemId!);
   };
 
   return (
@@ -53,7 +61,7 @@ export const SnapshotExpendableContent = ({
           <TextField
             type="text"
             label={t("title")}
-            onChange={(e) => handleUpdateSnapshot(data.itemId!, e.target.value)}
+            onChange={(e) => handleUpdateTitle(e.target.value)}
             variant="outlined"
             fullWidth
             defaultValue={localTitleState}
@@ -76,9 +84,18 @@ export const SnapshotExpendableContent = ({
           <Button
             color="primary"
             variant="contained"
-            onClick={() => UpdateSnapshot(data.id)}
+            onClick={() => handleUpdateSnapshot()}
           >
             {t("generate_snapshot")}
+          </Button>
+        </Grid>
+        <Grid item>
+          <Button
+            color="error"
+            variant="contained"
+            onClick={() => deleteSnapshot()}
+          >
+            {t("delete_snapshot")}
           </Button>
         </Grid>
         <Grid item>

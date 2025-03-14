@@ -80,7 +80,7 @@ export class LinkGroupProjectService {
     try {
       return await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userId } },
-        relations: ['project', 'user_group'],
+        relations: ['project', 'project.snapshots', 'user_group'],
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -524,17 +524,23 @@ export class LinkGroupProjectService {
     }
   }
 
-  async generateProjectSnapshot(createSnapshotDto: CreateSnapshotDto) {
+  async generateProjectSnapshot(
+    createSnapshotDto: CreateSnapshotDto,
+    creatorId: number,
+  ) {
     try {
-      const snapShot =
-        await this.snapshotService.createSnapshot(createSnapshotDto);
-
       const project = await this.projectService.findOne(
         createSnapshotDto.projectId,
       );
       const hash = generateAlphanumericSHA1Hash(
         `${createSnapshotDto.title}${Date.now().toString()}`,
       );
+      const snapShot = await this.snapshotService.createSnapshot({
+        ...createSnapshotDto,
+        projectId: project.id,
+        hash: hash,
+        creatorId: creatorId,
+      });
       const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 
       fs.mkdirSync(uploadPath, { recursive: true });
@@ -551,7 +557,50 @@ export class LinkGroupProjectService {
       return snapShot;
     } catch (error) {
       this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(`an error occurred`, error);
+      throw new InternalServerErrorException(
+        `an error occurred while creating snapshot`,
+        error,
+      );
+    }
+  }
+
+  async updateSnapshot(title: string, snapshotId: number, projectId: number) {
+    try {
+      const project = await this.projectService.findOne(projectId);
+      const snapshotToUpdate = await this.snapshotService.findOne(snapshotId);
+      const uploadPath = `${UPLOAD_FOLDER}/${snapshotToUpdate.hash}`;
+      const workspaceData = {
+        generated_at: Date.now(),
+        workspace: project.userWorkspace,
+      };
+      const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
+      fs.writeFileSync(
+        workspaceJsonPath,
+        JSON.stringify(workspaceData, null, 2),
+        'utf-8',
+      );
+      return await this.snapshotService.updateSnapshot(snapshotId, {
+        ...snapshotToUpdate,
+        title: title,
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while updating snapshot`,
+        error,
+      );
+    }
+  }
+
+  async deleteSnapshot(snapshotId: number) {
+    try {
+      return await this.snapshotService.deleteSnapshot(snapshotId);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while deleting snapshot`,
+        error,
+      );
     }
   }
 

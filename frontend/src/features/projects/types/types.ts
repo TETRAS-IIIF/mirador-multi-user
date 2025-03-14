@@ -73,6 +73,7 @@ export type RowProps = {
   snapShotHash?: string;
   generatedAt?: Date;
   title?: string;
+  snapshotId?: number;
 };
 
 export type Snapshot = {

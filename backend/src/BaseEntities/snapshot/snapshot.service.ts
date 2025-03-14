@@ -16,7 +16,10 @@ export class SnapshotService {
 
   async createSnapshot(snapshot: CreateSnapshotDto): Promise<Snapshot> {
     try {
-      return await this.snapshotRepository.save(snapshot);
+      return await this.snapshotRepository.save({
+        ...snapshot,
+        project: { id: snapshot.projectId },
+      });
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
