@@ -86,7 +86,7 @@ export const SnapshotExpendableContent = ({
             variant="contained"
             onClick={() => handleUpdateSnapshot()}
           >
-            {t("generate_snapshot")}
+            {t("update_snapshot")}
           </Button>
         </Grid>
         <Grid item>
@@ -95,7 +95,7 @@ export const SnapshotExpendableContent = ({
             variant="contained"
             onClick={() => deleteSnapshot()}
           >
-            {t("delete_snapshot")}
+            {t("delete")}
           </Button>
         </Grid>
         <Grid item>

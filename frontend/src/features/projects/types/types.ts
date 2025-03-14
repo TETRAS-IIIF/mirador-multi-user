@@ -80,8 +80,8 @@ export type Snapshot = {
   id: number;
   title: string;
   hash: string;
-  creatorId: number;
+  creator: string;
   createdAt: Date;
-  updatedAt: Date;
+  updated_at: Date;
   project: Project;
 };

@@ -1,6 +1,8 @@
 import { RowData, RowProps, Snapshot } from "../types/types.ts";
 import CollapsibleTable from "../../../components/elements/CollapsibleTable.tsx";
 import { SnapshotExpendableContent } from "./SnapshotExpendableContent.tsx";
+import { useTranslation } from "react-i18next";
+import dayjs from "dayjs";
 
 interface ISnapShopListProps {
   snapShots: Snapshot[];
@@ -19,6 +21,7 @@ export const SnapShotList = ({
   updateSnapshot,
   handleDeleteSnapshot,
 }: ISnapShopListProps) => {
+  const { t, i18n } = useTranslation();
   const createRowData = (
     value: string,
     align: "left" | "right" | "center" = "left",
@@ -26,11 +29,16 @@ export const SnapShotList = ({
     value,
     align,
   });
-
   const snapshotRows: RowProps[] = snapShots.map((snap, index) => ({
     id: index,
     itemId: itemId,
-    data: [createRowData(snap.title)],
+    data: [
+      createRowData(snap.title),
+      createRowData(
+        dayjs(snap.updated_at).locale(i18n.language).format("LLLL").toString(),
+      ),
+      createRowData(snap.creator),
+    ],
     snapShotHash: snap.hash,
     snapshotId: snap.id,
   }));
@@ -45,7 +53,11 @@ export const SnapShotList = ({
     align,
   });
 
-  const columns = [createColumn("Title", "title")];
+  const columns = [
+    createColumn(t("title"), t("title")),
+    createColumn(t("updated_at"), t("updated_at")),
+    createColumn(t("created_by"), t("created_by")),
+  ];
 
   return (
     <>

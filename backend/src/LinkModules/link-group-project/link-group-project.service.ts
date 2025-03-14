@@ -532,6 +532,7 @@ export class LinkGroupProjectService {
       const project = await this.projectService.findOne(
         createSnapshotDto.projectId,
       );
+      const creator = await this.groupService.findUserPersonalGroup(creatorId);
       const hash = generateAlphanumericSHA1Hash(
         `${createSnapshotDto.title}${Date.now().toString()}`,
       );
@@ -539,7 +540,7 @@ export class LinkGroupProjectService {
         ...createSnapshotDto,
         projectId: project.id,
         hash: hash,
-        creatorId: creatorId,
+        creator: creator.title,
       });
       const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 

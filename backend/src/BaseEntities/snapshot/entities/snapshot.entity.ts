@@ -25,7 +25,7 @@ export class Snapshot {
 
   @Column()
   @IsNumber()
-  creatorId: number;
+  creator: string;
 
   @CreateDateColumn({
     type: 'timestamp',

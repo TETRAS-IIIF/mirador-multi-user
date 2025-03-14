@@ -8,6 +8,9 @@ export class CreateSnapshotDto {
   hash: string;
 
   @ApiProperty()
+  creator?: string;
+
+  @ApiProperty()
   creatorId?: number;
 
   @ApiProperty()
