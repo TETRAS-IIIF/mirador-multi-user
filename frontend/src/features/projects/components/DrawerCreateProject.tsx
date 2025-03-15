@@ -96,6 +96,7 @@ export const DrawerCreateProject = ({
                     sx={{ width: "100%" }}
                     placeholder={t("placeholderProject")}
                     value={projectName}
+                    inputProps={{ maxLength: 100 }}
                   />
                 </Grid>
                 <Grid item>
