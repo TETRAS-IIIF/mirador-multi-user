@@ -45,6 +45,21 @@ export class AnnotationPageService {
     }
   }
 
+  async findAllProjectAnnotation(projectId: number) {
+    try {
+      return await this.annotationPageRepository.find({
+        where: {
+          projectId: projectId,
+        },
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while creating annotationPage, ${error.message}`,
+      );
+    }
+  }
+
   async findAll(annotPageId: string, projectId: number) {
     try {
       return await this.annotationPageRepository.find({

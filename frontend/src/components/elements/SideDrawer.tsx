@@ -34,6 +34,10 @@ import {
   ManifestGroupRights,
 } from "../../features/manifest/types/types";
 import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests";
+import { MENU_ELEMENT } from "../../utils/utils.ts";
+import { generateSnapshot } from "../../features/projects/api/generateProjectSnapShot.ts";
+import toast from "react-hot-toast";
+import dayjs from "dayjs";
 
 interface ISideDrawerProps {
   user: User;
@@ -48,15 +52,6 @@ interface MiradorViewerHandle {
   saveProject: () => void;
   setViewer: () => IState;
 }
-
-export const MENU_ELEMENT = {
-  PROJECTS: "PROJECT",
-  GROUPS: "GROUPS",
-  MEDIA: "MEDIA",
-  MANIFEST: "MANIFEST",
-  SETTING: "SETTING",
-  ADMIN: "ADMIN",
-};
 
 export const SideDrawer = ({
   user,
@@ -82,7 +77,7 @@ export const SideDrawer = ({
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const miradorViewerRef = useRef<MiradorViewerHandle>(null);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     if (miradorViewerRef.current !== null) {
@@ -237,15 +232,9 @@ export const SideDrawer = ({
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = miradorViewerRef.current?.setViewer();
     if (selectedProjectId) {
-      let projectToUpdate: Project = userProjects.find(
+      const projectToUpdate: Project = userProjects.find(
         (projectUser) => projectUser.id == selectedProjectId,
       )!;
-      //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
-      if (projectToUpdate == undefined) {
-        projectToUpdate = userProjects.find(
-          (projectUser) => projectUser.id == selectedProjectId,
-        )!;
-      }
       projectToUpdate.userWorkspace = miradorViewer!;
       if (projectToUpdate) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -272,6 +261,25 @@ export const SideDrawer = ({
       }
     }
   }, [handleSaveProject, setSelectedProjectId, user, userProjects]);
+
+  const handleGenerateSnapshot = async (projectId: number) => {
+    const generated_at = dayjs(Date.now())
+      .locale(i18n.language)
+      .format("LLLL")
+      .toString();
+
+    const snapshot = await generateSnapshot({
+      title: `Snapshot ${generated_at}`,
+      projectId: projectId,
+    });
+
+    if (!snapshot) return;
+
+    fetchProjects();
+    if (snapshot) {
+      toast.success(t("snapshot_success"));
+    }
+  };
 
   const saveProject = async (redirect?: boolean) => {
     if (redirect !== true) {
@@ -413,6 +421,7 @@ export const SideDrawer = ({
         saveProject={saveProject}
         setShowSignOutModal={setShowSignOutModal}
         user={user}
+        handleGenerateSnapshot={handleGenerateSnapshot}
       />
       <Content
         HandleSetIsRunning={HandleSetIsRunning}

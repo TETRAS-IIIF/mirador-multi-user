@@ -31,6 +31,8 @@ import {
 } from '../../utils/constants';
 import * as fs from 'node:fs';
 import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
+import { AnnotationPageService } from '../../BaseEntities/annotation-page/annotation-page.service';
+import { constructSnapshotWorkspace } from './utils/snapshot.utils';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -43,6 +45,7 @@ export class LinkGroupProjectService {
     private readonly groupService: UserGroupService,
     private readonly linkUserGroupService: LinkUserGroupService,
     private readonly snapshotService: SnapshotService,
+    private readonly annotationPageService: AnnotationPageService,
   ) {}
 
   async create(createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
@@ -558,9 +561,17 @@ export class LinkGroupProjectService {
         createSnapshotDto.projectId,
       );
       const creator = await this.groupService.findUserPersonalGroup(creatorId);
+      const projectAnnotationPages =
+        await this.annotationPageService.findAllProjectAnnotation(project.id);
+      const snapshotWorkspace = constructSnapshotWorkspace(
+        projectAnnotationPages,
+        project.userWorkspace,
+      );
+
       const hash = generateAlphanumericSHA1Hash(
         `${createSnapshotDto.title}${Date.now().toString()}`,
       );
+
       const snapShot = await this.snapshotService.createSnapshot({
         ...createSnapshotDto,
         projectId: project.id,
@@ -572,7 +583,7 @@ export class LinkGroupProjectService {
       fs.mkdirSync(uploadPath, { recursive: true });
       const workspaceData = {
         generated_at: Date.now(),
-        workspace: project.userWorkspace,
+        workspace: snapshotWorkspace,
       };
       const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
       fs.writeFileSync(

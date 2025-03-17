@@ -19,7 +19,12 @@ import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { ActionType } from '../../enum/actions';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { LockProjectDto } from './dto/lockProjectDto';
 import { CreateSnapshotDto } from '../../BaseEntities/snapshot/dto/create-snapshot.dto';
