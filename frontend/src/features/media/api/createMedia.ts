@@ -1,6 +1,6 @@
-import storage from "../../../utils/storage.ts";
-import { CreateMediaDto } from "../types/types.ts";
-import toast from "react-hot-toast";
+import storage from '../../../utils/storage.ts';
+import { CreateMediaDto } from '../types/types.ts';
+import toast from 'react-hot-toast';
 
 export const createMedia = async (
   mediaDto: CreateMediaDto,
@@ -26,18 +26,14 @@ export const createMedia = async (
     );
 
     if (!response.ok) {
-      if (response.statusText === "Payload Too Large") {
-        // TODO The message should be more user-friendly and say the maximum size allowed
+      if (response.status === 413) {
         toast.error(t("mediaTooLarge"));
       } else {
-        // TODO The message should be more user-friendly
-        // Be specific if the error come from unsupported image format or from video media
         toast.error(t("unsupportedMedia"));
       }
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
     console.error("Error uploading media:", error);
     throw error;
