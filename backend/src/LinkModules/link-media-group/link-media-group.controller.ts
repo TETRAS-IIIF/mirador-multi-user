@@ -43,7 +43,6 @@ export class LinkMediaGroupController {
   @Post('/media/upload')
   @UseInterceptors(
     FileInterceptor('file', {
-      //  TODO an mp4 file cause problem with this interceptor
       storage: diskStorage({
         destination: (req, file, callback) => {
           const hash = generateAlphanumericSHA1Hash(
