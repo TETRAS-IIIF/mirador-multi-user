@@ -7,4 +7,6 @@ backend/migrations/*
 mariaDB/data/*
 .env
 upload
-frontend/customAssets
+frontend/customAssets/
+frontend/customAssets/*
+/frontend/customAssets/*
