@@ -69,7 +69,7 @@ services:
       MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE}
       INSTANCE_SHORT_NAME: ${INSTANCE_SHORT_NAME}
       INSTANCE_NAME: ${INSTANCE_NAME}
-      JSON_MAX_SIZE: ${JSON_MAX_SIZE}
+      MAX_API_PAYLOAD_SIZE: ${MAX_API_PAYLOAD_SIZE}
     depends_on:
       - db
     restart: ${RESTART}
