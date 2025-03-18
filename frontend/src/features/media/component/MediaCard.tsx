@@ -1,4 +1,4 @@
-import { Media, MediaTypes } from "../types/types.ts";
+import { Media } from "../types/types.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { ObjectTypes } from "../../tag/type.ts";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
@@ -11,9 +11,6 @@ import { LinkUserGroup } from "../../user-group/types/types.ts";
 import { useTranslation } from "react-i18next";
 import { Grid } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import placeholder from "../../../assets/Placeholder.svg";
-import videoPlaceHolder from "../../../assets/video_placeholder.webp";
-import otherPlaceHolder from "../../../assets/other_placeholder.webp";
 
 interface IMediaCardProps {
   media: Media;
@@ -45,7 +42,7 @@ interface IMediaCardProps {
     mediaId: number,
     share: string | undefined,
   ) => void;
-  ownerId:number
+  ownerId: number;
 }
 
 export const MediaCard = ({

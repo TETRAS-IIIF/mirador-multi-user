@@ -4,9 +4,14 @@ export function isYouTubeVideo(url: string): boolean {
   return youtubeRegex.test(url);
 }
 
-export function isVideo(url: string): boolean {
-  return /\.(mp4|webm|ogg|mov|avi|flv|wmv|mkv|3gp)$/i.test(url);
-  // TODO Can be like isImage
+export async function isVideo(url: string): Promise<boolean> {
+  const response = await fetch(`${url}`, { method: 'HEAD' });
+  if (!response.ok) {
+    throw new Error(
+      `HTTP error! status: ${response.status}, message: ${response.statusText}`,
+    );
+  }
+  return response.headers.get('Content-Type')?.startsWith('video') || false;
 }
 
 export async function isPeerTubeVideo(url: string): Promise<boolean> {
@@ -116,8 +121,7 @@ export async function getYoutubeJson(
     const videoResponse = await fetch(
       `https://www.youtube.com/oembed?url=https://${normalizedUrl}&format=json`,
     );
-    const toreturn = await videoResponse.json();
-    return toreturn;
+    return await videoResponse.json();
   } catch (error: any) {
     console.error(`Error getYoutubeJson: ${error.message}`);
   }

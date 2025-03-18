@@ -53,7 +53,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { removeMediaFromList } from "../api/removeManifestFromList.ts";
 import { MediaFooter } from "../../../../customAssets/MediaFooter.tsx";
 import {
-  isFileSizeUnderLimit,
+  isFileSizeOverLimit,
   isValidFileForUpload,
 } from "../../../utils/utils.ts";
 import {
@@ -168,7 +168,7 @@ export const AllMedias = ({
         toast.error(t("unsupportedMedia"));
         return;
       }
-      if (!isFileSizeUnderLimit(file)) {
+      if (isFileSizeOverLimit(file)) {
         toast.error(
           t("fileTooLarge", {
             maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
@@ -275,7 +275,7 @@ export const AllMedias = ({
     userGroupId: number,
   ) => {
     await removeAccessToMedia(mediaId, userGroupId);
-    fetchMediaForUser()
+    fetchMediaForUser();
   };
   const handleChangeRights = async (
     group: ListItem,
