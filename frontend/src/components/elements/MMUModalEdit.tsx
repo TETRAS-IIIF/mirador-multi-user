@@ -425,6 +425,8 @@ export const MMUModalEdit = <
     return pattern.test(string);
   }
 
+  console.log(!!jsonElementToEditInAdvancedEditor)
+  console.log(jsonElementToEditInAdvancedEditor)
   return (
     <Grid container sx={{ maxHeight: 600 }}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
@@ -439,7 +441,7 @@ export const MMUModalEdit = <
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
             item.origin !== manifestOrigin.LINK)) && (
-          <Tab label={t("advancedEdit")} {...a11yProps(3)} />
+          <Tab label={t("advancedEdit")} {...a11yProps(3)} disabled={!jsonElementToEditInAdvancedEditor}/>
         )}
       </Tabs>
       <Grid item container flexDirection="column">
