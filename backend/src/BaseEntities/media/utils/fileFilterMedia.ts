@@ -5,7 +5,9 @@ export const fileFilterMedia = (req, file, callback) => {
     callback(null, true);
   } else {
     callback(
-      new UnsupportedMediaTypeException('Only image files are allowed!'),
+      new UnsupportedMediaTypeException(
+        'Audio and video files are not allowed!',
+      ),
       false,
     );
   }
