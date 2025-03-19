@@ -101,6 +101,9 @@ export const DrawerCreateGroup = ({
               </Grid>
               <Grid item sx={{ width: "70%" }}>
                 <TextField
+                  inputProps={{
+                    maxLength: 255,
+                  }}
                   inputRef={inputRef}
                   onChange={handleNameChange}
                   onKeyDown={handleKeyDown}

@@ -98,6 +98,9 @@ export default function CollapsibleTable({
         <Grid item xs={12}>
           <TextField
             fullWidth
+            inputProps={{
+              maxLength: 255,
+            }}
             label={t("filter")}
             variant="outlined"
             value={filter}

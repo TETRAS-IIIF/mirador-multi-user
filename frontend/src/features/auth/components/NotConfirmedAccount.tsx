@@ -53,6 +53,9 @@ export const NotConfirmedAccount = () => {
       >
         <Grid item>
           <TextField
+            inputProps={{
+              maxLength: 255,
+            }}
             label={t("emailAddress")}
             variant="outlined"
             value={email}

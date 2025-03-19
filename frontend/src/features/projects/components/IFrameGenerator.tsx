@@ -44,6 +44,9 @@ export const IFrameGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
           <Grid container spacing={2} flexDirection={"column"}>
             <Grid item>
               <TextField
+                inputProps={{
+                  maxLength: 255,
+                }}
                 label="Iframe Code"
                 multiline
                 fullWidth
