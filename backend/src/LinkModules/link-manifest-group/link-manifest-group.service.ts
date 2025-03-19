@@ -10,7 +10,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Repository } from 'typeorm';
-import { ManifestGroupRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
+import {
+  ManifestGroupRights,
+  PROJECT_RIGHTS_PRIORITY,
+} from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
@@ -285,6 +288,7 @@ export class LinkManifestGroupService {
 
   async findAllManifestByUserGroupId(id: number) {
     try {
+      const userPersonalGroup = await this.groupService.findOne(id);
       const request = await this.linkManifestGroupRepository.find({
         where: { user_group: { id: id } },
         relations: ['user_group'],
@@ -292,7 +296,9 @@ export class LinkManifestGroupService {
       return request.map((linkGroup: LinkManifestGroup) => ({
         ...linkGroup.manifest,
         rights: linkGroup.rights,
-        shared: Number(linkGroup.manifest.idCreator) !== Number(id),
+        shared:
+          Number(linkGroup.manifest.idCreator) !==
+          Number(userPersonalGroup.ownerId),
       }));
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -359,7 +365,6 @@ export class LinkManifestGroupService {
   }
 
   async getHighestRightForManifest(userId: number, manifestId: number) {
-
     const userPersonalGroup: UserGroup =
       await this.groupService.findUserPersonalGroup(userId);
 
