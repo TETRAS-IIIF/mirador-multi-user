@@ -122,6 +122,9 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
       </Typography>
 
       <TextField
+        inputProps={{
+          maxLength: 255,
+        }}
         label={t("name")}
         name="name"
         value={formValues.name}
@@ -133,6 +136,9 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
       />
 
       <TextField
+        inputProps={{
+          maxLength: 255,
+        }}
         label={t("mail")}
         name="mail"
         type="mail"
@@ -165,7 +171,9 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
               </IconButton>
             </InputAdornment>
           ),
-        }}
+        }
+      }
+        inputProps={{ maxLength: 255 }}
       />
 
       <TextField
@@ -190,6 +198,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
             </InputAdornment>
           ),
         }}
+        inputProps={{ maxLength: 255 }}
       />
 
       <TextField
@@ -218,6 +227,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
             </InputAdornment>
           ),
         }}
+        inputProps={{ maxLength: 255 }}
       />
 
       <Button

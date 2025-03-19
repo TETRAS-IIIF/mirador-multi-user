@@ -22,6 +22,9 @@ export const FieldForm = ({
     <Grid item>
       <TextField
         label={label}
+        inputProps={{
+          maxLength: 255,
+        }}
         variant="outlined"
         fullWidth
         type={type}
