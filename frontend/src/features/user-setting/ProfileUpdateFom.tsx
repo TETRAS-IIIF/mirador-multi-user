@@ -171,8 +171,9 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
               </IconButton>
             </InputAdornment>
           ),
-          maxLength: 255,
-        }}
+        }
+      }
+        inputProps={{ maxLength: 255 }}
       />
 
       <TextField
@@ -196,8 +197,8 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
               </IconButton>
             </InputAdornment>
           ),
-          maxLength: 255,
         }}
+        inputProps={{ maxLength: 255 }}
       />
 
       <TextField
@@ -225,8 +226,8 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
               </IconButton>
             </InputAdornment>
           ),
-          maxLength: 255,
         }}
+        inputProps={{ maxLength: 255 }}
       />
 
       <Button

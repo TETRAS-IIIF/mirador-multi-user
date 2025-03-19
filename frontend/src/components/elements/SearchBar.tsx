@@ -107,9 +107,6 @@ export const SearchBar = ({
               clearOnBlur={false}
               renderInput={(params) => (
                 <TextField
-                  inputProps={{
-                    maxLength: 255,
-                  }}
                   {...params}
                   label={label}
                 />
