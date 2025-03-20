@@ -56,6 +56,7 @@
   "deleteItem": "Supprimer l'élément",
   "description": "Description",
   "disconnect": "Déconnexion",
+  "disconnect_error": "Vous avez été déconnecté",
   "duplicateMAJ": "DUPLIQUER",
   "editGroupTooltip": "Modifier le groupe",
   "editMedia": "Modifier le média",

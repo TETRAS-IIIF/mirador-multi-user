@@ -55,6 +55,7 @@
   "deleteItem": "Delete item",
   "description": "Description",
   "disconnect": "Disconnect",
+  "disconnect_error": "You had been disconnect",
   "duplicateMAJ": "DUPLICATE",
   "editGroupTooltip": "Edit group",
   "editMedia": "Edit media",
