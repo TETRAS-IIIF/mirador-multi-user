@@ -1,5 +1,5 @@
-import storage from "../../../utils/storage.ts";
-import { Media } from "../types/types.ts";
+import storage from '../../../utils/storage.ts';
+import { Media } from '../types/types.ts';
 
 export const getUserGroupMedias = async (
   userGroupId: number,
