@@ -28,7 +28,6 @@ import toast from "react-hot-toast";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import CreateIcon from "@mui/icons-material/Create";
 import { ManifestCreationForm } from "./ManifestCreationForm.tsx";
-import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { Media } from "../../media/types/types.ts";
 import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -48,13 +47,18 @@ import { updateAccessToManifest } from "../api/updateAccessToManifest.ts";
 import { ObjectTypes } from "../../tag/type.ts";
 import { useTranslation } from "react-i18next";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
-import placeholder from "../../../assets/Placeholder.svg";
 import { IIIFResource, ManifestResource } from "manifesto.js";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { removeManifestFromList } from "../api/removeManifestFromList.ts";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
+import { removeManifestToGroup } from "../api/removeManifestToGroup.ts";
+import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -93,13 +97,11 @@ export const AllManifests = ({
   );
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false);
   const [manifestFilter, setManifestFilter] = useState<string | null>(null);
-  const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [userGroupSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
-  const [openSidePanel, setOpenSidePanel] = useState(false);
-  const [sortField, setSortField] = useState<keyof Manifest>("title");
+  const [sortField, setSortField] = useState<keyof Manifest>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState("asc");
 
   const { t } = useTranslation();
@@ -177,44 +179,7 @@ export const AllManifests = ({
     },
   ];
 
-  const fetchThumbnails = useCallback(async () => {
-    const urls: string[] = await Promise.all(
-      currentPageData.map(async (manifest) => {
-        if (manifest.thumbnailUrl) {
-          return manifest.thumbnailUrl;
-        }
-        let manifestUrl = "";
-        if (manifest.origin === manifestOrigin.UPLOAD) {
-          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`;
-        } else if (manifest.origin === manifestOrigin.LINK) {
-          manifestUrl = manifest.path;
-        } else if (manifest.origin === manifestOrigin.CREATE) {
-          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.path}`;
-        } else {
-          return placeholder;
-        }
-        try {
-          const manifestResponse = await fetch(manifestUrl);
-          const manifestFetched = await manifestResponse.json();
-          if (manifestFetched.thumbnail) {
-            return manifestFetched.thumbnail["@id"];
-          } else if (manifestFetched.items[0].thumbnail[0].id) {
-            return manifestFetched.items[0].thumbnail[0].id;
-          } else {
-            return placeholder;
-          }
-        } catch (error) {
-          console.error("Error fetching manifest:", error);
-          return placeholder;
-        }
-      }),
-    );
-
-    setThumbnailUrls(urls);
-  }, [currentPageData, caddyUrl]);
-
   useEffect(() => {
-    fetchThumbnails();
     fetchManifestForUser();
   }, []);
 
@@ -345,6 +310,7 @@ export const AllManifests = ({
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
       type: projectGroup.user_group.type,
+      personalOwnerGroupId: projectGroup.user_group.ownerId,
     }));
   }, [groupList]);
 
@@ -358,9 +324,6 @@ export const AllManifests = ({
       group.id,
       eventValue as ManifestGroupRights,
     );
-  };
-  const handleSetOpenSidePanel = () => {
-    setOpenSidePanel(!openSidePanel);
   };
 
   const handleRemoveManifestFromList: (
@@ -377,16 +340,20 @@ export const AllManifests = ({
     }
   };
 
+  const handleRemoveAccess = async (manifestId: number, groupId: number) => {
+    await removeManifestToGroup(manifestId, groupId);
+  };
+
   return (
     <>
-      <SidePanelMedia
-        open={openSidePanel && !!openModalManifestId}
-        setOpen={handleSetOpenSidePanel}
-        display={!!openModalManifestId}
-        fetchMediaForUser={fetchMediaForUser}
+      <SidePanel
         medias={medias}
-        user={user}
+        manifests={manifests}
         userPersonalGroup={userPersonalGroup}
+        user={user}
+        fetchMediaForUser={fetchMediaForUser}
+        fetchManifestForUser={fetchManifestForUser}
+        display={!!openModalManifestId}
       >
         <Grid
           item
@@ -427,7 +394,7 @@ export const AllManifests = ({
                   <SortItemSelector<Manifest>
                     sortField={sortField}
                     setSortField={setSortField}
-                    fields={["title", "created_at"]}
+                    fields={[TITLE, UPDATED_AT]}
                   />
                 </Grid>
                 <Grid item>
@@ -485,9 +452,10 @@ export const AllManifests = ({
                 flexDirection="column"
                 sx={{ marginBottom: "70px" }}
               >
-                {currentPageData.map((manifest, index) => (
+                {currentPageData.map((manifest: Manifest) => (
                   <Grid item key={manifest.id}>
                     <MMUCard
+                      ownerId={manifest.idCreator}
                       objectTypes={ObjectTypes.MANIFEST}
                       AddAccessListItemFunction={handleGrantAccess}
                       DefaultButton={
@@ -547,8 +515,15 @@ export const AllManifests = ({
                       deleteItem={handleDeleteManifest}
                       description={manifest.description}
                       getAccessToItem={getAllManifestGroups}
-                      getOptionLabel={getOptionLabel}
                       getGroupByOption={getGroupByOption}
+                      getOptionLabel={getOptionLabel}
+                      handleSelectorChange={handleChangeRights}
+                      handleRemoveFromList={() =>
+                        handleRemoveManifestFromList(
+                          manifest.id,
+                          manifest.share ? manifest.share : undefined,
+                        )
+                      }
                       id={manifest.id}
                       item={manifest}
                       itemLabel={manifest.title}
@@ -558,17 +533,10 @@ export const AllManifests = ({
                       rights={manifest.rights!}
                       searchBarLabel={t("searchLabel")}
                       searchModalEditItem={handleLookingForUserGroups}
-                      setItemToAdd={setUserToAdd}
                       setItemList={setGroupList}
-                      thumbnailUrl={thumbnailUrls[index]}
+                      setItemToAdd={setUserToAdd}
                       updateItem={handleUpdateManifest}
-                      handleSelectorChange={handleChangeRights}
-                      handleRemoveFromList={() =>
-                        handleRemoveManifestFromList(
-                          manifest.id,
-                          manifest.share ? manifest.share : undefined,
-                        )
-                      }
+                      removeAccessListItemFunction={handleRemoveAccess}
                     />
                   </Grid>
                 ))}
@@ -588,20 +556,20 @@ export const AllManifests = ({
               flexDirection="column"
               sx={{ marginBottom: "70px", width: "100%" }}
             >
-              <SidePanelMedia
-                display={true}
+              <SidePanel
                 medias={medias}
+                manifests={manifests}
                 userPersonalGroup={userPersonalGroup}
-                fetchMediaForUser={fetchMediaForUser}
                 user={user}
-                open={openSidePanel}
-                setOpen={handleSetOpenSidePanel}
+                fetchMediaForUser={fetchMediaForUser}
+                fetchManifestForUser={fetchManifestForUser}
+                display={true}
               >
                 <ManifestCreationForm
                   handleSubmit={handleSubmitManifestCreationForm}
                   t={t}
                 />
-              </SidePanelMedia>
+              </SidePanel>
             </Grid>
           )}
           <Grid>
@@ -621,7 +589,7 @@ export const AllManifests = ({
             />
           )}
         </Grid>
-      </SidePanelMedia>
+      </SidePanel>
     </>
   );
 };

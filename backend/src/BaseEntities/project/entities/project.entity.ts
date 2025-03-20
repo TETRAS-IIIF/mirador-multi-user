@@ -4,9 +4,12 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  Timestamp,
+  UpdateDateColumn,
 } from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../../LinkModules/link-group-project/entities/link-group-project.entity';
+import { Snapshot } from '../../snapshot/entities/snapshot.entity';
 
 @Entity()
 export class Project {
@@ -34,9 +37,6 @@ export class Project {
   metadata: any;
 
   @Column({ nullable: true })
-  snapShotHash: string;
-
-  @Column({ nullable: true })
   lockedByUserId: number;
 
   @Column({ type: 'timestamp', nullable: true })
@@ -62,4 +62,18 @@ export class Project {
     },
   )
   linkGroupProjectsIds: LinkGroupProject[];
+
+  @OneToMany(() => Snapshot, (snapshot) => snapshot.project, {
+    cascade: ['remove'],
+    onDelete: 'CASCADE',
+  })
+  snapshots: Snapshot[];
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+    onUpdate: 'CURRENT_TIMESTAMP(6)',
+  })
+  public updated_at: Date;
+
 }

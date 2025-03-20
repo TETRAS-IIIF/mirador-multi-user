@@ -33,12 +33,10 @@ export class AuthGuard implements CanActivate {
         secret: process.env.JWT_SECRET,
       });
 
-      // Check if email is confirmed
-      if (!payload.isEmailConfirmed) {
-        throw new ForbiddenException('Email not confirmed');
+      if (!payload.isEmailConfirmed || !payload.termsValidatedAt) {
+        throw new ForbiddenException('Email or terms not confirmed');
       }
 
-      // Assign payload to the request object for use in route handlers
       request['user'] = payload;
       request.metadata = { action };
     } catch (error) {

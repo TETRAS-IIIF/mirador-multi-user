@@ -8,7 +8,7 @@ import { CreateLinkGroupProjectDto } from './dto/create-link-group-project.dto';
 import { UpdateLinkGroupProjectDto } from './dto/update-link-group-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
 import { GroupProjectRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
@@ -22,13 +22,17 @@ import { LinkUserGroupService } from '../link-user-group/link-user-group.service
 import { Project } from '../../BaseEntities/project/entities/project.entity';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { ActionType } from '../../enum/actions';
-import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
-import * as fs from 'fs';
+import { UserGroupTypes } from '../../enum/user-group-types';
+import { SnapshotService } from '../../BaseEntities/snapshot/snapshot.service';
+import { CreateSnapshotDto } from '../../BaseEntities/snapshot/dto/create-snapshot.dto';
 import {
   DEFAULT_PROJECT_SNAPSHOT_FILE_NAME,
   UPLOAD_FOLDER,
 } from '../../utils/constants';
-import { UserGroupTypes } from '../../enum/user-group-types';
+import * as fs from 'node:fs';
+import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
+import { AnnotationPageService } from '../../BaseEntities/annotation-page/annotation-page.service';
+import { constructSnapshotWorkspace } from './utils/snapshot.utils';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -40,6 +44,8 @@ export class LinkGroupProjectService {
     private readonly projectService: ProjectService,
     private readonly groupService: UserGroupService,
     private readonly linkUserGroupService: LinkUserGroupService,
+    private readonly snapshotService: SnapshotService,
+    private readonly annotationPageService: AnnotationPageService,
   ) {}
 
   async create(createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
@@ -77,7 +83,7 @@ export class LinkGroupProjectService {
     try {
       return await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userId } },
-        relations: ['project', 'user_group'],
+        relations: ['project', 'project.snapshots', 'user_group'],
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -107,7 +113,10 @@ export class LinkGroupProjectService {
     }
   }
 
-  async duplicateProject(projectId: number): Promise<LinkGroupProject> {
+  async duplicateProject(
+    projectId: number,
+    userId: number,
+  ): Promise<LinkGroupProject> {
     try {
       const originalProject = await this.linkGroupProjectRepository.findOne({
         where: { project: { id: projectId } },
@@ -118,7 +127,7 @@ export class LinkGroupProjectService {
       }
       return await this.createProject({
         title: originalProject.project.title,
-        ownerId: originalProject.project.ownerId,
+        ownerId: userId,
         metadata: originalProject.project.metadata,
       });
     } catch (error) {
@@ -129,10 +138,21 @@ export class LinkGroupProjectService {
 
   async getProjectRelations(projectId: number) {
     try {
-      return await this.linkGroupProjectRepository.find({
+      const listOfGroups = await this.linkGroupProjectRepository.find({
         where: { project: { id: projectId } },
         relations: ['user_group'],
       });
+
+      return await Promise.all(
+        listOfGroups.map(async (group) => {
+          const personalOwnerGroup =
+            await this.groupService.findUserPersonalGroup(
+              group.user_group.ownerId,
+            );
+
+          return { ...group, personalOwnerGroupId: personalOwnerGroup.id };
+        }),
+      );
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
@@ -403,40 +423,45 @@ export class LinkGroupProjectService {
     try {
       const usersGroups =
         await this.linkUserGroupService.findALlGroupsForUser(userId);
-      let projects: Project[] = [];
+      const projectsMap: Map<
+        number,
+        Project & { rights: string; share?: string }
+      > = new Map();
 
       for (const usersGroup of usersGroups) {
         const groupProjects = await this.findAllGroupProjectByUserGroupId(
           usersGroup.id,
         );
+        for (const groupProject of groupProjects) {
+          const projectId = groupProject.project.id;
+          const currentRights =
+            PROJECT_RIGHTS_PRIORITY[groupProject.rights] || 0;
 
-        const userProjects = groupProjects.map((groupProject) => {
-          let project;
-          if (groupProject.user_group.type === UserGroupTypes.MULTI_USER) {
-            project = {
-              ...groupProject.project,
-              rights: groupProject.rights,
+          const existingProject = projectsMap.get(projectId);
+          const personalOwnerGroup =
+            await this.groupService.findUserPersonalGroup(
+              groupProject.project.ownerId,
+            );
+          const projectData = {
+            ...groupProject.project,
+            rights: groupProject.rights,
+            shared: Number(groupProject.project.ownerId) !== Number(userId),
+            ...(groupProject.user_group.type === UserGroupTypes.MULTI_USER && {
               share: 'group',
-            };
-          }
-          if (groupProject.user_group.type === UserGroupTypes.PERSONAL) {
-            project = {
-              ...groupProject.project,
-              rights: groupProject.rights,
-            };
-          }
+            }),
+            personalOwnerGroupId: personalOwnerGroup.id,
+          };
 
-          return project;
-        });
-
-        projects = projects.concat(
-          userProjects.filter(
-            (project) => !projects.some((p) => p.id === project.id),
-          ),
-        );
+          if (
+            !existingProject ||
+            currentRights > PROJECT_RIGHTS_PRIORITY[existingProject.rights]
+          ) {
+            projectsMap.set(projectId, projectData);
+          }
+        }
       }
 
-      return projects;
+      return Array.from(projectsMap.values());
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -447,17 +472,26 @@ export class LinkGroupProjectService {
   }
 
   async getHighestRightForProject(userId: number, projectId: number) {
-    const userGroups =
+    const userPersonalGroup: UserGroup =
+      await this.groupService.findUserPersonalGroup(userId);
+
+    const userGroups: UserGroup[] =
       await this.linkUserGroupService.findALlGroupsForUser(userId);
-    const linkEntities = await this.linkGroupProjectRepository.find({
-      where: {
-        user_group: { id: In(userGroups.map((group) => group.id)) },
-        project: { id: projectId },
-      },
-      relations: ['project', 'user_group'],
-    });
+    const allGroups = [...userGroups, userPersonalGroup];
+    let linkEntities = [];
+    for (const group of allGroups) {
+      const linkGroups = await this.linkGroupProjectRepository.find({
+        where: {
+          user_group: { id: group.id },
+          project: { id: projectId },
+        },
+        relations: ['project', 'user_group'],
+      });
+      linkEntities = linkEntities.concat(linkGroups);
+    }
+
     if (linkEntities.length === 0) {
-      return;
+      return null;
     }
 
     return linkEntities.reduce((prev, current) => {
@@ -521,15 +555,60 @@ export class LinkGroupProjectService {
     }
   }
 
-  async generateProjectSnapshot(projectId: number) {
+  async generateProjectSnapshot(
+    createSnapshotDto: CreateSnapshotDto,
+    creatorId: number,
+  ) {
     try {
-      const project = await this.projectService.findOne(projectId);
-      const hash = generateAlphanumericSHA1Hash(
-        `${project.title}${Date.now().toString()}`,
+      const project = await this.projectService.findOne(
+        createSnapshotDto.projectId,
       );
+      const creator = await this.groupService.findUserPersonalGroup(creatorId);
+      const projectAnnotationPages =
+        await this.annotationPageService.findAllProjectAnnotation(project.id);
+      const snapshotWorkspace = constructSnapshotWorkspace(
+        projectAnnotationPages,
+        project.userWorkspace,
+      );
+
+      const hash = generateAlphanumericSHA1Hash(
+        `${createSnapshotDto.title}${Date.now().toString()}`,
+      );
+
+      const snapShot = await this.snapshotService.createSnapshot({
+        ...createSnapshotDto,
+        projectId: project.id,
+        hash: hash,
+        creator: creator.title,
+      });
       const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 
       fs.mkdirSync(uploadPath, { recursive: true });
+      const workspaceData = {
+        generated_at: Date.now(),
+        workspace: snapshotWorkspace,
+      };
+      const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
+      fs.writeFileSync(
+        workspaceJsonPath,
+        JSON.stringify(workspaceData, null, 2),
+        'utf-8',
+      );
+      return snapShot;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while creating snapshot`,
+        error,
+      );
+    }
+  }
+
+  async updateSnapshot(title: string, snapshotId: number, projectId: number) {
+    try {
+      const project = await this.projectService.findOne(projectId);
+      const snapshotToUpdate = await this.snapshotService.findOne(snapshotId);
+      const uploadPath = `${UPLOAD_FOLDER}/${snapshotToUpdate.hash}`;
       const workspaceData = {
         generated_at: Date.now(),
         workspace: project.userWorkspace,
@@ -540,16 +619,33 @@ export class LinkGroupProjectService {
         JSON.stringify(workspaceData, null, 2),
         'utf-8',
       );
-      await this.projectService.update(projectId, {
-        id: projectId,
-        snapShotHash: hash,
+      return await this.snapshotService.updateSnapshot(snapshotId, {
+        ...snapshotToUpdate,
+        title: title,
       });
-      return {
-        snapShotHash: `${hash}`,
-      };
     } catch (error) {
       this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(`an error occurred`, error);
+      throw new InternalServerErrorException(
+        `an error occurred while updating snapshot`,
+        error,
+      );
+    }
+  }
+
+  async deleteSnapshot(snapshotId: number) {
+    try {
+      const snapshotToDelete = await this.snapshotService.findOne(snapshotId);
+      const uploadPath = `${UPLOAD_FOLDER}/${snapshotToDelete.hash}`;
+      const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
+      //TODO: remove file located at uploadPath generate rights error on filesystem
+      fs.unlinkSync(workspaceJsonPath);
+      return await this.snapshotService.deleteSnapshot(snapshotId);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while deleting snapshot`,
+        error,
+      );
     }
   }
 

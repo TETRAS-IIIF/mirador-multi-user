@@ -27,6 +27,7 @@ import {
 } from '@nestjs/swagger';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { LockProjectDto } from './dto/lockProjectDto';
+import { CreateSnapshotDto } from '../../BaseEntities/snapshot/dto/create-snapshot.dto';
 
 @ApiBearerAuth()
 @Controller('link-group-project')
@@ -264,7 +265,10 @@ export class LinkGroupProjectController {
       request.user.sub,
       projectId,
       async () => {
-        return this.linkGroupProjectService.duplicateProject(projectId);
+        return this.linkGroupProjectService.duplicateProject(
+          projectId,
+          request.user.sub,
+        );
       },
     );
   }
@@ -272,10 +276,60 @@ export class LinkGroupProjectController {
   @ApiOperation({ summary: 'Create project snapshot' })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
-  @Get('/snapshot/:projectId')
-  async generateSnapshot(@Param('projectId') projectId: number) {
-    return await this.linkGroupProjectService.generateProjectSnapshot(
+  @Post('/snapshot/')
+  async generateSnapshot(
+    @Body() createSnapshotDto: CreateSnapshotDto,
+    @Req() request,
+  ) {
+    createSnapshotDto.creatorId = request.user.sub;
+    return await this.linkGroupProjectService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      createSnapshotDto.projectId,
+      async () => {
+        return await this.linkGroupProjectService.generateProjectSnapshot(
+          createSnapshotDto,
+          request.user.sub,
+        );
+      },
+    );
+  }
+
+  @ApiOperation({ summary: 'update Snapshot' })
+  @SetMetadata('action', ActionType.UPDATE)
+  @UseGuards(AuthGuard)
+  @Post('/snapshot/update')
+  async updateSnapshot(@Body() updateSnapshotDto, @Req() request) {
+    return await this.linkGroupProjectService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      updateSnapshotDto.projectId,
+      async () => {
+        return await this.linkGroupProjectService.updateSnapshot(
+          updateSnapshotDto.title,
+          updateSnapshotDto.snapshotId,
+          updateSnapshotDto.projectId,
+        );
+      },
+    );
+  }
+
+  @ApiOperation({ summary: 'delete snapshot' })
+  @SetMetadata('action', ActionType.UPDATE)
+  @UseGuards(AuthGuard)
+  @Delete('/snapshot/delete/:snapshotId/:projectId')
+  async deleteSnapshot(
+    @Param('snapshotId') snapshotId: number,
+    @Param('projectId') projectId: number,
+    @Req() request,
+  ) {
+    return await this.linkGroupProjectService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
       projectId,
+      async () => {
+        return await this.linkGroupProjectService.deleteSnapshot(snapshotId);
+      },
     );
   }
 

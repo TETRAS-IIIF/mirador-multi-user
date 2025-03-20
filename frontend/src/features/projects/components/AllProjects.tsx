@@ -38,7 +38,6 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
 import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
-import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { updateAccessToProject } from "../api/UpdateAccessToProject.ts";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -54,7 +53,16 @@ import { SortItemSelector } from "../../../components/elements/sortItemSelector.
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { removeProjectFromList } from "../api/removeProjectFromList.ts";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
+import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
+import { Manifest } from "../../manifest/types/types.ts";
+import { generateSnapshot } from "../api/generateProjectSnapShot.ts";
+import { updateSnapshot } from "../api/updateSnapshot.ts";
+import { deleteSnapshot } from "../api/deleteSnapshot.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
 
 interface AllProjectsProps {
   user: User;
@@ -66,11 +74,14 @@ interface AllProjectsProps {
   handleSetMiradorState: (state: IState | undefined) => void;
   setMedias: Dispatch<SetStateAction<Media[]>>;
   medias: Media[];
+  manifests: Manifest[];
+  fetchManifestForUser: () => void;
 }
 
 export const AllProjects = ({
   setMedias,
   medias,
+  manifests,
   user,
   selectedProjectId,
   setSelectedProjectId,
@@ -78,6 +89,7 @@ export const AllProjects = ({
   setUserProjects,
   handleSetMiradorState,
   fetchProjects,
+  fetchManifestForUser,
 }: AllProjectsProps) => {
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>();
   const [openModalProjectId, setOpenModalProjectId] = useState<number | null>(
@@ -90,12 +102,10 @@ export const AllProjects = ({
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
   const [projectFilter, setProjectFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [openSidePanel, setOpenSidePanel] = useState(false);
-  const [sortField, setSortField] = useState<keyof Project>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortField, setSortField] = useState<keyof Project>(UPDATED_AT);
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const { t } = useTranslation();
-
   const itemsPerPage = 10;
 
   const toggleSortOrder = () => {
@@ -120,6 +130,7 @@ export const AllProjects = ({
   useEffect(() => {
     fetchProjects();
     fetchUserPersonalGroup();
+    fetchManifestForUser();
   }, [openModalProjectId]);
 
   const deleteUserProject = async (projectId: number) => {
@@ -130,7 +141,7 @@ export const AllProjects = ({
 
   const updateUserProject = async (projectUpdated: Project) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { rights, share, ...projectToUpdate } = projectUpdated;
+    const { rights, share, shared, ...projectToUpdate } = projectUpdated;
     let updatedProject: ProjectGroupUpdateDto;
     if (rights) {
       updatedProject = {
@@ -241,6 +252,7 @@ export const AllProjects = ({
       title: projectGroup.user_group.title,
       rights: projectGroup.rights,
       type: projectGroup.user_group.type,
+      personalOwnerGroupId: projectGroup.personalOwnerGroupId,
     }));
   }, [groupList]);
 
@@ -270,6 +282,7 @@ export const AllProjects = ({
     }
   };
 
+  //TODO remove this declaration and pass this function with props or create customHook
   const fetchMediaForUser = async () => {
     const medias = await getUserGroupMedias(userPersonalGroup!.id);
     setMedias(medias);
@@ -278,10 +291,6 @@ export const AllProjects = ({
   const handleDuplicateProject = async (projectId: number) => {
     await duplicateProject(projectId);
     setOpenModalProjectId(null);
-  };
-
-  const handleSetOpenSidePanel = () => {
-    setOpenSidePanel(!openSidePanel);
   };
 
   const handleRemoveProjectFromList = async (
@@ -299,16 +308,45 @@ export const AllProjects = ({
     }
   };
 
+  const UpdateSnapshot = async (
+    title: string,
+    projectId: number,
+    snapshotId: number,
+  ) => {
+    await updateSnapshot({
+      title: title,
+      snapshotId: snapshotId,
+      projectId: projectId,
+    });
+    fetchProjects();
+  };
+
+  const handleCreateSnapshot = async (itemId: number) => {
+    await generateSnapshot({
+      title: t("new_snapshot"),
+      projectId: itemId,
+    });
+    fetchProjects();
+  };
+
+  const handleDeleteSnapshot = async (
+    snapshotId: number,
+    projectId: number,
+  ) => {
+    await deleteSnapshot({ snapshotId: snapshotId, projectId: projectId });
+    fetchProjects();
+  };
+
   return (
     <>
-      <SidePanelMedia
-        open={openSidePanel && !!openModalProjectId}
-        setOpen={handleSetOpenSidePanel}
-        display={!!openModalProjectId}
-        fetchMediaForUser={fetchMediaForUser}
+      <SidePanel
         medias={medias}
-        user={user}
+        manifests={manifests}
         userPersonalGroup={userPersonalGroup!}
+        user={user}
+        fetchMediaForUser={fetchMediaForUser}
+        fetchManifestForUser={fetchManifestForUser}
+        display={!!openModalProjectId}
       >
         <Grid container justifyContent="center" flexDirection="column">
           <Grid
@@ -342,7 +380,7 @@ export const AllProjects = ({
                   <SortItemSelector<Project>
                     sortField={sortField}
                     setSortField={setSortField}
-                    fields={["title", "created_at"]}
+                    fields={[TITLE, UPDATED_AT]}
                   />
                 </Grid>
                 <Grid item>
@@ -382,6 +420,10 @@ export const AllProjects = ({
                     currentPageData.map((projectUser) => (
                       <Grid item key={projectUser.id}>
                         <MMUCard
+                          ownerId={projectUser.ownerId}
+                          handleDeleteSnapshot={handleDeleteSnapshot}
+                          updateSnapshot={UpdateSnapshot}
+                          handleCreateSnapshot={handleCreateSnapshot}
                           duplicateItem={handleDuplicateProject}
                           objectTypes={ObjectTypes.PROJECT}
                           thumbnailUrl={
@@ -474,7 +516,7 @@ export const AllProjects = ({
             )}
           </Grid>
         </Grid>
-      </SidePanelMedia>
+      </SidePanel>
     </>
   );
 };

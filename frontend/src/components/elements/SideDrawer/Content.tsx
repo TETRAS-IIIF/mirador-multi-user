@@ -7,7 +7,6 @@ import { AllManifests } from "../../../features/manifest/component/AllManifests"
 import { UserSettings } from "../../../features/user-setting/UserSettings";
 import { MMUModal } from "../modal";
 import { ConfirmDisconnect } from "../../../features/auth/components/confirmDisconect";
-import { MENU_ELEMENT } from "../SideDrawer";
 import { ProjectWorkspace } from "./ProjectWorkspace";
 import { User } from "../../../features/auth/types/types.ts";
 import { UserGroup } from "../../../features/user-group/types/types.ts";
@@ -15,6 +14,7 @@ import { Manifest } from "../../../features/manifest/types/types.ts";
 import { Media } from "../../../features/media/types/types.ts";
 import { Project } from "../../../features/projects/types/types.ts";
 import { Dispatch, SetStateAction } from "react";
+import { MENU_ELEMENT } from "../../../utils/utils.ts";
 
 interface ContentProps {
   HandleSetIsRunning: () => void;
@@ -92,6 +92,8 @@ export function Content({
           user={user}
           userPersonalGroup={userPersonalGroup}
           viewer={viewer}
+          fetchMediaForUser={fetchMediaForUser}
+          medias={medias}
         />
       )}
       {user &&
@@ -112,6 +114,8 @@ export function Content({
             user={user}
             userProjects={userProjects}
             fetchProjects={fetchProjects}
+            fetchManifestForUser={fetchManifestForUser}
+            manifests={manifests}
           />
         )}
       {user &&
@@ -131,6 +135,8 @@ export function Content({
           fetchGroups={fetchGroups}
           groups={groups}
           medias={medias}
+          manifests={manifests}
+          fetchManifestForUser={fetchManifestForUser}
           setMedias={setMedias}
           user={user}
           userPersonalGroup={userPersonalGroup}

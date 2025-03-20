@@ -15,10 +15,12 @@ export const getUserAllProjects = async (userPersonalGroupId: number) => {
     );
 
     const projectData = await response.json();
+
     //convert created_at to dayJS for materialUI input in editModal
     return projectData.map((project: any) => ({
       ...project,
       created_at: dayjs(project.created_at),
+      updated_at: dayjs(project.updated_at),
     }));
   } catch (error) {
     throw error;

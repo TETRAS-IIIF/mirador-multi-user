@@ -55,6 +55,9 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
             fullWidth
             helperText={t("helperTextApiToken")}
             defaultValue={token}
+            inputProps={{
+              maxLength: 255,
+            }}
           />
         </Grid>
         <Grid item xs={2}>

@@ -1,4 +1,4 @@
-import { Media, MediaTypes } from "../types/types.ts";
+import { Media } from "../types/types.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { ObjectTypes } from "../../tag/type.ts";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
@@ -11,9 +11,6 @@ import { LinkUserGroup } from "../../user-group/types/types.ts";
 import { useTranslation } from "react-i18next";
 import { Grid } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import placeholder from "../../../assets/Placeholder.svg";
-import videoPlaceHolder from "../../../assets/video_placeholder.webp";
-import otherPlaceHolder from "../../../assets/other_placeholder.webp";
 
 interface IMediaCardProps {
   media: Media;
@@ -45,47 +42,35 @@ interface IMediaCardProps {
     mediaId: number,
     share: string | undefined,
   ) => void;
+  ownerId: number;
 }
 
 export const MediaCard = ({
-  media,
-  handleGrantAccess,
   HandleCopyToClipBoard,
-  HandleOpenModal,
   HandleDeleteMedia,
+  HandleOpenModal,
+  HandleUpdateMedia,
+  caddyUrl,
   getAllMediaGroups,
+  getGroupByOption,
   getOptionLabel,
-  listOfGroup,
-  openModalMediaId,
-  handleRemoveAccessToMedia,
+  handleChangeRights,
+  handleGrantAccess,
   handleLookingForUserGroups,
+  handleRemoveAccessToMedia,
+  handleRemoveMediaFromList,
+  listOfGroup,
+  media,
+  openModalMediaId,
+  ownerId,
   setGroupList,
   setUserToAdd,
-  caddyUrl,
-  HandleUpdateMedia,
-  handleChangeRights,
-  getGroupByOption,
-  handleRemoveMediaFromList,
 }: IMediaCardProps) => {
   const { t } = useTranslation();
-  const thumbnailUrl = (): string | null => {
-    if (media.mediaTypes === MediaTypes.IMAGE) {
-      return media.hash
-        ? `${caddyUrl}/${media.hash}/thumbnail.webp`
-        : placeholder;
-    }
-    if (media.mediaTypes === MediaTypes.VIDEO) {
-      return media.hash
-        ? `${caddyUrl}/${media.hash}/thumbnail.webp`
-        : videoPlaceHolder;
-    }
-    if (media.mediaTypes === MediaTypes.OTHER) {
-      return otherPlaceHolder;
-    }
-    return null;
-  };
+
   return (
     <MMUCard
+      ownerId={ownerId}
       objectTypes={ObjectTypes.MEDIA}
       AddAccessListItemFunction={handleGrantAccess}
       DefaultButton={
@@ -148,7 +133,6 @@ export const MediaCard = ({
       searchModalEditItem={handleLookingForUserGroups}
       setItemList={setGroupList}
       setItemToAdd={setUserToAdd}
-      thumbnailUrl={thumbnailUrl()}
       updateItem={HandleUpdateMedia}
       handleSelectorChange={handleChangeRights}
       getGroupByOption={getGroupByOption}

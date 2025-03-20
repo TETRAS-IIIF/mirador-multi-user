@@ -56,6 +56,9 @@ const ForgotPassword = () => {
               {t("explanationPasswordReset")}
             </Typography>
             <TextField
+              inputProps={{
+                maxLength: 255,
+              }}
               label={t("mail")}
               type="email"
               fullWidth

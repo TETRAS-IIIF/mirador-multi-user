@@ -5,6 +5,7 @@ import { ResetPassword } from "../features/auth/components/resetPassword.tsx";
 import ForgotPassword from "../features/auth/components/forgotPassword.tsx";
 import { Terms } from "../features/miscellaneous/Terms";
 import { Consent } from "../features/miscellaneous/Consent";
+import { Disconnect } from "../features/miscellaneous/Disconnect.tsx";
 
 export const publicRoutes = [
   {
@@ -34,5 +35,9 @@ export const publicRoutes = [
   {
     path: "/consent/*",
     element: <Consent />,
+  },
+  {
+    path: "/disconnect/*",
+    element: <Disconnect />,
   },
 ];

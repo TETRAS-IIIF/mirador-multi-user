@@ -16,9 +16,15 @@ import { updateProject } from "../../../features/projects/api/updateProject.ts";
 
 interface NoteTemplateProps {
   project: Project;
+  handleUpdateTemplate: () => Promise<void>;
+  setUpdatedTemplateList: (newTemplate: Template[]) => void;
 }
 
-export const NoteTemplate = ({ project }: NoteTemplateProps) => {
+export const NoteTemplate = ({
+  project,
+  handleUpdateTemplate,
+  setUpdatedTemplateList,
+}: NoteTemplateProps) => {
   const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { rights, ...userProject } = project;
@@ -43,19 +49,13 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
     setEditorContent(newTextValue);
   };
 
-  const handleUpdateTemplate = async () => {
+  const handleUpdateTemplateLocally = async () => {
     if (isNewTemplate) {
       const updatedTemplateList = [
         ...templates,
         { title, content: editorContent },
       ];
-      await updateProject({
-        id: project.id,
-        project: {
-          ...userProject,
-          noteTemplate: updatedTemplateList,
-        },
-      });
+      setUpdatedTemplateList(updatedTemplateList);
       setTemplates(updatedTemplateList);
       setIsNewTemplate(false);
       const updatedSelectedTemplate =
@@ -68,13 +68,9 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
           ? { ...temp, title, content: editorContent }
           : temp,
       );
-      await updateProject({
-        id: userProject.id,
-        project: {
-          ...userProject,
-          noteTemplate: updatedTemplateList,
-        },
-      });
+      setUpdatedTemplateList(updatedTemplateList);
+
+      await handleUpdateTemplate();
       setTemplates(updatedTemplateList);
 
       const updatedSelectedTemplate =
@@ -222,7 +218,7 @@ export const NoteTemplate = ({ project }: NoteTemplateProps) => {
             <Button
               color="primary"
               variant="contained"
-              onClick={handleUpdateTemplate}
+              onClick={handleUpdateTemplateLocally}
             >
               {!selectedTemplate ? t("createTemplate") : t("updateTemplate")}
             </Button>

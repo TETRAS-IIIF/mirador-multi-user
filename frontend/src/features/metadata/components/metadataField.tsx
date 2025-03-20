@@ -34,6 +34,7 @@ const MetadataField = memo(
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                 },
+                maxLength: 255,
               }}
             />
           </Grid>

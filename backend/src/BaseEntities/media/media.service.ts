@@ -59,8 +59,16 @@ export class MediaService {
   }
   async update(id: number, updateMediaDto: UpdateMediaDto) {
     try {
-      const done = await this.mediaRepository.update(id, updateMediaDto);
-      if (done.affected != 1) throw new NotFoundException(id);
+      const media = await this.mediaRepository.findOne({ where: { id } });
+
+      if (!media) {
+        throw new NotFoundException(`Media with ID ${id} not found`);
+      }
+
+      Object.assign(media, updateMediaDto);
+
+      await this.mediaRepository.save(media);
+
       return this.findOne(id);
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -70,6 +78,7 @@ export class MediaService {
       );
     }
   }
+
 
   async remove(id: number) {
     try {

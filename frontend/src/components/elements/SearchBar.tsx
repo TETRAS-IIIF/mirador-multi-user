@@ -105,7 +105,12 @@ export const SearchBar = ({
               id="combo-box-demo"
               options={suggestions}
               clearOnBlur={false}
-              renderInput={(params) => <TextField {...params} label={label} />}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={label}
+                />
+              )}
               getOptionLabel={getOptionLabel}
               groupBy={groupByOption}
               noOptionsText={t("noOptions")}
@@ -114,12 +119,15 @@ export const SearchBar = ({
         ) : (
           <Grid item>
             <TextField
+              inputProps={{
+                maxLength: 255,
+                type: "search",
+              }}
               label={label}
               variant="outlined"
               value={searchValue}
               onChange={handleTextFieldChange}
               sx={{ width: "250px" }}
-              InputProps={{ type: "search" }}
             />
           </Grid>
         )}

@@ -7,12 +7,14 @@ import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.ent
 import { Media } from '../../BaseEntities/media/entities/media.entity';
 import { UserGroupModule } from '../../BaseEntities/user-group/user-group.module';
 import { MediaModule } from '../../BaseEntities/media/media.module';
+import { LinkUserGroupModule } from '../link-user-group/link-user-group.module';
 
 @Module({
   exports: [LinkMediaGroupService],
   imports: [
     UserGroupModule,
     MediaModule,
+    LinkUserGroupModule,
     TypeOrmModule.forFeature([LinkMediaGroup, UserGroup, Media]),
   ],
   controllers: [LinkMediaGroupController],

@@ -198,7 +198,7 @@ export class LinkMediaGroupController {
   }
 
   @ApiOperation({ summary: 'Remove access to a media' })
-  @SetMetadata('action', ActionType.DELETE)
+  @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Delete('/media/:mediaId/:groupId')
   async deleteMediaById(
@@ -211,9 +211,9 @@ export class LinkMediaGroupController {
       request.user.sub,
       mediaId,
       async () => {
-        return await this.linkMediaGroupService.removeAccesToMedia(
-          groupId,
+        return await this.linkMediaGroupService.removeAccessToMedia(
           mediaId,
+          groupId,
         );
       },
     );

@@ -14,7 +14,6 @@ import {
 import IState from "../../features/mirador/interface/IState.ts";
 import { getUserAllProjects } from "../../features/projects/api/getUserAllProjects.ts";
 import { createProject } from "../../features/projects/api/createProject.ts";
-import toast from "react-hot-toast";
 import { User } from "../../features/auth/types/types.ts";
 import { Media, MediaGroupRights } from "../../features/media/types/types.ts";
 import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
@@ -35,6 +34,10 @@ import {
   ManifestGroupRights,
 } from "../../features/manifest/types/types";
 import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests";
+import { MENU_ELEMENT } from "../../utils/utils.ts";
+import { generateSnapshot } from "../../features/projects/api/generateProjectSnapShot.ts";
+import toast from "react-hot-toast";
+import dayjs from "dayjs";
 
 interface ISideDrawerProps {
   user: User;
@@ -49,15 +52,6 @@ interface MiradorViewerHandle {
   saveProject: () => void;
   setViewer: () => IState;
 }
-
-export const MENU_ELEMENT = {
-  PROJECTS: "PROJECT",
-  GROUPS: "GROUPS",
-  MEDIA: "MEDIA",
-  MANIFEST: "MANIFEST",
-  SETTING: "SETTING",
-  ADMIN: "ADMIN",
-};
 
 export const SideDrawer = ({
   user,
@@ -83,7 +77,7 @@ export const SideDrawer = ({
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const miradorViewerRef = useRef<MiradorViewerHandle>(null);
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     if (miradorViewerRef.current !== null) {
@@ -238,21 +232,15 @@ export const SideDrawer = ({
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = miradorViewerRef.current?.setViewer();
     if (selectedProjectId) {
-      let projectToUpdate: Project = userProjects.find(
+      const projectToUpdate: Project = userProjects.find(
         (projectUser) => projectUser.id == selectedProjectId,
       )!;
-      //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
-      if (projectToUpdate == undefined) {
-        projectToUpdate = userProjects.find(
-          (projectUser) => projectUser.id == selectedProjectId,
-        )!;
-      }
       projectToUpdate.userWorkspace = miradorViewer!;
       if (projectToUpdate) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { rights, share, ...projectWithoutRights } = projectToUpdate;
+        const { rights, share, shared, ...projectWithoutRights } =
+          projectToUpdate;
         await updateProject({ project: projectWithoutRights });
-        toast.success(`Project ${projectWithoutRights.title} saved`); // TODO Trad
       }
     } else {
       const project: CreateProjectDto = {
@@ -274,6 +262,25 @@ export const SideDrawer = ({
     }
   }, [handleSaveProject, setSelectedProjectId, user, userProjects]);
 
+  const handleGenerateSnapshot = async (projectId: number) => {
+    const generated_at = dayjs(Date.now())
+      .locale(i18n.language)
+      .format("LLLL")
+      .toString();
+
+    const snapshot = await generateSnapshot({
+      title: `Snapshot ${generated_at}`,
+      projectId: projectId,
+    });
+
+    if (!snapshot) return;
+
+    fetchProjects();
+    if (snapshot) {
+      toast.success(t("snapshot_success"));
+    }
+  };
+
   const saveProject = async (redirect?: boolean) => {
     if (redirect !== true) {
       await handleLock({ projectId: selectedProjectId!, lock: true });
@@ -291,6 +298,7 @@ export const SideDrawer = ({
   const fetchProjects = useCallback(async () => {
     try {
       const projects = await getUserAllProjects(user.id);
+
       const rightsOrder = [
         ItemsRights.READER,
         ItemsRights.EDITOR,
@@ -413,6 +421,7 @@ export const SideDrawer = ({
         saveProject={saveProject}
         setShowSignOutModal={setShowSignOutModal}
         user={user}
+        handleGenerateSnapshot={handleGenerateSnapshot}
       />
       <Content
         HandleSetIsRunning={HandleSetIsRunning}

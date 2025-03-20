@@ -14,7 +14,7 @@ import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
 import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
 import { MediaService } from '../../BaseEntities/media/media.service';
-import { MediaGroupRights } from '../../enum/rights';
+import { MediaGroupRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { CreateMediaDto } from '../../BaseEntities/media/dto/create-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
@@ -22,6 +22,8 @@ import { join } from 'path';
 import * as fs from 'fs';
 import { ActionType } from '../../enum/actions';
 import { mediaOrigin } from '../../enum/origins';
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
+import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
 
 @Injectable()
 export class LinkMediaGroupService {
@@ -31,6 +33,7 @@ export class LinkMediaGroupService {
     @InjectRepository(LinkMediaGroup)
     private readonly linkMediaGroupRepository: Repository<LinkMediaGroup>,
     private readonly groupService: UserGroupService,
+    private readonly linkUserGroupService: LinkUserGroupService,
     @Inject(forwardRef(() => MediaService))
     private readonly mediaService: MediaService,
   ) {}
@@ -187,7 +190,7 @@ export class LinkMediaGroupService {
           }
         }
       }
-      if (mediaToRemove.origin === mediaOrigin.LINK) {
+      if (mediaToRemove.origin === mediaOrigin.LINK && mediaToRemove.hash) {
         const thumbnailPath = join(
           __dirname,
           '..',
@@ -246,7 +249,7 @@ export class LinkMediaGroupService {
     }
   }
 
-  async removeAccesToMedia(mediaId: number, userGroupId: number) {
+  async removeAccessToMedia(mediaId: number, userGroupId: number) {
     try {
       const userGroupMedias = await this.findAllMediaByUserGroupId(userGroupId);
       const mediaToRemove = userGroupMedias.find(
@@ -268,6 +271,7 @@ export class LinkMediaGroupService {
 
   async findAllMediaByUserGroupId(id: number) {
     try {
+      const userPersonalGroup = await this.groupService.findOne(id);
       const request = await this.linkMediaGroupRepository.find({
         where: { user_group: { id } },
         relations: ['user_group'],
@@ -275,6 +279,9 @@ export class LinkMediaGroupService {
       return request.map((linkGroup: LinkMediaGroup) => ({
         ...linkGroup.media,
         rights: linkGroup.rights,
+        shared:
+          Number(linkGroup.media.idCreator) !==
+          Number(userPersonalGroup.ownerId),
       }));
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -321,23 +328,21 @@ export class LinkMediaGroupService {
     rights: MediaGroupRights,
   ) {
     try {
-      const linkMediaGroupToUpdate = await this.linkMediaGroupRepository.find({
-        where: {
-          media: { id: mediaId },
-          user_group: { id: groupId },
-        },
-      });
-      const linkMediaGroup = this.linkMediaGroupRepository.create({
-        ...linkMediaGroupToUpdate[0],
-        rights: rights,
-      });
-      const toReturn = await this.linkMediaGroupRepository.upsert(
-        linkMediaGroup,
-        {
-          conflictPaths: ['rights', 'media', 'user_group'],
-        },
-      );
-      return toReturn;
+      const linkMediaGroupToUpdate =
+        await this.linkMediaGroupRepository.findOne({
+          where: {
+            media: { id: mediaId },
+            user_group: { id: groupId },
+          },
+        });
+
+      if (!linkMediaGroupToUpdate) {
+        throw new NotFoundException('no matching LinkMediaGroup found');
+      }
+
+      linkMediaGroupToUpdate.rights = rights;
+
+      return await this.linkMediaGroupRepository.save(linkMediaGroupToUpdate);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -364,21 +369,39 @@ export class LinkMediaGroupService {
     }
   }
 
-  async getHighestRightForManifest(groupId: number, mediaId: number) {
-    const linkEntities = await this.linkMediaGroupRepository.find({
-      where: {
-        user_group: { id: groupId },
-        media: { id: mediaId },
-      },
-      relations: ['media', 'user_group'],
-    });
-    if (linkEntities.length === 0) {
+  async getHighestRightForMedia(userId: number, mediaId: number) {
+    const userPersonalGroup: UserGroup =
+      await this.groupService.findUserPersonalGroup(userId);
+
+    const userGroups: UserGroup[] =
+      await this.linkUserGroupService.findALlGroupsForUser(userId);
+
+    const allGroups = [...userGroups, userPersonalGroup];
+
+    if (allGroups.length === 0) {
       return;
     }
-    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
+
+    let linkEntities = [];
+    for (const group of allGroups) {
+      const linkGroups = await this.linkMediaGroupRepository.find({
+        where: {
+          user_group: { id: group.id },
+          media: { id: mediaId },
+        },
+        relations: ['media', 'user_group'],
+      });
+
+      linkEntities = linkEntities.concat(linkGroups);
+    }
+
+    if (linkEntities.length === 0) {
+      return null;
+    }
+
     return linkEntities.reduce((prev, current) => {
-      const prevRight = rightsPriority[prev.rights] || 0;
-      const currentRight = rightsPriority[current.rights] || 0;
+      const prevRight = PROJECT_RIGHTS_PRIORITY[prev.rights] || 0;
+      const currentRight = PROJECT_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
     });
   }
@@ -390,16 +413,10 @@ export class LinkMediaGroupService {
     callback: (linkEntity: LinkMediaGroup) => any,
   ) {
     try {
-      const userPersonalGroup =
-        await this.groupService.findUserPersonalGroup(userId);
-
-      const linkEntity = await this.getHighestRightForManifest(
-        userPersonalGroup.id,
-        manifestId,
-      );
+      const linkEntity = await this.getHighestRightForMedia(userId, manifestId);
 
       if (!linkEntity) {
-        return new ForbiddenException(
+        throw new ForbiddenException(
           'User does not have access to this media or the media does not exist',
         );
       }
@@ -444,7 +461,7 @@ export class LinkMediaGroupService {
     try {
       const personalGroup =
         await this.groupService.findUserPersonalGroup(userId);
-      return await this.removeAccesToMedia(mediaId, personalGroup.id);
+      return await this.removeAccessToMedia(mediaId, personalGroup.id);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);

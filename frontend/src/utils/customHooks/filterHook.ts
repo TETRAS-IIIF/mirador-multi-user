@@ -1,6 +1,9 @@
 import { useMemo } from "react";
 import dayjs from "dayjs";
 
+export const UPDATED_AT = "updated_at";
+export const TITLE = "title";
+
 interface IUseCurrentPageData {
   currentPage: number;
   sortField: keyof any;
@@ -49,7 +52,7 @@ export const useCurrentPageData = ({
 
 const isInFilter = (item: any, filter: string | null) => {
   if (filter) {
-    return item.title.includes(filter);
+    return item.title.toLowerCase().includes(filter.toLowerCase());
   } else {
     return true;
   }
@@ -61,7 +64,7 @@ const sortItem = (sortField: keyof any, items: any[], sortOrder: string) => {
     const bValue = b[sortField];
     let comparison = 0;
 
-    if (sortField === "created_at") {
+    if (sortField === UPDATED_AT) {
       const aDate = dayjs.isDayjs(aValue) ? aValue : dayjs(aValue);
       const bDate = dayjs.isDayjs(bValue) ? bValue : dayjs(bValue);
       comparison = aDate.valueOf() - bDate.valueOf();

@@ -24,6 +24,7 @@ export const getAllManifestGroups = async (
     return manifests.map((manifest: any) => ({
       ...manifest,
       created_at: dayjs(manifest.created_at),
+      updated_at: dayjs(manifest.updated_at),
     }));
   } catch (error) {
     console.error("Error in getGroupsAccessToManifest:", error);

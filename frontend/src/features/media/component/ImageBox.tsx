@@ -8,8 +8,6 @@ import otherPlaceHolder from "../../../assets/other_placeholder.webp";
 
 const CustomImageItem = styled("div")({
   position: "relative",
-  width: 150,
-  height: 150,
   "&:hover img": {
     opacity: 0.4,
   },

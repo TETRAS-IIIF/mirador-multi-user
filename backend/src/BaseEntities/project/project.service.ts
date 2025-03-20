@@ -35,7 +35,6 @@ export class ProjectService {
     }
   }
 
-
   async findOne(projectId: number): Promise<Project> {
     try {
       const project = await this.projectRepository.findOneBy({ id: projectId });
@@ -48,13 +47,18 @@ export class ProjectService {
   async update(projectId: number, dto: UpdateProjectDto) {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { lockedByUserId, lockedAt, ...filteredData } = dto;
-      await this.projectRepository.findOne({
+      const { lockedByUserId, lockedAt, id, ...filteredData } = dto;
+
+      const project = await this.projectRepository.findOne({
         where: { id: projectId },
       });
-      const done = await this.projectRepository.update(projectId, filteredData);
-      if (done.affected != 1) throw new NotFoundException(projectId);
-      return await this.findOne(filteredData.id);
+      if (!project) {
+        throw new NotFoundException(`Project with ID ${projectId} not found`);
+      }
+      Object.assign(project, filteredData);
+      await this.projectRepository.save(project);
+
+      return await this.findOne(projectId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);

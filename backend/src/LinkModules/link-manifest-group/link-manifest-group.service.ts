@@ -10,7 +10,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Repository } from 'typeorm';
-import { ManifestGroupRights } from '../../enum/rights';
+import {
+  ManifestGroupRights,
+  PROJECT_RIGHTS_PRIORITY,
+} from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
@@ -26,6 +29,7 @@ import { UpdateManifestJsonDto } from './dto/UpdateManifestJsonDto';
 import * as path from 'node:path';
 import { manifestOrigin } from '../../enum/origins';
 import { UPLOAD_FOLDER } from '../../utils/constants';
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 
 @Injectable()
 export class LinkManifestGroupService {
@@ -36,6 +40,7 @@ export class LinkManifestGroupService {
     private readonly linkManifestGroupRepository: Repository<LinkManifestGroup>,
     private readonly manifestService: ManifestService,
     private readonly groupService: UserGroupService,
+    private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
 
   async createManifest(createManifestDto) {
@@ -103,6 +108,7 @@ export class LinkManifestGroupService {
         user_group: group,
         manifest: manifest,
       });
+
       const groupForManifest = await this.getAllManifestsGroup(manifestId);
       manifestsForGroup.push(groupForManifest);
       return manifestsForGroup;
@@ -125,24 +131,6 @@ export class LinkManifestGroupService {
       );
     }
   }
-
-  async getManifestForUser(userGroupId: number, manifestId: number) {
-    try {
-      const manifest =
-        await this.findAllManifestGroupByUserGroupId(userGroupId);
-      const toReturn = manifest.find(
-        (linkGroupManifest) => linkGroupManifest.manifest.id == manifestId,
-      );
-      return toReturn.manifest;
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      return new InternalServerErrorException(
-        'An error occurred while getting manifest for user group',
-        error.message,
-      );
-    }
-  }
-
   async updateManifest(updateManifestDto: UpdateManifestDto) {
     try {
       return await this.manifestService.update(
@@ -155,16 +143,6 @@ export class LinkManifestGroupService {
         `an error occurred while updating manifest with id ${updateManifestDto.id}`,
         error.message,
       );
-    }
-  }
-
-  private readJsonFile(filePath: string): any {
-    try {
-      const absolutePath = path.resolve(filePath);
-      const fileContent = fs.readFileSync(absolutePath, 'utf-8');
-      return JSON.parse(fileContent);
-    } catch (error) {
-      throw new Error(`Error reading file at ${filePath}: ${error.message}`);
     }
   }
 
@@ -269,7 +247,7 @@ export class LinkManifestGroupService {
     }
   }
 
-  async removeAccesToManifest(manifestId: number, userGroupId: number) {
+  async removeAccessToManifest(manifestId: number, userGroupId: number) {
     try {
       const userGroupManifests =
         await this.findAllManifestByUserGroupId(userGroupId);
@@ -293,18 +271,6 @@ export class LinkManifestGroupService {
     }
   }
 
-  async findAll() {
-    try {
-      return await this.linkManifestGroupRepository.find();
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        'An error occurred while finding linkMediaGroups',
-        error,
-      );
-    }
-  }
-
   async findAllUserGroupByManifestId(manifestId: number) {
     try {
       const request = await this.linkManifestGroupRepository.find({
@@ -320,24 +286,9 @@ export class LinkManifestGroupService {
     }
   }
 
-  async findAllManifestGroupByUserGroupId(userGroupId: number) {
-    try {
-      const request = await this.linkManifestGroupRepository.find({
-        where: { user_group: { id: userGroupId } },
-        relations: ['manifest'],
-      });
-      return request;
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        `an error occurred while finding all ManifestGroupByUserGroupId with userGroupId : ${userGroupId}`,
-        error.message,
-      );
-    }
-  }
-
   async findAllManifestByUserGroupId(id: number) {
     try {
+      const userPersonalGroup = await this.groupService.findOne(id);
       const request = await this.linkManifestGroupRepository.find({
         where: { user_group: { id: id } },
         relations: ['user_group'],
@@ -345,6 +296,9 @@ export class LinkManifestGroupService {
       return request.map((linkGroup: LinkManifestGroup) => ({
         ...linkGroup.manifest,
         rights: linkGroup.rights,
+        shared:
+          Number(linkGroup.manifest.idCreator) !==
+          Number(userPersonalGroup.ownerId),
       }));
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -410,21 +364,38 @@ export class LinkManifestGroupService {
     }
   }
 
-  async getHighestRightForManifest(groupId: number, manifestId: number) {
-    const linkEntities = await this.linkManifestGroupRepository.find({
-      where: {
-        user_group: { id: groupId },
-        manifest: { id: manifestId },
-      },
-      relations: ['manifest', 'user_group'],
-    });
-    if (linkEntities.length === 0) {
+  async getHighestRightForManifest(userId: number, manifestId: number) {
+    const userPersonalGroup: UserGroup =
+      await this.groupService.findUserPersonalGroup(userId);
+
+    const userGroups: UserGroup[] =
+      await this.linkUserGroupService.findALlGroupsForUser(userId);
+
+    const allGroups = [...userGroups, userPersonalGroup];
+
+    if (allGroups.length === 0) {
       return;
     }
-    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
+    let linkEntities = [];
+
+    for (const group of allGroups) {
+      const linkGroups = await this.linkManifestGroupRepository.find({
+        where: {
+          user_group: { id: group.id },
+          manifest: { id: manifestId },
+        },
+        relations: ['manifest', 'user_group'],
+      });
+      linkEntities = linkEntities.concat(linkGroups);
+    }
+
+    if (linkEntities.length === 0) {
+      return null;
+    }
+
     return linkEntities.reduce((prev, current) => {
-      const prevRight = rightsPriority[prev.rights] || 0;
-      const currentRight = rightsPriority[current.rights] || 0;
+      const prevRight = PROJECT_RIGHTS_PRIORITY[prev.rights] || 0;
+      const currentRight = PROJECT_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
     });
   }
@@ -436,11 +407,8 @@ export class LinkManifestGroupService {
     callback: (linkEntity: LinkManifestGroup) => any,
   ) {
     try {
-      const userPersonalGroup =
-        await this.groupService.findUserPersonalGroup(userId);
-
       const linkEntity = await this.getHighestRightForManifest(
-        userPersonalGroup.id,
+        userId,
         manifestId,
       );
 
@@ -490,7 +458,7 @@ export class LinkManifestGroupService {
     try {
       const personalGroup =
         await this.groupService.findUserPersonalGroup(userId);
-      return await this.removeAccesToManifest(manifestId, personalGroup.id);
+      return await this.removeAccessToManifest(manifestId, personalGroup.id);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);

@@ -30,7 +30,6 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { UpdateGroup } from "../api/updateGroup.ts";
 import { GetAllGroupUsers } from "../api/getAllGroupUsers.ts";
 import { ListItem } from "../../../components/types.ts";
-import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
@@ -41,7 +40,13 @@ import { SortItemSelector } from "../../../components/elements/sortItemSelector.
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { leavingGroup } from "../api/leavingGroup.ts";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
+import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
+import { Manifest } from "../../manifest/types/types.ts";
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from "../../../utils/customHooks/filterHook.ts";
 
 interface allGroupsProps {
   user: User;
@@ -50,6 +55,8 @@ interface allGroupsProps {
   userPersonalGroup: UserGroup;
   fetchGroups: () => void;
   groups: UserGroup[];
+  manifests: Manifest[];
+  fetchManifestForUser: () => void;
 }
 
 export const AllGroups = ({
@@ -59,6 +66,8 @@ export const AllGroups = ({
   userPersonalGroup,
   fetchGroups,
   groups,
+  manifests,
+  fetchManifestForUser,
 }: allGroupsProps) => {
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] =
     useState(false);
@@ -69,9 +78,9 @@ export const AllGroups = ({
   >([]);
   const [groupFilter, setGroupFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [openSidePanel, setOpenSidePanel] = useState(false);
-  const [sortField, setSortField] = useState<keyof UserGroup>("title");
-  const [sortOrder, setSortOrder] = useState("asc");
+
+  const [sortField, setSortField] = useState<keyof UserGroup>(UPDATED_AT);
+  const [sortOrder, setSortOrder] = useState("desc");
 
   const { t } = useTranslation();
 
@@ -174,15 +183,13 @@ export const AllGroups = ({
       id: userPersonalGroup.user.id,
       title: userPersonalGroup.user.name,
       rights: userPersonalGroup.rights,
+      personalOwnerGroupId: userPersonalGroup.personalOwnerGroupId,
     }));
   }, [userPersonalGroupList]);
 
   const handleRemoveUser = async (groupId: number, userToRemoveId: number) => {
     await removeAccessToGroup(groupId, userToRemoveId);
-  };
-
-  const handleSetOpenSidePanel = () => {
-    setOpenSidePanel(!openSidePanel);
+    fetchGroups();
   };
 
   const handleLeaveGroup = async (groupId: number) => {
@@ -192,11 +199,11 @@ export const AllGroups = ({
 
   return (
     <>
-      <SidePanelMedia
-        open={openSidePanel && !!openModalGroupId}
-        setOpen={handleSetOpenSidePanel}
+      <SidePanel
         display={!!openModalGroupId}
+        fetchManifestForUser={fetchManifestForUser}
         fetchMediaForUser={fetchMediaForUser}
+        manifests={manifests}
         medias={medias}
         user={user}
         userPersonalGroup={userPersonalGroup!}
@@ -224,7 +231,7 @@ export const AllGroups = ({
               <SortItemSelector<UserGroup>
                 sortField={sortField}
                 setSortField={setSortField}
-                fields={["title", "created_at"]}
+                fields={[TITLE, UPDATED_AT]}
               />
             </Grid>
             <Grid item>
@@ -259,9 +266,10 @@ export const AllGroups = ({
             )}
             {groups.length > 0 &&
               (currentPageData.length > 0 ? (
-                currentPageData.map((group) => (
+                currentPageData.map((group: UserGroup) => (
                   <Grid item key={group.id}>
                     <MMUCard
+                      ownerId={group.ownerId}
                       objectTypes={ObjectTypes.GROUP}
                       isGroups={true}
                       thumbnailUrl={
@@ -327,7 +335,7 @@ export const AllGroups = ({
             toggleModalGroupCreation={toggleModalGroupCreation}
           />
         </Grid>
-      </SidePanelMedia>
+      </SidePanel>
     </>
   );
 };
