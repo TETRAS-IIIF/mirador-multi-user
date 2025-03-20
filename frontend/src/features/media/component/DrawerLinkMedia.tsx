@@ -101,6 +101,9 @@ export const DrawerLinkMedia = ({
                 </Grid>
                 <Grid item sx={{ width: "70%" }}>
                   <TextField
+                    inputProps={{
+                      maxLength: 255,
+                    }}
                     inputRef={inputRef}
                     onChange={handleNameChange}
                     sx={{ width: "100%" }}

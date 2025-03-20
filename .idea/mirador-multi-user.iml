@@ -5,6 +5,13 @@
       <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/temp" />
       <excludeFolder url="file://$MODULE_DIR$/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/jsLinters" />
+      <excludeFolder url="file://$MODULE_DIR$/backend/logs" />
+      <excludeFolder url="file://$MODULE_DIR$/mariaDB/data/multiUsers" />
+      <excludeFolder url="file://$MODULE_DIR$/mariaDB/data/mysql" />
+      <excludeFolder url="file://$MODULE_DIR$/mariaDB/data/performance_schema" />
+      <excludeFolder url="file://$MODULE_DIR$/mariaDB/data/sys" />
+      <excludeFolder url="file://$MODULE_DIR$/upload" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

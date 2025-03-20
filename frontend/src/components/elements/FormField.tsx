@@ -31,6 +31,9 @@ const FormField: React.FC<FormFieldProps> = ({
       <Grid item>
         <TextField
           type={type}
+          inputProps={{
+            maxLength: 255,
+          }}
           label={placeholder}
           variant="outlined"
           {...register(name, { valueAsNumber })}

@@ -74,6 +74,9 @@ export const ShareLink = ({ itemId, snapShotHash }: IShareLinkProps) => {
             <>
               <Grid item xs={8}>
                 <TextField
+                  inputProps={{
+                    maxLength: 255,
+                  }}
                   label={t("projectSnapshotUrl")}
                   value={projectSnapshotURL}
                   disabled
