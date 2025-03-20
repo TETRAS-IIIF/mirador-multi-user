@@ -11,3 +11,12 @@ const maxUploadSize =
 export const isFileSizeOverLimit = (file: File) => {
   return file.size >= maxUploadSize;
 };
+
+export const MENU_ELEMENT = {
+  PROJECTS: "PROJECT",
+  GROUPS: "GROUPS",
+  MEDIA: "MEDIA",
+  MANIFEST: "MANIFEST",
+  SETTING: "SETTING",
+  ADMIN: "ADMIN",
+};

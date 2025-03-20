@@ -16,14 +16,6 @@ const StyledDrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-/**
- * SideDrawerHeader component
- * Display the header of the side drawer. This header allow to reduce/expand the side drawer
- * @param open
- * @param handleDrawerClose
- * @param handleDrawerOpen
- * @constructor
- */
 export function DrawerHeader({
   isSideDrawerExpanded,
   handleDrawerClose,
