@@ -6,7 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Timestamp, UpdateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../../LinkModules/link-group-project/entities/link-group-project.entity';
@@ -18,7 +18,7 @@ export class Project {
   @IsNumberString()
   id: number;
 
-  @Column({ length: 100 })
+  @Column()
   @IsString()
   title: string;
 
