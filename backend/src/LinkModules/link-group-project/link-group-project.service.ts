@@ -426,14 +426,16 @@ export class LinkGroupProjectService {
         const groupProjects = await this.findAllGroupProjectByUserGroupId(
           usersGroup.id,
         );
-
         for (const groupProject of groupProjects) {
           const projectId = groupProject.project.id;
           const currentRights =
             PROJECT_RIGHTS_PRIORITY[groupProject.rights] || 0;
 
           const existingProject = projectsMap.get(projectId);
-
+          const personalOwnerGroup =
+            await this.groupService.findUserPersonalGroup(
+              groupProject.project.ownerId,
+            );
           const projectData = {
             ...groupProject.project,
             rights: groupProject.rights,
@@ -441,6 +443,7 @@ export class LinkGroupProjectService {
             ...(groupProject.user_group.type === UserGroupTypes.MULTI_USER && {
               share: 'group',
             }),
+            personalOwnerGroupId: personalOwnerGroup.id,
           };
 
           if (
