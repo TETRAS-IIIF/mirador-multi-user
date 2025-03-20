@@ -129,8 +129,9 @@ export const MMUModalEdit = <
     id: number;
     noteTemplate?: Template[];
     origin?: manifestOrigin | mediaOrigin;
-    ownerId?: number
+    ownerId?: number;
     path?: string;
+    personalOwnerGroupId?: number;
     rights?: ItemsRights;
     snapshots?: Snapshot[];
     tags?: string[];
@@ -490,16 +491,28 @@ export const MMUModalEdit = <
         {objectTypes !== ObjectTypes.GROUP && (
           <Tab label={t("metadata")} {...a11yProps(1)} />
         )}
-        {(objectTypes === ObjectTypes.PROJECT ||
-          (objectTypes === ObjectTypes.MANIFEST &&
-            item.origin !== manifestOrigin.LINK)) && (
-          <Tab label={t("advancedEdit")} {...a11yProps(3)} />
-        )}
+
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t("templates")} {...a11yProps(4)} />
         )}
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t("tags")} {...a11yProps(5)} />
+        )}
+        {(objectTypes === ObjectTypes.PROJECT ||
+          (objectTypes === ObjectTypes.MANIFEST &&
+            item.origin !== manifestOrigin.LINK)) && (
+          <Tooltip
+            title={!jsonElementToEditInAdvancedEditor ? t("advanced_edit_disabled") : ""}
+            disableHoverListener={!!jsonElementToEditInAdvancedEditor}
+          >
+            <span>
+              <Tab
+                label={t("advancedEdit")}
+                {...a11yProps(3)}
+                disabled={!jsonElementToEditInAdvancedEditor}
+              />
+            </span>
+          </Tooltip>
         )}
       </Tabs>
       <Grid item container flexDirection="column">
@@ -653,7 +666,8 @@ export const MMUModalEdit = <
                   snapShots={item.snapshots ? item.snapshots : []}
                   updateSnapshot={updateSnapshot}
                 >
-                  {(accessListItem) => (
+                  {
+                    (accessListItem) => (
                     <Selector
                       value={accessListItem.rights!}
                       onChange={handleSelectorChange(accessListItem)}

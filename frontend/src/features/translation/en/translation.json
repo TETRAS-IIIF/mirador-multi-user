@@ -23,6 +23,7 @@
   "addTag": "Add a Tag",
   "admin": "Admin",
   "advancedEdit": "Advanced Edit",
+  "advanced_edit_disabled": "Open project a first time to access advanced edit mode",
   "areYouSureDuplicate": "Are you sure you want to duplicate",
   "cancel": "CANCEL",
   "canvasRemoving": "Remove canvas {{index}}",
