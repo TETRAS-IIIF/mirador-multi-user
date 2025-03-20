@@ -1,16 +1,16 @@
-import { Divider, Grid, IconButton, Typography } from '@mui/material';
-import { ListItem } from '../types.ts';
-import { LoadingSpinner } from './loadingSpinner.tsx';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { SearchBar } from './SearchBar.tsx';
-import { MMUToolTip } from './MMUTootlTip.tsx';
-import { UserGroupTypes } from '../../features/user-group/types/types.ts';
-import PersonIcon from '@mui/icons-material/Person';
-import GroupsIcon from '@mui/icons-material/Groups';
-import { ShareLink } from './shareLink.tsx';
-import { ObjectTypes } from '../../features/tag/type.ts';
-import { useTranslation } from 'react-i18next';
+import { Button, Divider, Grid, IconButton, Typography } from "@mui/material";
+import { ListItem } from "../types.ts";
+import { LoadingSpinner } from "./loadingSpinner.tsx";
+import { Dispatch, ReactNode, SetStateAction } from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { SearchBar } from "./SearchBar.tsx";
+import { MMUToolTip } from "./MMUTootlTip.tsx";
+import { UserGroupTypes } from "../../features/user-group/types/types.ts";
+import PersonIcon from "@mui/icons-material/Person";
+import GroupsIcon from "@mui/icons-material/Groups";
+import { ShareLink } from "./shareLink.tsx";
+import { ObjectTypes } from "../../features/tag/type.ts";
+import { useTranslation } from "react-i18next";
 import { Snapshot } from "../../features/projects/types/types.ts";
 
 interface IProjectUserGroup<G, T> {
@@ -24,7 +24,7 @@ interface IProjectUserGroup<G, T> {
   item: T;
   items: ListItem[];
   objectTypes: ObjectTypes;
-  ownerId:number
+  ownerId: number;
   removeItem: (itemId: number) => void;
   searchBarLabel: string;
   setItemToAdd?: Dispatch<SetStateAction<G | null>>;
@@ -39,8 +39,12 @@ interface IProjectUserGroup<G, T> {
 
 export const ItemList = <
   G extends { title: string },
-  T extends { id: number; snapshots?: Snapshot[] },
-  T extends { id: number; snapShotHash?: string,ownerId?: number,personalOwnerGroupId?: number },
+  T extends {
+    id: number;
+    snapshots?: Snapshot[];
+    ownerId?: number;
+    personalOwnerGroupId?: number;
+  },
 >({
   children,
   getGroupByOption,
@@ -61,17 +65,23 @@ export const ItemList = <
 }: IProjectUserGroup<G, T>): JSX.Element => {
   const { t } = useTranslation();
 
-  const isActionAllowedForListItem = (listItem:ListItem) =>{
-    if(objectTypes === ObjectTypes.MANIFEST || objectTypes === ObjectTypes.MEDIA){
-      return (listItem.personalOwnerGroupId !== ownerId || listItem.type === UserGroupTypes.MULTI_USER)
+  const isActionAllowedForListItem = (listItem: ListItem) => {
+    if (
+      objectTypes === ObjectTypes.MANIFEST ||
+      objectTypes === ObjectTypes.MEDIA
+    ) {
+      return (
+        listItem.personalOwnerGroupId !== ownerId ||
+        listItem.type === UserGroupTypes.MULTI_USER
+      );
     }
-    if(objectTypes === ObjectTypes.GROUP){
+    if (objectTypes === ObjectTypes.GROUP) {
       return item.ownerId !== listItem.id;
     }
-    if(objectTypes === ObjectTypes.PROJECT){
-      return item.personalOwnerGroupId !== listItem.personalOwnerGroupId
+    if (objectTypes === ObjectTypes.PROJECT) {
+      return item.personalOwnerGroupId !== listItem.personalOwnerGroupId;
     }
-  }
+  };
 
   return (
     <Grid
@@ -159,13 +169,22 @@ export const ItemList = <
                   alignItems="center"
                   justifyContent="spaceBetween"
                 >
-                  <Grid item container xs={8} alignItems="center" spacing={2} justifyContent="space-between">
+                  <Grid
+                    item
+                    container
+                    xs={8}
+                    alignItems="center"
+                    spacing={2}
+                    justifyContent="space-between"
+                  >
                     <Grid item>
                       <Typography>{listItem.title}</Typography>
                     </Grid>
                   </Grid>
                   <Grid item>
-                    {listItem.type === UserGroupTypes.PERSONAL && <PersonIcon />}
+                    {listItem.type === UserGroupTypes.PERSONAL && (
+                      <PersonIcon />
+                    )}
                     {listItem.type === UserGroupTypes.MULTI_USER && (
                       <GroupsIcon />
                     )}
@@ -176,20 +195,22 @@ export const ItemList = <
                   </Grid>
                   {isActionAllowedForListItem(listItem) && (
                     <>
-                    <Grid item>{children!(listItem)}</Grid>
+                      <Grid item>{children!(listItem)}</Grid>
                       <Grid item>
                         <IconButton
                           onClick={() => removeItem(listItem.id)}
                           aria-label="delete"
                           color="error"
-                          disabled={listItem.personalOwnerGroupId === ownerId && listItem.type !== UserGroupTypes.MULTI_USER }
+                          disabled={
+                            listItem.personalOwnerGroupId === ownerId &&
+                            listItem.type !== UserGroupTypes.MULTI_USER
+                          }
                         >
                           <DeleteIcon />
                         </IconButton>
                       </Grid>
                     </>
-                    )
-                  }
+                  )}
                   <Grid item xs={12} sx={{ mb: "5px" }}>
                     <Divider />
                   </Grid>
