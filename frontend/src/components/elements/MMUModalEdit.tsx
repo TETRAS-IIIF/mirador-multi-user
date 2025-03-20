@@ -66,7 +66,6 @@ interface ModalItemProps<T> {
   description: string;
   duplicateItem?: (itemId: number) => void;
   fetchData: () => Promise<void>;
-  getGroupByOption?: (option: any) => string;
   getOptionLabel?: (option: { title: string }, searchInput: string) => string;
   handleAddAccessListItem: () => void;
   handleCreateSnapshot?: (projectId: number) => void;
@@ -77,16 +76,12 @@ interface ModalItemProps<T> {
   ) => (event: SelectChangeEvent) => Promise<void>;
   getGroupByOption?: (option: any) => string;
   isGroups?: boolean;
-  isGroups?: boolean;
   item: T;
   itemLabel: string;
   listOfItem?: ListItem[];
   metadata?: Record<string, string>;
-  metadata?: Record<string, string>;
-  objectTypes?: ObjectTypes;
   objectTypes?: ObjectTypes;
   ownerId: number;
-  ownerId:number;
   rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
   searchBarLabel: string;
   searchInput: string;
@@ -492,17 +487,15 @@ export const MMUModalEdit = <
           <Tab label={t("metadata")} {...a11yProps(1)} />
         )}
 
-        {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t("templates")} {...a11yProps(4)} />
-        )}
-        {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t("tags")} {...a11yProps(5)} />
-        )}
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
             item.origin !== manifestOrigin.LINK)) && (
           <Tooltip
-            title={!jsonElementToEditInAdvancedEditor ? t("advanced_edit_disabled") : ""}
+            title={
+              !jsonElementToEditInAdvancedEditor
+                ? t("advanced_edit_disabled")
+                : ""
+            }
             disableHoverListener={!!jsonElementToEditInAdvancedEditor}
           >
             <span>
@@ -513,6 +506,12 @@ export const MMUModalEdit = <
               />
             </span>
           </Tooltip>
+        )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("templates")} {...a11yProps(4)} />
+        )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("tags")} {...a11yProps(5)} />
         )}
       </Tabs>
       <Grid item container flexDirection="column">
@@ -666,8 +665,7 @@ export const MMUModalEdit = <
                   snapShots={item.snapshots ? item.snapshots : []}
                   updateSnapshot={updateSnapshot}
                 >
-                  {
-                    (accessListItem) => (
+                  {(accessListItem) => (
                     <Selector
                       value={accessListItem.rights!}
                       onChange={handleSelectorChange(accessListItem)}
