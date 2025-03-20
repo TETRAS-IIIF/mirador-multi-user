@@ -75,7 +75,6 @@ export class MediaLinkInterceptor implements NestInterceptor {
       } else {
         throw new Error('Unsupported media type');
       }
-
       if (thumbnailBuffer) {
         const hash = generateAlphanumericSHA1Hash(
           `${Date.now().toString()}${Math.random().toString(36)}`,
