@@ -114,6 +114,7 @@ export const MMUModalEdit = <
     userWorkspace?: Record<string, string>;
     rights?: ItemsRights;
     ownerId?: number;
+    personalOwnerGroupId?: number;
   },
   G extends { title: string },
 >({
@@ -598,7 +599,8 @@ export const MMUModalEdit = <
                   getGroupByOption={getGroupByOption}
                   ownerId={ownerId}
                 >
-                  {(accessListItem) => (
+                  {
+                    (accessListItem) => (
                     <Selector
                       value={accessListItem.rights!}
                       onChange={handleSelectorChange(accessListItem)}
