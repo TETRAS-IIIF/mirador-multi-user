@@ -22,6 +22,7 @@
   "addNewCanvas": "Ajouter un canevas",
   "admin": "Administration",
   "advancedEdit": "Édition avancée",
+  "advanced_edit_disabled": "Ouvrez le projet une première fois pour accéder à l'édition avancer",
   "areYouSureDuplicate": "Êtes-vous sûr de vouloir dupliquer",
   "cancel": "ANNULER",
   "canvasRemoving": "Supprimer le canevas {{index}}",
