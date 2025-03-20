@@ -190,7 +190,7 @@ export class LinkMediaGroupService {
           }
         }
       }
-      if (mediaToRemove.origin === mediaOrigin.LINK) {
+      if (mediaToRemove.origin === mediaOrigin.LINK && mediaToRemove.hash) {
         const thumbnailPath = join(
           __dirname,
           '..',
