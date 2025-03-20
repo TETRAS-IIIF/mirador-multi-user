@@ -141,8 +141,9 @@ export const ItemList = <
                         <PersonIcon />
                       )}
                   </Grid>
-                  {isActionAllowedForListItem(listItem) && <Grid item>{children!(listItem)}</Grid>}
                   {isActionAllowedForListItem(listItem) && (
+                    <>
+                    <Grid item>{children!(listItem)}</Grid>
                       <Grid item>
                         <IconButton
                           onClick={() => removeItem(listItem.id)}
@@ -153,6 +154,7 @@ export const ItemList = <
                           <DeleteIcon />
                         </IconButton>
                       </Grid>
+                    </>
                     )
                   }
                   <Grid item xs={12} sx={{ mb: "5px" }}>
