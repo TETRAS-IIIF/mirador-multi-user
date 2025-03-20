@@ -68,6 +68,9 @@ export const ResetPassword = () => {
             {t("reset-password")}
           </Typography>
           <TextField
+            inputProps={{
+              maxLength: 255,
+            }}
             label={t("new-password")}
             type="password"
             fullWidth
@@ -77,6 +80,9 @@ export const ResetPassword = () => {
             required
           />
           <TextField
+            inputProps={{
+              maxLength: 255,
+            }}
             label="Confirm New Password"
             type={t("password")}
             fullWidth

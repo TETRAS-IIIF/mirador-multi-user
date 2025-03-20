@@ -11,7 +11,12 @@ services:
       - "traefik.http.routers.${NAME}.rule=Host(`${HOST}`)"
       - "traefik.http.routers.${NAME}.tls.certresolver=myresolver"
       - "traefik.http.routers.${NAME}.entrypoints=web,websecure"
-      - "traefik.http.routers.${NAME}.middlewares=hardening@docker"
+      - "traefik.http.middlewares.hardening-${NAME}.headers.sslredirect=true"
+      - "traefik.http.middlewares.hardening-${NAME}.headers.forceSTSHeader=true"
+      - "traefik.http.middlewares.hardening-${NAME}.headers.stsIncludeSubdomains=true"
+      - "traefik.http.middlewares.hardening-${NAME}.headers.stsSeconds=15552000"
+      - "traefik.http.middlewares.hardening-${NAME}.headers.stsPreload=true"
+      - "traefik.http.middlewares.hardening-${NAME}.headers.referrerPolicy=no-referrer"
 
   backend:
     networks:

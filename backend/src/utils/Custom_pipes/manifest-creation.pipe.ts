@@ -125,9 +125,17 @@ export class MediaInterceptor implements NestInterceptor {
               const timeStamp = Date.now();
               const timeStamp2 = Date.now();
               const timeStamp3 = Date.now();
-              const height = youtubeJson.height;
-              const width = youtubeJson.width;
+              let height: number;
+              let width: number;
+              if (youtubeJson.width >= youtubeJson.height) {
+                height = 1500;
+                width = (1500 * youtubeJson.width) / youtubeJson.height;
+              } else {
+                height = 1500;
+                width = (1500 * youtubeJson.height) / youtubeJson.width;
+              }
               const duration = videoDuration;
+
               manifestToCreate.items.push({
                 id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
                 type: 'Canvas',

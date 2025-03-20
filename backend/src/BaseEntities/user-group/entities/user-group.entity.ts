@@ -20,7 +20,7 @@ export class UserGroup {
   @IsNumberString()
   id: number;
 
-  @Column({ length: 100 })
+  @Column()
   @IsString()
   title: string;
 

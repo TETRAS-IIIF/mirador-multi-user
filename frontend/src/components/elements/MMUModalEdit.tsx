@@ -75,12 +75,17 @@ interface ModalItemProps<T> {
   handleSelectorChange: (
     listItem: ListItem,
   ) => (event: SelectChangeEvent) => Promise<void>;
+  getGroupByOption?: (option: any) => string;
+  isGroups?: boolean;
   isGroups?: boolean;
   item: T;
   itemLabel: string;
   listOfItem?: ListItem[];
   metadata?: Record<string, string>;
+  metadata?: Record<string, string>;
   objectTypes?: ObjectTypes;
+  objectTypes?: ObjectTypes;
+  ownerId: number;
   ownerId:number;
   rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
   searchBarLabel: string;
@@ -247,7 +252,7 @@ export const MMUModalEdit = <
 
   const handleUpdateItem = async () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { rights ,...dataUpdated } = item
+    const { rights, ...dataUpdated } = item;
 
     let itemToUpdate = {
       ...(dataUpdated as T),
@@ -272,7 +277,7 @@ export const MMUModalEdit = <
         dataUpdated.id,
         selectedMetadataFormat!.title,
         selectedMetadataData,
-        dataUpdated.ownerId!
+        dataUpdated.ownerId!,
       );
     }
     if (updateItem) {
@@ -517,6 +522,9 @@ export const MMUModalEdit = <
               alignItems="center"
             >
               <TextField
+                inputProps={{
+                  maxLength: 255,
+                }}
                 type="text"
                 label={t("title")}
                 onChange={handleChangeTitle}
@@ -534,6 +542,9 @@ export const MMUModalEdit = <
               alignItems="center"
             >
               <TextField
+                inputProps={{
+                  maxLength: 255,
+                }}
                 type="text"
                 label={t("description")}
                 onChange={handleChangeDescription}
@@ -551,6 +562,9 @@ export const MMUModalEdit = <
               alignItems="center"
             >
               <TextField
+                inputProps={{
+                  maxLength: 255,
+                }}
                 type="text"
                 label={t("creator")}
                 onChange={handleChangeCreator}
@@ -591,6 +605,9 @@ export const MMUModalEdit = <
               <TextField
                 type="text"
                 label={t("thumbnailUrl")}
+                inputProps={{
+                  maxLength: 255,
+                }}
                 onChange={handleChangeThumbnailUrl}
                 variant="outlined"
                 defaultValue={
