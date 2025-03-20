@@ -426,6 +426,8 @@ export const MMUModalEdit = <
     return pattern.test(string);
   }
 
+  console.log(!!jsonElementToEditInAdvancedEditor)
+  console.log(jsonElementToEditInAdvancedEditor)
   return (
     <Grid container sx={{ maxHeight: 600 }}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
@@ -440,8 +442,18 @@ export const MMUModalEdit = <
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
             item.origin !== manifestOrigin.LINK)) && (
-          <Tab label={t("advancedEdit")} {...a11yProps(3)} />
-        )}
+          <Tooltip
+            title={!jsonElementToEditInAdvancedEditor ? t("advanced_edit_disabled") : ""}
+            disableHoverListener={!!jsonElementToEditInAdvancedEditor}
+          >
+      <span>
+        <Tab
+          label={t("advancedEdit")}
+          {...a11yProps(3)}
+          disabled={!jsonElementToEditInAdvancedEditor}
+        />
+      </span>
+          </Tooltip>        )}
       </Tabs>
       <Grid item container flexDirection="column">
         <CustomTabPanel value={tabValue} index={0}>
