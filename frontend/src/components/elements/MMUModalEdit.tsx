@@ -75,18 +75,13 @@ interface ModalItemProps<T> {
   handleSelectorChange: (
     listItem: ListItem,
   ) => (event: SelectChangeEvent) => Promise<void>;
-  getGroupByOption?: (option: any) => string;
-  isGroups?: boolean;
   isGroups?: boolean;
   item: T;
   itemLabel: string;
   listOfItem?: ListItem[];
   metadata?: Record<string, string>;
-  metadata?: Record<string, string>;
-  objectTypes?: ObjectTypes;
   objectTypes?: ObjectTypes;
   ownerId: number;
-  ownerId:number;
   rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
   searchBarLabel: string;
   searchInput: string;
@@ -129,7 +124,7 @@ export const MMUModalEdit = <
     id: number;
     noteTemplate?: Template[];
     origin?: manifestOrigin | mediaOrigin;
-    ownerId?: number
+    ownerId?: number;
     path?: string;
     rights?: ItemsRights;
     snapshots?: Snapshot[];
