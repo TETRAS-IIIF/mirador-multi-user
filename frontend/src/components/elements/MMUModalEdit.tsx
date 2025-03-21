@@ -4,7 +4,6 @@ import {
   SelectChangeEvent,
   Tab,
   Tabs,
-  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -32,9 +31,6 @@ import {
   ManifestGroupRights,
   manifestOrigin,
 } from "../../features/manifest/types/types.ts";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { ObjectTypes } from "../../features/tag/type.ts";
 import { a11yProps } from "./SideBar/allyProps.tsx";
@@ -59,6 +55,7 @@ import {
   Template,
 } from "../../features/projects/types/types.ts";
 import { TagMaker } from "./TagsFactory/TagMaker.tsx";
+import { MMUGeneralSettings } from "./MMUGeneralSettings.tsx";
 
 interface ModalItemProps<T> {
   HandleOpenModalEdit: () => void;
@@ -187,7 +184,10 @@ export const MMUModalEdit = <
     jsonElementToEditInAdvancedEditor,
     setJsonElementToEditInAdvancedEditor,
   ] = useState<Record<string, string> | undefined>();
-
+  console.log(
+    "jsonElementToEditInAdvancedEditor",
+    jsonElementToEditInAdvancedEditor,
+  );
   const [updatedTemplateList, setUpdatedTemplateList] = useState<
     Template[] | undefined
   >(item.noteTemplate ? item.noteTemplate : undefined);
@@ -468,13 +468,16 @@ export const MMUModalEdit = <
       });
     }
   };
+  console.log(
+    objectTypes === ObjectTypes.PROJECT ||
+      (objectTypes === ObjectTypes.MANIFEST &&
+        item.origin !== manifestOrigin.LINK),
+  );
 
-  function isValidUrl(string: string) {
-    const pattern =
-      /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
-    return pattern.test(string);
-  }
-
+  console.log(!!jsonElementToEditInAdvancedEditor);
+  console.log(
+    jsonElementToEditInAdvancedEditor && item.origin !== manifestOrigin.LINK,
+  );
   return (
     <Grid
       container
@@ -532,121 +535,19 @@ export const MMUModalEdit = <
         sx={{ height: "90%" }}
       >
         <CustomTabPanel value={tabValue} index={0}>
-          <Grid
-            container
-            item
-            sx={{
-              overflowY: "auto",
-              height: "100%",
-            }}
-          >
-            <Grid
-              item
-              sx={{ minHeight: "50px", width: "100%", marginTop: "10px" }}
-              container
-              flexDirection="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <TextField
-                inputProps={{
-                  maxLength: 255,
-                }}
-                type="text"
-                label={t("title")}
-                onChange={handleChangeTitle}
-                variant="outlined"
-                defaultValue={itemLabel}
-                fullWidth
-              />
-            </Grid>
-            <Grid
-              item
-              sx={{ minHeight: "50px", width: "100%" }}
-              container
-              flexDirection="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <TextField
-                inputProps={{
-                  maxLength: 255,
-                }}
-                type="text"
-                label={t("description")}
-                onChange={handleChangeDescription}
-                variant="outlined"
-                defaultValue={description}
-                multiline
-                fullWidth
-              />
-            </Grid>
-            <Grid
-              item
-              sx={{ minHeight: "50px", width: "100%" }}
-              container
-              justifyContent="flex-end"
-              alignItems="center"
-            >
-              <TextField
-                inputProps={{
-                  maxLength: 255,
-                }}
-                type="text"
-                label={t("creator")}
-                onChange={handleChangeCreator}
-                variant="outlined"
-                defaultValue={
-                  newItemMetadataCreator
-                    ? newItemMetadataCreator
-                    : user.data?.name
-                }
-                multiline
-                fullWidth
-                disabled
-              />
-            </Grid>
-            <Grid
-              item
-              sx={{ minHeight: "50px", width: "100%" }}
-              container
-              justifyContent="flex-start"
-              alignItems="center"
-            >
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  disabled
-                  label={t("createdAt")}
-                  onChange={(newValue) => setNewItemDate(newValue)}
-                  value={newItemDate}
-                />
-              </LocalizationProvider>
-            </Grid>
-            <Grid
-              item
-              sx={{ minHeight: "50px", width: "100%" }}
-              container
-              justifyContent="flex-end"
-              alignItems="center"
-            >
-              <TextField
-                type="text"
-                label={t("thumbnailUrl")}
-                inputProps={{
-                  maxLength: 255,
-                }}
-                onChange={handleChangeThumbnailUrl}
-                variant="outlined"
-                defaultValue={
-                  thumbnailUrl && isValidUrl(thumbnailUrl)
-                    ? thumbnailUrl
-                    : undefined
-                }
-                multiline
-                fullWidth
-              />
-            </Grid>
-          </Grid>
+          <MMUGeneralSettings
+            handleChangeTitle={handleChangeTitle}
+            itemLabel={itemLabel}
+            handleChangeDescription={handleChangeDescription}
+            description={description}
+            handleChangeCreator={handleChangeCreator}
+            newItemMetadataCreator={newItemMetadataCreator}
+            user={user.data!}
+            setNewItemDate={setNewItemDate}
+            thumbnailUrl={thumbnailUrl}
+            newItemDate={newItemDate}
+            handleChangeThumbnailUrl={handleChangeThumbnailUrl}
+          />
         </CustomTabPanel>
         {rights !== ItemsRights.READER &&
           listOfItem &&
