@@ -25,7 +25,6 @@ export function Row({
 }: SingleRowProps) {
   const [open, setOpen] = React.useState(false);
   const { t } = useTranslation();
-
   return (
     <>
       <TableRow>
@@ -57,8 +56,16 @@ export function Row({
       </TableRow>
       {renderExpandableContent && (
         <TableRow>
-          <TableCell colSpan={row.data.length + 2}>
-            <Collapse in={open}>{renderExpandableContent(row)}</Collapse>
+          <TableCell
+            colSpan={row.data.length + 2}
+            sx={{
+              paddingTop: 0,
+              paddingBottom: 0,
+            }}
+          >
+            <Collapse sx={{ padding: 0, margin: 0 }} in={open}>
+              {renderExpandableContent(row)}
+            </Collapse>
           </TableCell>
         </TableRow>
       )}

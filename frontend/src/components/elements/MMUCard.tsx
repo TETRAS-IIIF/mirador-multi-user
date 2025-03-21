@@ -319,38 +319,36 @@ const MMUCard = <
             openModal={openModal}
             setOpenModal={HandleOpenModal}
             children={
-              <>
-                <MMUModalEdit
-                  handleDeleteSnapshot={handleDeleteSnapshot}
-                  updateSnapshot={updateSnapshot}
-                  handleCreateSnapshot={handleCreateSnapshot}
-                  objectTypes={objectTypes}
-                  isGroups={isGroups}
-                  metadata={metadata ? metadata : undefined}
-                  thumbnailUrl={thumbnailUrl as string}
-                  HandleOpenModalEdit={HandleOpenModal}
-                  description={description}
-                  searchBarLabel={searchBarLabel ? searchBarLabel : ""}
-                  itemLabel={itemLabel}
-                  handleSelectorChange={handleChangeSelectedItem}
-                  fetchData={fetchData}
-                  listOfItem={listOfItem}
-                  deleteItem={deleteItem}
-                  getOptionLabel={getOptionLabel}
-                  getGroupByOption={getGroupByOption}
-                  setSearchInput={setSearchInput}
-                  handleAddAccessListItem={handleAddAccessListItem}
-                  item={item}
-                  searchInput={searchInput}
-                  searchModalEditItem={searchModalEditItem}
-                  setItemToAdd={setItemToAdd}
-                  updateItem={updateItem}
-                  rights={rights}
-                  handleDeleteAccessListItem={handleRemoveAccessListItem}
-                  duplicateItem={duplicateItem}
-                  ownerId={ownerId}
-                />
-              </>
+              <MMUModalEdit
+                handleDeleteSnapshot={handleDeleteSnapshot}
+                updateSnapshot={updateSnapshot}
+                handleCreateSnapshot={handleCreateSnapshot}
+                objectTypes={objectTypes}
+                isGroups={isGroups}
+                metadata={metadata ? metadata : undefined}
+                thumbnailUrl={thumbnailUrl as string}
+                HandleOpenModalEdit={HandleOpenModal}
+                description={description}
+                searchBarLabel={searchBarLabel ? searchBarLabel : ""}
+                itemLabel={itemLabel}
+                handleSelectorChange={handleChangeSelectedItem}
+                fetchData={fetchData}
+                listOfItem={listOfItem}
+                deleteItem={deleteItem}
+                getOptionLabel={getOptionLabel}
+                getGroupByOption={getGroupByOption}
+                setSearchInput={setSearchInput}
+                handleAddAccessListItem={handleAddAccessListItem}
+                item={item}
+                searchInput={searchInput}
+                searchModalEditItem={searchModalEditItem}
+                setItemToAdd={setItemToAdd}
+                updateItem={updateItem}
+                rights={rights}
+                handleDeleteAccessListItem={handleRemoveAccessListItem}
+                duplicateItem={duplicateItem}
+                ownerId={ownerId}
+              />
             }
           />
         </Grid>

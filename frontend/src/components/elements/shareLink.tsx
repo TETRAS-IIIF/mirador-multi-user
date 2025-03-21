@@ -11,6 +11,7 @@ interface IShareLinkProps {
     snapshotId: number,
   ) => void;
   handleDeleteSnapshot: (snapshotId: number, projectId: number) => void;
+  handleCreateSnapshot?: (id: number) => void;
 }
 
 export const ShareLink = ({
@@ -18,10 +19,21 @@ export const ShareLink = ({
   snapShots,
   updateSnapshot,
   handleDeleteSnapshot,
+  handleCreateSnapshot,
 }: IShareLinkProps) => {
   return (
-    <Grid container item spacing={2} sx={{ width: "100%" }}>
-      <Grid item container xs={10} spacing={2} sx={{ width: "100%" }}>
+    <Grid
+      container
+      item
+      spacing={2}
+      sx={{ width: "100%", padding: 0, margin: 0 }}
+    >
+      <Grid
+        item
+        container
+        spacing={1}
+        sx={{ width: "100%", padding: 0, margin: 0 }}
+      >
         <Grid
           container
           item
@@ -32,6 +44,7 @@ export const ShareLink = ({
         >
           <Grid item sx={{ width: "100%" }}>
             <SnapShotList
+              handleCreateSnapshot={handleCreateSnapshot}
               handleDeleteSnapshot={handleDeleteSnapshot}
               snapShots={snapShots}
               itemId={itemId}

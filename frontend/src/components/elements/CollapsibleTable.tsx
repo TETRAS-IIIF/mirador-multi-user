@@ -1,4 +1,5 @@
 import {
+  Button,
   Grid,
   Paper,
   Table,
@@ -27,6 +28,8 @@ interface CollapsibleTableProps {
   renderExpandableContent?: (data: RowProps) => ReactNode;
   onActionClick?: (row: RowProps) => void;
   labelButton?: string;
+  handleCreateSnapshot?: (id: number) => void;
+  itemId?: number;
 }
 
 export default function CollapsibleTable({
@@ -35,6 +38,8 @@ export default function CollapsibleTable({
   renderExpandableContent,
   onActionClick,
   labelButton,
+  itemId,
+  handleCreateSnapshot,
 }: CollapsibleTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
@@ -88,21 +93,31 @@ export default function CollapsibleTable({
   return (
     <>
       <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
-        <Grid item xs={12}>
+        <Grid item xs={8}>
           <TextField
             fullWidth
             inputProps={{
               maxLength: 255,
             }}
-            label={t("filter")}
+            label={t("filter_snapshots")}
             variant="outlined"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           />
         </Grid>
+        {handleCreateSnapshot && (
+          <Grid item xs={4}>
+            <Button
+              variant="contained"
+              onClick={() => handleCreateSnapshot!(itemId!)}
+            >
+              {t("create_snapshot")}
+            </Button>
+          </Grid>
+        )}
       </Grid>
       <TableContainer component={Paper}>
-        <Table aria-label="collapsible table">
+        <Table aria-label="collapsible table" size="small">
           <TableHead>
             <TableRow>
               <TableCell />

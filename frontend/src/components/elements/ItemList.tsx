@@ -1,4 +1,4 @@
-import { Button, Divider, Grid, IconButton, Typography } from "@mui/material";
+import { Divider, Grid, IconButton, Typography } from "@mui/material";
 import { ListItem } from "../types.ts";
 import { LoadingSpinner } from "./loadingSpinner.tsx";
 import { Dispatch, ReactNode, SetStateAction } from "react";
@@ -89,7 +89,6 @@ export const ItemList = <
       item
       sx={{
         minHeight: "55px",
-        height: "400px",
         overflowY: "auto",
       }}
     >
@@ -100,24 +99,33 @@ export const ItemList = <
             container
             flexDirection="column"
             item
-            spacing={2}
-            sx={{ width: "100%" }}
+            spacing={1}
+            sx={{ width: "100%", padding: 0, margin: 0 }}
           >
-            <Grid item container sx={{ width: "100%" }} spacing={1}>
+            <Grid
+              item
+              container
+              sx={{
+                width: "100%",
+                padding: 0,
+                margin: 0,
+              }}
+              spacing={1}
+            >
               <Grid item>
                 <Typography variant="h5">{t("snapshot")}</Typography>
               </Grid>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  onClick={() => handleCreateSnapshot!(item.id)}
-                >
-                  {t("create_snapshot")}
-                </Button>
-              </Grid>
             </Grid>
-            <Grid item sx={{ width: "100%", margin: "10px" }}>
+            <Grid
+              item
+              sx={{
+                width: "100%",
+                margin: 0,
+                padding: 0,
+              }}
+            >
               <ShareLink
+                handleCreateSnapshot={handleCreateSnapshot}
                 handleDeleteSnapshot={handleDeleteSnapshot!}
                 itemId={item.id}
                 snapShots={item.snapshots ? item.snapshots : []}
