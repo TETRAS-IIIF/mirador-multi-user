@@ -27,8 +27,9 @@ export const constructSnapshotWorkspace = (
     if (page.content?.items && Array.isArray(page.content.items)) {
       page.content.items.forEach((item) => {
         if (item.target) {
-          //const annotationId = item.target.split('#xywh')[0]; // This line cause problem in case of complex target
-          const annotationId = item.id;
+          const annotationId = item.target.source
+            ? item.target.source
+            : item.target.split('#xywh')[0];
 
           Object.entries(miradorWorkspace.manifests).forEach(
             ([_, manifest]) => {
