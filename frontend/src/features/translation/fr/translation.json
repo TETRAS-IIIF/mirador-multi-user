@@ -74,7 +74,7 @@
   "errorToken": "Jeton de réinitialisation invalide ou manquant",
   "explanationPasswordReset": "Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.",
   "fileTooLarge": "Le fichier est trop volumineux, max {{maxSize}}MB",
-  "filter": "Filtrer",
+  "filter_snapshots": "Filtrer les aperçus",
   "filterGroups": "Filtrer les groupes",
   "filterManifest": "Filtrer les manifestes",
   "filterMedia": "Filtrer les médias",

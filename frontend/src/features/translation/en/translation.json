@@ -73,7 +73,7 @@
   "errorToken": "Invalid or missing reset token",
   "explanationPasswordReset": "Enter your email address to receive a password reset link.",
   "fileTooLarge": "File is too large, max {{maxSize}}MB",
-  "filter": "filter",
+  "filter_snapshots": "filter snapshots",
   "filterGroups": "Filter groups",
   "filterManifest": "Filter Manifest",
   "filterMedia": "Filter Media",

@@ -13,6 +13,7 @@ interface ISnapShopListProps {
     snapshotId: number,
   ) => void;
   handleDeleteSnapshot: (snapshotId: number, projectId: number) => void;
+  handleCreateSnapshot?: (id: number) => void;
 }
 
 export const SnapShotList = ({
@@ -20,6 +21,7 @@ export const SnapShotList = ({
   itemId,
   updateSnapshot,
   handleDeleteSnapshot,
+  handleCreateSnapshot,
 }: ISnapShopListProps) => {
   const { t, i18n } = useTranslation();
   const createRowData = (
@@ -62,6 +64,8 @@ export const SnapShotList = ({
   return (
     <>
       <CollapsibleTable
+        handleCreateSnapshot={handleCreateSnapshot}
+        itemId={itemId}
         columns={columns}
         rows={snapshotRows}
         renderExpandableContent={(row) => (

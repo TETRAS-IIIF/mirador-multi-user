@@ -476,8 +476,18 @@ export const MMUModalEdit = <
   }
 
   return (
-    <Grid container>
-      <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
+    <Grid
+      container
+      sx={{
+        height: "70vh",
+      }}
+    >
+      <Tabs
+        value={tabValue}
+        onChange={handleChangeTab}
+        aria-label="basic tabs"
+        sx={{ height: "50px" }}
+      >
         <Tab label={t("general")} {...a11yProps(0)} />
         <Tab
           label={objectTypes != ObjectTypes.GROUP ? t("share") : t("members")}
@@ -514,15 +524,20 @@ export const MMUModalEdit = <
           <Tab label={t("tags")} {...a11yProps(5)} />
         )}
       </Tabs>
-      <Grid item container flexDirection="column">
+      <Grid
+        item
+        container
+        flexDirection="column"
+        justifyContent="space-between"
+        sx={{ height: "90%" }}
+      >
         <CustomTabPanel value={tabValue} index={0}>
           <Grid
             container
             item
             sx={{
-              minHeight: "55px",
-              height: "400px",
               overflowY: "auto",
+              height: "100%",
             }}
           >
             <Grid
@@ -643,7 +658,7 @@ export const MMUModalEdit = <
                 item
                 sx={{
                   minHeight: "55px",
-                  height: "400px",
+                  height: "100%",
                   overflowY: "auto",
                 }}
               >
@@ -681,9 +696,8 @@ export const MMUModalEdit = <
               container
               item
               sx={{
-                minHeight: "55px",
-                height: "400px",
                 overflowY: "auto",
+                height: "100%",
               }}
             >
               <MetadataForm
@@ -707,7 +721,7 @@ export const MMUModalEdit = <
                 item
                 sx={{
                   minHeight: "55px",
-                  height: "400px",
+                  height: "100%",
                   overflowY: "auto",
                 }}
               >
@@ -726,7 +740,7 @@ export const MMUModalEdit = <
             flexDirection="column"
             sx={{
               minHeight: "55px",
-              height: "600px",
+              height: "100%",
               overflowY: "auto",
             }}
           >
@@ -747,7 +761,7 @@ export const MMUModalEdit = <
             flexDirection="column"
             sx={{
               minHeight: "55px",
-              height: "400px",
+              height: "100%",
               overflowY: "auto",
             }}
           >
@@ -766,8 +780,9 @@ export const MMUModalEdit = <
             justifyContent="space-between"
             alignItems="center"
             flexDirection="row"
+            sx={{ height: "20px", padding: 0, margin: 0 }}
           >
-            <Grid item container xs={5} spacing={3}>
+            <Grid item container flexDirection="row" spacing={1} xs={4}>
               <Grid item>
                 {rights === ItemsRights.ADMIN && tabValue === 0 && (
                   <Tooltip title={t("deleteItem")}>
@@ -801,11 +816,11 @@ export const MMUModalEdit = <
             <Grid
               item
               container
-              justifyContent="flex-end"
               flexDirection="row"
               alignItems="center"
-              spacing={2}
-              sx={{ width: "auto", marginTop: "1px" }}
+              justifyContent="flex-end"
+              spacing={1}
+              xs={6}
             >
               <Grid item>
                 <Button
@@ -817,7 +832,6 @@ export const MMUModalEdit = <
                   {t("cancel")}
                 </Button>
               </Grid>
-
               <Grid item>
                 <Button
                   variant="contained"
@@ -829,43 +843,45 @@ export const MMUModalEdit = <
                 </Button>
               </Grid>
             </Grid>
-            <MMUModal
-              width={400}
-              openModal={openDeleteModal}
-              setOpenModal={handleConfirmDeleteItemModal}
-            >
-              <ModalConfirmDelete
-                deleteItem={deleteItem}
-                itemId={item.id}
-                content={t("deleteConfirmation", {
-                  itemName: itemLabel,
-                })}
-                buttonLabel={t("deleteDefinitely")}
-              />
-            </MMUModal>
-            <MMUModal
-              width={400}
-              openModal={openDuplicateModal}
-              setOpenModal={handleConfirmDuplicateItem}
-            >
-              <Grid>
-                <Typography>
-                  {" "}
-                  {t("areYouSureDuplicate")} <b>{itemLabel}</b> ?
-                </Typography>
-                <Button onClick={() => confirmDuplicate(item.id)}>
-                  {t("yes")}
-                </Button>
-                <Button
-                  onClick={() => setOpenDuplicateModal(!openDuplicateModal)}
-                >
-                  {t("no")}
-                </Button>
-              </Grid>
-            </MMUModal>
           </Grid>
         )}
       </Grid>
+      {openDeleteModal && (
+        <MMUModal
+          width={400}
+          openModal={openDeleteModal}
+          setOpenModal={handleConfirmDeleteItemModal}
+        >
+          <ModalConfirmDelete
+            deleteItem={deleteItem}
+            itemId={item.id}
+            content={t("deleteConfirmation", {
+              itemName: itemLabel,
+            })}
+            buttonLabel={t("deleteDefinitely")}
+          />
+        </MMUModal>
+      )}
+      {openDuplicateModal && (
+        <MMUModal
+          width={400}
+          openModal={openDuplicateModal}
+          setOpenModal={handleConfirmDuplicateItem}
+        >
+          <Grid>
+            <Typography>
+              {" "}
+              {t("areYouSureDuplicate")} <b>{itemLabel}</b> ?
+            </Typography>
+            <Button onClick={() => confirmDuplicate(item.id)}>
+              {t("yes")}
+            </Button>
+            <Button onClick={() => setOpenDuplicateModal(!openDuplicateModal)}>
+              {t("no")}
+            </Button>
+          </Grid>
+        </MMUModal>
+      )}
     </Grid>
   );
 };

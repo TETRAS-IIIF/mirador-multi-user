@@ -55,7 +55,6 @@ export const MetadataForm = <T extends { id: number }>({
   const [generatingFields, setGeneratingFields] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-
   const handleInputChange = useCallback(
     (term: string, value: string | null | undefined) => {
       const newValue = value ?? "";
@@ -109,7 +108,14 @@ export const MetadataForm = <T extends { id: number }>({
 
   useEffect(() => {}, [selectedMetadataFormat]);
   return (
-    <>
+    <Grid
+      container
+      item
+      sx={{
+        overflowY: "auto",
+        border: "solid black",
+      }}
+    >
       {loading ? (
         <Grid container alignItems="center" justifyContent="center">
           <CircularProgress />
@@ -117,10 +123,9 @@ export const MetadataForm = <T extends { id: number }>({
       ) : (
         <Box
           sx={{
-            minHeight: "55px",
-            height: "400px",
             overflowY: "auto",
             width: "100%",
+            height: "100%",
           }}
         >
           <Box sx={{ minWidth: 120, paddingTop: 2, paddingBottom: 2 }}>
@@ -200,6 +205,6 @@ export const MetadataForm = <T extends { id: number }>({
           ) : null}
         </Box>
       )}
-    </>
+    </Grid>
   );
 };
