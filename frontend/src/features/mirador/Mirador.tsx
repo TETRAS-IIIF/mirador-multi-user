@@ -71,6 +71,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
         HandleSetIsRunning();
         const config = {
           id: viewerRef.current.id,
+          debug: true,
           templates: project.noteTemplate,
           tags: project.tags,
           annotation: {
