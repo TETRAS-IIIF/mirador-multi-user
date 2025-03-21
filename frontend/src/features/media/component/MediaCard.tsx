@@ -42,29 +42,29 @@ interface IMediaCardProps {
     mediaId: number,
     share: string | undefined,
   ) => void;
-  ownerId:number
+  ownerId: number;
 }
 
 export const MediaCard = ({
-  media,
-  handleGrantAccess,
   HandleCopyToClipBoard,
-  HandleOpenModal,
   HandleDeleteMedia,
+  HandleOpenModal,
+  HandleUpdateMedia,
+  caddyUrl,
   getAllMediaGroups,
+  getGroupByOption,
   getOptionLabel,
-  listOfGroup,
-  openModalMediaId,
-  handleRemoveAccessToMedia,
+  handleChangeRights,
+  handleGrantAccess,
   handleLookingForUserGroups,
+  handleRemoveAccessToMedia,
+  handleRemoveMediaFromList,
+  listOfGroup,
+  media,
+  openModalMediaId,
+  ownerId,
   setGroupList,
   setUserToAdd,
-  caddyUrl,
-  HandleUpdateMedia,
-  handleChangeRights,
-  getGroupByOption,
-  handleRemoveMediaFromList,
-                            ownerId,
 }: IMediaCardProps) => {
   const { t } = useTranslation();
 

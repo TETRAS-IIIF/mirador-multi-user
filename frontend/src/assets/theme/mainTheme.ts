@@ -4,10 +4,14 @@ import backgroundImage from "../../../customAssets/landing-background.webp";
 
 declare module "@mui/material/styles" {
   interface Palette {
+    selectedBackground: string;
+    selectedText: string;
     backgroundImage?: string;
   }
 
   interface PaletteOptions {
+    selectedBackground?: string;
+    selectedText?: string;
     backgroundImage?: string;
   }
 }
@@ -18,6 +22,8 @@ export const theme = createTheme({
     background: {
       default: "#dcdcdc",
     },
+    selectedBackground: "#1976d2",
+    selectedText: "#F5EBFF",
     backgroundImage: `url(${backgroundImage})`,
   },
   components: {

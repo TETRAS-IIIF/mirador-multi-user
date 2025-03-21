@@ -28,7 +28,6 @@ import toast from "react-hot-toast";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import CreateIcon from "@mui/icons-material/Create";
 import { ManifestCreationForm } from "./ManifestCreationForm.tsx";
-import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { Media } from "../../media/types/types.ts";
 import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
@@ -58,7 +57,8 @@ import {
   UPDATED_AT,
   useCurrentPageData,
 } from "../../../utils/customHooks/filterHook.ts";
-import { removeManifestToGroup } from '../api/removeManifestToGroup.ts';
+import { removeManifestToGroup } from "../api/removeManifestToGroup.ts";
+import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -101,9 +101,8 @@ export const AllManifests = ({
   const [userGroupSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
-  const [openSidePanel, setOpenSidePanel] = useState(false);
   const [sortField, setSortField] = useState<keyof Manifest>(UPDATED_AT);
-  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   const { t } = useTranslation();
 
@@ -326,9 +325,6 @@ export const AllManifests = ({
       eventValue as ManifestGroupRights,
     );
   };
-  const handleSetOpenSidePanel = () => {
-    setOpenSidePanel(!openSidePanel);
-  };
 
   const handleRemoveManifestFromList: (
     manifestId: number,
@@ -344,23 +340,20 @@ export const AllManifests = ({
     }
   };
 
-  const handleRemoveAccess = async (
-    manifestId: number,
-    groupId: number,
-  ) => {
-    await removeManifestToGroup(manifestId,groupId);
+  const handleRemoveAccess = async (manifestId: number, groupId: number) => {
+    await removeManifestToGroup(manifestId, groupId);
   };
 
   return (
     <>
-      <SidePanelMedia
-        open={openSidePanel && !!openModalManifestId}
-        setOpen={handleSetOpenSidePanel}
-        display={!!openModalManifestId}
-        fetchMediaForUser={fetchMediaForUser}
+      <SidePanel
         medias={medias}
-        user={user}
+        manifests={manifests}
         userPersonalGroup={userPersonalGroup}
+        user={user}
+        fetchMediaForUser={fetchMediaForUser}
+        fetchManifestForUser={fetchManifestForUser}
+        display={!!openModalManifestId}
       >
         <Grid
           item
@@ -563,20 +556,20 @@ export const AllManifests = ({
               flexDirection="column"
               sx={{ marginBottom: "70px", width: "100%" }}
             >
-              <SidePanelMedia
-                display={true}
+              <SidePanel
                 medias={medias}
+                manifests={manifests}
                 userPersonalGroup={userPersonalGroup}
-                fetchMediaForUser={fetchMediaForUser}
                 user={user}
-                open={openSidePanel}
-                setOpen={handleSetOpenSidePanel}
+                fetchMediaForUser={fetchMediaForUser}
+                fetchManifestForUser={fetchManifestForUser}
+                display={true}
               >
                 <ManifestCreationForm
                   handleSubmit={handleSubmitManifestCreationForm}
                   t={t}
                 />
-              </SidePanelMedia>
+              </SidePanel>
             </Grid>
           )}
           <Grid>
@@ -596,7 +589,7 @@ export const AllManifests = ({
             />
           )}
         </Grid>
-      </SidePanelMedia>
+      </SidePanel>
     </>
   );
 };

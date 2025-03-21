@@ -7,7 +7,6 @@ import { LinkGroupProject } from '../../LinkModules/link-group-project/entities/
 import { LinkMediaGroup } from '../../LinkModules/link-media-group/entities/link-media-group.entity';
 import { Media } from '../media/entities/media.entity';
 import { LinkUserGroup } from '../../LinkModules/link-user-group/entities/link-user-group.entity';
-import { Tag } from '../tag/entities/tag.entity';
 
 @Module({
   exports: [UserGroupService],
@@ -18,7 +17,6 @@ import { Tag } from '../tag/entities/tag.entity';
       LinkMediaGroup,
       LinkUserGroup,
       Media,
-      Tag
     ]),
   ],
   controllers: [UserGroupController],

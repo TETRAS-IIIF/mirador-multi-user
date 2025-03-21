@@ -2,15 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Timestamp,
   UpdateDateColumn,
 } from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../../LinkModules/link-group-project/entities/link-group-project.entity';
-import { Tag } from '../../tag/entities/tag.entity';
+import { Snapshot } from '../../snapshot/entities/snapshot.entity';
 
 @Entity()
 export class Project {
@@ -18,7 +17,7 @@ export class Project {
   @IsNumberString()
   id: number;
 
-  @Column()
+  @Column({ length: 100 })
   @IsString()
   title: string;
 
@@ -38,13 +37,16 @@ export class Project {
   metadata: any;
 
   @Column({ nullable: true })
-  snapShotHash: string;
-
-  @Column({ nullable: true })
   lockedByUserId: number;
 
   @Column({ type: 'timestamp', nullable: true })
   lockedAt: Date;
+
+  @Column({ type: 'json', nullable: true })
+  noteTemplate: string[];
+
+  @Column({ type: 'json', nullable: true })
+  tags: string[];
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -61,6 +63,12 @@ export class Project {
   )
   linkGroupProjectsIds: LinkGroupProject[];
 
+  @OneToMany(() => Snapshot, (snapshot) => snapshot.project, {
+    cascade: ['remove'],
+    onDelete: 'CASCADE',
+  })
+  snapshots: Snapshot[];
+
   @UpdateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
@@ -68,7 +76,4 @@ export class Project {
   })
   public updated_at: Date;
 
-  @ManyToOne(() => Tag)
-  @JoinColumn({ name: 'tagId' })
-  tag: Tag;
 }

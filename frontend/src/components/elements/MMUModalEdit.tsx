@@ -52,35 +52,49 @@ import { fetchManifest } from "../../features/manifest/api/fetchManifest.ts";
 import { updateManifestJson } from "../../features/manifest/api/updateManifestJson.ts";
 import { Selector } from "../Selector.tsx";
 import { useTranslation } from "react-i18next";
+import { NoteTemplate } from "./CustomizationEditModal/NoteTemplate.tsx";
+import {
+  Project,
+  Snapshot,
+  Template,
+} from "../../features/projects/types/types.ts";
+import { TagMaker } from "./TagsFactory/TagMaker.tsx";
 
-interface ModalItemProps<T, G> {
-  item: T;
-  itemLabel: string;
-  updateItem?: (newItem: T) => void;
+interface ModalItemProps<T> {
+  HandleOpenModalEdit: () => void;
   deleteItem?: (itemId: number) => void;
+  description: string;
   duplicateItem?: (itemId: number) => void;
+  fetchData: () => Promise<void>;
+  getOptionLabel?: (option: { title: string }, searchInput: string) => string;
+  handleAddAccessListItem: () => void;
+  handleCreateSnapshot?: (projectId: number) => void;
   handleDeleteAccessListItem: (itemId: number) => void;
-  searchModalEditItem?: (partialString: string) => Promise<any[]> | any[];
-  getOptionLabel?: (option: G, searchInput: string) => string;
+  handleDeleteSnapshot?: (snapshotId: number, projectId: number) => void;
   handleSelectorChange: (
     listItem: ListItem,
   ) => (event: SelectChangeEvent) => Promise<void>;
-  fetchData: () => Promise<void>;
+  getGroupByOption?: (option: any) => string;
+  isGroups?: boolean;
+  item: T;
+  itemLabel: string;
   listOfItem?: ListItem[];
-  setItemToAdd?: Dispatch<SetStateAction<G | null>>;
-  handleAddAccessListItem: () => void;
-  setSearchInput: Dispatch<SetStateAction<string>>;
-  searchInput: string;
+  metadata?: Record<string, string>;
+  objectTypes?: ObjectTypes;
+  ownerId: number;
   rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
   searchBarLabel: string;
-  description: string;
-  HandleOpenModalEdit: () => void;
+  searchInput: string;
+  searchModalEditItem?: (partialString: string) => Promise<any[]> | any[];
+  setItemToAdd?: Dispatch<SetStateAction<{ title: string } | null>>;
+  setSearchInput: Dispatch<SetStateAction<string>>;
   thumbnailUrl?: string | null;
-  metadata?: Record<string, string>;
-  isGroups?: boolean;
-  objectTypes?: ObjectTypes;
-  getGroupByOption?: (option: any) => string;
-  ownerId: number;
+  updateItem?: (newItem: T) => void;
+  updateSnapshot?: (
+    snapshotTitle: string,
+    projectId: number,
+    snapshotId: number,
+  ) => void;
 }
 
 type MetadataFormat = {
@@ -105,45 +119,50 @@ type MetadataArray = MetadataFormat[];
 
 export const MMUModalEdit = <
   T extends {
-    id: number;
-    origin?: manifestOrigin | mediaOrigin;
     created_at: Dayjs;
-    snapShotHash?: string;
     hash?: string;
-    path?: string;
-    userWorkspace?: Record<string, string>;
-    rights?: ItemsRights;
+    id: number;
+    noteTemplate?: Template[];
+    origin?: manifestOrigin | mediaOrigin;
     ownerId?: number;
+    path?: string;
     personalOwnerGroupId?: number;
+    rights?: ItemsRights;
+    snapshots?: Snapshot[];
+    tags?: string[];
+    title?: string;
+    userWorkspace?: Record<string, string>;
   },
-  G extends { title: string },
 >({
-  itemLabel,
-  setItemToAdd,
-  item,
-  updateItem,
-  deleteItem,
-  searchModalEditItem,
-  getOptionLabel,
-  handleSelectorChange,
-  fetchData,
-  listOfItem,
-  handleAddAccessListItem,
-  setSearchInput,
-  searchInput,
-  rights,
-  searchBarLabel,
-  handleDeleteAccessListItem,
-  description,
   HandleOpenModalEdit,
-  thumbnailUrl,
-  metadata,
-  isGroups,
-  getGroupByOption,
+  deleteItem,
+  description,
   duplicateItem,
+  fetchData,
+  getGroupByOption,
+  getOptionLabel,
+  handleAddAccessListItem,
+  handleCreateSnapshot,
+  handleDeleteAccessListItem,
+  handleDeleteSnapshot,
+  handleSelectorChange,
+  isGroups,
+  item,
+  itemLabel,
+  listOfItem,
+  metadata,
   objectTypes,
   ownerId,
-}: ModalItemProps<T, G>) => {
+  rights,
+  searchBarLabel,
+  searchInput,
+  searchModalEditItem,
+  setItemToAdd,
+  setSearchInput,
+  thumbnailUrl,
+  updateItem,
+  updateSnapshot,
+}: ModalItemProps<T>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
   const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
@@ -168,6 +187,11 @@ export const MMUModalEdit = <
     jsonElementToEditInAdvancedEditor,
     setJsonElementToEditInAdvancedEditor,
   ] = useState<Record<string, string> | undefined>();
+
+  const [updatedTemplateList, setUpdatedTemplateList] = useState<
+    Template[] | undefined
+  >(item.noteTemplate ? item.noteTemplate : undefined);
+
   const user = useUser();
   const { t } = useTranslation();
 
@@ -225,12 +249,20 @@ export const MMUModalEdit = <
   const handleUpdateItem = async () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { rights, ...dataUpdated } = item;
-    const itemToUpdate = {
+
+    let itemToUpdate = {
       ...(dataUpdated as T),
+      description: newItemDescription,
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
-      description: newItemDescription,
     };
+
+    if (updatedTemplateList) {
+      itemToUpdate = {
+        ...itemToUpdate,
+        noteTemplate: updatedTemplateList,
+      };
+    }
     if (
       objectTypes !== ObjectTypes.GROUP &&
       objectTypes &&
@@ -332,7 +364,7 @@ export const MMUModalEdit = <
     }
   }, []);
 
-  const handleGetOtpionLabel = (option: G) => {
+  const handleGetOtpionLabel = (option: { title: string }) => {
     return getOptionLabel ? getOptionLabel(option, searchInput) : "";
   };
   const handleSearchModalEditItem = (query: string) => {
@@ -420,16 +452,31 @@ export const MMUModalEdit = <
     }
   };
 
+  const handleUpdateTemplate = async () => {
+    if (updateItem) {
+      updateItem({
+        ...item,
+        noteTemplate: updatedTemplateList,
+      });
+    }
+  };
+  const handleUpdateTags = async (updatedTagList: string[]) => {
+    if (updateItem) {
+      updateItem({
+        ...item,
+        tags: updatedTagList,
+      });
+    }
+  };
+
   function isValidUrl(string: string) {
     const pattern =
       /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
     return pattern.test(string);
   }
 
-  console.log(!!jsonElementToEditInAdvancedEditor)
-  console.log(jsonElementToEditInAdvancedEditor)
   return (
-    <Grid container sx={{ maxHeight: 600 }}>
+    <Grid container>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
         <Tab label={t("general")} {...a11yProps(0)} />
         <Tab
@@ -439,21 +486,33 @@ export const MMUModalEdit = <
         {objectTypes !== ObjectTypes.GROUP && (
           <Tab label={t("metadata")} {...a11yProps(1)} />
         )}
+
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
             item.origin !== manifestOrigin.LINK)) && (
           <Tooltip
-            title={!jsonElementToEditInAdvancedEditor ? t("advanced_edit_disabled") : ""}
+            title={
+              !jsonElementToEditInAdvancedEditor
+                ? t("advanced_edit_disabled")
+                : ""
+            }
             disableHoverListener={!!jsonElementToEditInAdvancedEditor}
           >
-      <span>
-        <Tab
-          label={t("advancedEdit")}
-          {...a11yProps(3)}
-          disabled={!jsonElementToEditInAdvancedEditor}
-        />
-      </span>
-          </Tooltip>        )}
+            <span>
+              <Tab
+                label={t("advancedEdit")}
+                {...a11yProps(3)}
+                disabled={!jsonElementToEditInAdvancedEditor}
+              />
+            </span>
+          </Tooltip>
+        )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("templates")} {...a11yProps(4)} />
+        )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("tags")} {...a11yProps(5)} />
+        )}
       </Tabs>
       <Grid item container flexDirection="column">
         <CustomTabPanel value={tabValue} index={0}>
@@ -572,14 +631,6 @@ export const MMUModalEdit = <
                 fullWidth
               />
             </Grid>
-            {/*<Grid*/}
-            {/*item*/}
-            {/*container*/}
-            {/*justifyContent="flex-end"*/}
-            {/*alignItems="center"*/}
-            {/*>*/}
-            {/*  <TaggingForm objectTypes={objectTypes} object={item}/>*/}
-            {/*</Grid>*/}
           </Grid>
         </CustomTabPanel>
         {rights !== ItemsRights.READER &&
@@ -597,22 +648,24 @@ export const MMUModalEdit = <
                 }}
               >
                 <ItemList
-                  item={item}
-                  objectTypes={objectTypes!}
-                  snapShotHash={item.snapShotHash ? item.snapShotHash : ""}
+                  getGroupByOption={getGroupByOption}
                   handleAddAccessListItem={handleAddAccessListItem}
-                  setItemToAdd={setItemToAdd}
-                  items={listOfItem}
+                  handleCreateSnapshot={handleCreateSnapshot}
+                  handleDeleteSnapshot={handleDeleteSnapshot}
+                  handleGetOptionLabel={handleGetOtpionLabel}
                   handleSearchModalEditItem={handleSearchModalEditItem}
+                  item={item}
+                  items={listOfItem}
+                  objectTypes={objectTypes!}
+                  ownerId={ownerId}
                   removeItem={handleDeleteAccessListItem}
                   searchBarLabel={searchBarLabel}
+                  setItemToAdd={setItemToAdd}
                   setSearchInput={setSearchInput}
-                  handleGetOptionLabel={handleGetOtpionLabel}
-                  getGroupByOption={getGroupByOption}
-                  ownerId={ownerId}
+                  snapShots={item.snapshots ? item.snapshots : []}
+                  updateSnapshot={updateSnapshot}
                 >
-                  {
-                    (accessListItem) => (
+                  {(accessListItem) => (
                     <Selector
                       value={accessListItem.rights!}
                       onChange={handleSelectorChange(accessListItem)}
@@ -665,6 +718,47 @@ export const MMUModalEdit = <
               </Grid>
             </CustomTabPanel>
           )}
+        <CustomTabPanel value={tabValue} index={4}>
+          <Grid
+            container
+            item
+            spacing={1}
+            flexDirection="column"
+            sx={{
+              minHeight: "55px",
+              height: "600px",
+              overflowY: "auto",
+            }}
+          >
+            <Grid item sx={{ height: "100%" }}>
+              <NoteTemplate
+                project={item as unknown as Project}
+                handleUpdateTemplate={handleUpdateTemplate}
+                setUpdatedTemplateList={setUpdatedTemplateList}
+              />
+            </Grid>
+          </Grid>
+        </CustomTabPanel>
+        <CustomTabPanel value={tabValue} index={5}>
+          <Grid
+            container
+            item
+            spacing={1}
+            flexDirection="column"
+            sx={{
+              minHeight: "55px",
+              height: "400px",
+              overflowY: "auto",
+            }}
+          >
+            <Grid item sx={{ height: "100%" }}>
+              <TagMaker
+                project={item as unknown as Project}
+                handleUpdateTags={handleUpdateTags}
+              />
+            </Grid>
+          </Grid>
+        </CustomTabPanel>
         {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && (
           <Grid
             item
@@ -675,7 +769,7 @@ export const MMUModalEdit = <
           >
             <Grid item container xs={5} spacing={3}>
               <Grid item>
-                {rights === ItemsRights.ADMIN && (
+                {rights === ItemsRights.ADMIN && tabValue === 0 && (
                   <Tooltip title={t("deleteItem")}>
                     <Button
                       color="error"
@@ -690,6 +784,7 @@ export const MMUModalEdit = <
               <Grid item>
                 {(rights === ItemsRights.ADMIN ||
                   rights === ItemsRights.EDITOR) &&
+                  tabValue === 0 &&
                   duplicateItem && (
                     <Tooltip title={t("duplicate")}>
                       <Button
@@ -710,7 +805,7 @@ export const MMUModalEdit = <
               flexDirection="row"
               alignItems="center"
               spacing={2}
-              sx={{ width: "auto" }}
+              sx={{ width: "auto", marginTop: "1px" }}
             >
               <Grid item>
                 <Button

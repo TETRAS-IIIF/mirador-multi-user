@@ -22,13 +22,17 @@ import { LinkUserGroupService } from '../link-user-group/link-user-group.service
 import { Project } from '../../BaseEntities/project/entities/project.entity';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { ActionType } from '../../enum/actions';
-import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
-import * as fs from 'fs';
+import { UserGroupTypes } from '../../enum/user-group-types';
+import { SnapshotService } from '../../BaseEntities/snapshot/snapshot.service';
+import { CreateSnapshotDto } from '../../BaseEntities/snapshot/dto/create-snapshot.dto';
 import {
   DEFAULT_PROJECT_SNAPSHOT_FILE_NAME,
   UPLOAD_FOLDER,
 } from '../../utils/constants';
-import { UserGroupTypes } from '../../enum/user-group-types';
+import * as fs from 'node:fs';
+import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
+import { AnnotationPageService } from '../../BaseEntities/annotation-page/annotation-page.service';
+import { constructSnapshotWorkspace } from './utils/snapshot.utils';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -40,6 +44,8 @@ export class LinkGroupProjectService {
     private readonly projectService: ProjectService,
     private readonly groupService: UserGroupService,
     private readonly linkUserGroupService: LinkUserGroupService,
+    private readonly snapshotService: SnapshotService,
+    private readonly annotationPageService: AnnotationPageService,
   ) {}
 
   async create(createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
@@ -77,7 +83,7 @@ export class LinkGroupProjectService {
     try {
       return await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userId } },
-        relations: ['project', 'user_group'],
+        relations: ['project', 'project.snapshots', 'user_group'],
       });
     } catch (error) {
       throw new InternalServerErrorException(
@@ -549,15 +555,60 @@ export class LinkGroupProjectService {
     }
   }
 
-  async generateProjectSnapshot(projectId: number) {
+  async generateProjectSnapshot(
+    createSnapshotDto: CreateSnapshotDto,
+    creatorId: number,
+  ) {
     try {
-      const project = await this.projectService.findOne(projectId);
-      const hash = generateAlphanumericSHA1Hash(
-        `${project.title}${Date.now().toString()}`,
+      const project = await this.projectService.findOne(
+        createSnapshotDto.projectId,
       );
+      const creator = await this.groupService.findUserPersonalGroup(creatorId);
+      const projectAnnotationPages =
+        await this.annotationPageService.findAllProjectAnnotation(project.id);
+      const snapshotWorkspace = constructSnapshotWorkspace(
+        projectAnnotationPages,
+        project.userWorkspace,
+      );
+
+      const hash = generateAlphanumericSHA1Hash(
+        `${createSnapshotDto.title}${Date.now().toString()}`,
+      );
+
+      const snapShot = await this.snapshotService.createSnapshot({
+        ...createSnapshotDto,
+        projectId: project.id,
+        hash: hash,
+        creator: creator.title,
+      });
       const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 
       fs.mkdirSync(uploadPath, { recursive: true });
+      const workspaceData = {
+        generated_at: Date.now(),
+        workspace: snapshotWorkspace,
+      };
+      const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
+      fs.writeFileSync(
+        workspaceJsonPath,
+        JSON.stringify(workspaceData, null, 2),
+        'utf-8',
+      );
+      return snapShot;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while creating snapshot`,
+        error,
+      );
+    }
+  }
+
+  async updateSnapshot(title: string, snapshotId: number, projectId: number) {
+    try {
+      const project = await this.projectService.findOne(projectId);
+      const snapshotToUpdate = await this.snapshotService.findOne(snapshotId);
+      const uploadPath = `${UPLOAD_FOLDER}/${snapshotToUpdate.hash}`;
       const workspaceData = {
         generated_at: Date.now(),
         workspace: project.userWorkspace,
@@ -568,16 +619,33 @@ export class LinkGroupProjectService {
         JSON.stringify(workspaceData, null, 2),
         'utf-8',
       );
-      await this.projectService.update(projectId, {
-        id: projectId,
-        snapShotHash: hash,
+      return await this.snapshotService.updateSnapshot(snapshotId, {
+        ...snapshotToUpdate,
+        title: title,
       });
-      return {
-        snapShotHash: `${hash}`,
-      };
     } catch (error) {
       this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(`an error occurred`, error);
+      throw new InternalServerErrorException(
+        `an error occurred while updating snapshot`,
+        error,
+      );
+    }
+  }
+
+  async deleteSnapshot(snapshotId: number) {
+    try {
+      const snapshotToDelete = await this.snapshotService.findOne(snapshotId);
+      const uploadPath = `${UPLOAD_FOLDER}/${snapshotToDelete.hash}`;
+      const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
+      //TODO: remove file located at uploadPath generate rights error on filesystem
+      fs.unlinkSync(workspaceJsonPath);
+      return await this.snapshotService.deleteSnapshot(snapshotId);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while deleting snapshot`,
+        error,
+      );
     }
   }
 

@@ -37,6 +37,8 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import ShareIcon from "@mui/icons-material/Share";
 import useFetchThumbnailsUrl from "../../utils/customHooks/useFetchThumbnailsUrl.ts";
 import { LoadingSpinner } from "./loadingSpinner.tsx";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import { Snapshot } from "../../features/projects/types/types.ts";
 
 interface IMMUCardProps<T, X> {
   id: number;
@@ -78,27 +80,32 @@ interface IMMUCardProps<T, X> {
     manifestId: number,
     share: string | undefined,
   ) => Promise<void> | void;
+  handleCreateSnapshot?: (projectId: number) => void;
+  updateSnapshot?: (
+    snapshotTitle: string,
+    projectId: number,
+    snapshotId: number,
+  ) => void;
+  handleDeleteSnapshot?: (snapshotId: number, projectId: number) => void;
   ownerId: number;
 }
 
 const MMUCard = <
   T extends {
     created_at: Dayjs;
-    hash?: string;
     id: number;
     mediaTypes?: MediaTypes;
     origin?: manifestOrigin | mediaOrigin;
     path?: string;
     share?: string;
     shared?: boolean;
-    snapShotHash?: string;
+    snapshots?: Snapshot[];
     thumbnailUrl?: string;
     title?: string;
     updated_at: Dayjs;
   },
   X extends { id: number },
 >({
-  ownerId,
   AddAccessListItemFunction,
   DefaultButton,
   EditorButton,
@@ -109,6 +116,8 @@ const MMUCard = <
   getAccessToItem,
   getGroupByOption,
   getOptionLabel,
+  handleCreateSnapshot,
+  handleDeleteSnapshot,
   handleRemoveFromList,
   handleSelectorChange,
   id,
@@ -119,6 +128,7 @@ const MMUCard = <
   metadata,
   objectTypes,
   openModal,
+  ownerId,
   removeAccessListItemFunction,
   rights,
   searchBarLabel,
@@ -126,6 +136,7 @@ const MMUCard = <
   setItemList,
   setItemToAdd,
   updateItem,
+  updateSnapshot,
 }: IMMUCardProps<T, X>) => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
@@ -222,6 +233,12 @@ const MMUCard = <
                 <ImageIcon />
               </Grid>
             )}
+          {objectTypes === ObjectTypes.MEDIA &&
+            item.mediaTypes === MediaTypes.OTHER && (
+              <Grid item xs={12} sm={1}>
+                <AttachFileIcon />
+              </Grid>
+            )}
           <Grid item xs={12} sm={2}>
             <Tooltip title={itemLabel} placement="bottom-start">
               <Typography
@@ -298,12 +315,15 @@ const MMUCard = <
             </Grid>
           </CardActions>
           <MMUModal
-            width={800}
+            width={1000}
             openModal={openModal}
             setOpenModal={HandleOpenModal}
             children={
               <>
                 <MMUModalEdit
+                  handleDeleteSnapshot={handleDeleteSnapshot}
+                  updateSnapshot={updateSnapshot}
+                  handleCreateSnapshot={handleCreateSnapshot}
                   objectTypes={objectTypes}
                   isGroups={isGroups}
                   metadata={metadata ? metadata : undefined}

@@ -4,8 +4,8 @@ import WorkIcon from "@mui/icons-material/Work";
 import ArticleIcon from "@mui/icons-material/Article";
 import PermMediaIcon from "@mui/icons-material/PermMedia";
 import GroupsIcon from "@mui/icons-material/Groups";
-import { MENU_ELEMENT } from "../../SideDrawer";
 import { useTranslation } from "react-i18next";
+import { MENU_ELEMENT } from "../../../../utils/utils.ts";
 
 interface DrawerElementContentMenuProps {
   open: boolean;
@@ -13,14 +13,6 @@ interface DrawerElementContentMenuProps {
   handleChangeContent: (content: string) => void;
 }
 
-/**
- * SideDrawerContentMenu component
- * Display the menu items for the side drawer (Projects, Manifests, Media, Groups)
- * @param open
- * @param selectedContent
- * @param handleChangeContent
- * @constructor
- */
 export function DrawerElementContentMenu({
   open,
   selectedContent,
@@ -29,9 +21,9 @@ export function DrawerElementContentMenu({
   const { t } = useTranslation();
 
   return (
-    <List sx={{ minHeight: "70vh", flexGrow: 1 }}>
+    <List sx={{ minHeight: "50vh", flexGrow: 1, padding: 0 }}>
       <Tooltip title={t("projectTitle")} placement="right">
-        <ListItem sx={{ padding: 0 }}>
+        <ListItem sx={{ padding: 0, margin: 0 }}>
           <ItemButton
             selected={MENU_ELEMENT.PROJECTS === selectedContent}
             open={open}

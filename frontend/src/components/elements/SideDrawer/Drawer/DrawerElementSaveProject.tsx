@@ -10,14 +10,6 @@ interface DrawerElementSaveProjectProps {
   saveProject: () => void;
 }
 
-/**
- * SaveProject component
- * Display the save project button
- * @param open
- * @param projectSelected
- * @param saveProject
- * @constructor
- */
 export function DrawerElementSaveProject({
   open,
   projectSelected,
@@ -26,9 +18,9 @@ export function DrawerElementSaveProject({
   const { t } = useTranslation();
 
   return (
-    <List>
+    <List sx={{ padding: 0, margin: 0 }}>
       <Tooltip title={projectSelected!.title} placement="left">
-        <ListItem sx={{ padding: 0 }}>
+        <ListItem sx={{ padding: 0, margin: 0 }}>
           <ItemButton
             icon={<WorkIcon />}
             text={projectSelected!.title}

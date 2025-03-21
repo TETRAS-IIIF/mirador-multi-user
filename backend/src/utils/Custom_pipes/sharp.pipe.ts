@@ -11,6 +11,8 @@ import { createWriteStream } from 'fs';
 import { join } from 'path';
 import { generateAlphanumericSHA1Hash } from '../hashGenerator';
 import { THUMBNAIL_FILE_SUFFIX, UPLOAD_FOLDER } from '../constants';
+import { isImage } from '../checkTypes/isImage';
+import { mediaTypes } from '../../enum/mediaTypes';
 
 @Injectable()
 export class SharpPipeInterceptor implements NestInterceptor {
@@ -20,65 +22,68 @@ export class SharpPipeInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
     const file = request.file;
-
-    if (file) {
-      const filePath = file.path;
-      return sharp(filePath)
-        .resize(200, 200)
-        .webp({ effort: 3 })
-        .toBuffer()
-        .then((buffer) => {
-          const processedFilePath = `${file.destination}/thumbnail.webp`;
-          return sharp(buffer).toFile(processedFilePath);
-        })
-        .then(() => next.handle());
-    }
-
-    // Handle base64-encoded file in request.body
-    else if (request.body.file) {
-      const base64File = request.body.file;
-      const matches = base64File.match(/^data:(.+);base64,(.+)$/);
-
-      if (!matches) {
-        throw new Error('Invalid file format');
+    const isThisAnImage = isImage(request.file);
+    if (isThisAnImage) {
+      if (file) {
+        request.fileType = mediaTypes.IMAGE;
+        const filePath = file.path;
+        return sharp(filePath)
+          .resize(200, 200)
+          .webp({ effort: 3 })
+          .toBuffer()
+          .then((buffer) => {
+            const processedFilePath = `${file.destination}/thumbnail.webp`;
+            return sharp(buffer).toFile(processedFilePath);
+          })
+          .then(() => next.handle());
       }
+      // Handle base64-encoded file in request.body
+      else if (request.body.file) {
+        const base64File = request.body.file;
+        const matches = base64File.match(/^data:(.+);base64,(.+)$/);
 
-      const mimeType = matches[1];
-      const fileExtension = mimeType.split('/')[1];
-      const fileBuffer = Buffer.from(matches[2], 'base64');
+        if (!matches) {
+          throw new Error('Invalid file format');
+        }
 
-      const hash = generateAlphanumericSHA1Hash(
-        `${Date.now().toString()}${Math.random().toString(36)}`,
-      );
-      const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
+        const mimeType = matches[1];
+        const fileExtension = mimeType.split('/')[1];
+        const fileBuffer = Buffer.from(matches[2], 'base64');
 
-      fs.mkdirSync(uploadPath, { recursive: true });
+        const hash = generateAlphanumericSHA1Hash(
+          `${Date.now().toString()}${Math.random().toString(36)}`,
+        );
+        const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 
-      const fileName =
-        request.body.fileName || `uploaded_file.${fileExtension}`;
-      const processedFilePath = join(
-        uploadPath,
-        `${fileName}${THUMBNAIL_FILE_SUFFIX}`,
-      );
-      request.generatedHash = hash;
-      return sharp(fileBuffer)
-        .resize(200, 200)
-        .webp({ effort: 3 })
-        .toBuffer()
-        .then((buffer) => {
-          return new Promise((resolve, reject) => {
-            const writeStream = createWriteStream(processedFilePath);
-            writeStream.write(buffer);
-            writeStream.end();
-            writeStream.on('finish', () => {
-              request.processedFilePath = processedFilePath;
-              resolve(next.handle());
+        fs.mkdirSync(uploadPath, { recursive: true });
+
+        const fileName =
+          request.body.fileName || `uploaded_file.${fileExtension}`;
+        const processedFilePath = join(
+          uploadPath,
+          `${fileName}${THUMBNAIL_FILE_SUFFIX}`,
+        );
+        request.generatedHash = hash;
+        return sharp(fileBuffer)
+          .resize(200, 200)
+          .webp({ effort: 3 })
+          .toBuffer()
+          .then((buffer) => {
+            return new Promise((resolve, reject) => {
+              const writeStream = createWriteStream(processedFilePath);
+              writeStream.write(buffer);
+              writeStream.end();
+              writeStream.on('finish', () => {
+                request.processedFilePath = processedFilePath;
+                resolve(next.handle());
+              });
+              writeStream.on('error', reject);
             });
-            writeStream.on('error', reject);
           });
-        });
+      }
+    } else {
+      request.fileType = mediaTypes.OTHER;
     }
-
     return next.handle();
   }
 }

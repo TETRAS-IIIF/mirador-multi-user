@@ -13,3 +13,5 @@ export const LOGS_FOLDER = './logs';
 export const DEFAULT_PROJECT_SNAPSHOT_FILE_NAME = 'workspace.json';
 
 export const THUMBNAIL_FILE_SUFFIX = '_thumbnail.webp';
+
+export const MARIA_DB_PORT = 3306;

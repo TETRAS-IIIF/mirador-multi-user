@@ -1,15 +1,22 @@
 export const isValidFileForUpload = (file: File) => {
-  return isImageFile(file);
+  return !isVideoOrAudioFile(file);
 };
 
-const isImageFile = (file: File) => {
-  return !!file.name.match(
-    /\.(jpg|jpeg|png|webp|gif|bmp|tiff|svg|ico|jfif|heic|heif)$/i,
-  );
+const isVideoOrAudioFile = (file: File) => {
+  return file.type.startsWith("video/") || file.type.startsWith("audio/");
+};
+const maxUploadSize =
+  parseInt(import.meta.env.VITE_MAX_UPLOAD_SIZE, 10) * 1024 * 1024;
+
+export const isFileSizeOverLimit = (file: File) => {
+  return file.size >= maxUploadSize;
 };
 
-const maxUploadSize = import.meta.env.VITE_MAX_UPLOAD_SIZE * 1024 * 1024;
-
-export const isFileSizeUnderLimit = (file: File) => {
-  return file.size <= maxUploadSize;
+export const MENU_ELEMENT = {
+  PROJECTS: "PROJECT",
+  GROUPS: "GROUPS",
+  MEDIA: "MEDIA",
+  MANIFEST: "MANIFEST",
+  SETTING: "SETTING",
+  ADMIN: "ADMIN",
 };

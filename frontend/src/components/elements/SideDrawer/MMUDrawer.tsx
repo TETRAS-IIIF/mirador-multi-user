@@ -14,10 +14,13 @@ import { DrawerElementAdmin } from "./Drawer/DrawerElementAdmin";
 import { ItemButton } from "../SideBar/ItemButton";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { MENU_ELEMENT } from "../SideDrawer";
 import MuiDrawer from "@mui/material/Drawer";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { DrawerGenerateSnapshot } from "./Drawer/DrawerGenerateSnapshot.tsx";
+import { Project } from "../../../features/projects/types/types.ts";
+import { User } from "../../../features/auth/types/types.ts";
+import { MENU_ELEMENT } from "../../../utils/utils.ts";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -61,17 +64,13 @@ const StyledDrawer = styled(MuiDrawer, {
 interface MMUDrawerProps {
   handleChangeContent: (content: string) => void;
   setShowSignOutModal: (show: boolean) => void;
-  projectSelected: any;
+  projectSelected: Project | null;
   saveProject: () => void;
   selectedContent: string;
-  user: any;
+  user: User;
+  handleGenerateSnapshot: (projectId: number) => void;
 }
 
-/**
- * Drawer on the left of MMU
- *
- * @constructor
- */
 export function MMUDrawer({
   handleChangeContent,
   setShowSignOutModal,
@@ -79,6 +78,7 @@ export function MMUDrawer({
   saveProject,
   selectedContent,
   user,
+  handleGenerateSnapshot,
 }: MMUDrawerProps) {
   const [isSideDrawerExpanded, setIsSideDrawerExpanded] = useState(true);
 
@@ -93,11 +93,7 @@ export function MMUDrawer({
   };
 
   return (
-    <StyledDrawer
-      variant="permanent"
-      open={isSideDrawerExpanded}
-      sx={{ maxHeight: "100vh" }}
-    >
+    <StyledDrawer variant="permanent" open={isSideDrawerExpanded}>
       <DrawerHeader
         isSideDrawerExpanded={isSideDrawerExpanded}
         handleDrawerClose={handleDrawerClose}
@@ -109,13 +105,19 @@ export function MMUDrawer({
         selectedContent={selectedContent}
         handleChangeContent={handleChangeContent}
       />
-      <Divider />
+      <Divider sx={{ mb: 0 }} />
       {projectSelected && (
         <>
           <DrawerElementSaveProject
             open={isSideDrawerExpanded}
             projectSelected={projectSelected}
             saveProject={saveProject}
+          />
+          <Divider />
+          <DrawerGenerateSnapshot
+            open={isSideDrawerExpanded}
+            projectSelected={projectSelected}
+            handleGenerateSnapshot={handleGenerateSnapshot}
           />
           <Divider />
         </>
