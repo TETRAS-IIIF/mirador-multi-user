@@ -1,4 +1,4 @@
-import storage from "../../../utils/storage.ts";
+import storage from "../../../../utils/storage.ts";
 import dayjs from "dayjs";
 
 export const getUserAllProjects = async (userPersonalGroupId: number) => {

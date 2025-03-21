@@ -14,13 +14,13 @@ import {
 } from "../types/types.ts";
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
-import { deleteProject } from "../api/deleteProject.ts";
-import { updateProject } from "../api/updateProject";
-import { createProject } from "../api/createProject";
+import { deleteProject } from "../api/Project/deleteProject.ts";
+import { updateProject } from "../api/Project/updateProject.ts";
+import { createProject } from "../api/Project/createProject.ts";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
+import { getUserPersonalGroup } from "../api/group/getUserPersonalGroup.ts";
 import {
   ItemsRights,
   LinkUserGroup,
@@ -31,7 +31,7 @@ import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
 import { ListItem } from "../../../components/types.ts";
-import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
+import { getGroupsAccessToProject } from "../api/group/getGroupsAccessToProject.ts";
 import AddIcon from "@mui/icons-material/Add";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
@@ -39,25 +39,25 @@ import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.
 import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
-import { updateAccessToProject } from "../api/UpdateAccessToProject.ts";
+import { updateAccessToProject } from "../api/Project/UpdateAccessToProject.ts";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { ObjectTypes } from "../../tag/type.ts";
 import toast from "react-hot-toast";
-import { duplicateProject } from "../api/duplicateProject.ts";
+import { duplicateProject } from "../api/Project/duplicateProject.ts";
 import { getUserNameWithId } from "../../auth/api/getUserNameWithId.ts";
-import { isProjectLocked } from "../api/isProjectLocked.ts";
-import { handleLock } from "../api/handleLock.ts";
+import { isProjectLocked } from "../api/Project/isProjectLocked.ts";
+import { handleLock } from "../api/Project/handleLock.ts";
 import { useTranslation } from "react-i18next";
 import { dublinCoreMetadata } from "../../../utils/dublinCoreMetadata.ts";
 import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { removeProjectFromList } from "../api/removeProjectFromList.ts";
+import { removeProjectFromList } from "../api/Project/removeProjectFromList.ts";
 import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
 import { Manifest } from "../../manifest/types/types.ts";
-import { generateSnapshot } from "../api/generateProjectSnapShot.ts";
-import { updateSnapshot } from "../api/updateSnapshot.ts";
-import { deleteSnapshot } from "../api/deleteSnapshot.ts";
+import { generateSnapshot } from "../api/snapshot/generateProjectSnapShot.ts";
+import { updateSnapshot } from "../api/snapshot/updateSnapshot.ts";
+import { deleteSnapshot } from "../api/snapshot/deleteSnapshot.ts";
 import {
   TITLE,
   UPDATED_AT,

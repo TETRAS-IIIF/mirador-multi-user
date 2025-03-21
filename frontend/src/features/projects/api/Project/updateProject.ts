@@ -1,5 +1,5 @@
-import { ProjectGroupUpdateDto } from "../types/types";
-import { fetchBackendAPIConnected } from "../../../utils/fetchBackendAPI.ts";
+import { ProjectGroupUpdateDto } from "../../types/types.ts";
+import { fetchBackendAPIConnected } from "../../../../utils/fetchBackendAPI.ts";
 import toast from "react-hot-toast";
 import { t } from "i18next";
 

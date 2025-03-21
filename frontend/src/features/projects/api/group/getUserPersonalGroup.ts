@@ -1,5 +1,5 @@
-import storage from "../../../utils/storage.ts";
-import { UserGroup } from "../../user-group/types/types.ts";
+import storage from "../../../../utils/storage.ts";
+import { UserGroup } from "../../../user-group/types/types.ts";
 
 export const getUserPersonalGroup = async (
   userId: number,
