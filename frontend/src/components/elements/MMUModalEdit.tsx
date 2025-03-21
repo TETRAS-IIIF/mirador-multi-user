@@ -489,24 +489,35 @@ export const MMUModalEdit = <
 
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
-            item.origin !== manifestOrigin.LINK)) && (
-          <Tooltip
-            title={
-              !jsonElementToEditInAdvancedEditor
-                ? t("advanced_edit_disabled")
-                : ""
-            }
-            disableHoverListener={!!jsonElementToEditInAdvancedEditor}
-          >
-            <span>
-              <Tab
-                label={t("advancedEdit")}
-                {...a11yProps(3)}
-                disabled={!jsonElementToEditInAdvancedEditor}
-              />
-            </span>
-          </Tooltip>
-        )}
+            item.origin !== manifestOrigin.LINK)) &&
+          !jsonElementToEditInAdvancedEditor && (
+            <Tooltip
+              title={
+                !jsonElementToEditInAdvancedEditor
+                  ? t("advanced_edit_disabled")
+                  : ""
+              }
+              disableHoverListener={!!jsonElementToEditInAdvancedEditor}
+            >
+              <span>
+                <Tab
+                  label={t("advancedEdit")}
+                  {...a11yProps(3)}
+                  disabled={!jsonElementToEditInAdvancedEditor}
+                />
+              </span>
+            </Tooltip>
+          )}
+        {(objectTypes === ObjectTypes.PROJECT ||
+          (objectTypes === ObjectTypes.MANIFEST &&
+            item.origin !== manifestOrigin.LINK)) &&
+          jsonElementToEditInAdvancedEditor && (
+            <Tab
+              label={t("advancedEdit")}
+              {...a11yProps(3)}
+              disabled={!jsonElementToEditInAdvancedEditor}
+            />
+          )}
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t("templates")} {...a11yProps(4)} />
         )}
