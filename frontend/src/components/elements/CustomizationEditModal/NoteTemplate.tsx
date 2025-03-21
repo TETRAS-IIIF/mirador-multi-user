@@ -12,7 +12,7 @@ import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { Project, Template } from "../../../features/projects/types/types.ts";
-import { updateProject } from "../../../features/projects/api/updateProject.ts";
+import { updateProject } from "../../../features/projects/api/Project/updateProject.ts";
 
 interface NoteTemplateProps {
   project: Project;

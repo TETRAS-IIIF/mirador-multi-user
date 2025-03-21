@@ -1,5 +1,5 @@
-import storage from "../../../utils/storage.ts";
-import { ItemsRights } from "../../user-group/types/types.ts";
+import storage from "../../../../utils/storage.ts";
+import { ItemsRights } from "../../../user-group/types/types.ts";
 
 export const updateAccessToProject = async (
   projectId: number,

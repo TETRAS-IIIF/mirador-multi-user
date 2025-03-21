@@ -1,4 +1,4 @@
-import storage from "../../../utils/storage.ts";
+import storage from "../../../../utils/storage.ts";
 
 interface IdtoProjectSnapshotProps {
   title: string;

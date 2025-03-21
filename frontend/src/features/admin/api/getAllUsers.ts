@@ -16,8 +16,7 @@ export const getAllUsers = async (): Promise<User[]> => {
     if (!response.ok) {
       throw new Error("Failed to fetch user");
     }
-    const users = await response.json();
-    return users;
+    return await response.json();
   } catch (error) {
     storage.clearToken();
     throw error;

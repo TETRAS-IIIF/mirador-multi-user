@@ -1,4 +1,4 @@
-import storage from "../../../utils/storage.ts";
+import storage from "../../../../utils/storage.ts";
 
 export const removeProjectFromList = async (projectId: number) => {
   const token = storage.getToken();
