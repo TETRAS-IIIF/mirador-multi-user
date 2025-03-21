@@ -66,7 +66,6 @@ interface ModalItemProps<T> {
   description: string;
   duplicateItem?: (itemId: number) => void;
   fetchData: () => Promise<void>;
-  getGroupByOption?: (option: any) => string;
   getOptionLabel?: (option: { title: string }, searchInput: string) => string;
   handleAddAccessListItem: () => void;
   handleCreateSnapshot?: (projectId: number) => void;
@@ -75,6 +74,7 @@ interface ModalItemProps<T> {
   handleSelectorChange: (
     listItem: ListItem,
   ) => (event: SelectChangeEvent) => Promise<void>;
+  getGroupByOption?: (option: any) => string;
   isGroups?: boolean;
   item: T;
   itemLabel: string;
@@ -487,12 +487,6 @@ export const MMUModalEdit = <
           <Tab label={t("metadata")} {...a11yProps(1)} />
         )}
 
-        {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t("templates")} {...a11yProps(4)} />
-        )}
-        {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t("tags")} {...a11yProps(5)} />
-        )}
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
             item.origin !== manifestOrigin.LINK)) && (
@@ -512,6 +506,12 @@ export const MMUModalEdit = <
               />
             </span>
           </Tooltip>
+        )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("templates")} {...a11yProps(4)} />
+        )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("tags")} {...a11yProps(5)} />
         )}
       </Tabs>
       <Grid item container flexDirection="column">
