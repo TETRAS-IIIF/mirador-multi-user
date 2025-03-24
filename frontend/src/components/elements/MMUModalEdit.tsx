@@ -426,8 +426,8 @@ export const MMUModalEdit = <
     return pattern.test(string);
   }
 
-  console.log(!!jsonElementToEditInAdvancedEditor)
-  console.log(jsonElementToEditInAdvancedEditor)
+  console.log(!!jsonElementToEditInAdvancedEditor);
+  console.log(jsonElementToEditInAdvancedEditor);
   return (
     <Grid container sx={{ maxHeight: 600 }}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
@@ -441,19 +441,35 @@ export const MMUModalEdit = <
         )}
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
-            item.origin !== manifestOrigin.LINK)) && (
-          <Tooltip
-            title={!jsonElementToEditInAdvancedEditor ? t("advanced_edit_disabled") : ""}
-            disableHoverListener={!!jsonElementToEditInAdvancedEditor}
-          >
-      <span>
-        <Tab
-          label={t("advancedEdit")}
-          {...a11yProps(3)}
-          disabled={!jsonElementToEditInAdvancedEditor}
-        />
-      </span>
-          </Tooltip>        )}
+            item.origin !== manifestOrigin.LINK)) &&
+          !jsonElementToEditInAdvancedEditor && (
+            <Tooltip
+              title={
+                !jsonElementToEditInAdvancedEditor
+                  ? t("advanced_edit_disabled")
+                  : ""
+              }
+              disableHoverListener={!!jsonElementToEditInAdvancedEditor}
+            >
+              <span>
+                <Tab
+                  label={t("advancedEdit")}
+                  {...a11yProps(3)}
+                  disabled={!jsonElementToEditInAdvancedEditor}
+                />
+              </span>
+            </Tooltip>
+          )}
+        {(objectTypes === ObjectTypes.PROJECT ||
+          (objectTypes === ObjectTypes.MANIFEST &&
+            item.origin !== manifestOrigin.LINK)) &&
+          jsonElementToEditInAdvancedEditor && (
+            <Tab
+              label={t("advancedEdit")}
+              {...a11yProps(3)}
+              disabled={!jsonElementToEditInAdvancedEditor}
+            />
+          )}
       </Tabs>
       <Grid item container flexDirection="column">
         <CustomTabPanel value={tabValue} index={0}>
@@ -611,8 +627,7 @@ export const MMUModalEdit = <
                   getGroupByOption={getGroupByOption}
                   ownerId={ownerId}
                 >
-                  {
-                    (accessListItem) => (
+                  {(accessListItem) => (
                     <Selector
                       value={accessListItem.rights!}
                       onChange={handleSelectorChange(accessListItem)}
