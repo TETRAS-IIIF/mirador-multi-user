@@ -224,5 +224,6 @@
   "welcome": "Bienvenue sur {{instanceName}}",
   "yes": "Oui",
   "yourAccount": "Votre compte",
-  "yourTextHere": "Votre texte ici"
+  "yourTextHere": "Votre texte ici",
+  "charactersNotAllowed": "Caractères spéciaux non autorisés"
 }

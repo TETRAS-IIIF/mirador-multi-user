@@ -223,5 +223,6 @@
   "welcome": "Welcome to {{instanceName}}",
   "yes": "Yes",
   "yourAccount": "Your account",
-  "yourTextHere": "Your text here"
+  "yourTextHere": "Your text here",
+  "charactersNotAllowed": "Special characters are not allowed"
 }
