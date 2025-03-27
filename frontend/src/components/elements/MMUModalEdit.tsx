@@ -53,11 +53,7 @@ import { updateManifestJson } from "../../features/manifest/api/updateManifestJs
 import { Selector } from "../Selector.tsx";
 import { useTranslation } from "react-i18next";
 import { NoteTemplate } from "./CustomizationEditModal/NoteTemplate.tsx";
-import {
-  Project,
-  Snapshot,
-  Template,
-} from "../../features/projects/types/types.ts";
+import { Project, Snapshot } from "../../features/projects/types/types.ts";
 import { TagMaker } from "./TagsFactory/TagMaker.tsx";
 
 interface ModalItemProps<T> {
@@ -122,7 +118,7 @@ export const MMUModalEdit = <
     created_at: Dayjs;
     hash?: string;
     id: number;
-    noteTemplate?: Template[];
+    noteTemplate?: string;
     origin?: manifestOrigin | mediaOrigin;
     ownerId?: number;
     path?: string;
@@ -188,10 +184,6 @@ export const MMUModalEdit = <
     setJsonElementToEditInAdvancedEditor,
   ] = useState<Record<string, string> | undefined>();
 
-  const [updatedTemplateList, setUpdatedTemplateList] = useState<
-    Template[] | undefined
-  >(item.noteTemplate ? item.noteTemplate : undefined);
-
   const user = useUser();
   const { t } = useTranslation();
 
@@ -250,19 +242,13 @@ export const MMUModalEdit = <
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { rights, ...dataUpdated } = item;
 
-    let itemToUpdate = {
+    const itemToUpdate = {
       ...(dataUpdated as T),
       description: newItemDescription,
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
     };
 
-    if (updatedTemplateList) {
-      itemToUpdate = {
-        ...itemToUpdate,
-        noteTemplate: updatedTemplateList,
-      };
-    }
     if (
       objectTypes !== ObjectTypes.GROUP &&
       objectTypes &&
@@ -452,11 +438,11 @@ export const MMUModalEdit = <
     }
   };
 
-  const handleUpdateTemplate = async () => {
+  const handleUpdateTemplate = async (newTemplate: string) => {
     if (updateItem) {
       updateItem({
         ...item,
-        noteTemplate: updatedTemplateList,
+        noteTemplate: newTemplate,
       });
     }
   };
@@ -757,9 +743,8 @@ export const MMUModalEdit = <
           >
             <Grid item sx={{ height: "100%" }}>
               <NoteTemplate
-                project={item as unknown as Project}
-                handleUpdateTemplate={handleUpdateTemplate}
-                setUpdatedTemplateList={setUpdatedTemplateList}
+                template={item?.noteTemplate ?? ""}
+                updateTemplate={handleUpdateTemplate}
               />
             </Grid>
           </Grid>

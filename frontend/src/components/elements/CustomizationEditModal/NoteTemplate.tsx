@@ -1,229 +1,41 @@
 import { TextEditor } from "./TextEditor.tsx";
-import {
-  Button,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-} from "@mui/material";
-import { ChangeEvent, useState } from "react";
+import { Grid } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { SelectChangeEvent } from "@mui/material/Select";
-import { Project, Template } from "../../../features/projects/types/types.ts";
-import { updateProject } from "../../../features/projects/api/Project/updateProject.ts";
+import Button from "@mui/material/Button";
+import { useState } from "react";
 
 interface NoteTemplateProps {
-  project: Project;
-  handleUpdateTemplate: () => Promise<void>;
-  setUpdatedTemplateList: (newTemplate: Template[]) => void;
+  template: string;
+  updateTemplate: (newTemplate: string) => Promise<void>;
 }
 
 export const NoteTemplate = ({
-  project,
-  handleUpdateTemplate,
-  setUpdatedTemplateList,
+  template,
+  updateTemplate,
 }: NoteTemplateProps) => {
   const { t } = useTranslation();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { rights, ...userProject } = project;
 
-  const [templates, setTemplates] = useState<Template[]>(
-    project.noteTemplate ? project.noteTemplate : [],
-  );
-  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
-    templates.length > 0 ? templates[0] : null,
-  );
+  console.log("NoteTemplate.tsx: template: ", template);
 
-  const [title, setTitle] = useState(
-    selectedTemplate ? selectedTemplate.title : "",
-  );
-  const [editorContent, setEditorContent] = useState(
-    selectedTemplate ? selectedTemplate.content : "",
-  );
-
-  const [isNewTemplate, setIsNewTemplate] = useState(false);
-
-  const handleTemplateContent = (newTextValue: string) => {
-    setEditorContent(newTextValue);
-  };
-
-  const handleUpdateTemplateLocally = async () => {
-    if (isNewTemplate) {
-      const updatedTemplateList = [
-        ...templates,
-        { title, content: editorContent },
-      ];
-      setUpdatedTemplateList(updatedTemplateList);
-      setTemplates(updatedTemplateList);
-      setIsNewTemplate(false);
-      const updatedSelectedTemplate =
-        updatedTemplateList.find((temp) => temp.title === title) || null;
-
-      setSelectedTemplate(updatedSelectedTemplate);
-    } else {
-      const updatedTemplateList = templates.map((temp) =>
-        temp.title === selectedTemplate?.title
-          ? { ...temp, title, content: editorContent }
-          : temp,
-      );
-      setUpdatedTemplateList(updatedTemplateList);
-
-      await handleUpdateTemplate();
-      setTemplates(updatedTemplateList);
-
-      const updatedSelectedTemplate =
-        updatedTemplateList.find((temp) => temp.title === title) || null;
-
-      setSelectedTemplate(updatedSelectedTemplate);
-    }
-  };
-
-  const handleDeleteTemplate = async () => {
-    if (!selectedTemplate) return;
-    const updatedTemplateList = templates.filter(
-      (temp) => temp.title !== selectedTemplate.title,
-    );
-    await updateProject({
-      id: userProject.id,
-      project: {
-        ...userProject,
-        noteTemplate: updatedTemplateList,
-      },
-    });
-
-    setTemplates(updatedTemplateList);
-    setSelectedTemplate(null);
-    setTitle("");
-    setEditorContent("");
-  };
-
-  const handleSelectTemplate = (event: SelectChangeEvent<string>) => {
-    const selected =
-      templates.find((temp) => temp.title === event.target.value) || null;
-    setSelectedTemplate(selected);
-    setIsNewTemplate(false);
-    setTitle(selected ? selected.title : "");
-    setEditorContent(selected ? selected.content : "");
-  };
-
-  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
-  };
-
-  const handleCreateNewTemplate = () => {
-    setSelectedTemplate(null);
-    setIsNewTemplate(true);
-    setTitle(t("newTemplate"));
-    setEditorContent("");
-  };
+  const [editorContent, setEditorContent] = useState<string>(template);
 
   return (
     <Grid
       container
       spacing={2}
       flexDirection="column"
-      sx={{ display: "flex", marginTop: 1 }}
+      sx={{ display: "flex", marginTop: 1, width: "100%" }}
     >
-      <Grid
-        item
-        container
-        spacing={1}
-        alignItems="center"
-        flexDirection="column"
-      >
-        <Grid
-          item
-          container
-          flexDirection="row"
-          alignItems="center"
-          spacing={1}
+      <Grid item>
+        <TextEditor textHtml={editorContent} updateText={setEditorContent} />
+      </Grid>
+      <Grid item>
+        <Button
+          variant="contained"
+          onClick={() => updateTemplate(editorContent)}
         >
-          <Grid item>
-            <FormControl sx={{ width: "400px" }}>
-              <InputLabel id="template-select-label">
-                {t("templates")}
-              </InputLabel>
-              <Select
-                labelId="template-select-label"
-                value={selectedTemplate ? selectedTemplate.title : ""}
-                label={t("templates")}
-                onChange={handleSelectTemplate}
-              >
-                {templates.map((temp) => (
-                  <MenuItem key={temp.title} value={temp.title}>
-                    {temp.title}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item>
-            <Button
-              color="primary"
-              variant="outlined"
-              onClick={handleCreateNewTemplate}
-            >
-              {t("createNewTemplate")}
-            </Button>
-          </Grid>
-        </Grid>
-
-        {(selectedTemplate || isNewTemplate) && (
-          <Grid
-            item
-            container
-            flexDirection="column"
-            spacing={1}
-            sx={{ flex: 1, display: "flex", height: "100%" }}
-          >
-            <Grid item>
-              <TextField
-                fullWidth
-                label={t("title")}
-                value={title}
-                onChange={handleTitleChange}
-              />
-            </Grid>
-            <Grid item sx={{ minHeight: "200px", maxHeight: "400px" }}>
-              <TextEditor
-                textHtml={editorContent}
-                updateText={handleTemplateContent}
-              />
-            </Grid>
-          </Grid>
-        )}
-        <Grid
-          item
-          container
-          sx={{
-            mt: "auto",
-            display: "flex",
-            justifyContent: "space-between",
-            backGround: "white",
-          }}
-        >
-          <Grid item>
-            <Button
-              color="error"
-              variant="contained"
-              onClick={handleDeleteTemplate}
-              disabled={!selectedTemplate}
-            >
-              {t("deleteTemplate")}
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={handleUpdateTemplateLocally}
-            >
-              {!selectedTemplate ? t("createTemplate") : t("updateTemplate")}
-            </Button>
-          </Grid>
-        </Grid>
+          {t("saveTemplate")}
+        </Button>
       </Grid>
     </Grid>
   );
