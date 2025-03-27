@@ -207,5 +207,6 @@
   "user_already_exists": "Un utilisateur avec cet email ou ce nom existe déjà.",
   "welcome": "Bienvenue sur {{instanceName}}",
   "yes": "Oui",
-  "yourAccount": "Votre compte"
+  "yourAccount": "Votre compte",
+  "charactersNotAllowed": "Caractères spéciaux non autorisés"
 }

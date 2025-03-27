@@ -6,6 +6,7 @@ import { FieldForm } from "../../../components/elements/FieldForm.tsx";
 import { MediaTypes } from "../../media/types/types.ts";
 import { ManifestCreationFormCanvases } from "./ManifestCreationFormCanvases.tsx";
 import { ManifestCreationFormThumbnail } from "./ManifestCreationFormThumbnail.tsx";
+import toast from "react-hot-toast";
 
 export interface MediaField {
   title: string;
@@ -41,7 +42,25 @@ export const ManifestCreationForm = ({
   const handleManifestTitleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
-    setManifestTitle(e.target.value);
+    // we don't want to allow the user to use [ or ] in the title
+
+    let manifestTitle = e.target.value;
+    const unsafeOrReservedRegex = /[<>{}|\\^`"[\]@:?#!$&'()*+,;=]/;
+
+    /**
+     * Check if the url has unsafe or reserved characters
+     * @param url
+     */
+    function hasUnsafeOrReservedChars(url: string) {
+      return unsafeOrReservedRegex.test(url);
+    }
+
+    if (hasUnsafeOrReservedChars(manifestTitle)) {
+      toast.error(t("charactersNotAllowed"));
+      // remove unsafe char
+      manifestTitle = manifestTitle.replace(unsafeOrReservedRegex, "");
+    }
+    setManifestTitle(manifestTitle);
   };
 
   return (
