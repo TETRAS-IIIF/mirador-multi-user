@@ -515,7 +515,7 @@ export const MMUModalEdit = <
             />
           )}
         {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t("templates")} {...a11yProps(4)} />
+          <Tab label={t("template")} {...a11yProps(4)} />
         )}
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t("tags")} {...a11yProps(5)} />

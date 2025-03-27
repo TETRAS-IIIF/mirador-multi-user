@@ -15,8 +15,6 @@ export const NoteTemplate = ({
 }: NoteTemplateProps) => {
   const { t } = useTranslation();
 
-  console.log("NoteTemplate.tsx: template: ", template);
-
   const [editorContent, setEditorContent] = useState<string>(template);
 
   return (
