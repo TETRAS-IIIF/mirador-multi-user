@@ -1,4 +1,6 @@
-import storage from "../../../../utils/storage.ts";
+import { t } from "i18next";
+import { fetchBackendAPIConnected } from "../../../../utils/fetchBackendAPI.ts";
+import toast from "react-hot-toast";
 
 interface IdtoUpdateSnapshotProps {
   title: string;
@@ -9,29 +11,22 @@ interface IdtoUpdateSnapshotProps {
 export const updateSnapshot = async (
   dtoUpdateSnapshot: IdtoUpdateSnapshotProps,
 ) => {
-  const token = storage.getToken();
-
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/link-group-project/snapshot/update`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...dtoUpdateSnapshot,
-        }),
+  return fetchBackendAPIConnected(
+    "link-group-project/snapshot/update",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
-
-    if (!response.ok) {
-      throw new Error(`Failed to generate snapshot: ${response.status}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error("Error in snapshot generation:", error);
-  }
+      body: JSON.stringify({
+        ...dtoUpdateSnapshot,
+      }),
+    },
+    () => {
+      toast.success(t("snapshotUpdated"));
+    },
+    () => {
+      toast.error(t("saveError"));
+    },
+  );
 };
