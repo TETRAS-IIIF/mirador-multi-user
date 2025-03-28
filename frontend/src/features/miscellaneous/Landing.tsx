@@ -41,11 +41,11 @@ export const Landing = () => {
         spacing={5}
         alignItems="center"
       >
-        <Grid item>
+        {/* <Grid item>
           <Button variant="contained" onClick={HandleSignIn}>
             {t("create-account")}
           </Button>
-        </Grid>
+        </Grid>*/}
         <Grid item>
           <Button variant="contained" onClick={HandleLogin}>
             {t("login")}
