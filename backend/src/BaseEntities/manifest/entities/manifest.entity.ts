@@ -16,7 +16,7 @@ export class Manifest {
   id: number;
 
   @IsString()
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'longtext' })
   thumbnailUrl: string;
 
   @Column({ type: 'enum', enum: manifestOrigin })
