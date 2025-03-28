@@ -7,9 +7,9 @@ import { LandingFooter } from "../../../customAssets/landing-footer.tsx";
 export const Landing = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const HandleSignIn = () => {
-    navigate("/auth/signin");
-  };
+  /* const HandleSignIn = () => {
+     navigate("/auth/signin");
+   };*/
   const HandleLogin = () => {
     navigate("/auth/login");
   };
