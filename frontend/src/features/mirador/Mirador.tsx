@@ -82,6 +82,8 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
               ),
             // adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
             exportLocalStorageAnnotations: false,
+            commentTemplate: project.noteTemplate,
+            tagsSuggestions: project.tags,
           },
           annotations: {
             htmlSanitizationRuleSet: "liberal",
@@ -141,6 +143,8 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
                   `${canvasId}/annotationPage`,
                   user.name,
                 ),
+              commentTemplate: project.noteTemplate,
+              tagsSuggestions: project.tags,
             },
           };
           const miradorStateWithAdapter = {
