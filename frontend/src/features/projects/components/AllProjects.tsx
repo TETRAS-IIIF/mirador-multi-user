@@ -125,7 +125,6 @@ export const AllProjects = ({
     fetchUserPersonalGroup();
   }, [openModalProjectId]);
 
-console.log("userProjects",userProjects)
   const deleteUserProject = async (projectId: number) => {
     await deleteProject(projectId);
     setOpenModalProjectId(null);
@@ -303,7 +302,6 @@ console.log("userProjects",userProjects)
       return;
     }
   };
-  console.log("currentPageData",currentPageData)
   return (
     <>
       <SidePanelMedia
