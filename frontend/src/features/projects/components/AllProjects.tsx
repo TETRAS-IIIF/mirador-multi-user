@@ -236,7 +236,10 @@ export const AllProjects = ({
     eventValue: string,
     projectId: number,
   ) => {
-    await updateAccessToProject(projectId, group.id, eventValue as ItemsRights);
+    const newRights = await updateAccessToProject(projectId, group.id, eventValue as ItemsRights);
+    if(newRights.error) {
+    toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
 
   const listOfGroup: ListItem[] = useMemo(() => {

@@ -1,5 +1,5 @@
-import { ManifestGroupRights } from "../types/types.ts";
-import storage from "../../../utils/storage.ts";
+import { ManifestGroupRights } from '../types/types.ts';
+import storage from '../../../utils/storage.ts';
 
 export const updateAccessToManifest = async (
   manifestId: number,
@@ -23,8 +23,7 @@ export const updateAccessToManifest = async (
         }),
       },
     );
-    const toReturn = await response.json();
-    return toReturn;
+    return await response.json();
   } catch (error) {
     throw error;
   }

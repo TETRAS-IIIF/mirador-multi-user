@@ -1,5 +1,5 @@
-import storage from "../../../utils/storage.ts";
-import { ItemsRights } from "../../user-group/types/types.ts";
+import storage from '../../../utils/storage.ts';
+import { ItemsRights } from '../../user-group/types/types.ts';
 
 export const updateAccessToProject = async (
   projectId: number,
@@ -8,6 +8,7 @@ export const updateAccessToProject = async (
 ) => {
   const token = storage.getToken();
   try {
+    console.log("updateAccessToProject)")
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/link-group-project/change-rights`,
       {
@@ -23,8 +24,7 @@ export const updateAccessToProject = async (
         }),
       },
     );
-    const toReturn = await response.json();
-    return toReturn;
+    return await response.json();
   } catch (error) {
     throw error;
   }
