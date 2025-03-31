@@ -198,7 +198,7 @@ const MMUCard = <
           justifyContent="flex-start"
           spacing={2}
         >
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={1}>
             {isLoading ? (
               <LoadingSpinner />
             ) : (
@@ -207,7 +207,7 @@ const MMUCard = <
                 alt={t("thumbnailMissing")}
                 style={{
                   height: 100,
-                  width: 150,
+                  width: 100,
                   objectFit: "contain",
                   marginLeft: "10px",
                 }}
@@ -239,7 +239,7 @@ const MMUCard = <
                 <AttachFileIcon />
               </Grid>
             )}
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={3}>
             <Tooltip title={itemLabel} placement="bottom-start">
               <Typography
                 variant="subtitle1"
@@ -247,7 +247,7 @@ const MMUCard = <
                   textOverflow: "ellipsis",
                   overflow: "hidden",
                   whiteSpace: "nowrap",
-                  maxWidth: "200px",
+                  maxWidth: "400px",
                 }}
               >
                 {itemLabel}
@@ -262,7 +262,7 @@ const MMUCard = <
                   textOverflow: "ellipsis",
                   overflow: "hidden",
                   whiteSpace: "nowrap",
-                  maxWidth: "200px",
+                  maxWidth: "400px",
                 }}
               >
                 {description}
