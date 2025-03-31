@@ -175,49 +175,10 @@ export const SideDrawer = ({
   };
 
   const fetchManifestForUser = async () => {
-    const allManifests: Manifest[] = [];
+    const allManifests = await getUserGroupManifests(userPersonalGroup!.id);
 
-    // Fetch user manifests
-    const userManifests = await getUserGroupManifests(userPersonalGroup!.id);
-    allManifests.push(...userManifests);
-
-    // Fetch group manifests
-    for (const group of groups) {
-      const manifestsGroup = await getUserGroupManifests(group!.id);
-      for (const manifest of manifestsGroup) {
-        allManifests.push({ ...manifest, share: "group" });
-      }
-    }
-
-    const rightsPriority = {
-      [ManifestGroupRights.ADMIN]: 3,
-      [ManifestGroupRights.EDITOR]: 2,
-      [ManifestGroupRights.READER]: 1,
-    };
-
-    const uniqueManifestsMap = new Map<number, Manifest>();
-
-    allManifests.forEach((manifest) => {
-      const existing = uniqueManifestsMap.get(manifest.id);
-      if (
-        !existing ||
-        (manifest.rights &&
-          rightsPriority[manifest.rights] >
-            (existing.rights ? rightsPriority[existing.rights] : 0))
-      ) {
-        // Add or replace with the manifest that has higher rights
-        uniqueManifestsMap.set(manifest.id, manifest);
-      } else if (existing && manifest.share && !existing.share) {
-        // Propagate the `share` field if it's missing in the existing manifest
-        existing.share = manifest.share;
-      }
-    });
-
-    const uniqueManifests = Array.from(uniqueManifestsMap.values());
-
-    // Fetch and add manifest JSON
     const updatedManifests = await Promise.all(
-      uniqueManifests.map(async (manifest) => {
+      allManifests.map(async (manifest : Manifest) => {
         const manifestJson = await getManifestFromUrl(manifest.path);
         return { ...manifest, json: manifestJson };
       }),
