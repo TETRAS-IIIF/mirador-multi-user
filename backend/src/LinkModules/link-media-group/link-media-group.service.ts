@@ -14,7 +14,7 @@ import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
 import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
 import { MediaService } from '../../BaseEntities/media/media.service';
-import { MediaGroupRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
+import { MediaGroupRights, ITEM_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { CreateMediaDto } from '../../BaseEntities/media/dto/create-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
@@ -330,8 +330,25 @@ export class LinkMediaGroupService {
     mediaId: number,
     groupId: number,
     rights: MediaGroupRights,
+    userId: number,
   ) {
     try {
+      const userRightOnMedia = await this.getHighestRightForMedia(
+        userId,
+        mediaId,
+      );
+      const userToUpdateRights = await this.getHighestRightForMedia(
+        groupId,
+        mediaId,
+      );
+      if (
+        ITEM_RIGHTS_PRIORITY[userRightOnMedia.rights] <
+        ITEM_RIGHTS_PRIORITY[userToUpdateRights.rights]
+      ) {
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
+      }
       const linkMediaGroupToUpdate =
         await this.linkMediaGroupRepository.findOne({
           where: {
@@ -349,6 +366,11 @@ export class LinkMediaGroupService {
       return await this.linkMediaGroupRepository.save(linkMediaGroupToUpdate);
     } catch (error) {
       this.logger.error(error.message, error.stack);
+      if (error instanceof ForbiddenException) {
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
+      }
       throw new InternalServerErrorException(
         'An error occurred while updating the linkMediaGroup',
         error,
@@ -404,8 +426,8 @@ export class LinkMediaGroupService {
     }
 
     return linkEntities.reduce((prev, current) => {
-      const prevRight = PROJECT_RIGHTS_PRIORITY[prev.rights] || 0;
-      const currentRight = PROJECT_RIGHTS_PRIORITY[current.rights] || 0;
+      const prevRight = ITEM_RIGHTS_PRIORITY[prev.rights] || 0;
+      const currentRight = ITEM_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
     });
   }

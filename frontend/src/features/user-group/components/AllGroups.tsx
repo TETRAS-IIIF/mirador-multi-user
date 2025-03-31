@@ -142,11 +142,14 @@ export const AllGroups = ({
     const userToUpdate = userPersonalGroupList.find(
       (user) => user.user.id === group.id,
     );
-    await ChangeAccessToGroup(groupId, {
+    const newRights = await ChangeAccessToGroup(groupId, {
       groupId: group.id,
       rights: eventValue as ItemsRights,
       userId: userToUpdate!.user.id,
     });
+    if(newRights.error) {
+      toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
 
   const HandleOpenModal = useCallback(

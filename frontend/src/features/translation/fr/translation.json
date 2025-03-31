@@ -131,6 +131,7 @@
   "noOptions": "Aucune option",
   "noProjectMatchFilter": "Aucun projet ne correspond à votre filtre.",
   "no_manifest_yet": "Aucun manifeste pour le moment.",
+  "not_allowed_to_modify_rights": "Vous ne pouvez pas modifier un utilisateur ayant des privilèges plus élevés.",
   "notAllowedMessage": "Vous n'êtes pas autorisé à faire cela",
   "notConfirmedAccountTitle": "Vous devez confirmer votre e-mail et les conditions d'utilisations",
   "oldPassword": "Ancien mot de passe",

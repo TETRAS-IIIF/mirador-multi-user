@@ -10,10 +10,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Repository } from 'typeorm';
-import {
-  ManifestGroupRights,
-  PROJECT_RIGHTS_PRIORITY,
-} from '../../enum/rights';
+import { ManifestGroupRights, ITEM_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
@@ -229,8 +226,25 @@ export class LinkManifestGroupService {
 
   async updateAccessToManifest(
     updateManifestGroupRelation: UpdateManifestGroupRelation,
+    userId: number,
   ) {
     try {
+      const userRightsOnManifest = await this.getHighestRightForManifest(
+        userId,
+        updateManifestGroupRelation.manifestId,
+      );
+      const userToUpdateRights = await this.getHighestRightForManifest(
+        updateManifestGroupRelation.userGroupId,
+        updateManifestGroupRelation.manifestId,
+      );
+      if (
+        ITEM_RIGHTS_PRIORITY[userRightsOnManifest.rights] <
+        ITEM_RIGHTS_PRIORITY[userToUpdateRights.rights]
+      ) {
+        throw new ForbiddenException(
+          'ou cannot modify a user with higher privileges.',
+        );
+      }
       const { manifestId, userGroupId, rights } = updateManifestGroupRelation;
       const manifestToUpdate = await this.manifestService.findOne(manifestId);
       const groupToUpdate = await this.groupService.findOne(userGroupId);
@@ -241,6 +255,11 @@ export class LinkManifestGroupService {
       );
     } catch (error) {
       this.logger.error(error.message, error.stack);
+      if (error instanceof ForbiddenException) {
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
+      }
       throw new InternalServerErrorException(
         `an error occurred while updating access to manifest with id ${updateManifestGroupRelation.manifestId}, for the group with id ${updateManifestGroupRelation.userGroupId}`,
         error.message,
@@ -406,8 +425,8 @@ export class LinkManifestGroupService {
     }
 
     return linkEntities.reduce((prev, current) => {
-      const prevRight = PROJECT_RIGHTS_PRIORITY[prev.rights] || 0;
-      const currentRight = PROJECT_RIGHTS_PRIORITY[current.rights] || 0;
+      const prevRight = ITEM_RIGHTS_PRIORITY[prev.rights] || 0;
+      const currentRight = ITEM_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
     });
   }

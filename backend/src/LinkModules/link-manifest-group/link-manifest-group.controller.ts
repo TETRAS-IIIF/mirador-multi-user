@@ -255,11 +255,14 @@ export class LinkManifestGroupController {
       request.user.sub,
       manifestId,
       async () => {
-        return this.linkManifestGroupService.updateAccessToManifest({
-          manifestId,
-          userGroupId,
-          rights,
-        });
+        return this.linkManifestGroupService.updateAccessToManifest(
+          {
+            manifestId,
+            userGroupId,
+            rights,
+          },
+          request.user.sub,
+        );
       },
     );
   }

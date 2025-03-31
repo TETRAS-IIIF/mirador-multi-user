@@ -279,11 +279,15 @@ export const AllMedias = ({
     eventValue: string,
     mediaId: number,
   ) => {
-    await updateAccessToMedia(
+    const newRights = await updateAccessToMedia(
       mediaId,
       group.id,
       eventValue as MediaGroupRights,
     );
+
+    if(newRights.error) {
+      toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
 
   const handleButtonClick = () => {
