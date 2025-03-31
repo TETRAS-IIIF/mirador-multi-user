@@ -24,6 +24,7 @@ import { ActionType } from '../../enum/actions';
 import { mediaOrigin } from '../../enum/origins';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
+import { UserGroupTypes } from '../../enum/user-group-types';
 
 @Injectable()
 export class LinkMediaGroupService {
@@ -282,6 +283,9 @@ export class LinkMediaGroupService {
         shared:
           Number(linkGroup.media.idCreator) !==
           Number(userPersonalGroup.ownerId),
+        ...(linkGroup.user_group.type === UserGroupTypes.MULTI_USER && {
+          share: 'group',
+        }),
       }));
     } catch (error) {
       this.logger.error(error.message, error.stack);

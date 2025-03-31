@@ -168,7 +168,7 @@ const MMUCard = <
   const handleConfirmRemoveFromListModal = () => {
     setOpenRemoveItemFromListModal(!openRemoveItemFromListModal);
   };
-
+console.log("item",item)
   return (
     <Card>
       <Grid

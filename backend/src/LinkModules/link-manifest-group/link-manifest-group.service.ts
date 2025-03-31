@@ -30,6 +30,7 @@ import * as path from 'node:path';
 import { manifestOrigin } from '../../enum/origins';
 import { UPLOAD_FOLDER } from '../../utils/constants';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
+import { UserGroupTypes } from '../../enum/user-group-types';
 
 @Injectable()
 export class LinkManifestGroupService {
@@ -293,13 +294,24 @@ export class LinkManifestGroupService {
         where: { user_group: { id: id } },
         relations: ['user_group'],
       });
-      return request.map((linkGroup: LinkManifestGroup) => ({
+
+      console.log('request');
+      console.log(request);
+      console.log('userPersonalGroup.ownerId');
+      console.log(userPersonalGroup.ownerId);
+      const toReturn = request.map((linkGroup: LinkManifestGroup) => ({
         ...linkGroup.manifest,
         rights: linkGroup.rights,
         shared:
           Number(linkGroup.manifest.idCreator) !==
           Number(userPersonalGroup.ownerId),
+        ...(linkGroup.user_group.type === UserGroupTypes.MULTI_USER && {
+          share: 'group',
+        }),
       }));
+      console.log('toReturn');
+      console.log(toReturn);
+      return toReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
