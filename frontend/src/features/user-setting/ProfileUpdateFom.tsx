@@ -13,8 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useUser } from '../../utils/auth.tsx';
 import { useUpdateUser } from '../../utils/customHooks/useUpdateProfile.ts';
 
-export const ProfileUpdateForm = ({
-}) => {
+export const ProfileUpdateForm = () => {
   const user = useUser();
   const { t } = useTranslation();
   const [formValues, setFormValues] = useState({
