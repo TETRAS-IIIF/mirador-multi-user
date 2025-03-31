@@ -22,6 +22,7 @@
   "addNewCanvas": "Ajouter un canevas",
   "admin": "Administration",
   "advancedEdit": "Édition avancée",
+  "advanced_edit_disabled": "Ouvrez le projet une première fois pour accéder à l'édition avancer",
   "areYouSureDuplicate": "Êtes-vous sûr de vouloir dupliquer",
   "cancel": "ANNULER",
   "canvasRemoving": "Supprimer le canevas {{index}}",
@@ -206,5 +207,6 @@
   "user_already_exists": "Un utilisateur avec cet email ou ce nom existe déjà.",
   "welcome": "Bienvenue sur {{instanceName}}",
   "yes": "Oui",
-  "yourAccount": "Votre compte"
+  "yourAccount": "Votre compte",
+  "charactersNotAllowed": "Caractères spéciaux non autorisés"
 }
