@@ -34,7 +34,7 @@ import { addMediaToGroup } from "../api/AddMediaToGroup.ts";
 import { ListItem } from "../../../components/types.ts";
 import { ProjectGroup } from "../../projects/types/types.ts";
 import { removeAccessToMedia } from "../api/removeAccessToMedia.ts";
-import { getAllMediaGroups } from "../api/getAllMediaGroups.ts";
+import { getAccessToMedia } from "../api/getAccessToMedia.ts";
 import { updateAccessToMedia } from "../api/updateAccessToMedia.ts";
 import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
 import AddLinkIcon from "@mui/icons-material/AddLink";
@@ -425,7 +425,7 @@ export const AllMedias = ({
                           : undefined,
                       }}
                       ownerId={media.idCreator}
-                      getAllMediaGroups={getAllMediaGroups}
+                      getAccessToMedia={getAccessToMedia}
                       getOptionLabel={getOptionLabel}
                       getGroupByOption={getGroupByOption}
                       HandleOpenModal={HandleOpenModal}
