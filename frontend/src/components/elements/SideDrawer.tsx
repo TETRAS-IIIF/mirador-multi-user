@@ -36,12 +36,12 @@ import {
 import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests";
 
 interface ISideDrawerProps {
-  user: User;
   handleDisconnect: () => void;
   selectedProjectId?: number;
   setSelectedProjectId: (id?: number) => void;
-  viewer: any;
   setViewer: Dispatch<any>;
+  user: User;
+  viewer: any;
 }
 
 interface MiradorViewerHandle {
@@ -431,7 +431,6 @@ export const SideDrawer = ({
         saveMiradorState={saveMiradorState}
         selectedContent={selectedContent}
         selectedProjectId={selectedProjectId}
-        setMedias={setMedias}
         setSelectedProjectId={setSelectedProjectId}
         setShowSignOutModal={setShowSignOutModal}
         setViewer={setViewer}
