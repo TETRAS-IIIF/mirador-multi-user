@@ -29,6 +29,8 @@ import {
   UPLOAD_FOLDER,
 } from '../../utils/constants';
 import { UserGroupTypes } from '../../enum/user-group-types';
+import { MetadataService } from '../../BaseEntities/metadata/metadata.service';
+import { ObjectTypes } from '../../enum/ObjectTypes';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -40,6 +42,7 @@ export class LinkGroupProjectService {
     private readonly projectService: ProjectService,
     private readonly groupService: UserGroupService,
     private readonly linkUserGroupService: LinkUserGroupService,
+    private readonly metadataService: MetadataService,
   ) {}
 
   async create(createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
@@ -119,11 +122,28 @@ export class LinkGroupProjectService {
       if (!originalProject) {
         throw new NotFoundException(`Object with ID ${projectId} not found`);
       }
-      return await this.createProject({
+
+      const duplicatedProject = await this.createProject({
         title: originalProject.project.title,
         ownerId: userId,
+        description: originalProject.project.description,
         metadata: originalProject.project.metadata,
+        thumbnailUrl: originalProject.project.thumbnailUrl,
       });
+
+      console.log('--------duplicatedProject--------');
+      console.log(duplicatedProject);
+
+      const duplicatedMetadata = await this.metadataService.duplicateMetadata(
+        ObjectTypes.PROJECT,
+        originalProject.project.id,
+        duplicatedProject.project.id,
+      );
+
+      console.log("duplicatedMetadata")
+      console.log(duplicatedMetadata)
+
+      return duplicatedProject;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
@@ -391,6 +411,7 @@ export class LinkGroupProjectService {
           `there is no user personal group for : ${dto.ownerId}`,
         );
       }
+
       const project = await this.projectService.create({
         ...dto,
         metadata: { ...dto.metadata, creator: userPersonalGroup.title },

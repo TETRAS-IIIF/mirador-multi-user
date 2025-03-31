@@ -8,6 +8,7 @@ import { LinkGroupProject } from './entities/link-group-project.entity';
 import { ProjectModule } from '../../BaseEntities/project/project.module';
 import { UserGroupModule } from '../../BaseEntities/user-group/user-group.module';
 import { LinkUserGroupModule } from '../link-user-group/link-user-group.module';
+import { MetadataModule } from '../../BaseEntities/metadata/metadata.module';
 //TODO: The import on LinkUserGroupModule there is a toxic pattern and should be removed because it could lead to circular dependencies. The logic where we need LinkGroupProjectService and another LinkModule should be moved in a different module.
 @Module({
   exports: [LinkGroupProjectService],
@@ -16,6 +17,7 @@ import { LinkUserGroupModule } from '../link-user-group/link-user-group.module';
     ProjectModule,
     UserGroupModule,
     LinkUserGroupModule,
+    MetadataModule,
   ],
   controllers: [LinkGroupProjectController],
   providers: [LinkGroupProjectService],

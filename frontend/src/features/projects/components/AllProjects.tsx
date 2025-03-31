@@ -107,7 +107,6 @@ export const AllProjects = ({
   };
 
   const totalPages = Math.ceil(userProjects.length / itemsPerPage);
-
   const currentPageData = useCurrentPageData({
     currentPage,
     sortField,
@@ -126,6 +125,7 @@ export const AllProjects = ({
     fetchUserPersonalGroup();
   }, [openModalProjectId]);
 
+console.log("userProjects",userProjects)
   const deleteUserProject = async (projectId: number) => {
     await deleteProject(projectId);
     setOpenModalProjectId(null);
@@ -303,7 +303,7 @@ export const AllProjects = ({
       return;
     }
   };
-
+  console.log("currentPageData",currentPageData)
   return (
     <>
       <SidePanelMedia

@@ -60,11 +60,51 @@ export class MetadataService {
       return metadatas.map((item) => ({
         metadata: item.metadata,
         title: item.metadataFormat.title,
+        metadataFormat: item.metadataFormat,
       }));
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while looking for metadata with id: ${objectId} and type : ${objectType}, ${error.message}`,
+      );
+    }
+  }
+
+  async duplicateMetadata(
+    objectType: ObjectTypes,
+    objectToDuplicateId: number,
+    newObjectId: number,
+  ) {
+    try {
+      const metadataToDuplicate = await this.getMetadataForObjectId(
+        objectType,
+        objectToDuplicateId,
+      );
+      console.log('--------metadataToDuplicate--------');
+      console.log(metadataToDuplicate[0]);
+
+      const metadata = this.metadataRepository.create({
+        objectType: objectType,
+        objectId: newObjectId,
+        metadataFormat: metadataToDuplicate[0].metadataFormat,
+        metadata: metadataToDuplicate[0].metadata,
+      });
+      const duplicatedMetadata = await this.metadataRepository.upsert(
+        metadata,
+        {
+          conflictPaths: ['objectType', 'objectId', 'metadataFormat'],
+        },
+      );
+
+      console.log("--------duplicatedMetadata--------")
+      console.log(duplicatedMetadata)
+      return this.metadataRepository.findOne({
+        where: { id: duplicatedMetadata.identifiers[0].id },
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while duplicating for metadata with id: ${objectToDuplicateId} and type : ${objectType} for new objectId : ${newObjectId}, ${error.message}`,
       );
     }
   }
