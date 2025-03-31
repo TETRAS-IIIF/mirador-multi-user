@@ -80,8 +80,6 @@ export class MetadataService {
         objectType,
         objectToDuplicateId,
       );
-      console.log('--------metadataToDuplicate--------');
-      console.log(metadataToDuplicate[0]);
 
       const metadata = this.metadataRepository.create({
         objectType: objectType,
@@ -96,8 +94,6 @@ export class MetadataService {
         },
       );
 
-      console.log("--------duplicatedMetadata--------")
-      console.log(duplicatedMetadata)
       return this.metadataRepository.findOne({
         where: { id: duplicatedMetadata.identifiers[0].id },
       });

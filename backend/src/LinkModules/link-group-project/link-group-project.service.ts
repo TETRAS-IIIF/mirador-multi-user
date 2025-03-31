@@ -131,17 +131,11 @@ export class LinkGroupProjectService {
         thumbnailUrl: originalProject.project.thumbnailUrl,
       });
 
-      console.log('--------duplicatedProject--------');
-      console.log(duplicatedProject);
-
-      const duplicatedMetadata = await this.metadataService.duplicateMetadata(
+      await this.metadataService.duplicateMetadata(
         ObjectTypes.PROJECT,
         originalProject.project.id,
         duplicatedProject.project.id,
       );
-
-      console.log("duplicatedMetadata")
-      console.log(duplicatedMetadata)
 
       return duplicatedProject;
     } catch (error) {
