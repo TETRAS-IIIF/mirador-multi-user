@@ -39,13 +39,10 @@ export const SearchBar = ({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
-  console.log("suggestions :", suggestions);
   const handleFetchData = async (partialDataName: string) => {
     try {
       if (fetchFunction) {
-        console.log("partial data name", partialDataName);
         const data = await fetchFunction(partialDataName);
-        console.log("data", data);
         if (data) {
           setSuggestions(data);
         }
