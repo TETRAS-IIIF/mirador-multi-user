@@ -1,7 +1,8 @@
 # Mirador multi user
 
 Mirador Multi user is a project that aims to create a multi-user environment for the Mirador 4 viewer.
-Forked from https://github.com/ARVEST-APP/mirador-multi-user 
+
+Forked from original work of https://github.com/ARVEST-APP/mirador-multi-user 
 
 # Demo
 
