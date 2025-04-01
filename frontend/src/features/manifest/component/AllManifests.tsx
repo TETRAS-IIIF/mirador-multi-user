@@ -58,7 +58,7 @@ import {
   UPDATED_AT,
   useCurrentPageData,
 } from "../../../utils/customHooks/filterHook.ts";
-import { removeManifestToGroup } from '../api/removeManifestToGroup.ts';
+import { removeManifestToGroup } from "../api/removeManifestToGroup.ts";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -225,11 +225,11 @@ export const AllManifests = ({
     manifestCanvases: ManifestCanvases[],
   ) => {
     try {
-for(const canvases of manifestCanvases){
-  if(canvases.media[0].value.length <= 0){
-    return toast.error(t("no_media_error"))
-  }
-}
+      for (const canvases of manifestCanvases) {
+        if (canvases.media[0].value.length <= 0) {
+          return toast.error(t("no_media_error"));
+        }
+      }
       await createManifest({
         manifestMedias: manifestCanvases,
         title: manifestTitle,
@@ -349,11 +349,8 @@ for(const canvases of manifestCanvases){
     }
   };
 
-  const handleRemoveAccess = async (
-    manifestId: number,
-    groupId: number,
-  ) => {
-    await removeManifestToGroup(manifestId,groupId);
+  const handleRemoveAccess = async (manifestId: number, groupId: number) => {
+    await removeManifestToGroup(manifestId, groupId);
   };
 
   return (
