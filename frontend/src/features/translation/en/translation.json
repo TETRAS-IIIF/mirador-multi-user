@@ -126,6 +126,7 @@
   "noMatchingManifestFilter": "There is no manifest matching your filter.",
   "noMatchingMediaFilter": "There is no media matching your filter.",
   "noMediaYet": "No medias yet.",
+  "no_media_error": "You can't submit a manifest without media",
   "noOptions": "No options",
   "noProjectMatchFilter": "There is no project matching your filter.",
   "no_manifest_yet": "No manifest yet.",

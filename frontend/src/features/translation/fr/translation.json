@@ -126,6 +126,7 @@
   "noGroupYet": "Aucun groupe pour le moment.",
   "noMatchingGroupFilter": "Aucun groupe ne correspond à votre filtre.",
   "noMatchingMediaFilter": "Aucun média ne correspond à votre filtre.",
+  "no_media_error": "Vous ne pouvez pas créer un manifest sans media.",
   "noMatchingManifestFilter": "Aucun manifestes ne correspond à votre filtre.",
   "noMediaYet": "Aucun média pour le moment.",
   "noOptions": "Aucune option",

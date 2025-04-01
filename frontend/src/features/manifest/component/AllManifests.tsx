@@ -225,6 +225,11 @@ export const AllManifests = ({
     manifestCanvases: ManifestCanvases[],
   ) => {
     try {
+for(const canvases of manifestCanvases){
+  if(canvases.media[0].value.length <= 0){
+    return toast.error(t("no_media_error"))
+  }
+}
       await createManifest({
         manifestMedias: manifestCanvases,
         title: manifestTitle,
