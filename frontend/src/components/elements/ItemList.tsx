@@ -80,6 +80,7 @@ export const ItemList = <
         minHeight: "55px",
         overflowY: "auto",
       }}
+      spacing={2}
     >
       <Grid container item alignItems="center" spacing={2}>
         <Grid item>
