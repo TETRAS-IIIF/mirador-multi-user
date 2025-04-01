@@ -27,6 +27,7 @@ import * as path from 'node:path';
 import { manifestOrigin } from '../../enum/origins';
 import { UPLOAD_FOLDER } from '../../utils/constants';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
+import { UserGroupTypes } from '../../enum/user-group-types';
 
 @Injectable()
 export class LinkManifestGroupService {
@@ -269,9 +270,9 @@ export class LinkManifestGroupService {
   async removeAccessToManifest(manifestId: number, userGroupId: number) {
     try {
       const userGroupManifests =
-        await this.findAllManifestByUserGroupId(userGroupId);
+        await this.findAllGroupManifestByUserGroupId(userGroupId);
       const manifestToRemove = userGroupManifests.find(
-        (userGroupManifest) => userGroupManifest.id == manifestId,
+        (userGroupManifest) => userGroupManifest.manifest.id == manifestId,
       );
       if (!manifestToRemove) {
         throw new NotFoundException(
@@ -305,24 +306,69 @@ export class LinkManifestGroupService {
     }
   }
 
-  async findAllManifestByUserGroupId(id: number) {
+  async findAllGroupManifestByUserGroupId(
+    userGroupId: number,
+  ): Promise<LinkManifestGroup[]> {
     try {
-      const userPersonalGroup = await this.groupService.findOne(id);
-      const request = await this.linkManifestGroupRepository.find({
-        where: { user_group: { id: id } },
-        relations: ['user_group'],
+      return await this.linkManifestGroupRepository.find({
+        where: { user_group: { id: userGroupId } },
+        relations: ['manifest', 'user_group'],
       });
-      return request.map((linkGroup: LinkManifestGroup) => ({
-        ...linkGroup.manifest,
-        rights: linkGroup.rights,
-        shared:
-          Number(linkGroup.manifest.idCreator) !==
-          Number(userPersonalGroup.ownerId),
-      }));
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        `an error occurred while finding manifest for userGroup with id ${id}`,
+        `an error occurred while finding all Manife for Manifest with id ${userGroupId}, ${error.message}`,
+      );
+    }
+  }
+
+  async findAllManifestByUserId(userId: number) {
+    try {
+      const userGroups =
+        await this.linkUserGroupService.findALlGroupsForUser(userId);
+
+      const manifestsMap: Map<
+        number,
+        Manifest & { rights: string; share?: string }
+      > = new Map();
+
+      for (const userGroup of userGroups) {
+        const groupManifests = await this.findAllGroupManifestByUserGroupId(
+          userGroup.id,
+        );
+        for (const groupManifest of groupManifests) {
+          const manifest = groupManifest.manifest;
+          const currentRights = ITEM_RIGHTS_PRIORITY[groupManifest.rights] || 0;
+
+          const existingManifest = manifestsMap.get(manifest.id);
+          const personalOwnerGroup =
+            await this.groupService.findUserPersonalGroup(
+              groupManifest.manifest.idCreator,
+            );
+
+          const manifestData = {
+            ...manifest,
+            rights: groupManifest.rights,
+            shared: Number(manifest.idCreator) !== Number(userId),
+            ...(groupManifest.user_group.type === UserGroupTypes.MULTI_USER && {
+              share: 'group',
+            }),
+            personalOwnerGroupId: personalOwnerGroup.id,
+          };
+          if (
+            !existingManifest ||
+            currentRights > ITEM_RIGHTS_PRIORITY[existingManifest.rights]
+          ) {
+            manifestsMap.set(manifest.id, manifestData);
+          }
+        }
+      }
+
+      return Array.from(manifestsMap.values());
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while finding manifest for userGroup with id ${userId}`,
         error.message,
       );
     }

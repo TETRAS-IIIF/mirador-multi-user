@@ -24,6 +24,9 @@ import { ActionType } from '../../enum/actions';
 import { mediaOrigin } from '../../enum/origins';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
+import { UserGroupTypes } from '../../enum/user-group-types';
+import { Project } from '../../BaseEntities/project/entities/project.entity';
+import { Media } from '../../BaseEntities/media/entities/media.entity';
 
 @Injectable()
 export class LinkMediaGroupService {
@@ -134,9 +137,41 @@ export class LinkMediaGroupService {
     }
   }
 
-  async getAllMediasForUserGroup(userGroupId: number) {
+  async getAllMediasForUser(userId: number) {
     try {
-      return await this.findAllMediaByUserGroupId(userGroupId);
+      const usersGroups =
+        await this.linkUserGroupService.findALlGroupsForUser(userId);
+      const mediasMap: Map<number, Media & { rights: string; share?: string }> =
+        new Map();
+
+      for (const userGroup of usersGroups) {
+        const linkMediaGroups: LinkMediaGroup[] =
+          await this.findAllMediaByUserGroupId(userGroup.id);
+        for (const linkMediaGroup of linkMediaGroups) {
+          const media = linkMediaGroup.media;
+          const mediaId = media.id;
+          const currentRights = ITEM_RIGHTS_PRIORITY[linkMediaGroup.rights];
+          const existingMedia = mediasMap.get(mediaId);
+          const personalOwnerGroup =
+            await this.groupService.findUserPersonalGroup(media.idCreator);
+          const mediaData = {
+            ...media,
+            rights: linkMediaGroup.rights,
+            shared: Number(media.idCreator) !== Number(userId),
+            ...(linkMediaGroup.user_group.type ===
+              UserGroupTypes.MULTI_USER && { share: 'group' }),
+            personalOwnerGroupId: personalOwnerGroup.id,
+          };
+
+          if (
+            !existingMedia ||
+            currentRights > ITEM_RIGHTS_PRIORITY[existingMedia.rights]
+          ) {
+            mediasMap.set(mediaId, mediaData);
+          }
+        }
+      }
+      return Array.from(mediasMap.values());
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -253,7 +288,7 @@ export class LinkMediaGroupService {
     try {
       const userGroupMedias = await this.findAllMediaByUserGroupId(userGroupId);
       const mediaToRemove = userGroupMedias.find(
-        (userGroupMedia) => userGroupMedia.id == mediaId,
+        (userGroupMedia) => userGroupMedia.media.id == mediaId,
       );
       if (!mediaToRemove) {
         throw new NotFoundException(
@@ -271,17 +306,12 @@ export class LinkMediaGroupService {
 
   async findAllMediaByUserGroupId(id: number) {
     try {
-      const userPersonalGroup = await this.groupService.findOne(id);
       const request = await this.linkMediaGroupRepository.find({
         where: { user_group: { id } },
         relations: ['user_group'],
       });
       return request.map((linkGroup: LinkMediaGroup) => ({
-        ...linkGroup.media,
-        rights: linkGroup.rights,
-        shared:
-          Number(linkGroup.media.idCreator) !==
-          Number(userPersonalGroup.ownerId),
+        ...linkGroup,
       }));
     } catch (error) {
       this.logger.error(error.message, error.stack);

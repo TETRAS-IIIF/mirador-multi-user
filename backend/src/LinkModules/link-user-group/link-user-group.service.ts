@@ -302,8 +302,6 @@ export class LinkUserGroupService {
         userId,
       );
 
-      console.log('userToUpdateRights');
-      console.log(userToUpdateRights);
       if (
         ITEM_RIGHTS_PRIORITY[userRightOnGroup.rights] <
         ITEM_RIGHTS_PRIORITY[userToUpdateRights.rights]
@@ -320,6 +318,9 @@ export class LinkUserGroupService {
         relations: ['user', 'user_group'],
       });
 
+      if (linkGroup.user_group.ownerId === userId) {
+        throw new ForbiddenException("You can't change owner rights");
+      }
       if (!linkGroup) {
         throw new NotFoundException(`User group with id ${groupId} not found.`);
       }
@@ -330,7 +331,6 @@ export class LinkUserGroupService {
         conflictPaths: ['user', 'user_group'],
       });
 
-      // Return the updated linkGroup
       return linkGroup;
     } catch (error) {
       this.logger.error(error.message, error.stack);

@@ -14,7 +14,6 @@ import { UserGroup } from "../../../features/user-group/types/types.ts";
 import { Manifest } from "../../../features/manifest/types/types.ts";
 import { Media } from "../../../features/media/types/types.ts";
 import { Project } from "../../../features/projects/types/types.ts";
-import { Dispatch, SetStateAction } from "react";
 
 interface ContentProps {
   HandleSetIsRunning: () => void;
@@ -33,7 +32,6 @@ interface ContentProps {
   saveMiradorState: (state: any) => void;
   selectedContent: string;
   selectedProjectId: number | undefined;
-  setMedias: Dispatch<SetStateAction<Media[]>>;
   setSelectedProjectId: (id: number | undefined) => void;
   setShowSignOutModal: (show: boolean) => void;
   setViewer: (viewer: any) => void;
@@ -63,7 +61,6 @@ export function Content({
   saveMiradorState,
   selectedContent,
   selectedProjectId,
-  setMedias,
   setSelectedProjectId,
   setShowSignOutModal,
   setViewer,
@@ -106,7 +103,7 @@ export function Content({
             handleSetMiradorState={handleSetMiradorState}
             medias={medias}
             selectedProjectId={selectedProjectId}
-            setMedias={setMedias}
+            fetchMediaForUser={fetchMediaForUser}
             setSelectedProjectId={setSelectedProjectId}
             setUserProjects={HandleSetUserProjects}
             user={user}
@@ -121,7 +118,6 @@ export function Content({
           <AllMedias
             fetchMediaForUser={fetchMediaForUser}
             medias={medias}
-            setMedias={setMedias}
             user={user}
             userPersonalGroup={userPersonalGroup}
           />
@@ -131,7 +127,7 @@ export function Content({
           fetchGroups={fetchGroups}
           groups={groups}
           medias={medias}
-          setMedias={setMedias}
+          fetchMediaForUser={fetchMediaForUser}
           user={user}
           userPersonalGroup={userPersonalGroup}
         />
