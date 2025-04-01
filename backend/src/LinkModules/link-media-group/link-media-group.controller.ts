@@ -78,7 +78,7 @@ export class LinkMediaGroupController {
       description: 'your media description',
       user_group: userGroup,
       path: `${file.filename}`,
-      hash: req.generatedHash ? `${(req as any).generatedHash}` : null,
+      hash: req.generatedHash,
       origin: mediaOrigin.UPLOAD,
       mediaTypes: req.fileType,
     };
