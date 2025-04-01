@@ -62,7 +62,7 @@
   "errorFetchProject": "Échec de la récupération des projets :",
   "errorMail": "Veuillez entrer votre adresse e-mail.",
   "errorMetadataAlreadyExist": "Un métadonné avec ce titre existe déjà",
-  "errorProjectAlreadyOpen": "Le projet est déjà ouvert par...",
+  "errorProjectAlreadyOpen": "Le projet est déjà ouvert par ",
   "errorResetPassword": "Une erreur est survenue. Veuillez réessayer plus tard.",
   "errorToken": "Jeton de réinitialisation invalide ou manquant",
   "explanationPasswordReset": "Entrez votre adresse e-mail pour recevoir un lien de réinitialisation.",

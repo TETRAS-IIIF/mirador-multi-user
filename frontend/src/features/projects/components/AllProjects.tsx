@@ -158,7 +158,7 @@ export const AllProjects = ({
         const Locked = await isProjectLocked(projectUser.id);
         if (Locked) {
           const userName = await getUserNameWithId(Locked);
-          return toast.error(t("errorProjectAlreadyOpen" + userName));
+          return toast.error(t("errorProjectAlreadyOpen")+ userName);
         }
         await handleLock({ projectId: projectUser.id, lock: true });
       } catch (error) {
