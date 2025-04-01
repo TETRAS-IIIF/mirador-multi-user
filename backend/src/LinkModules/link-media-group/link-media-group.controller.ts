@@ -181,6 +181,7 @@ export class LinkMediaGroupController {
           mediaId,
           userGroupId,
           rights,
+          request.user.sub,
         );
       },
     );

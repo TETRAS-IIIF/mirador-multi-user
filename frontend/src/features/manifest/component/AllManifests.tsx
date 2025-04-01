@@ -320,11 +320,14 @@ export const AllManifests = ({
     eventValue: string,
     manifestId: number,
   ) => {
-    await updateAccessToManifest(
+    const newRights = await updateAccessToManifest(
       manifestId,
       group.id,
       eventValue as ManifestGroupRights,
     );
+    if(newRights.error) {
+      toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
   const handleSetOpenSidePanel = () => {
     setOpenSidePanel(!openSidePanel);
