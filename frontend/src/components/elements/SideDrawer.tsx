@@ -31,9 +31,8 @@ import { MMUDrawer } from "./SideDrawer/MMUDrawer";
 import { getUserMedias } from "../../features/media/api/getUserMedias.ts";
 import {
   Manifest,
-  ManifestGroupRights,
 } from "../../features/manifest/types/types";
-import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests";
+import { getUserManifests } from '../../features/manifest/api/getUserGroupManifests.ts';
 
 interface ISideDrawerProps {
   handleDisconnect: () => void;
@@ -175,7 +174,7 @@ export const SideDrawer = ({
   };
 
   const fetchManifestForUser = async () => {
-    const allManifests = await getUserGroupManifests(userPersonalGroup!.id);
+    const allManifests = await getUserManifests();
 
     const updatedManifests = await Promise.all(
       allManifests.map(async (manifest : Manifest) => {
