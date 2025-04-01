@@ -420,9 +420,9 @@ export const MMUModalEdit = <
           !jsonElementToEditInAdvancedEditor && (
             <Tooltip
               title={
-                !jsonElementToEditInAdvancedEditor
-                  ? t("advanced_edit_disabled")
-                  : ""
+                !jsonElementToEditInAdvancedEditor && objectTypes === ObjectTypes.PROJECT
+                  ? t("advanced_edit_disabled_project")
+                  : t("advanced_edit_disabled_manifest")
               }
               disableHoverListener={!!jsonElementToEditInAdvancedEditor}
             >
