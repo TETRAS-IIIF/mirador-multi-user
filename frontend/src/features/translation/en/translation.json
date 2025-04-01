@@ -62,7 +62,7 @@
   "error_image_type": "Only image files are allowed",
   "errorMail": "Please enter your email address.",
   "errorMetadataAlreadyExist": "metadata with this title already exists",
-  "errorProjectAlreadyOpen": "Project is already open by...",
+  "errorProjectAlreadyOpen": "Project is already open by ",
   "errorResetPassword": "An error occurred. Please try again later.",
   "errorToken": "Invalid or missing reset token",
   "explanationPasswordReset": "Enter your email address to receive a password reset link.",
