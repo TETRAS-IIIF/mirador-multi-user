@@ -93,7 +93,7 @@ export const SearchBar = ({
   };
 
   return (
-    <Grid container flexDirection="column" spacing={1}>
+    <Grid container flexDirection="column">
       <Grid container spacing={2} alignItems="center">
         {fetchFunction ? (
           <Grid item>
