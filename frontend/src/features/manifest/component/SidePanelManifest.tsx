@@ -88,7 +88,7 @@ export const SidePanelManifest = ({
 
   const isInFilter = (manifest: Manifest) => {
     if (manifestFilter) {
-      return manifest.title.includes(manifestFilter);
+      return manifest.title.toLowerCase().includes(manifestFilter.toLowerCase());
     } else {
       return true;
     }

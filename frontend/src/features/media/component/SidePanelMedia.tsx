@@ -132,7 +132,7 @@ export const SidePanelMedia = ({
 
   const isInFilter = (media: Media) => {
     if (mediaFilter) {
-      return media.title.includes(mediaFilter);
+      return media.title.toLowerCase().includes(mediaFilter.toLowerCase());
     } else {
       return true;
     }
