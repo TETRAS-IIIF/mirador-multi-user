@@ -335,7 +335,9 @@ export class LinkUserGroupService {
     } catch (error) {
       this.logger.error(error.message, error.stack);
       if (error instanceof ForbiddenException) {
-        throw new ForbiddenException(error.message);
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
       }
       throw new InternalServerErrorException(
         `Updating access for userId ${userId} to group ${groupId} failed.`,

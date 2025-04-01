@@ -14,7 +14,7 @@ import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
 import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
 import { MediaService } from '../../BaseEntities/media/media.service';
-import { ITEM_RIGHTS_PRIORITY, MediaGroupRights } from '../../enum/rights';
+import { MediaGroupRights, ITEM_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { CreateMediaDto } from '../../BaseEntities/media/dto/create-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
