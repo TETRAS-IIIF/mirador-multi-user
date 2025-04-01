@@ -8,7 +8,6 @@ import { MMUToolTip } from "./MMUTootlTip.tsx";
 import { UserGroupTypes } from "../../features/user-group/types/types.ts";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupsIcon from "@mui/icons-material/Groups";
-import { ShareLink } from "./shareLink.tsx";
 import { ObjectTypes } from "../../features/tag/type.ts";
 import { useTranslation } from "react-i18next";
 import { Snapshot } from "../../features/projects/types/types.ts";
@@ -17,8 +16,6 @@ interface IProjectUserGroup<G, T> {
   children?: (item: ListItem) => ReactNode;
   getGroupByOption?: (option: any) => string;
   handleAddAccessListItem: () => void;
-  handleCreateSnapshot?: (projectId: number) => void;
-  handleDeleteSnapshot?: (snapshotId: number, projectId: number) => void;
   handleGetOptionLabel: (option: { title: string }) => string;
   handleSearchModalEditItem: (partialString: string) => Promise<any[]> | any[];
   item: T;
@@ -30,11 +27,6 @@ interface IProjectUserGroup<G, T> {
   setItemToAdd?: Dispatch<SetStateAction<G | null>>;
   setSearchInput: Dispatch<SetStateAction<string>>;
   snapShots: Snapshot[];
-  updateSnapshot?: (
-    snapshotTitle: string,
-    projectId: number,
-    snapshotId: number,
-  ) => void;
 }
 
 export const ItemList = <
@@ -49,8 +41,6 @@ export const ItemList = <
   children,
   getGroupByOption,
   handleAddAccessListItem,
-  handleCreateSnapshot,
-  handleDeleteSnapshot,
   handleGetOptionLabel,
   handleSearchModalEditItem,
   item,
@@ -61,8 +51,7 @@ export const ItemList = <
   searchBarLabel,
   setItemToAdd,
   setSearchInput,
-  updateSnapshot,
-}: IProjectUserGroup<G, T>): JSX.Element => {
+}: IProjectUserGroup<G, T>) => {
   const { t } = useTranslation();
 
   const isActionAllowedForListItem = (listItem: ListItem) => {
@@ -92,142 +81,97 @@ export const ItemList = <
         overflowY: "auto",
       }}
     >
-      <Grid container item spacing={2} sx={{ marginTop: "10px" }}>
-        {objectTypes === ObjectTypes.PROJECT && (
-          <Grid
-            alignItems="center"
-            container
-            flexDirection="column"
-            item
-            spacing={1}
-            sx={{ width: "100%", padding: 0, margin: 0 }}
-          >
-            <Grid
-              item
-              container
-              sx={{
-                width: "100%",
-                padding: 0,
-                margin: 0,
-              }}
-              spacing={1}
-            >
-              <Grid item>
-                <Typography variant="h5">{t("snapshot")}</Typography>
-              </Grid>
-            </Grid>
-            <Grid
-              item
-              sx={{
-                width: "100%",
-                margin: 0,
-                padding: 0,
-              }}
-            >
-              <ShareLink
-                handleCreateSnapshot={handleCreateSnapshot}
-                handleDeleteSnapshot={handleDeleteSnapshot!}
-                itemId={item.id}
-                snapShots={item.snapshots ? item.snapshots : []}
-                updateSnapshot={updateSnapshot!}
-              />
-            </Grid>
-          </Grid>
-        )}
-        <Grid container item alignItems="center" spacing={2}>
-          <Grid item>
-            <Typography variant="h5">{t("Permissions")}</Typography>
-          </Grid>
-          <Grid item>
-            <MMUToolTip
-              children={
-                <div>
-                  {t("MMUTooltipAdmin")}
-                  <br />
-                  {t("MMUTooltipEditor")}
-                  <br />
-                  {t("MMUTooltipReader")}
-                </div>
-              }
-            />
-          </Grid>
+      <Grid container item alignItems="center" spacing={2}>
+        <Grid item>
+          <Typography variant="h5">{t("Permissions")}</Typography>
         </Grid>
-        <Grid item sx={{ marginLeft: "10px" }}>
-          <SearchBar
-            label={searchBarLabel}
-            handleAdd={handleAddAccessListItem}
-            setSelectedData={setItemToAdd!}
-            getOptionLabel={handleGetOptionLabel}
-            fetchFunction={handleSearchModalEditItem}
-            setSearchInput={setSearchInput}
-            actionButtonLabel={t("add")}
-            groupByOption={getGroupByOption}
+        <Grid item>
+          <MMUToolTip
+            children={
+              <div>
+                {t("MMUTooltipAdmin")}
+                <br />
+                {t("MMUTooltipEditor")}
+                <br />
+                {t("MMUTooltipReader")}
+              </div>
+            }
           />
         </Grid>
-        <Grid item container flexDirection="column" spacing={1}>
-          {items &&
-            items.map((listItem) =>
-              listItem ? (
+      </Grid>
+      <Grid item sx={{ marginLeft: "10px" }}>
+        <SearchBar
+          label={searchBarLabel}
+          handleAdd={handleAddAccessListItem}
+          setSelectedData={setItemToAdd!}
+          getOptionLabel={handleGetOptionLabel}
+          fetchFunction={handleSearchModalEditItem}
+          setSearchInput={setSearchInput}
+          actionButtonLabel={t("add")}
+          groupByOption={getGroupByOption}
+        />
+      </Grid>
+      <Grid item container flexDirection="column" spacing={1}>
+        {items &&
+          items.map((listItem) =>
+            listItem ? (
+              <Grid
+                key={listItem.id}
+                item
+                container
+                spacing={1}
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="spaceBetween"
+              >
                 <Grid
-                  key={listItem.id}
                   item
                   container
-                  spacing={1}
-                  flexDirection="row"
+                  xs={8}
                   alignItems="center"
-                  justifyContent="spaceBetween"
+                  spacing={2}
+                  justifyContent="space-between"
                 >
-                  <Grid
-                    item
-                    container
-                    xs={8}
-                    alignItems="center"
-                    spacing={2}
-                    justifyContent="space-between"
-                  >
-                    <Grid item>
-                      <Typography>{listItem.title}</Typography>
-                    </Grid>
-                  </Grid>
                   <Grid item>
-                    {listItem.type === UserGroupTypes.PERSONAL && (
-                      <PersonIcon />
-                    )}
-                    {listItem.type === UserGroupTypes.MULTI_USER && (
-                      <GroupsIcon />
-                    )}
-                    {listItem.type !== UserGroupTypes.PERSONAL &&
-                      listItem.type !== UserGroupTypes.MULTI_USER && (
-                        <PersonIcon />
-                      )}
-                  </Grid>
-                  {isActionAllowedForListItem(listItem) && (
-                    <>
-                      <Grid item>{children!(listItem)}</Grid>
-                      <Grid item>
-                        <IconButton
-                          onClick={() => removeItem(listItem.id)}
-                          aria-label="delete"
-                          color="error"
-                          disabled={
-                            listItem.personalOwnerGroupId === ownerId &&
-                            listItem.type !== UserGroupTypes.MULTI_USER
-                          }
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Grid>
-                    </>
-                  )}
-                  <Grid item xs={12} sx={{ mb: "5px" }}>
-                    <Divider />
+                    <Typography>{listItem.title}</Typography>
                   </Grid>
                 </Grid>
-              ) : (
-                <LoadingSpinner />
-              ),
-            )}
-        </Grid>
+                <Grid item>
+                  {listItem.type === UserGroupTypes.PERSONAL && <PersonIcon />}
+                  {listItem.type === UserGroupTypes.MULTI_USER && (
+                    <GroupsIcon />
+                  )}
+                  {listItem.type !== UserGroupTypes.PERSONAL &&
+                    listItem.type !== UserGroupTypes.MULTI_USER && (
+                      <PersonIcon />
+                    )}
+                </Grid>
+                {isActionAllowedForListItem(listItem) && (
+                  <>
+                    <Grid item>{children!(listItem)}</Grid>
+                    <Grid item>
+                      <IconButton
+                        onClick={() => removeItem(listItem.id)}
+                        aria-label="delete"
+                        color="error"
+                        disabled={
+                          listItem.personalOwnerGroupId === ownerId &&
+                          listItem.type !== UserGroupTypes.MULTI_USER
+                        }
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Grid>
+                  </>
+                )}
+                <Grid item xs={12} sx={{ mb: "5px" }}>
+                  <Divider />
+                </Grid>
+              </Grid>
+            ) : (
+              <LoadingSpinner />
+            ),
+          )}
       </Grid>
     </Grid>
   );

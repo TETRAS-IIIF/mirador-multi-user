@@ -55,6 +55,7 @@ import { useTranslation } from "react-i18next";
 import { NoteTemplate } from "./CustomizationEditModal/NoteTemplate.tsx";
 import { Project, Snapshot } from "../../features/projects/types/types.ts";
 import { TagMaker } from "./TagsFactory/TagMaker.tsx";
+import { SnapshotFactory } from "./SnapshotFactory.tsx";
 
 interface ModalItemProps<T> {
   HandleOpenModalEdit: () => void;
@@ -520,6 +521,9 @@ export const MMUModalEdit = <
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t("tags")} {...a11yProps(5)} />
         )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("snapshots")} {...a11yProps(6)} />
+        )}
       </Tabs>
       <Grid
         item
@@ -662,8 +666,6 @@ export const MMUModalEdit = <
                 <ItemList
                   getGroupByOption={getGroupByOption}
                   handleAddAccessListItem={handleAddAccessListItem}
-                  handleCreateSnapshot={handleCreateSnapshot}
-                  handleDeleteSnapshot={handleDeleteSnapshot}
                   handleGetOptionLabel={handleGetOtpionLabel}
                   handleSearchModalEditItem={handleSearchModalEditItem}
                   item={item}
@@ -675,7 +677,6 @@ export const MMUModalEdit = <
                   setItemToAdd={setItemToAdd}
                   setSearchInput={setSearchInput}
                   snapShots={item.snapshots ? item.snapshots : []}
-                  updateSnapshot={updateSnapshot}
                 >
                   {(accessListItem) => (
                     <Selector
@@ -765,6 +766,29 @@ export const MMUModalEdit = <
               <TagMaker
                 project={item as unknown as Project}
                 handleUpdateTags={handleUpdateTags}
+              />
+            </Grid>
+          </Grid>
+        </CustomTabPanel>
+        <CustomTabPanel index={6} value={tabValue}>
+          <Grid
+            container
+            item
+            spacing={1}
+            flexDirection="column"
+            sx={{
+              minHeight: "55px",
+              height: "100%",
+              overflowY: "auto",
+            }}
+          >
+            <Grid item sx={{ height: "100%" }}>
+              <SnapshotFactory
+                objectTypes={objectTypes!}
+                handleCreateSnapshot={handleCreateSnapshot}
+                handleDeleteSnapshot={handleDeleteSnapshot}
+                updateSnapshot={updateSnapshot}
+                item={item}
               />
             </Grid>
           </Grid>

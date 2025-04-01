@@ -39,11 +39,13 @@ export const SearchBar = ({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
-
+  console.log("suggestions :", suggestions);
   const handleFetchData = async (partialDataName: string) => {
     try {
       if (fetchFunction) {
+        console.log("partial data name", partialDataName);
         const data = await fetchFunction(partialDataName);
+        console.log("data", data);
         if (data) {
           setSuggestions(data);
         }
@@ -105,12 +107,7 @@ export const SearchBar = ({
               id="combo-box-demo"
               options={suggestions}
               clearOnBlur={false}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={label}
-                />
-              )}
+              renderInput={(params) => <TextField {...params} label={label} />}
               getOptionLabel={getOptionLabel}
               groupBy={groupByOption}
               noOptionsText={t("noOptions")}
