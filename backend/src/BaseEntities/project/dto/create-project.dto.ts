@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsObject, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
 
 export class CreateProjectDto {
   @IsNotEmpty()
@@ -13,4 +13,7 @@ export class CreateProjectDto {
 
   @IsObject()
   metadata: any;
+
+  description?: string;
+  thumbnailUrl?: string;
 }

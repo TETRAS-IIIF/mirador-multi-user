@@ -104,7 +104,6 @@ export const AllProjects = ({
   };
 
   const totalPages = Math.ceil(userProjects.length / itemsPerPage);
-
   const currentPageData = useCurrentPageData({
     currentPage,
     sortField,
@@ -298,7 +297,6 @@ export const AllProjects = ({
       return;
     }
   };
-
   return (
     <>
       <SidePanelMedia
