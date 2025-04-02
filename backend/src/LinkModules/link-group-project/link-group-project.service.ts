@@ -123,13 +123,29 @@ export class LinkGroupProjectService {
         throw new NotFoundException(`Object with ID ${projectId} not found`);
       }
 
+      const {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        updated_at,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        created_at,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        ownerId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        lockedAt,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        linkGroupProjectsIds,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        lockedByUserId,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        snapShotHash,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        id,
+        ...dataToDuplicate
+      } = originalProject.project;
+
       const duplicatedProject = await this.createProject({
-        title: originalProject.project.title,
         ownerId: userId,
-        description: originalProject.project.description,
-        metadata: originalProject.project.metadata,
-        thumbnailUrl: originalProject.project.thumbnailUrl,
-        userWorkspace: originalProject.project.userWorkspace,
+        ...dataToDuplicate,
       });
 
       await this.metadataService.duplicateMetadata(
