@@ -129,6 +129,7 @@ export class LinkGroupProjectService {
         description: originalProject.project.description,
         metadata: originalProject.project.metadata,
         thumbnailUrl: originalProject.project.thumbnailUrl,
+        userWorkspace: originalProject.project.userWorkspace,
       });
 
       await this.metadataService.duplicateMetadata(
