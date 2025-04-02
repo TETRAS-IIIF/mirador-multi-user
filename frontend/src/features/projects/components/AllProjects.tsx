@@ -55,9 +55,6 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { removeProjectFromList } from "../api/Project/removeProjectFromList.ts";
 import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
 import { Manifest } from "../../manifest/types/types.ts";
-import { generateSnapshot } from "../api/snapshot/generateProjectSnapShot.ts";
-import { updateSnapshot } from "../api/snapshot/updateSnapshot.ts";
-import { deleteSnapshot } from "../api/snapshot/deleteSnapshot.ts";
 import {
   TITLE,
   UPDATED_AT,
@@ -308,35 +305,6 @@ export const AllProjects = ({
     }
   };
 
-  const UpdateSnapshot = async (
-    title: string,
-    projectId: number,
-    snapshotId: number,
-  ) => {
-    await updateSnapshot({
-      title: title,
-      snapshotId: snapshotId,
-      projectId: projectId,
-    });
-    fetchProjects();
-  };
-
-  const handleCreateSnapshot = async (itemId: number) => {
-    await generateSnapshot({
-      title: t("new_snapshot"),
-      projectId: itemId,
-    });
-    fetchProjects();
-  };
-
-  const handleDeleteSnapshot = async (
-    snapshotId: number,
-    projectId: number,
-  ) => {
-    await deleteSnapshot({ snapshotId: snapshotId, projectId: projectId });
-    fetchProjects();
-  };
-
   return (
     <>
       <SidePanel
@@ -420,10 +388,8 @@ export const AllProjects = ({
                     currentPageData.map((projectUser) => (
                       <Grid item key={projectUser.id}>
                         <MMUCard
+                          fetchItems={fetchProjects}
                           ownerId={projectUser.ownerId}
-                          handleDeleteSnapshot={handleDeleteSnapshot}
-                          updateSnapshot={UpdateSnapshot}
-                          handleCreateSnapshot={handleCreateSnapshot}
                           duplicateItem={handleDuplicateProject}
                           objectTypes={ObjectTypes.PROJECT}
                           thumbnailUrl={

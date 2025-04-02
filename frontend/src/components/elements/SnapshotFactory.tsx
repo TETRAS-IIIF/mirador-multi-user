@@ -3,17 +3,14 @@ import { Grid, Typography } from "@mui/material";
 import { ShareLink } from "./shareLink.tsx";
 import { Snapshot } from "../../features/projects/types/types.ts";
 import { useTranslation } from "react-i18next";
+import { generateSnapshot } from "../../features/projects/api/snapshot/generateProjectSnapShot.ts";
+import { deleteSnapshot } from "../../features/projects/api/snapshot/deleteSnapshot.ts";
+import { updateSnapshot } from "../../features/projects/api/snapshot/updateSnapshot.ts";
 
 interface ISnapshotFactoryProps<T> {
   objectTypes: ObjectTypes;
-  handleCreateSnapshot?: (projectId: number) => void;
-  handleDeleteSnapshot?: (snapshotId: number, projectId: number) => void;
-  updateSnapshot?: (
-    snapshotTitle: string,
-    projectId: number,
-    snapshotId: number,
-  ) => void;
   item: T;
+  fetchItems: () => void;
 }
 
 export const SnapshotFactory = <
@@ -25,13 +22,39 @@ export const SnapshotFactory = <
   },
 >({
   objectTypes,
-  handleCreateSnapshot,
-  handleDeleteSnapshot,
-  updateSnapshot,
   item,
+  fetchItems,
 }: ISnapshotFactoryProps<T>) => {
   const { t } = useTranslation();
 
+  const handleCreateSnapshot = async () => {
+    await generateSnapshot({
+      title: t("new_snapshot"),
+      projectId: item.id,
+    });
+    fetchItems();
+  };
+
+  const handleDeleteSnapshot = async (
+    snapshotId: number,
+    projectId: number,
+  ) => {
+    await deleteSnapshot({ snapshotId: snapshotId, projectId: projectId });
+    fetchItems();
+  };
+
+  const UpdateSnapshot = async (
+    title: string,
+    projectId: number,
+    snapshotId: number,
+  ) => {
+    await updateSnapshot({
+      title: title,
+      snapshotId: snapshotId,
+      projectId: projectId,
+    });
+    fetchItems();
+  };
   return (
     <>
       {objectTypes === ObjectTypes.PROJECT && (
@@ -70,7 +93,7 @@ export const SnapshotFactory = <
               handleDeleteSnapshot={handleDeleteSnapshot!}
               itemId={item.id}
               snapShots={item.snapshots ? item.snapshots : []}
-              updateSnapshot={updateSnapshot!}
+              updateSnapshot={UpdateSnapshot!}
             />
           </Grid>
         </Grid>

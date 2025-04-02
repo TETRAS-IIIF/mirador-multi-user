@@ -80,14 +80,8 @@ interface IMMUCardProps<T, X> {
     manifestId: number,
     share: string | undefined,
   ) => Promise<void> | void;
-  handleCreateSnapshot?: (projectId: number) => void;
-  updateSnapshot?: (
-    snapshotTitle: string,
-    projectId: number,
-    snapshotId: number,
-  ) => void;
-  handleDeleteSnapshot?: (snapshotId: number, projectId: number) => void;
   ownerId: number;
+  fetchItems?: () => void;
 }
 
 const MMUCard = <
@@ -116,8 +110,6 @@ const MMUCard = <
   getAccessToItem,
   getGroupByOption,
   getOptionLabel,
-  handleCreateSnapshot,
-  handleDeleteSnapshot,
   handleRemoveFromList,
   handleSelectorChange,
   id,
@@ -136,7 +128,7 @@ const MMUCard = <
   setItemList,
   setItemToAdd,
   updateItem,
-  updateSnapshot,
+  fetchItems,
 }: IMMUCardProps<T, X>) => {
   const [searchInput, setSearchInput] = useState<string>("");
   const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
@@ -320,9 +312,7 @@ const MMUCard = <
             setOpenModal={HandleOpenModal}
             children={
               <MMUModalEdit
-                handleDeleteSnapshot={handleDeleteSnapshot}
-                updateSnapshot={updateSnapshot}
-                handleCreateSnapshot={handleCreateSnapshot}
+                fetchItems={fetchItems}
                 objectTypes={objectTypes}
                 isGroups={isGroups}
                 metadata={metadata ? metadata : undefined}

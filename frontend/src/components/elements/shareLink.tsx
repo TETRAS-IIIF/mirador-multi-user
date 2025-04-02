@@ -9,7 +9,7 @@ interface IShareLinkProps {
     snapshotTitle: string,
     projectId: number,
     snapshotId: number,
-  ) => void;
+  ) => Promise<void>;
   handleDeleteSnapshot: (snapshotId: number, projectId: number) => void;
   handleCreateSnapshot?: (id: number) => void;
 }

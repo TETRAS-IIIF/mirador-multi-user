@@ -10,7 +10,6 @@ import PersonIcon from "@mui/icons-material/Person";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { ObjectTypes } from "../../features/tag/type.ts";
 import { useTranslation } from "react-i18next";
-import { Snapshot } from "../../features/projects/types/types.ts";
 
 interface IProjectUserGroup<G, T> {
   children?: (item: ListItem) => ReactNode;
@@ -26,14 +25,12 @@ interface IProjectUserGroup<G, T> {
   searchBarLabel: string;
   setItemToAdd?: Dispatch<SetStateAction<G | null>>;
   setSearchInput: Dispatch<SetStateAction<string>>;
-  snapShots: Snapshot[];
 }
 
 export const ItemList = <
   G extends { title: string },
   T extends {
     id: number;
-    snapshots?: Snapshot[];
     ownerId?: number;
     personalOwnerGroupId?: number;
   },

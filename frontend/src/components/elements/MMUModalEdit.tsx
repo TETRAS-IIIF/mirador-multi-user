@@ -87,11 +87,7 @@ interface ModalItemProps<T> {
   setSearchInput: Dispatch<SetStateAction<string>>;
   thumbnailUrl?: string | null;
   updateItem?: (newItem: T) => void;
-  updateSnapshot?: (
-    snapshotTitle: string,
-    projectId: number,
-    snapshotId: number,
-  ) => void;
+  fetchItems?: () => void;
 }
 
 type MetadataFormat = {
@@ -139,9 +135,7 @@ export const MMUModalEdit = <
   getGroupByOption,
   getOptionLabel,
   handleAddAccessListItem,
-  handleCreateSnapshot,
   handleDeleteAccessListItem,
-  handleDeleteSnapshot,
   handleSelectorChange,
   isGroups,
   item,
@@ -158,7 +152,7 @@ export const MMUModalEdit = <
   setSearchInput,
   thumbnailUrl,
   updateItem,
-  updateSnapshot,
+  fetchItems,
 }: ModalItemProps<T>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
@@ -676,7 +670,6 @@ export const MMUModalEdit = <
                   searchBarLabel={searchBarLabel}
                   setItemToAdd={setItemToAdd}
                   setSearchInput={setSearchInput}
-                  snapShots={item.snapshots ? item.snapshots : []}
                 >
                   {(accessListItem) => (
                     <Selector
@@ -784,10 +777,8 @@ export const MMUModalEdit = <
           >
             <Grid item sx={{ height: "100%" }}>
               <SnapshotFactory
+                fetchItems={fetchItems!}
                 objectTypes={objectTypes!}
-                handleCreateSnapshot={handleCreateSnapshot}
-                handleDeleteSnapshot={handleDeleteSnapshot}
-                updateSnapshot={updateSnapshot}
                 item={item}
               />
             </Grid>
