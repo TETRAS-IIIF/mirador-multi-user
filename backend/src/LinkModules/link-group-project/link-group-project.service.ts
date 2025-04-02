@@ -471,21 +471,24 @@ export class LinkGroupProjectService {
             await this.groupService.findUserPersonalGroup(
               groupProject.project.ownerId,
             );
-          const projectData = {
-            ...groupProject.project,
-            rights: groupProject.rights,
-            shared: Number(groupProject.project.ownerId) !== Number(userId),
-            ...(groupProject.user_group.type === UserGroupTypes.MULTI_USER && {
-              share: 'group',
-            }),
-            personalOwnerGroupId: personalOwnerGroup.id,
-          };
+          if (personalOwnerGroup !== null) {
+            const projectData = {
+              ...groupProject.project,
+              rights: groupProject.rights,
+              shared: Number(groupProject.project.ownerId) !== Number(userId),
+              ...(groupProject.user_group.type ===
+                UserGroupTypes.MULTI_USER && {
+                share: 'group',
+              }),
+              personalOwnerGroupId: personalOwnerGroup.id,
+            };
 
-          if (
-            !existingProject ||
-            currentRights > ITEM_RIGHTS_PRIORITY[existingProject.rights]
-          ) {
-            projectsMap.set(projectId, projectData);
+            if (
+              !existingProject ||
+              currentRights > ITEM_RIGHTS_PRIORITY[existingProject.rights]
+            ) {
+              projectsMap.set(projectId, projectData);
+            }
           }
         }
       }

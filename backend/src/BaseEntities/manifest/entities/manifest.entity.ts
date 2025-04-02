@@ -1,15 +1,17 @@
 import {
   Column,
   CreateDateColumn,
-  Entity, JoinColumn, ManyToOne,
+  Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
+  UpdateDateColumn,
+} from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkManifestGroup } from '../../../LinkModules/link-manifest-group/entities/link-manifest-group.entity';
 import { manifestOrigin } from '../../../enum/origins';
-import { Tag } from "../../tag/entities/tag.entity";
+import { Tag } from '../../tag/entities/tag.entity';
 
 @Entity()
 export class Manifest {
@@ -17,7 +19,7 @@ export class Manifest {
   id: number;
 
   @IsString()
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'longtext' })
   thumbnailUrl: string;
 
   @Column({ type: 'enum', enum: manifestOrigin })
