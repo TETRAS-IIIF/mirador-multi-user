@@ -112,9 +112,9 @@ export class LinkMediaGroupController {
     isArray: true,
   })
   @UseGuards(AuthGuard)
-  @Get('/group/:userGroupId')
-  async getMediaByUserGroupId(@Param('userGroupId') userGroupId: number) {
-    return this.linkMediaGroupService.getAllMediasForUserGroup(userGroupId);
+  @Get('/medias')
+  async getUserMedias(@Req() request) {
+    return this.linkMediaGroupService.getAllMediasForUser(request.user.sub);
   }
 
   @ApiOperation({ summary: 'Get all group that can access a specific media' })
@@ -181,6 +181,7 @@ export class LinkMediaGroupController {
           mediaId,
           userGroupId,
           rights,
+          request.user.sub,
         );
       },
     );

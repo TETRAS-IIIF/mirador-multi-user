@@ -1,7 +1,5 @@
 import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import {
-  Dispatch,
-  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -37,7 +35,6 @@ import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
 import { Media } from "../../media/types/types.ts";
-import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { updateAccessToProject } from "../api/UpdateAccessToProject.ts";
@@ -68,12 +65,12 @@ interface AllProjectsProps {
   setUserProjects: (userProjects: Project[]) => void;
   userProjects: Project[];
   handleSetMiradorState: (state: IState | undefined) => void;
-  setMedias: Dispatch<SetStateAction<Media[]>>;
+  fetchMediaForUser: ()=>void;
   medias: Media[];
 }
 
 export const AllProjects = ({
-  setMedias,
+  fetchMediaForUser,
   medias,
   user,
   selectedProjectId,
@@ -157,7 +154,7 @@ export const AllProjects = ({
         const Locked = await isProjectLocked(projectUser.id);
         if (Locked) {
           const userName = await getUserNameWithId(Locked);
-          return toast.error(t("errorProjectAlreadyOpen" + userName));
+          return toast.error(t("errorProjectAlreadyOpen")+ userName);
         }
         await handleLock({ projectId: projectUser.id, lock: true });
       } catch (error) {
@@ -235,7 +232,10 @@ export const AllProjects = ({
     eventValue: string,
     projectId: number,
   ) => {
-    await updateAccessToProject(projectId, group.id, eventValue as ItemsRights);
+    const newRights = await updateAccessToProject(projectId, group.id, eventValue as ItemsRights);
+    if(newRights.error) {
+    toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
 
   const listOfGroup: ListItem[] = useMemo(() => {
@@ -272,11 +272,6 @@ export const AllProjects = ({
     } else {
       return t("users");
     }
-  };
-
-  const fetchMediaForUser = async () => {
-    const medias = await getUserGroupMedias(userPersonalGroup!.id);
-    setMedias(medias);
   };
 
   const handleDuplicateProject = async (projectId: number) => {

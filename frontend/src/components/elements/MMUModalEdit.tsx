@@ -1,57 +1,34 @@
-import {
-  Button,
-  Grid,
-  SelectChangeEvent,
-  Tab,
-  Tabs,
-  TextField,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import SaveIcon from "@mui/icons-material/Save";
-import { ItemList } from "./ItemList.tsx";
-import { MMUModal } from "./modal.tsx";
-import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
-import { ItemsRights } from "../../features/user-group/types/types.ts";
-import { ListItem } from "../types.ts";
-import CancelIcon from "@mui/icons-material/Cancel";
-import {
-  MediaGroupRights,
-  mediaOrigin,
-} from "../../features/media/types/types.ts";
-import {
-  ManifestGroupRights,
-  manifestOrigin,
-} from "../../features/manifest/types/types.ts";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import dayjs, { Dayjs } from "dayjs";
-import { ObjectTypes } from "../../features/tag/type.ts";
-import { a11yProps } from "./SideBar/allyProps.tsx";
-import { CustomTabPanel } from "./CustomTabPanel.tsx";
-import { MetadataForm } from "../../features/metadata/components/metadataForm.tsx";
-import { getMetadataFormat } from "../../features/metadata/api/getMetadataFormat.ts";
-import { useUser } from "../../utils/auth.tsx";
-import { createMetadataForItem } from "../../features/metadata/api/createMetadataForItem.ts";
-import { gettingMetadataForObject } from "../../features/metadata/api/gettingMetadataForObject.ts";
-import { labelMetadata } from "../../features/metadata/types/types.ts";
-import { uploadMetadataFormat } from "../../features/metadata/api/uploadMetadataFormat.ts";
-import toast from "react-hot-toast";
-import { JsonEditor } from "json-edit-react";
-import { fetchManifest } from "../../features/manifest/api/fetchManifest.ts";
-import { updateManifestJson } from "../../features/manifest/api/updateManifestJson.ts";
-import { Selector } from "../Selector.tsx";
-import { useTranslation } from "react-i18next";
+import { Button, Grid, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography } from '@mui/material';
+import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import SaveIcon from '@mui/icons-material/Save';
+import { ItemList } from './ItemList.tsx';
+import { MMUModal } from './modal.tsx';
+import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
+import { ItemsRights } from '../../features/user-group/types/types.ts';
+import { ListItem } from '../types.ts';
+import CancelIcon from '@mui/icons-material/Cancel';
+import { MediaGroupRights, mediaOrigin } from '../../features/media/types/types.ts';
+import { ManifestGroupRights, manifestOrigin } from '../../features/manifest/types/types.ts';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from 'dayjs';
+import { ObjectTypes } from '../../features/tag/type.ts';
+import { a11yProps } from './SideBar/allyProps.tsx';
+import { CustomTabPanel } from './CustomTabPanel.tsx';
+import { MetadataForm } from '../../features/metadata/components/metadataForm.tsx';
+import { getMetadataFormat } from '../../features/metadata/api/getMetadataFormat.ts';
+import { useUser } from '../../utils/auth.tsx';
+import { createMetadataForItem } from '../../features/metadata/api/createMetadataForItem.ts';
+import { gettingMetadataForObject } from '../../features/metadata/api/gettingMetadataForObject.ts';
+import { labelMetadata } from '../../features/metadata/types/types.ts';
+import { uploadMetadataFormat } from '../../features/metadata/api/uploadMetadataFormat.ts';
+import toast from 'react-hot-toast';
+import { JsonEditor } from 'json-edit-react';
+import { fetchManifest } from '../../features/manifest/api/fetchManifest.ts';
+import { updateManifestJson } from '../../features/manifest/api/updateManifestJson.ts';
+import { Selector } from '../Selector.tsx';
+import { useTranslation } from 'react-i18next';
 
 interface ModalItemProps<T, G> {
   item: T;
@@ -426,8 +403,6 @@ export const MMUModalEdit = <
     return pattern.test(string);
   }
 
-  console.log(!!jsonElementToEditInAdvancedEditor);
-  console.log(jsonElementToEditInAdvancedEditor);
   return (
     <Grid container sx={{ maxHeight: 600 }}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
@@ -445,9 +420,9 @@ export const MMUModalEdit = <
           !jsonElementToEditInAdvancedEditor && (
             <Tooltip
               title={
-                !jsonElementToEditInAdvancedEditor
-                  ? t("advanced_edit_disabled")
-                  : ""
+                !jsonElementToEditInAdvancedEditor && objectTypes === ObjectTypes.PROJECT
+                  ? t("advanced_edit_disabled_project")
+                  : t("advanced_edit_disabled_manifest")
               }
               disableHoverListener={!!jsonElementToEditInAdvancedEditor}
             >
@@ -629,6 +604,7 @@ export const MMUModalEdit = <
                 >
                   {(accessListItem) => (
                     <Selector
+                      rights={item.rights === ItemsRights.EDITOR ? [ItemsRights.READER, ItemsRights.EDITOR] : Object.values(ItemsRights)}
                       value={accessListItem.rights!}
                       onChange={handleSelectorChange(accessListItem)}
                     />

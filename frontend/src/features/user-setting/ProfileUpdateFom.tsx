@@ -8,22 +8,13 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { updateUser } from "../auth/api/updateUser.tsx";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import { useUser } from '../../utils/auth.tsx';
+import { useUpdateUser } from '../../utils/customHooks/useUpdateProfile.ts';
 
-interface UserProfile {
-  name: string;
-  mail: string;
-}
-
-interface ProfileUpdateFormProps {
-  user: UserProfile;
-}
-
-export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
-  user,
-}) => {
+export const ProfileUpdateForm = () => {
+  const user = useUser();
   const { t } = useTranslation();
   const [formValues, setFormValues] = useState({
     name: "",
@@ -45,9 +36,14 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
     confirmPassword: "",
   });
 
+  const updateUserMutation = useUpdateUser();
   useEffect(() => {
-    setFormValues({ ...formValues, name: user.name, mail: user.mail });
-  }, [user]);
+      setFormValues((prev) => ({
+        ...prev,
+        name: user.data!.name,
+        mail: user.data!.mail,
+      }));
+  }, [user.data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -87,20 +83,20 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({
     return valid;
   };
 
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
-      const updatedUser = await updateUser({
-        ...formValues,
+      updateUserMutation.mutate(formValues, {
+        onSuccess: () => {
+          toast.success(t("userSuccessfullyUpdated"));
+        },
+        onError: () => {
+          toast.error(t("toastErrorUpdateUser"));
+        },
       });
-      if (updatedUser) {
-        toast.success(t("userSuccessfullyUpdated"));
-      } else {
-        toast.error(t("toastErrorUpdateUser"));
-      }
     }
   };
-
   const togglePasswordVisibility = (field: string) => {
     // @ts-ignore
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));

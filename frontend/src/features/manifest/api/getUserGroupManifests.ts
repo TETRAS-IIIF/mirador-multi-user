@@ -2,13 +2,12 @@ import { Manifest } from '../types/types.ts';
 import storage from "../../../utils/storage.ts";
 import dayjs from "dayjs";
 
-export const getUserGroupManifests = async (
-  userGroupId: number,
+export const getUserManifests = async (
 ): Promise<Manifest[]> => {
   const token = storage.getToken();
 
   const response = await fetch(
-    `${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/group/${userGroupId}`,
+    `${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifests`,
     {
       method: "GET",
       headers: {

@@ -12,7 +12,7 @@ import { Brackets, Repository } from 'typeorm';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UserGroupTypes } from '../../enum/user-group-types';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
-import { User_UserGroupRights } from '../../enum/rights';
+import { ITEM_RIGHTS_PRIORITY, User_UserGroupRights } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
 import { UsersService } from '../../BaseEntities/users/users.service';
@@ -289,8 +289,27 @@ export class LinkUserGroupService {
     groupId: number,
     userId: number,
     rights: User_UserGroupRights,
+    requestUserId: number,
   ) {
     try {
+      const userRightOnGroup = await this.getHighestRightForGroup(
+        groupId,
+        requestUserId,
+      );
+
+      const userToUpdateRights = await this.getHighestRightForGroup(
+        groupId,
+        userId,
+      );
+
+      if (
+        ITEM_RIGHTS_PRIORITY[userRightOnGroup.rights] <
+        ITEM_RIGHTS_PRIORITY[userToUpdateRights.rights]
+      ) {
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
+      }
       const linkGroup = await this.linkUserGroupRepository.findOne({
         where: {
           user_group: { type: UserGroupTypes.MULTI_USER, id: groupId },
@@ -299,6 +318,9 @@ export class LinkUserGroupService {
         relations: ['user', 'user_group'],
       });
 
+      if (linkGroup.user_group.ownerId === userId) {
+        throw new ForbiddenException("You can't change owner rights");
+      }
       if (!linkGroup) {
         throw new NotFoundException(`User group with id ${groupId} not found.`);
       }
@@ -309,13 +331,14 @@ export class LinkUserGroupService {
         conflictPaths: ['user', 'user_group'],
       });
 
-      // Return the updated linkGroup
       return linkGroup;
     } catch (error) {
-      console.error(
-        `Error updating access for userId ${userId} to group ${groupId}:`,
-        error,
-      );
+      this.logger.error(error.message, error.stack);
+      if (error instanceof ForbiddenException) {
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
+      }
       throw new InternalServerErrorException(
         `Updating access for userId ${userId} to group ${groupId} failed.`,
         error,

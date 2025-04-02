@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { Repository } from 'typeorm';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
-import { GroupProjectRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
+import { GroupProjectRights, ITEM_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { ProjectService } from '../../BaseEntities/project/project.service';
@@ -250,8 +250,26 @@ export class LinkGroupProjectService {
 
   async updateAccessToProject(
     updateAccessToProjectDto: UpdateAccessToProjectDto,
+    userId: number,
   ) {
     try {
+      const userRightOnProject = await this.getHighestRightForProject(
+        userId,
+        updateAccessToProjectDto.projectId,
+      );
+
+      const userToUpdateRights = await this.getHighestRightForProject(
+        updateAccessToProjectDto.groupId,
+        updateAccessToProjectDto.projectId,
+      );
+      if (
+        ITEM_RIGHTS_PRIORITY[userRightOnProject.rights] <
+        ITEM_RIGHTS_PRIORITY[userToUpdateRights.rights]
+      ) {
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
+      }
       const projectToUpdate = await this.projectService.findOne(
         updateAccessToProjectDto.projectId,
       );
@@ -264,7 +282,7 @@ export class LinkGroupProjectService {
           user_group: { id: groupToUpdate.id },
         },
       });
-      const updateRights = await this.linkGroupProjectRepository.update(
+      return await this.linkGroupProjectRepository.update(
         linkGroupToUpdate.id,
         {
           user_group: groupToUpdate,
@@ -272,10 +290,13 @@ export class LinkGroupProjectService {
           rights: updateAccessToProjectDto.rights,
         },
       );
-
-      return updateRights;
     } catch (error) {
       this.logger.error(error.message, error.stack);
+      if (error instanceof ForbiddenException) {
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
+      }
       throw new InternalServerErrorException(
         `an error occurred while trying to update access to project with id ${updateAccessToProjectDto.projectId} to group with id: ${updateAccessToProjectDto.groupId}`,
         error,
@@ -443,8 +464,7 @@ export class LinkGroupProjectService {
         );
         for (const groupProject of groupProjects) {
           const projectId = groupProject.project.id;
-          const currentRights =
-            PROJECT_RIGHTS_PRIORITY[groupProject.rights] || 0;
+          const currentRights = ITEM_RIGHTS_PRIORITY[groupProject.rights] || 0;
 
           const existingProject = projectsMap.get(projectId);
           const personalOwnerGroup =
@@ -463,7 +483,7 @@ export class LinkGroupProjectService {
 
           if (
             !existingProject ||
-            currentRights > PROJECT_RIGHTS_PRIORITY[existingProject.rights]
+            currentRights > ITEM_RIGHTS_PRIORITY[existingProject.rights]
           ) {
             projectsMap.set(projectId, projectData);
           }
@@ -504,8 +524,8 @@ export class LinkGroupProjectService {
     }
 
     return linkEntities.reduce((prev, current) => {
-      const prevRight = PROJECT_RIGHTS_PRIORITY[prev.rights] || 0;
-      const currentRight = PROJECT_RIGHTS_PRIORITY[current.rights] || 0;
+      const prevRight = ITEM_RIGHTS_PRIORITY[prev.rights] || 0;
+      const currentRight = ITEM_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
     });
   }

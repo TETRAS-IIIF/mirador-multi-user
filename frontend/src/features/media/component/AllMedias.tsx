@@ -10,9 +10,7 @@ import {
 } from "@mui/material";
 import {
   ChangeEvent,
-  Dispatch,
   ReactNode,
-  SetStateAction,
   SyntheticEvent,
   useCallback,
   useEffect,
@@ -36,7 +34,7 @@ import { addMediaToGroup } from "../api/AddMediaToGroup.ts";
 import { ListItem } from "../../../components/types.ts";
 import { ProjectGroup } from "../../projects/types/types.ts";
 import { removeAccessToMedia } from "../api/removeAccessToMedia.ts";
-import { getAllMediaGroups } from "../api/getAllMediaGroups.ts";
+import { getAccessToMedia } from "../api/getAccessToMedia.ts";
 import { updateAccessToMedia } from "../api/updateAccessToMedia.ts";
 import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
 import AddLinkIcon from "@mui/icons-material/AddLink";
@@ -79,7 +77,6 @@ interface IAllMediasProps {
   userPersonalGroup: UserGroup;
   medias: Media[];
   fetchMediaForUser: () => void;
-  setMedias: Dispatch<SetStateAction<Media[]>>;
 }
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
@@ -95,7 +92,6 @@ export const AllMedias = ({
   userPersonalGroup,
   medias,
   fetchMediaForUser,
-  setMedias,
 }: IAllMediasProps) => {
   const [openModalMediaId, setOpenModalMediaId] = useState<number | null>(null);
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
@@ -202,26 +198,17 @@ export const AllMedias = ({
   const HandleDeleteMedia = useCallback(
     async (mediaId: number) => {
       await deleteMedia(mediaId);
-      const updatedListOfMedias = medias.filter(function (media) {
-        return media.id != mediaId;
-      });
-      setMedias(updatedListOfMedias);
+     fetchMediaForUser()
     },
-    [medias, setMedias],
+    [medias],
   );
 
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       await updateMedia(mediaToUpdate);
-      const updatedListOfMedias = medias.filter(function (media) {
-        return media.id != mediaToUpdate.id;
-      });
-      updatedListOfMedias.push(mediaToUpdate);
-      setMedias(updatedListOfMedias);
       fetchMediaForUser();
     },
-    [medias, setMedias],
+    [medias],
   );
 
   const handleGrantAccess = async (mediaId: number) => {
@@ -279,11 +266,15 @@ export const AllMedias = ({
     eventValue: string,
     mediaId: number,
   ) => {
-    await updateAccessToMedia(
+    const newRights = await updateAccessToMedia(
       mediaId,
       group.id,
       eventValue as MediaGroupRights,
     );
+
+    if(newRights.error) {
+      toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
 
   const handleButtonClick = () => {
@@ -434,7 +425,7 @@ export const AllMedias = ({
                           : undefined,
                       }}
                       ownerId={media.idCreator}
-                      getAllMediaGroups={getAllMediaGroups}
+                      getAccessToMedia={getAccessToMedia}
                       getOptionLabel={getOptionLabel}
                       getGroupByOption={getGroupByOption}
                       HandleOpenModal={HandleOpenModal}

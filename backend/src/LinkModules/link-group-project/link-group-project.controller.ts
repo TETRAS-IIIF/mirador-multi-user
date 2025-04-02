@@ -19,7 +19,12 @@ import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { ActionType } from '../../enum/actions';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { LockProjectDto } from './dto/lockProjectDto';
 
@@ -138,6 +143,7 @@ export class LinkGroupProjectController {
       async () => {
         return this.linkGroupProjectService.updateAccessToProject(
           updateAccessToProjectDto,
+          request.user.sub,
         );
       },
     );
@@ -285,7 +291,9 @@ export class LinkGroupProjectController {
   @UseGuards(AuthGuard)
   @Get('/snapshot/:projectId')
   async generateSnapshot(@Param('projectId') projectId: number) {
-    return await this.linkGroupProjectService.generateProjectSnapshot(projectId);
+    return await this.linkGroupProjectService.generateProjectSnapshot(
+      projectId,
+    );
   }
 
   @ApiOperation({ summary: 'Check if project is lock and user can access it' })

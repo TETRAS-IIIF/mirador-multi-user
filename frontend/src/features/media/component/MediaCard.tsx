@@ -18,7 +18,7 @@ interface IMediaCardProps {
   HandleCopyToClipBoard: (string: string) => void;
   HandleOpenModal: (id: number) => void;
   HandleDeleteMedia: (itemId: number) => void;
-  getAllMediaGroups: (itemId: number) => Promise<any>;
+  getAccessToMedia: (itemId: number) => Promise<any>;
   getOptionLabel: (option: any, searchInput: string) => string;
   listOfGroup: ListItem[];
   openModalMediaId: number | null;
@@ -51,7 +51,7 @@ export const MediaCard = ({
   HandleCopyToClipBoard,
   HandleOpenModal,
   HandleDeleteMedia,
-  getAllMediaGroups,
+  getAccessToMedia,
   getOptionLabel,
   listOfGroup,
   openModalMediaId,
@@ -119,7 +119,7 @@ export const MediaCard = ({
       HandleOpenModal={() => HandleOpenModal(media.id)}
       deleteItem={() => HandleDeleteMedia(media.id)}
       description={media.description}
-      getAccessToItem={getAllMediaGroups}
+      getAccessToItem={getAccessToMedia}
       getOptionLabel={getOptionLabel}
       id={media.id}
       item={media}

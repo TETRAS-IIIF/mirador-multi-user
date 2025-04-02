@@ -1,8 +1,6 @@
 import { User } from "../../auth/types/types.ts";
 import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
 import {
-  Dispatch,
-  SetStateAction,
   useCallback,
   useEffect,
   useMemo,
@@ -32,7 +30,6 @@ import { GetAllGroupUsers } from "../api/getAllGroupUsers.ts";
 import { ListItem } from "../../../components/types.ts";
 import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { Media } from "../../media/types/types.ts";
-import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { ObjectTypes } from "../../tag/type.ts";
 import toast from "react-hot-toast";
@@ -50,7 +47,7 @@ import {
 interface allGroupsProps {
   user: User;
   medias: Media[];
-  setMedias: Dispatch<SetStateAction<Media[]>>;
+  fetchMediaForUser: () => void;
   userPersonalGroup: UserGroup;
   fetchGroups: () => void;
   groups: UserGroup[];
@@ -59,7 +56,7 @@ interface allGroupsProps {
 export const AllGroups = ({
   user,
   medias,
-  setMedias,
+  fetchMediaForUser,
   userPersonalGroup,
   fetchGroups,
   groups,
@@ -95,11 +92,6 @@ export const AllGroups = ({
   });
 
   const totalPages = Math.ceil(groups.length / itemsPerPage);
-
-  const fetchMediaForUser = async () => {
-    const medias = await getUserGroupMedias(userPersonalGroup!.id);
-    setMedias(medias);
-  };
 
   useEffect(() => {
     fetchGroups();
@@ -142,11 +134,14 @@ export const AllGroups = ({
     const userToUpdate = userPersonalGroupList.find(
       (user) => user.user.id === group.id,
     );
-    await ChangeAccessToGroup(groupId, {
+    const newRights = await ChangeAccessToGroup(groupId, {
       groupId: group.id,
       rights: eventValue as ItemsRights,
       userId: userToUpdate!.user.id,
     });
+    if(newRights.error) {
+      toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
 
   const HandleOpenModal = useCallback(
