@@ -416,7 +416,7 @@ export const MMUModalEdit = <
         )}
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
-            item.origin !== manifestOrigin.LINK)) &&
+            item.origin === manifestOrigin.LINK)) &&
           !jsonElementToEditInAdvancedEditor && (
             <Tooltip
               title={
