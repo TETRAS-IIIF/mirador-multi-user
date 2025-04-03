@@ -29,7 +29,7 @@
     "manifest-editor": "^1.0.2",
     "manifesto.js": "^4.2.21",
     "mirador": "npm:mirador-video@1.0.27",
-    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.1.0",
+    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.1.1",
     "mirador-mltools-plugin-mmu": "npm:arvest-ml-tools@^0.0.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
