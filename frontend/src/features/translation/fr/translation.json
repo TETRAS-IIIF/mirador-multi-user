@@ -41,7 +41,7 @@
   "createGroup": "Créer un groupe",
   "createGroupMAJ": "CRÉER LE GROUPE",
   "createProjectTitle": "CRÉER UN PROJET",
-  "createNewTemplate": "Créé le nouveau modèle",
+  "createNewTemplate": "Créé un nouveau modèle",
   "createdAt": "Créé le",
   "created_at": "Date de création",
   "creator": "Créateur",
@@ -227,5 +227,8 @@
   "yes": "Oui",
   "yourAccount": "Votre compte",
   "yourTextHere": "Votre texte ici",
-  "charactersNotAllowed": "Caractères spéciaux non autorisés"
+  "charactersNotAllowed": "Caractères spéciaux non autorisés",
+  "deleteTemplate": "Supprimer le modèle",
+  "noteTemplateInfo": "Créer un ou plusieurs modèles de notes. Ceux ci seront disponibles lors de l'édition d'annotation.",
+  "templateChoice": "Choisissez un modèle"
 }

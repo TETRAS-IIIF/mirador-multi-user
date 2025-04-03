@@ -7,6 +7,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -29,6 +30,17 @@ export const NoteTemplate = ({
     templates[0] || null,
   );
 
+  const handleCreateNewTemplate = () => {
+    const newtemplate = {
+      title: t("newTemplate"),
+      content: t("newTemplate"),
+      id: uuidv4(),
+    };
+
+    setTemplates([...templates, newtemplate]);
+    setSelectedTemplate(newtemplate);
+  };
+
   const handleDeleteTemplate = async () => {
     if (!selectedTemplate) return;
     const updatedTemplateList = templates.filter(
@@ -45,30 +57,6 @@ export const NoteTemplate = ({
     setSelectedTemplate(selected);
   };
 
-  const handleTemplateContent = (newTextValue: string) => {
-    if (selectedTemplate) {
-      selectedTemplate.content = newTextValue;
-    }
-  };
-
-  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSelectedTemplate((prev) => ({
-      ...prev,
-      title: event.target.value,
-    }));
-  };
-
-  const handleCreateNewTemplate = () => {
-    const newtemplate = {
-      title: t("newTemplate"),
-      content: t("newTemplate"),
-      id: uuidv4(),
-    };
-
-    setTemplates([...templates, newtemplate]);
-    setSelectedTemplate(newtemplate);
-  };
-
   const saveCurrentTemplate = () => {
     if (!selectedTemplate) return;
 
@@ -78,6 +66,19 @@ export const NoteTemplate = ({
 
     setTemplates(updatedTemplateList);
     setSelectedTemplate(null);
+  };
+
+  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setSelectedTemplate((prev) => ({
+      ...prev,
+      title: event.target.value,
+    }));
+  };
+
+  const handleTemplateContent = (newTextValue: string) => {
+    if (selectedTemplate) {
+      selectedTemplate.content = newTextValue;
+    }
   };
 
   return (
@@ -102,15 +103,18 @@ export const NoteTemplate = ({
           spacing={1}
         >
           <Grid item>
+            <Typography>{t("noteTemplateInfo")}</Typography>
+          </Grid>
+          <Grid item>
             <FormControl sx={{ width: "400px" }}>
               <InputLabel id="template-select-label">
-                {t("templates")}
+                {t("templateChoice")}
               </InputLabel>
 
               <Select
                 labelId="template-select-label"
                 value={selectedTemplate ? selectedTemplate.id : ""}
-                label={t("templates")}
+                label={t("templateChoice")}
                 onChange={handleSelectTemplate}
               >
                 {templates.map((temp) => (
