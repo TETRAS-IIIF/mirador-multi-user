@@ -230,5 +230,7 @@
   "charactersNotAllowed": "Caractères spéciaux non autorisés",
   "deleteTemplate": "Supprimer le modèle",
   "noteTemplateInfo": "Créer un ou plusieurs modèles de notes. Ceux ci seront disponibles lors de l'édition d'annotation.",
-  "templateChoice": "Choisissez un modèle"
+  "templateChoice": "Choisissez un modèle",
+  "newTemplateTitle": "Nouveau modèle",
+  "newTemplateContent": "Ajouter votre contenu"
 }

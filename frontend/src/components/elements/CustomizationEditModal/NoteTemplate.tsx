@@ -32,8 +32,8 @@ export const NoteTemplate = ({
 
   const handleCreateNewTemplate = () => {
     const newtemplate = {
-      title: t("newTemplate"),
-      content: t("newTemplate"),
+      title: t("newTemplateTitle"),
+      content: t("newTemplateContent"),
       id: uuidv4(),
     };
 
