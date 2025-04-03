@@ -22,7 +22,7 @@ export class SettingsService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      await this.syncSettingsWithEnv(requiredSettings, unMutableSettings);
+      await this.syncSettingsWithEnv(requiredSettings);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -35,18 +35,12 @@ export class SettingsService implements OnModuleInit {
   private shouldUpdate(
     existing: { value: string; isKeyMutable?: boolean } | undefined,
     newValue: string,
-    isKeyMutable: boolean,
   ) {
     if (!existing) return true;
     if (existing.value === newValue) return false;
-    if (isKeyMutable) return true;
-    return existing.isKeyMutable === false;
   }
 
-  async syncSettingsWithEnv(
-    requiredSettings: Record<string, any>,
-    unMutableSettings: Record<string, any>,
-  ) {
+  async syncSettingsWithEnv(requiredSettings: Record<string, any>) {
     const existingSettings = await this.settingsRepository.find();
     const existingMap = new Map(
       existingSettings.map((setting) => [setting.key, setting]),
@@ -54,45 +48,39 @@ export class SettingsService implements OnModuleInit {
 
     for (const [key, envValue] of Object.entries(requiredSettings)) {
       const existing = existingMap.get(key);
-      if (this.shouldUpdate(existing, envValue, true)) {
-        await this.set(key, envValue, true);
+      if (this.shouldUpdate(existing, envValue)) {
+        await this.set(key, envValue);
+        console.info('New setting :', key, envValue);
       }
     }
-
-    for (const [key, envValue] of Object.entries(unMutableSettings)) {
-      const existing = existingMap.get(key);
-      if (this.shouldUpdate(existing, envValue, false)) {
-        await this.set(key, envValue, false);
-      }
-    }
-
-    await this.set('lastStartingTime', new Date().toISOString());
+    await this.set('LAST_STARTING_TIME', new Date().toISOString());
   }
 
-  async get(key: string) {
+  async getAll() {
     try {
-      const setting = await this.settingsRepository.findOne({ where: { key } });
-      if (setting) {
-        return setting.value;
-      }
-      return null;
+      const settings = await this.settingsRepository.find();
+      const privateSettings = Object.keys(unMutableSettings);
+      return {
+        mutableSettings: settings,
+        unMutableSettings: privateSettings,
+      };
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        `An error occurred while getting setting : ${key}`,
+        `An error occurred while getting settings}`,
         error,
       );
     }
   }
 
-  async set(key: string, value: string, isKeyMutable = true) {
+  async set(key: string, value: string) {
     try {
       let setting = await this.settingsRepository.findOne({ where: { key } });
 
       if (setting) {
         setting.value = value;
       } else {
-        setting = this.settingsRepository.create({ key, value, isKeyMutable });
+        setting = this.settingsRepository.create({ key, value });
       }
 
       await this.settingsRepository.save(setting);

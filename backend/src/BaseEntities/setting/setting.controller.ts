@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Param,
   Post,
   Req,
   UnauthorizedException,
@@ -17,11 +16,11 @@ export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 
   @UseGuards(AuthGuard)
-  @Get(':key')
-  async getSetting(@Param('key') key: string, @Req() request) {
+  @Get()
+  async getSetting(@Req() request) {
     const isAdmin = await this.settingsService.isAdmin(request.user.sub);
     if (isAdmin) {
-      return { key, value: await this.settingsService.get(key) };
+      return await this.settingsService.getAll();
     } else {
       return new UnauthorizedException('you are not allowed to do this');
     }
