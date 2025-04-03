@@ -41,10 +41,12 @@
   "createGroupMAJ": "CREATE GROUP",
   "createProjectTitle": "CREATE PROJECT",
   "createdAt": "created at",
+  "createNewTemplate": "Create new template",
   "created_at": "creation date",
   "updated_at": "Update date",
   "creator": "Creator",
   "customization": "Customization",
+  "createTemplate": "Create template",
   "create_snapshot": "Create snapshot",
   "created_by": "created by",
   "defaultProjectTitle": "new project",
@@ -224,5 +226,10 @@
   "yes": "Yes",
   "yourAccount": "Your account",
   "yourTextHere": "Your text here",
-  "charactersNotAllowed": "Special characters are not allowed"
+  "charactersNotAllowed": "Special characters are not allowed",
+  "deleteTemplate": "Delete template",
+  "noteTemplateInfo": "Create one or more template, their will be available inside annotation editor.",
+  "templateChoice": "Choose a template",
+  "newTemplateTitle": "New template",
+  "newTemplateContent": "Add your content"
 }
