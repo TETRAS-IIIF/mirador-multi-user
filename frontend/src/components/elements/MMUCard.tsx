@@ -39,6 +39,9 @@ import useFetchThumbnailsUrl from "../../utils/customHooks/useFetchThumbnailsUrl
 import { LoadingSpinner } from "./loadingSpinner.tsx";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { Snapshot } from "../../features/projects/types/types.ts";
+import LinkIcon from "@mui/icons-material/Link";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import CreateIcon from "@mui/icons-material/Create";
 
 interface IMMUCardProps<T, X> {
   id: number;
@@ -215,6 +218,9 @@ const MMUCard = <
             )}
           </Grid>
           <Grid item xs={12} sm={1}>
+            {item.origin === manifestOrigin.LINK && <LinkIcon />}
+            {item.origin === manifestOrigin.UPLOAD && <UploadFileIcon />}
+            {item.origin === manifestOrigin.CREATE && <CreateIcon />}
             {item.shared && (
               <Tooltip title={t("shared")}>
                 <ShareIcon />

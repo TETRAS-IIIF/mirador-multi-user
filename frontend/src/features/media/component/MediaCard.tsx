@@ -11,6 +11,7 @@ import { LinkUserGroup } from "../../user-group/types/types.ts";
 import { useTranslation } from "react-i18next";
 import { Grid } from "@mui/material";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import placeholder from "assets/Placeholder.svg";
 
 interface IMediaCardProps {
   media: Media;
@@ -142,6 +143,7 @@ export const MediaCard = ({
           media.share ? media.share : undefined,
         )
       }
+      thumbnailUrl={media.thumbnailUrl ? media.thumbnailUrl : placeholder}
     />
   );
 };
