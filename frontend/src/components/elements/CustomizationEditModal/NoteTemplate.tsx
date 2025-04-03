@@ -11,113 +11,73 @@ import {
 import { ChangeEvent, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { Project, Template } from "../../../features/projects/types/types.ts";
-import { updateProject } from "../../../features/projects/api/Project/updateProject.ts";
+import { Template } from "../../../features/projects/types/types.ts";
+import { v4 as uuidv4 } from "uuid";
 
 interface NoteTemplateProps {
-  project: Project;
-  handleUpdateTemplate: () => Promise<void>;
-  setUpdatedTemplateList: (newTemplate: Template[]) => void;
+  templates: Template[];
+  setTemplates: (templates: Template[]) => void;
 }
 
 export const NoteTemplate = ({
-  project,
-  handleUpdateTemplate,
-  setUpdatedTemplateList,
+  templates,
+  setTemplates,
 }: NoteTemplateProps) => {
   const { t } = useTranslation();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { rights, ...userProject } = project;
 
-  const [templates, setTemplates] = useState<Template[]>(
-    project.noteTemplate ? project.noteTemplate : [],
-  );
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
-    templates.length > 0 ? templates[0] : null,
+    templates[0] || null,
   );
-
-  const [title, setTitle] = useState(
-    selectedTemplate ? selectedTemplate.title : "",
-  );
-  const [editorContent, setEditorContent] = useState(
-    selectedTemplate ? selectedTemplate.content : "",
-  );
-
-  const [isNewTemplate, setIsNewTemplate] = useState(false);
-
-  const handleTemplateContent = (newTextValue: string) => {
-    setEditorContent(newTextValue);
-  };
-
-  const handleUpdateTemplateLocally = async () => {
-    if (isNewTemplate) {
-      const updatedTemplateList = [
-        ...templates,
-        { title, content: editorContent },
-      ];
-      setUpdatedTemplateList(updatedTemplateList);
-      setTemplates(updatedTemplateList);
-      setIsNewTemplate(false);
-      const updatedSelectedTemplate =
-        updatedTemplateList.find((temp) => temp.title === title) || null;
-
-      setSelectedTemplate(updatedSelectedTemplate);
-      await handleUpdateTemplate();
-    } else {
-      const updatedTemplateList = templates.map((temp) =>
-        temp.title === selectedTemplate?.title
-          ? { ...temp, title, content: editorContent }
-          : temp,
-      );
-      setUpdatedTemplateList(updatedTemplateList);
-
-      await handleUpdateTemplate();
-      setTemplates(updatedTemplateList);
-
-      const updatedSelectedTemplate =
-        updatedTemplateList.find((temp) => temp.title === title) || null;
-
-      setSelectedTemplate(updatedSelectedTemplate);
-    }
-  };
 
   const handleDeleteTemplate = async () => {
     if (!selectedTemplate) return;
     const updatedTemplateList = templates.filter(
       (temp) => temp.title !== selectedTemplate.title,
     );
-    await updateProject({
-      id: userProject.id,
-      project: {
-        ...userProject,
-        noteTemplate: updatedTemplateList,
-      },
-    });
 
     setTemplates(updatedTemplateList);
     setSelectedTemplate(null);
-    setTitle("");
-    setEditorContent("");
   };
 
   const handleSelectTemplate = (event: SelectChangeEvent<string>) => {
     const selected =
-      templates.find((temp) => temp.title === event.target.value) || null;
+      templates.find((temp) => temp.id === event.target.value) || null;
     setSelectedTemplate(selected);
-    setIsNewTemplate(false);
-    setTitle(selected ? selected.title : "");
-    setEditorContent(selected ? selected.content : "");
+  };
+
+  const handleTemplateContent = (newTextValue: string) => {
+    if (selectedTemplate) {
+      selectedTemplate.content = newTextValue;
+    }
   };
 
   const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTitle(event.target.value);
+    setSelectedTemplate((prev) => ({
+      ...prev,
+      title: event.target.value,
+    }));
   };
 
   const handleCreateNewTemplate = () => {
+    const newtemplate = {
+      title: t("newTemplate"),
+      content: t("newTemplate"),
+      id: uuidv4(),
+    };
+
+    setTemplates([...templates, newtemplate]);
+    setSelectedTemplate(newtemplate);
+  };
+
+  const saveCurrentTemplate = () => {
+    if (!selectedTemplate) return;
+
+    const updatedTemplateList = templates.map((temp) =>
+      temp.id !== selectedTemplate.id ? temp : selectedTemplate,
+    );
+
+    setTemplates(updatedTemplateList);
     setSelectedTemplate(null);
-    setIsNewTemplate(true);
-    setTitle(t("newTemplate"));
-    setEditorContent("");
   };
 
   return (
@@ -146,14 +106,15 @@ export const NoteTemplate = ({
               <InputLabel id="template-select-label">
                 {t("templates")}
               </InputLabel>
+
               <Select
                 labelId="template-select-label"
-                value={selectedTemplate ? selectedTemplate.title : ""}
+                value={selectedTemplate ? selectedTemplate.id : ""}
                 label={t("templates")}
                 onChange={handleSelectTemplate}
               >
                 {templates.map((temp) => (
-                  <MenuItem key={temp.title} value={temp.title}>
+                  <MenuItem key={temp.id} value={temp.id}>
                     {temp.title}
                   </MenuItem>
                 ))}
@@ -171,7 +132,7 @@ export const NoteTemplate = ({
           </Grid>
         </Grid>
 
-        {(selectedTemplate || isNewTemplate) && (
+        {selectedTemplate && (
           <Grid
             item
             container
@@ -183,48 +144,48 @@ export const NoteTemplate = ({
               <TextField
                 fullWidth
                 label={t("title")}
-                value={title}
+                value={selectedTemplate?.title || ""}
                 onChange={handleTitleChange}
               />
             </Grid>
             <Grid item sx={{ minHeight: "200px", maxHeight: "400px" }}>
               <TextEditor
-                textHtml={editorContent}
+                textHtml={selectedTemplate?.content || ""}
                 updateText={handleTemplateContent}
               />
             </Grid>
+            <Grid
+              item
+              container
+              sx={{
+                mt: "auto",
+                display: "flex",
+                justifyContent: "space-between",
+                backGround: "white",
+              }}
+            >
+              <Grid item>
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={handleDeleteTemplate}
+                  disabled={!selectedTemplate}
+                >
+                  {t("deleteTemplate")}
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={saveCurrentTemplate}
+                >
+                  {t("updateTemplate")}
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
         )}
-        <Grid
-          item
-          container
-          sx={{
-            mt: "auto",
-            display: "flex",
-            justifyContent: "space-between",
-            backGround: "white",
-          }}
-        >
-          <Grid item>
-            <Button
-              color="error"
-              variant="contained"
-              onClick={handleDeleteTemplate}
-              disabled={!selectedTemplate}
-            >
-              {t("deleteTemplate")}
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={handleUpdateTemplateLocally}
-            >
-              {!selectedTemplate ? t("createTemplate") : t("updateTemplate")}
-            </Button>
-          </Grid>
-        </Grid>
       </Grid>
     </Grid>
   );
