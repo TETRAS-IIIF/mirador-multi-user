@@ -28,7 +28,7 @@ import { ImpersonationModule } from './impersonation/impersonation.module';
 import { AnnotationPageModule } from './BaseEntities/annotation-page/annotation-page.module';
 import { SnapshotModule } from './BaseEntities/snapshot/snapshot.module';
 import { SettingsModule } from './BaseEntities/setting/setting.module';
-import { DatabaseModule } from './BaseEntities/migration/database.module';
+import { DatabaseModule } from './BaseEntities/database/database.module';
 
 @Module({
   imports: [

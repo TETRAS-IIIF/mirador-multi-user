@@ -9,7 +9,7 @@ import { Setting } from './Entities/setting.entity';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { requiredSettings, unMutableSettings } from './utils.setting';
 import { AuthService } from '../../auth/auth.service';
-import { DatabaseService } from '../migration/database.service';
+import { DatabaseService } from '../database/database.service';
 import { UPLOAD_FOLDER } from '../../utils/constants';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -22,7 +22,7 @@ export class SettingsService implements OnModuleInit {
     @InjectRepository(Setting)
     private readonly settingsRepository: Repository<Setting>,
     private readonly authService: AuthService,
-    private readonly migrationService: DatabaseService,
+    private readonly databaseService: DatabaseService,
   ) {}
 
   async onModuleInit() {
@@ -76,15 +76,21 @@ export class SettingsService implements OnModuleInit {
     return (totalSize / 1024 / 1024).toFixed(2) + ' MB';
   }
 
+  async getDbSize() {
+    return await this.databaseService.getDatabaseSizeMB();
+  }
+
   async getAll() {
     try {
       const settings = await this.settingsRepository.find();
       const privateSettings = [...unMutableSettings];
-      const lastMigration = await this.migrationService.getLastMigrationDate();
+      const lastMigration = await this.databaseService.getLastMigrationDate();
       const uploadFileSize = this.getUploadFolderSize();
+      const dbSize = await this.getDbSize();
       privateSettings.push(
         ['LAST_MIGRATION', lastMigration?.toISOString() ?? null],
         ['UPLOAD_FOLDER_SIZE', uploadFileSize],
+        ['DB_SIZE', dbSize],
       );
       return {
         mutableSettings: settings,
