@@ -76,17 +76,13 @@ export class SettingsService implements OnModuleInit {
     return (totalSize / 1024 / 1024).toFixed(2) + ' MB';
   }
 
-  async getDbSize() {
-    return await this.databaseService.getDatabaseSizeMB();
-  }
-
   async getAll() {
     try {
       const settings = await this.settingsRepository.find();
       const privateSettings = [...unMutableSettings];
       const lastMigration = await this.databaseService.getLastMigrationDate();
       const uploadFileSize = this.getUploadFolderSize();
-      const dbSize = await this.getDbSize();
+      const dbSize = await this.databaseService.getDatabaseSizeMB();
       privateSettings.push(
         ['LAST_MIGRATION', lastMigration?.toISOString() ?? null],
         ['UPLOAD_FOLDER_SIZE', uploadFileSize],
