@@ -5,41 +5,24 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Redis } from 'ioredis';
 import { Setting } from './Entities/setting.entity';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
-import { requiredSettings } from './utils.setting';
+import { requiredSettings, unMutableSettings } from './utils.setting';
+import { AuthService } from '../../auth/auth.service';
 
 @Injectable()
 export class SettingsService implements OnModuleInit {
-  private redis: Redis;
   private readonly logger = new CustomLogger();
 
   constructor(
     @InjectRepository(Setting)
     private readonly settingsRepository: Repository<Setting>,
-  ) {
-    this.redis = new Redis();
-  }
+    private readonly authService: AuthService,
+  ) {}
 
   async onModuleInit() {
     try {
-      const existingSettings = await this.settingsRepository.find();
-
-      const existingKeys = new Set(
-        existingSettings.map((setting) => setting.key),
-      );
-
-      for (const [key, defaultValue] of Object.entries(requiredSettings)) {
-        if (!existingKeys.has(key)) {
-          await this.settingsRepository.save({ key, value: defaultValue });
-        }
-      }
-
-      const updatedSettings = await this.settingsRepository.find();
-      for (const setting of updatedSettings) {
-        await this.redis.set(setting.key, setting.value);
-      }
+      await this.syncSettingsWithEnv(requiredSettings, unMutableSettings);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -49,14 +32,45 @@ export class SettingsService implements OnModuleInit {
     }
   }
 
+  private shouldUpdate(
+    existing: { value: string; isKeyMutable?: boolean } | undefined,
+    newValue: string,
+    isKeyMutable: boolean,
+  ) {
+    if (!existing) return true;
+    if (existing.value === newValue) return false;
+    if (isKeyMutable) return true;
+    return existing.isKeyMutable === false;
+  }
+
+  async syncSettingsWithEnv(
+    requiredSettings: Record<string, any>,
+    unMutableSettings: Record<string, any>,
+  ) {
+    const existingSettings = await this.settingsRepository.find();
+    const existingMap = new Map(
+      existingSettings.map((setting) => [setting.key, setting]),
+    );
+
+    for (const [key, envValue] of Object.entries(requiredSettings)) {
+      const existing = existingMap.get(key);
+      if (this.shouldUpdate(existing, envValue, true)) {
+        await this.set(key, envValue, true);
+      }
+    }
+
+    for (const [key, envValue] of Object.entries(unMutableSettings)) {
+      const existing = existingMap.get(key);
+      if (this.shouldUpdate(existing, envValue, false)) {
+        await this.set(key, envValue, false);
+      }
+    }
+  }
+
   async get(key: string) {
     try {
-      const cachedValue = await this.redis.get(key);
-      if (cachedValue) return cachedValue;
-
       const setting = await this.settingsRepository.findOne({ where: { key } });
       if (setting) {
-        await this.redis.set(key, setting.value);
         return setting.value;
       }
       return null;
@@ -69,16 +83,16 @@ export class SettingsService implements OnModuleInit {
     }
   }
 
-  async set(key: string, value: string) {
+  async set(key: string, value: string, isKeyMutable = true) {
     try {
-      await this.redis.set(key, value);
-
       let setting = await this.settingsRepository.findOne({ where: { key } });
+
       if (setting) {
         setting.value = value;
       } else {
-        setting = this.settingsRepository.create({ key, value });
+        setting = this.settingsRepository.create({ key, value, isKeyMutable });
       }
+
       await this.settingsRepository.save(setting);
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -91,12 +105,28 @@ export class SettingsService implements OnModuleInit {
 
   async delete(key: string) {
     try {
-      await this.redis.del(key);
       await this.settingsRepository.delete({ key });
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while deleting settings: ${key}`,
+        error,
+      );
+    }
+  }
+
+  async isAdmin(userId: number) {
+    try {
+      const user = await this.authService.findProfile(userId);
+      if (user._isAdmin) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `An error occurred while checking admin rights of user with id: ${userId}`,
         error,
       );
     }
