@@ -13,6 +13,7 @@ import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 @Injectable()
 export class MediaService {
   private readonly logger = new CustomLogger();
+
   constructor(
     @InjectRepository(Media)
     private readonly mediaRepository: Repository<Media>,
@@ -57,6 +58,7 @@ export class MediaService {
       );
     }
   }
+
   async update(id: number, updateMediaDto: UpdateMediaDto) {
     try {
       const media = await this.mediaRepository.findOne({ where: { id } });
@@ -78,7 +80,6 @@ export class MediaService {
       );
     }
   }
-
 
   async remove(id: number) {
     try {
@@ -129,5 +130,4 @@ export class MediaService {
       throw new InternalServerErrorException(`an error occurred`, error);
     }
   }
-
 }
