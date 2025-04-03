@@ -69,12 +69,12 @@ export const NoteTemplate = ({
   };
 
   const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSelectedTemplate((prev) => ({
-      ...prev,
+    setSelectedTemplate({
+      content: selectedTemplate?.content || "",
+      id: selectedTemplate?.id || "",
       title: event.target.value,
-    }));
+    });
   };
-
   const handleTemplateContent = (newTextValue: string) => {
     if (selectedTemplate) {
       selectedTemplate.content = newTextValue;
