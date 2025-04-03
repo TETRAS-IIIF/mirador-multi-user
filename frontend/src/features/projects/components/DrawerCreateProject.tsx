@@ -91,14 +91,12 @@ export const DrawerCreateProject = ({
                 </Grid>
                 <Grid item sx={{ width: "70%" }}>
                   <TextField
-                    inputProps={{
-                      maxLength: 255,
-                    }}
                     inputRef={inputRef}
                     onChange={handleNameChange}
                     sx={{ width: "100%" }}
                     placeholder={t("placeholderProject")}
                     value={projectName}
+                    inputProps={{ maxLength: 100 }}
                   />
                 </Grid>
                 <Grid item>

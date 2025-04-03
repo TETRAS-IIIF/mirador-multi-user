@@ -48,7 +48,7 @@ export const SnapshotExpendableContent = ({
   };
 
   return (
-    <Grid item container spacing={2} sx={{ padding: 1 }}>
+    <Grid item container spacing={2} sx={{ padding: 2 }}>
       <Grid
         item
         container

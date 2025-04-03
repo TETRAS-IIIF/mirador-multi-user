@@ -51,29 +51,37 @@ export class MediaLinkInterceptor implements NestInterceptor {
       let thumbnailBuffer: Buffer | null = null;
       let videoId: string | null = null;
 
-      if (await isImage(url)) {
-        const imageResponse = await fetch(url);
-        if (!imageResponse.ok) throw new Error('Failed to fetch media');
-        thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
-        request.mediaTypes = mediaTypes.IMAGE;
-      } else if (await isVideo(url)) {
-        request.mediaTypes = mediaTypes.VIDEO;
-      } else if (isYouTubeVideo(url)) {
-        videoId = getYouTubeVideoID(url);
-        if (videoId) {
-          thumbnailBuffer = await getYoutubeThumbnail(videoId);
-        }
-        request.mediaTypes = mediaTypes.VIDEO;
-      } else if (await isPeerTubeVideo(url)) {
-        videoId = getPeerTubeVideoID(url);
-        if (videoId) {
-          thumbnailBuffer = await getPeerTubeThumbnail(url, videoId);
-        }
-        request.mediaTypes = mediaTypes.VIDEO;
-      } else {
-        throw new Error('Unsupported media type');
-      }
+      switch (true) {
+        case await isImage(url):
+          const imageResponse = await fetch(url);
+          if (!imageResponse.ok) throw new Error('Failed to fetch media');
+          thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
+          request.mediaTypes = mediaTypes.IMAGE;
+          break;
 
+        case await isVideo(url):
+          request.mediaTypes = mediaTypes.VIDEO;
+          break;
+
+        case isYouTubeVideo(url):
+          videoId = getYouTubeVideoID(url);
+          if (videoId) {
+            thumbnailBuffer = await getYoutubeThumbnail(videoId);
+          }
+          request.mediaTypes = mediaTypes.VIDEO;
+          break;
+
+        case await isPeerTubeVideo(url):
+          videoId = getPeerTubeVideoID(url);
+          if (videoId) {
+            thumbnailBuffer = await getPeerTubeThumbnail(url, videoId);
+          }
+          request.mediaTypes = mediaTypes.VIDEO;
+          break;
+
+        default:
+          request.mediaTypes = mediaTypes.OTHER;
+      }
       if (thumbnailBuffer) {
         const hash = generateAlphanumericSHA1Hash(
           `${Date.now().toString()}${Math.random().toString(36)}`,

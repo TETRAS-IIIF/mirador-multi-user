@@ -53,11 +53,7 @@ import { updateManifestJson } from "../../features/manifest/api/updateManifestJs
 import { Selector } from "../Selector.tsx";
 import { useTranslation } from "react-i18next";
 import { NoteTemplate } from "./CustomizationEditModal/NoteTemplate.tsx";
-import {
-  Project,
-  Snapshot,
-  Template,
-} from "../../features/projects/types/types.ts";
+import { Project, Snapshot } from "../../features/projects/types/types.ts";
 import { TagMaker } from "./TagsFactory/TagMaker.tsx";
 
 interface ModalItemProps<T> {
@@ -66,7 +62,6 @@ interface ModalItemProps<T> {
   description: string;
   duplicateItem?: (itemId: number) => void;
   fetchData: () => Promise<void>;
-  getGroupByOption?: (option: any) => string;
   getOptionLabel?: (option: { title: string }, searchInput: string) => string;
   handleAddAccessListItem: () => void;
   handleCreateSnapshot?: (projectId: number) => void;
@@ -75,6 +70,7 @@ interface ModalItemProps<T> {
   handleSelectorChange: (
     listItem: ListItem,
   ) => (event: SelectChangeEvent) => Promise<void>;
+  getGroupByOption?: (option: any) => string;
   isGroups?: boolean;
   item: T;
   itemLabel: string;
@@ -122,10 +118,11 @@ export const MMUModalEdit = <
     created_at: Dayjs;
     hash?: string;
     id: number;
-    noteTemplate?: Template[];
+    noteTemplate?: string;
     origin?: manifestOrigin | mediaOrigin;
     ownerId?: number;
     path?: string;
+    personalOwnerGroupId?: number;
     rights?: ItemsRights;
     snapshots?: Snapshot[];
     tags?: string[];
@@ -187,10 +184,6 @@ export const MMUModalEdit = <
     setJsonElementToEditInAdvancedEditor,
   ] = useState<Record<string, string> | undefined>();
 
-  const [updatedTemplateList, setUpdatedTemplateList] = useState<
-    Template[] | undefined
-  >(item.noteTemplate ? item.noteTemplate : undefined);
-
   const user = useUser();
   const { t } = useTranslation();
 
@@ -249,19 +242,13 @@ export const MMUModalEdit = <
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { rights, ...dataUpdated } = item;
 
-    let itemToUpdate = {
+    const itemToUpdate = {
       ...(dataUpdated as T),
       description: newItemDescription,
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
     };
 
-    if (updatedTemplateList) {
-      itemToUpdate = {
-        ...itemToUpdate,
-        noteTemplate: updatedTemplateList,
-      };
-    }
     if (
       objectTypes !== ObjectTypes.GROUP &&
       objectTypes &&
@@ -451,11 +438,11 @@ export const MMUModalEdit = <
     }
   };
 
-  const handleUpdateTemplate = async () => {
+  const handleUpdateTemplate = async (newTemplate: string) => {
     if (updateItem) {
       updateItem({
         ...item,
-        noteTemplate: updatedTemplateList,
+        noteTemplate: newTemplate,
       });
     }
   };
@@ -475,8 +462,18 @@ export const MMUModalEdit = <
   }
 
   return (
-    <Grid container>
-      <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
+    <Grid
+      container
+      sx={{
+        height: "70vh",
+      }}
+    >
+      <Tabs
+        value={tabValue}
+        onChange={handleChangeTab}
+        aria-label="basic tabs"
+        sx={{ height: "50px" }}
+      >
         <Tab label={t("general")} {...a11yProps(0)} />
         <Tab
           label={objectTypes != ObjectTypes.GROUP ? t("share") : t("members")}
@@ -485,27 +482,59 @@ export const MMUModalEdit = <
         {objectTypes !== ObjectTypes.GROUP && (
           <Tab label={t("metadata")} {...a11yProps(1)} />
         )}
+
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
-            item.origin !== manifestOrigin.LINK)) && (
-          <Tab label={t("advancedEdit")} {...a11yProps(3)} />
-        )}
+            item.origin !== manifestOrigin.LINK)) &&
+          !jsonElementToEditInAdvancedEditor && (
+            <Tooltip
+              title={
+                !jsonElementToEditInAdvancedEditor
+                  ? t("advanced_edit_disabled")
+                  : ""
+              }
+              disableHoverListener={!!jsonElementToEditInAdvancedEditor}
+            >
+              <span>
+                <Tab
+                  label={t("advancedEdit")}
+                  {...a11yProps(3)}
+                  disabled={!jsonElementToEditInAdvancedEditor}
+                />
+              </span>
+            </Tooltip>
+          )}
+        {(objectTypes === ObjectTypes.PROJECT ||
+          (objectTypes === ObjectTypes.MANIFEST &&
+            item.origin !== manifestOrigin.LINK)) &&
+          jsonElementToEditInAdvancedEditor && (
+            <Tab
+              label={t("advancedEdit")}
+              {...a11yProps(3)}
+              disabled={!jsonElementToEditInAdvancedEditor}
+            />
+          )}
         {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t("templates")} {...a11yProps(4)} />
+          <Tab label={t("template")} {...a11yProps(4)} />
         )}
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t("tags")} {...a11yProps(5)} />
         )}
       </Tabs>
-      <Grid item container flexDirection="column">
+      <Grid
+        item
+        container
+        flexDirection="column"
+        justifyContent="space-between"
+        sx={{ height: "90%" }}
+      >
         <CustomTabPanel value={tabValue} index={0}>
           <Grid
             container
             item
             sx={{
-              minHeight: "55px",
-              height: "400px",
               overflowY: "auto",
+              height: "100%",
             }}
           >
             <Grid
@@ -626,7 +655,7 @@ export const MMUModalEdit = <
                 item
                 sx={{
                   minHeight: "55px",
-                  height: "400px",
+                  height: "100%",
                   overflowY: "auto",
                 }}
               >
@@ -664,9 +693,8 @@ export const MMUModalEdit = <
               container
               item
               sx={{
-                minHeight: "55px",
-                height: "400px",
                 overflowY: "auto",
+                height: "100%",
               }}
             >
               <MetadataForm
@@ -690,7 +718,7 @@ export const MMUModalEdit = <
                 item
                 sx={{
                   minHeight: "55px",
-                  height: "400px",
+                  height: "100%",
                   overflowY: "auto",
                 }}
               >
@@ -709,15 +737,14 @@ export const MMUModalEdit = <
             flexDirection="column"
             sx={{
               minHeight: "55px",
-              height: "600px",
+              height: "100%",
               overflowY: "auto",
             }}
           >
             <Grid item sx={{ height: "100%" }}>
               <NoteTemplate
-                project={item as unknown as Project}
-                handleUpdateTemplate={handleUpdateTemplate}
-                setUpdatedTemplateList={setUpdatedTemplateList}
+                template={item?.noteTemplate ?? ""}
+                updateTemplate={handleUpdateTemplate}
               />
             </Grid>
           </Grid>
@@ -730,7 +757,7 @@ export const MMUModalEdit = <
             flexDirection="column"
             sx={{
               minHeight: "55px",
-              height: "400px",
+              height: "100%",
               overflowY: "auto",
             }}
           >
@@ -749,8 +776,9 @@ export const MMUModalEdit = <
             justifyContent="space-between"
             alignItems="center"
             flexDirection="row"
+            sx={{ height: "20px", padding: 0, margin: 0 }}
           >
-            <Grid item container xs={5} spacing={3}>
+            <Grid item container flexDirection="row" spacing={1} xs={4}>
               <Grid item>
                 {rights === ItemsRights.ADMIN && tabValue === 0 && (
                   <Tooltip title={t("deleteItem")}>
@@ -784,11 +812,11 @@ export const MMUModalEdit = <
             <Grid
               item
               container
-              justifyContent="flex-end"
               flexDirection="row"
               alignItems="center"
-              spacing={2}
-              sx={{ width: "auto", marginTop: "1px" }}
+              justifyContent="flex-end"
+              spacing={1}
+              xs={6}
             >
               <Grid item>
                 <Button
@@ -800,7 +828,6 @@ export const MMUModalEdit = <
                   {t("cancel")}
                 </Button>
               </Grid>
-
               <Grid item>
                 <Button
                   variant="contained"
@@ -812,43 +839,45 @@ export const MMUModalEdit = <
                 </Button>
               </Grid>
             </Grid>
-            <MMUModal
-              width={400}
-              openModal={openDeleteModal}
-              setOpenModal={handleConfirmDeleteItemModal}
-            >
-              <ModalConfirmDelete
-                deleteItem={deleteItem}
-                itemId={item.id}
-                content={t("deleteConfirmation", {
-                  itemName: itemLabel,
-                })}
-                buttonLabel={t("deleteDefinitely")}
-              />
-            </MMUModal>
-            <MMUModal
-              width={400}
-              openModal={openDuplicateModal}
-              setOpenModal={handleConfirmDuplicateItem}
-            >
-              <Grid>
-                <Typography>
-                  {" "}
-                  {t("areYouSureDuplicate")} <b>{itemLabel}</b> ?
-                </Typography>
-                <Button onClick={() => confirmDuplicate(item.id)}>
-                  {t("yes")}
-                </Button>
-                <Button
-                  onClick={() => setOpenDuplicateModal(!openDuplicateModal)}
-                >
-                  {t("no")}
-                </Button>
-              </Grid>
-            </MMUModal>
           </Grid>
         )}
       </Grid>
+      {openDeleteModal && (
+        <MMUModal
+          width={400}
+          openModal={openDeleteModal}
+          setOpenModal={handleConfirmDeleteItemModal}
+        >
+          <ModalConfirmDelete
+            deleteItem={deleteItem}
+            itemId={item.id}
+            content={t("deleteConfirmation", {
+              itemName: itemLabel,
+            })}
+            buttonLabel={t("deleteDefinitely")}
+          />
+        </MMUModal>
+      )}
+      {openDuplicateModal && (
+        <MMUModal
+          width={400}
+          openModal={openDuplicateModal}
+          setOpenModal={handleConfirmDuplicateItem}
+        >
+          <Grid>
+            <Typography>
+              {" "}
+              {t("areYouSureDuplicate")} <b>{itemLabel}</b> ?
+            </Typography>
+            <Button onClick={() => confirmDuplicate(item.id)}>
+              {t("yes")}
+            </Button>
+            <Button onClick={() => setOpenDuplicateModal(!openDuplicateModal)}>
+              {t("no")}
+            </Button>
+          </Grid>
+        </MMUModal>
+      )}
     </Grid>
   );
 };

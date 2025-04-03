@@ -1,5 +1,5 @@
-import storage from "../../../utils/storage.ts";
-import { ProjectUser } from "../types/types.ts";
+import storage from "../../../../utils/storage.ts";
+import { ProjectUser } from "../../types/types.ts";
 
 export const lookingForProject = async (
   partialProjectName: string,

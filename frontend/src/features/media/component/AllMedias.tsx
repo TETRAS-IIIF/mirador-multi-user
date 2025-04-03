@@ -433,9 +433,10 @@ export const AllMedias = ({
                     <MediaCard
                       media={{
                         ...media,
-                        thumbnailUrl: media.hash
-                          ? `${caddyUrl}/${media.hash}/thumbnail.webp`
-                          : undefined,
+                        thumbnailUrl:
+                          media.hash && media.mediaTypes === MediaTypes.IMAGE
+                            ? `${caddyUrl}/${media.hash}/thumbnail.webp`
+                            : undefined,
                       }}
                       ownerId={media.idCreator}
                       getAllMediaGroups={getAllMediaGroups}

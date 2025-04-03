@@ -1,5 +1,5 @@
-import storage from "../../../utils/storage.ts";
-import { ProjectGroup } from "../types/types.ts";
+import storage from "../../../../utils/storage.ts";
+import { ProjectGroup } from "../../types/types.ts";
 
 export const getGroupsAccessToProject = async (
   projectId: number,

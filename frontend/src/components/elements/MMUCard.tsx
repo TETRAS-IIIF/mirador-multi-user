@@ -39,6 +39,9 @@ import useFetchThumbnailsUrl from "../../utils/customHooks/useFetchThumbnailsUrl
 import { LoadingSpinner } from "./loadingSpinner.tsx";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import { Snapshot } from "../../features/projects/types/types.ts";
+import LinkIcon from "@mui/icons-material/Link";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import CreateIcon from "@mui/icons-material/Create";
 
 interface IMMUCardProps<T, X> {
   id: number;
@@ -198,7 +201,7 @@ const MMUCard = <
           justifyContent="flex-start"
           spacing={2}
         >
-          <Grid item xs={12} sm={4}>
+          <Grid item xs={12} sm={1}>
             {isLoading ? (
               <LoadingSpinner />
             ) : (
@@ -207,7 +210,7 @@ const MMUCard = <
                 alt={t("thumbnailMissing")}
                 style={{
                   height: 100,
-                  width: 150,
+                  width: 100,
                   objectFit: "contain",
                   marginLeft: "10px",
                 }}
@@ -215,6 +218,9 @@ const MMUCard = <
             )}
           </Grid>
           <Grid item xs={12} sm={1}>
+            {item.origin === manifestOrigin.LINK && <LinkIcon />}
+            {item.origin === manifestOrigin.UPLOAD && <UploadFileIcon />}
+            {item.origin === manifestOrigin.CREATE && <CreateIcon />}
             {item.shared && (
               <Tooltip title={t("shared")}>
                 <ShareIcon />
@@ -239,7 +245,7 @@ const MMUCard = <
                 <AttachFileIcon />
               </Grid>
             )}
-          <Grid item xs={12} sm={2}>
+          <Grid item xs={12} sm={3}>
             <Tooltip title={itemLabel} placement="bottom-start">
               <Typography
                 variant="subtitle1"
@@ -247,7 +253,7 @@ const MMUCard = <
                   textOverflow: "ellipsis",
                   overflow: "hidden",
                   whiteSpace: "nowrap",
-                  maxWidth: "200px",
+                  maxWidth: "400px",
                 }}
               >
                 {itemLabel}
@@ -262,7 +268,7 @@ const MMUCard = <
                   textOverflow: "ellipsis",
                   overflow: "hidden",
                   whiteSpace: "nowrap",
-                  maxWidth: "200px",
+                  maxWidth: "400px",
                 }}
               >
                 {description}
@@ -319,38 +325,36 @@ const MMUCard = <
             openModal={openModal}
             setOpenModal={HandleOpenModal}
             children={
-              <>
-                <MMUModalEdit
-                  handleDeleteSnapshot={handleDeleteSnapshot}
-                  updateSnapshot={updateSnapshot}
-                  handleCreateSnapshot={handleCreateSnapshot}
-                  objectTypes={objectTypes}
-                  isGroups={isGroups}
-                  metadata={metadata ? metadata : undefined}
-                  thumbnailUrl={thumbnailUrl as string}
-                  HandleOpenModalEdit={HandleOpenModal}
-                  description={description}
-                  searchBarLabel={searchBarLabel ? searchBarLabel : ""}
-                  itemLabel={itemLabel}
-                  handleSelectorChange={handleChangeSelectedItem}
-                  fetchData={fetchData}
-                  listOfItem={listOfItem}
-                  deleteItem={deleteItem}
-                  getOptionLabel={getOptionLabel}
-                  getGroupByOption={getGroupByOption}
-                  setSearchInput={setSearchInput}
-                  handleAddAccessListItem={handleAddAccessListItem}
-                  item={item}
-                  searchInput={searchInput}
-                  searchModalEditItem={searchModalEditItem}
-                  setItemToAdd={setItemToAdd}
-                  updateItem={updateItem}
-                  rights={rights}
-                  handleDeleteAccessListItem={handleRemoveAccessListItem}
-                  duplicateItem={duplicateItem}
-                  ownerId={ownerId}
-                />
-              </>
+              <MMUModalEdit
+                handleDeleteSnapshot={handleDeleteSnapshot}
+                updateSnapshot={updateSnapshot}
+                handleCreateSnapshot={handleCreateSnapshot}
+                objectTypes={objectTypes}
+                isGroups={isGroups}
+                metadata={metadata ? metadata : undefined}
+                thumbnailUrl={thumbnailUrl as string}
+                HandleOpenModalEdit={HandleOpenModal}
+                description={description}
+                searchBarLabel={searchBarLabel ? searchBarLabel : ""}
+                itemLabel={itemLabel}
+                handleSelectorChange={handleChangeSelectedItem}
+                fetchData={fetchData}
+                listOfItem={listOfItem}
+                deleteItem={deleteItem}
+                getOptionLabel={getOptionLabel}
+                getGroupByOption={getGroupByOption}
+                setSearchInput={setSearchInput}
+                handleAddAccessListItem={handleAddAccessListItem}
+                item={item}
+                searchInput={searchInput}
+                searchModalEditItem={searchModalEditItem}
+                setItemToAdd={setItemToAdd}
+                updateItem={updateItem}
+                rights={rights}
+                handleDeleteAccessListItem={handleRemoveAccessListItem}
+                duplicateItem={duplicateItem}
+                ownerId={ownerId}
+              />
             }
           />
         </Grid>

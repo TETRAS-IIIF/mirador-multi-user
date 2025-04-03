@@ -6,24 +6,24 @@ import {
   useRef,
   useState,
 } from "react";
-import { updateProject } from "../../features/projects/api/updateProject.ts";
+import { updateProject } from "../../features/projects/api/Project/updateProject.ts";
 import {
   CreateProjectDto,
   Project,
 } from "../../features/projects/types/types.ts";
 import IState from "../../features/mirador/interface/IState.ts";
-import { getUserAllProjects } from "../../features/projects/api/getUserAllProjects.ts";
-import { createProject } from "../../features/projects/api/createProject.ts";
+import { getUserAllProjects } from "../../features/projects/api/Project/getUserAllProjects.ts";
+import { createProject } from "../../features/projects/api/Project/createProject.ts";
 import { User } from "../../features/auth/types/types.ts";
 import { Media, MediaGroupRights } from "../../features/media/types/types.ts";
-import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
+import { getUserPersonalGroup } from "../../features/projects/api/group/getUserPersonalGroup.ts";
 import {
   ItemsRights,
   UserGroup,
   UserGroupTypes,
 } from "../../features/user-group/types/types.ts";
 import { getAllUserGroups } from "../../features/user-group/api/getAllUserGroups.ts";
-import { handleLock } from "../../features/projects/api/handleLock.ts";
+import { handleLock } from "../../features/projects/api/Project/handleLock.ts";
 import { useTranslation } from "react-i18next";
 import { loadLanguage } from "../../features/translation/i18n.ts";
 import { Content } from "./SideDrawer/Content";
@@ -35,7 +35,7 @@ import {
 } from "../../features/manifest/types/types";
 import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests";
 import { MENU_ELEMENT } from "../../utils/utils.ts";
-import { generateSnapshot } from "../../features/projects/api/generateProjectSnapShot.ts";
+import { generateSnapshot } from "../../features/projects/api/snapshot/generateProjectSnapShot.ts";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
 

@@ -1,4 +1,4 @@
-import { Button, Divider, Grid, IconButton, Typography } from "@mui/material";
+import { Divider, Grid, IconButton, Typography } from "@mui/material";
 import { ListItem } from "../types.ts";
 import { LoadingSpinner } from "./loadingSpinner.tsx";
 import { Dispatch, ReactNode, SetStateAction } from "react";
@@ -24,7 +24,7 @@ interface IProjectUserGroup<G, T> {
   item: T;
   items: ListItem[];
   objectTypes: ObjectTypes;
-  ownerId:number
+  ownerId: number;
   removeItem: (itemId: number) => void;
   searchBarLabel: string;
   setItemToAdd?: Dispatch<SetStateAction<G | null>>;
@@ -39,7 +39,12 @@ interface IProjectUserGroup<G, T> {
 
 export const ItemList = <
   G extends { title: string },
-  T extends { id: number; snapshots?: Snapshot[] },
+  T extends {
+    id: number;
+    snapshots?: Snapshot[];
+    ownerId?: number;
+    personalOwnerGroupId?: number;
+  },
 >({
   children,
   getGroupByOption,
@@ -60,13 +65,30 @@ export const ItemList = <
 }: IProjectUserGroup<G, T>): JSX.Element => {
   const { t } = useTranslation();
 
+  const isActionAllowedForListItem = (listItem: ListItem) => {
+    if (
+      objectTypes === ObjectTypes.MANIFEST ||
+      objectTypes === ObjectTypes.MEDIA
+    ) {
+      return (
+        listItem.personalOwnerGroupId !== ownerId ||
+        listItem.type === UserGroupTypes.MULTI_USER
+      );
+    }
+    if (objectTypes === ObjectTypes.GROUP) {
+      return item.ownerId !== listItem.id;
+    }
+    if (objectTypes === ObjectTypes.PROJECT) {
+      return item.personalOwnerGroupId !== listItem.personalOwnerGroupId;
+    }
+  };
+
   return (
     <Grid
       container
       item
       sx={{
         minHeight: "55px",
-        height: "400px",
         overflowY: "auto",
       }}
     >
@@ -77,24 +99,33 @@ export const ItemList = <
             container
             flexDirection="column"
             item
-            spacing={2}
-            sx={{ width: "100%" }}
+            spacing={1}
+            sx={{ width: "100%", padding: 0, margin: 0 }}
           >
-            <Grid item container sx={{ width: "100%" }} spacing={1}>
+            <Grid
+              item
+              container
+              sx={{
+                width: "100%",
+                padding: 0,
+                margin: 0,
+              }}
+              spacing={1}
+            >
               <Grid item>
                 <Typography variant="h5">{t("snapshot")}</Typography>
               </Grid>
-              <Grid item>
-                <Button
-                  variant="contained"
-                  onClick={() => handleCreateSnapshot!(item.id)}
-                >
-                  {t("create_snapshot")}
-                </Button>
-              </Grid>
             </Grid>
-            <Grid item sx={{ width: "100%", margin: "10px" }}>
+            <Grid
+              item
+              sx={{
+                width: "100%",
+                margin: 0,
+                padding: 0,
+              }}
+            >
               <ShareLink
+                handleCreateSnapshot={handleCreateSnapshot}
                 handleDeleteSnapshot={handleDeleteSnapshot!}
                 itemId={item.id}
                 snapShots={item.snapshots ? item.snapshots : []}
@@ -135,10 +166,10 @@ export const ItemList = <
         </Grid>
         <Grid item container flexDirection="column" spacing={1}>
           {items &&
-            items.map((item) =>
-              item ? (
+            items.map((listItem) =>
+              listItem ? (
                 <Grid
-                  key={item.id}
+                  key={listItem.id}
                   item
                   container
                   spacing={1}
@@ -146,36 +177,48 @@ export const ItemList = <
                   alignItems="center"
                   justifyContent="spaceBetween"
                 >
-                  <Grid item container xs={8} alignItems="center" spacing={2} justifyContent="space-between">
+                  <Grid
+                    item
+                    container
+                    xs={8}
+                    alignItems="center"
+                    spacing={2}
+                    justifyContent="space-between"
+                  >
                     <Grid item>
-                      <Typography>{item.title}</Typography>
+                      <Typography>{listItem.title}</Typography>
                     </Grid>
                   </Grid>
                   <Grid item>
-                    {item.type === UserGroupTypes.PERSONAL && <PersonIcon />}
-                    {item.type === UserGroupTypes.MULTI_USER && (
+                    {listItem.type === UserGroupTypes.PERSONAL && (
+                      <PersonIcon />
+                    )}
+                    {listItem.type === UserGroupTypes.MULTI_USER && (
                       <GroupsIcon />
                     )}
-                    {item.type !== UserGroupTypes.PERSONAL &&
-                      item.type !== UserGroupTypes.MULTI_USER && (
+                    {listItem.type !== UserGroupTypes.PERSONAL &&
+                      listItem.type !== UserGroupTypes.MULTI_USER && (
                         <PersonIcon />
                       )}
                   </Grid>
-                  {(item.personalOwnerGroupId !== ownerId || item.type === UserGroupTypes.MULTI_USER) && <Grid item>{children!(item)}</Grid>}
-                  {
-                    (item.personalOwnerGroupId !== ownerId || item.type === UserGroupTypes.MULTI_USER) && (
+                  {isActionAllowedForListItem(listItem) && (
+                    <>
+                      <Grid item>{children!(listItem)}</Grid>
                       <Grid item>
                         <IconButton
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeItem(listItem.id)}
                           aria-label="delete"
                           color="error"
-                          disabled={item.personalOwnerGroupId === ownerId && item.type !== UserGroupTypes.MULTI_USER }
+                          disabled={
+                            listItem.personalOwnerGroupId === ownerId &&
+                            listItem.type !== UserGroupTypes.MULTI_USER
+                          }
                         >
                           <DeleteIcon />
                         </IconButton>
                       </Grid>
-                    )
-                  }
+                    </>
+                  )}
                   <Grid item xs={12} sx={{ mb: "5px" }}>
                     <Divider />
                   </Grid>

@@ -1,19 +1,19 @@
-import storage from "../../../utils/storage.ts";
+import storage from "../../../../utils/storage.ts";
 
-interface IdtoUpdateSnapshotProps {
+interface IdtoProjectSnapshotProps {
   title: string;
-  snapshotId: number;
+  hash?: string;
   projectId: number;
 }
 
-export const updateSnapshot = async (
-  dtoUpdateSnapshot: IdtoUpdateSnapshotProps,
+export const generateSnapshot = async (
+  dtoProjectSnapshot: IdtoProjectSnapshotProps,
 ) => {
   const token = storage.getToken();
 
   try {
     const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/link-group-project/snapshot/update`,
+      `${import.meta.env.VITE_BACKEND_URL}/link-group-project/snapshot/`,
       {
         method: "POST",
         headers: {
@@ -21,7 +21,7 @@ export const updateSnapshot = async (
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ...dtoUpdateSnapshot,
+          ...dtoProjectSnapshot,
         }),
       },
     );
