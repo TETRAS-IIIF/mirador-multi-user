@@ -65,6 +65,8 @@ export class SettingsService implements OnModuleInit {
         await this.set(key, envValue, false);
       }
     }
+
+    await this.set('lastStartingTime', new Date().toISOString());
   }
 
   async get(key: string) {
