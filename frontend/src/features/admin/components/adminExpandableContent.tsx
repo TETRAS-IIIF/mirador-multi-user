@@ -18,7 +18,6 @@ export function AdminExpandableContent({ id }: RowProps) {
 
   async function handleValidateUser() {
     const validate = await validateUser(id)
-    console.log(validate)
     if (validate === 201) {
       toast.success(t('user_validate'));
     } else {
