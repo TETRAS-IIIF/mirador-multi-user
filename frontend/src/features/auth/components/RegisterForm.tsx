@@ -30,7 +30,7 @@ export const RegisterForm = () => {
   const onSubmit = async (data: RegisterCredentialsDTO) => {
       await createUser(data, {
         onSuccess: () => {
-          toast.success(t("accountCreated"));
+          toast.success(t("accountCreated"),{duration:10000});
           navigate("/");
         },
         onError: (error:any) =>
