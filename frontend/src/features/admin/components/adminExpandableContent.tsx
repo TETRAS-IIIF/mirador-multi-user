@@ -26,7 +26,7 @@ export function AdminExpandableContent({ id }: RowProps) {
   }
 
   return (
-    <Grid container spacing={2} flexDirection="column">
+    <Grid container spacing={2} flexDirection="row">
       <Grid item>
         <Button
           variant="contained"

@@ -3,7 +3,6 @@ import { getAllUsers } from '../api/getAllUsers.ts';
 import { User } from '../../auth/types/types.ts';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AdminExpandableContent } from './adminExpandableContent.tsx';
 import { AdminCollapsibleTable } from './adminCollapsibleTable.tsx';
 
 export const AdminPanel = () => {
@@ -54,7 +53,6 @@ export const AdminPanel = () => {
       <AdminCollapsibleTable
         columns={columns}
         rows={rows}
-        renderExpandableContent={AdminExpandableContent}
       />
     </Grid>
   );

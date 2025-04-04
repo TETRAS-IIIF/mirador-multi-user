@@ -1,12 +1,12 @@
 import React from 'react';
 import {
-  Box,
   Collapse,
   IconButton,
   TableCell,
   TableRow,
 } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { AdminExpandableContent } from './adminExpandableContent.tsx';
 
 interface RowData {
   value: React.ReactNode;
@@ -20,13 +20,11 @@ interface RowProps {
 
 interface SingleRowProps {
   row: RowProps;
-  renderExpandableContent?: (row: RowProps) => React.ReactNode;
 }
 
 export function RowAdminPanel(
   {
     row,
-    renderExpandableContent,
   }: SingleRowProps) {
   const [open, setOpen] = React.useState(false);
 
@@ -48,15 +46,13 @@ export function RowAdminPanel(
           </TableCell>
         ))}
       </TableRow>
-      {renderExpandableContent && (
-        <TableRow>
-          <TableCell colSpan={row.data.length + 2}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box>{renderExpandableContent(row)}</Box>
-            </Collapse>
-          </TableCell>
-        </TableRow>
-      )}
+      <TableRow>
+        <TableCell colSpan={row.data.length + 2}>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <AdminExpandableContent id={row.id} />
+          </Collapse>
+        </TableCell>
+      </TableRow>
     </>
   );
 }
