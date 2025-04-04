@@ -19,11 +19,12 @@ export type Project = {
   tags?: string[];
   thumbnailUrl?: string;
   title: string;
-  updated_at: Dayjs
+  updated_at: Dayjs;
   userWorkspace: IState;
 };
 
 export type Template = {
+  id: string;
   title: string;
   content: string;
 };
@@ -51,7 +52,7 @@ export type ProjectGroupUpdateDto = {
   };
   rights?: ItemsRights;
   group?: UserGroup;
-  shared?:boolean;
+  shared?: boolean;
 };
 export type CreateProjectDto = {
   title: string;

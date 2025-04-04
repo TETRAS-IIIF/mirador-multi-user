@@ -195,9 +195,9 @@ export const MMUModalEdit = <
     setSelectedMetadataData(updateData);
   };
 
-  const [updatedTemplateList, setUpdatedTemplateList] = useState<
-    Template[] | undefined
-  >(item.noteTemplate ? item.noteTemplate : undefined);
+  const [templates, setTemplates] = useState<Template[]>(
+    item.noteTemplate ? item.noteTemplate : [],
+  );
 
   const handleSetSelectedMetadataFormat = (
     newFormat: MetadataFormat | undefined,
@@ -250,19 +250,12 @@ export const MMUModalEdit = <
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { rights, ...dataUpdated } = item;
 
-    let itemToUpdate = {
+    const itemToUpdate = {
       ...(dataUpdated as T),
       description: newItemDescription,
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
     };
-
-    if (updatedTemplateList) {
-      itemToUpdate = {
-        ...itemToUpdate,
-        noteTemplate: updatedTemplateList,
-      };
-    }
 
     if (
       objectTypes !== ObjectTypes.GROUP &&
@@ -453,12 +446,15 @@ export const MMUModalEdit = <
     }
   };
 
-  const handleUpdateTemplate = async () => {
+  const handleUpdateTemplates = async (updatedTemplates: Template[]) => {
     if (updateItem) {
       updateItem({
         ...item,
-        noteTemplate: updatedTemplateList,
+        noteTemplate: updatedTemplates,
       });
+      // Not ideal to have this setState here, but we need to trigger the refresh
+      // The best will be updateItem triggering refresh
+      setTemplates(updatedTemplates);
     }
   };
 
@@ -759,9 +755,8 @@ export const MMUModalEdit = <
           >
             <Grid item sx={{ height: "100%" }}>
               <NoteTemplate
-                project={item as unknown as Project}
-                handleUpdateTemplate={handleUpdateTemplate}
-                setUpdatedTemplateList={setUpdatedTemplateList}
+                templates={templates}
+                setTemplates={handleUpdateTemplates}
               />
             </Grid>
           </Grid>

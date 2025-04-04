@@ -226,5 +226,10 @@
   "yes": "Yes",
   "yourAccount": "Your account",
   "yourTextHere": "Your text here",
-  "charactersNotAllowed": "Special characters are not allowed"
+  "charactersNotAllowed": "Special characters are not allowed",
+  "deleteTemplate": "Delete template",
+  "noteTemplateInfo": "Create one or more template, their will be available inside annotation editor.",
+  "templateChoice": "Choose a template",
+  "newTemplateTitle": "New template",
+  "newTemplateContent": "Add your content"
 }
