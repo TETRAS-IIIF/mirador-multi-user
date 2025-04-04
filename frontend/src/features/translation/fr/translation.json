@@ -158,6 +158,7 @@
   "removeManifestFromList": "Retirer le manifeste de la liste",
   "removeMediaFromList": "Retirer le media de la liste",
   "removedProjectFromList": "Le projet a été retiré de la liste",
+  "resendError": "Une erreur a eu lieu durant l'envoie de votre email de confirmation",
   "resendConfirmationLink": "Renvoyer le lien de confirmation",
   "reset-password": "Réinitialiser le mot de passe",
   "reset-password-title": "Réinitialiser le mot de passe",

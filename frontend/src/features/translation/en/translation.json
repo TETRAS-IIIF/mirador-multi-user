@@ -158,6 +158,7 @@
   "removedManifestFromList": "The manifest was removed from the list",
   "removedMediaFromList": "The media was removed from the list",
   "register": "REGISTER",
+  "resendError": "An error occurred while sending your confirmation link email",
   "resendConfirmationLink": "Resend Confirmation Link",
   "reset-password": "Reset Password",
   "reset-password-title": "Reset password",
