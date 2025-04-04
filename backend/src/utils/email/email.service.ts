@@ -183,9 +183,11 @@ export class EmailServerService implements MailService {
         text: content.text,
         html: content.body,
       });
-      console.log('Email sent');
+      this.logger.log(
+        `email sent to : ${content.to} with subject ${content.subject}`,
+      );
     } catch (error) {
-      console.log('Error sending email', error);
+      this.logger.error('Error sending email', error);
       throw new InternalServerErrorException('Failed to send email', error);
     }
   }
@@ -200,7 +202,7 @@ export class EmailServerService implements MailService {
     );
     const plainText = `Hi, \\nTo reset your password, click here: ${url}`;
 
-    return this.sendMail({
+    await this.sendMail({
       to: email.to,
       subject: 'Reset password',
       text: plainText,
