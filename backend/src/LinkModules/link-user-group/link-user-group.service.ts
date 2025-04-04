@@ -159,13 +159,10 @@ export class LinkUserGroupService {
 
   public async sendConfirmationLink(email: string, language: string) {
     try {
-      console.log('email', email);
       const user = await this.userService.findOneByMail(email);
-      console.log('user', user);
       if (user.isEmailConfirmed && user.termsValidatedAt) {
         throw new BadRequestException('Email and terms already confirmed');
       }
-      console.log('user', user);
       await this.emailService.sendConfirmationEmail({
         to: user.mail,
         subject: 'Account creation',

@@ -11,7 +11,6 @@ export type LoginCredentialsDTO = {
 export const login = async (
   data: LoginCredentialsDTO,
 ): Promise<UserResponse> => {
-  console.log('data', data);
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/auth/login`,
@@ -42,7 +41,6 @@ export const login = async (
       },
     );
     const profile = await profileResponse.json();
-    console.log('profile', profile);
     if (profile.statusCode === 403) {
       storage.setUserEmail(data.mail);
     }
