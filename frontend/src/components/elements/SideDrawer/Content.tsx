@@ -1,19 +1,19 @@
-import { Box } from "@mui/material";
-import { AdminPanel } from "../../../features/admin/components/adminPanel";
-import { AllProjects } from "../../../features/projects/components/AllProjects";
-import { AllMedias } from "../../../features/media/component/AllMedias";
-import { AllGroups } from "../../../features/user-group/components/AllGroups";
-import { AllManifests } from "../../../features/manifest/component/AllManifests";
-import { UserSettings } from "../../../features/user-setting/UserSettings";
-import { MMUModal } from "../modal";
-import { ConfirmDisconnect } from "../../../features/auth/components/confirmDisconect";
-import { MENU_ELEMENT } from "../SideDrawer";
-import { ProjectWorkspace } from "./ProjectWorkspace";
-import { User } from "../../../features/auth/types/types.ts";
-import { UserGroup } from "../../../features/user-group/types/types.ts";
-import { Manifest } from "../../../features/manifest/types/types.ts";
-import { Media } from "../../../features/media/types/types.ts";
-import { Project } from "../../../features/projects/types/types.ts";
+import { Box } from '@mui/material';
+import { AdminPanel } from '../../../features/admin/components/adminPanel';
+import { AllProjects } from '../../../features/projects/components/AllProjects';
+import { AllMedias } from '../../../features/media/component/AllMedias';
+import { AllGroups } from '../../../features/user-group/components/AllGroups';
+import { AllManifests } from '../../../features/manifest/component/AllManifests';
+import { UserSettings } from '../../../features/user-setting/UserSettings';
+import { MMUModal } from '../modal';
+import { ConfirmDisconnect } from '../../../features/auth/components/confirmDisconect';
+import { MENU_ELEMENT } from '../SideDrawer';
+import { ProjectWorkspace } from './ProjectWorkspace';
+import { User } from '../../../features/auth/types/types.ts';
+import { UserGroup } from '../../../features/user-group/types/types.ts';
+import { Manifest } from '../../../features/manifest/types/types.ts';
+import { Media } from '../../../features/media/types/types.ts';
+import { Project } from '../../../features/projects/types/types.ts';
 
 interface ContentProps {
   HandleSetIsRunning: () => void;
@@ -44,36 +44,36 @@ interface ContentProps {
 }
 
 export function Content({
-  HandleSetIsRunning,
-  HandleSetUserProjects,
-  fetchGroups,
-  fetchProjects,
-  fetchManifestForUser,
-  fetchMediaForUser,
-  groups,
-  handleDisconnectUser,
-  handleSetMiradorState,
-  manifests,
-  medias,
-  miradorState,
-  miradorViewerRef,
-  projectSelected,
-  saveMiradorState,
-  selectedContent,
-  selectedProjectId,
-  setSelectedProjectId,
-  setShowSignOutModal,
-  setViewer,
-  showSignOutModal,
-  user,
-  userPersonalGroup,
-  userProjects,
-  viewer,
-}: ContentProps) {
+                          HandleSetIsRunning,
+                          HandleSetUserProjects,
+                          fetchGroups,
+                          fetchProjects,
+                          fetchManifestForUser,
+                          fetchMediaForUser,
+                          groups,
+                          handleDisconnectUser,
+                          handleSetMiradorState,
+                          manifests,
+                          medias,
+                          miradorState,
+                          miradorViewerRef,
+                          projectSelected,
+                          saveMiradorState,
+                          selectedContent,
+                          selectedProjectId,
+                          setSelectedProjectId,
+                          setShowSignOutModal,
+                          setViewer,
+                          showSignOutModal,
+                          user,
+                          userPersonalGroup,
+                          userProjects,
+                          viewer,
+                        }: ContentProps) {
   return (
     <Box
       component="main"
-      sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: "100vh" }}
+      sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: '100vh' }}
     >
       {selectedProjectId && projectSelected && (
         <ProjectWorkspace
