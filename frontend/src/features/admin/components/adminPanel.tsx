@@ -1,24 +1,10 @@
-import { Grid } from "@mui/material";
-import CollapsibleTable from "../../../components/elements/CollapsibleTable.tsx";
+import { Grid } from '@mui/material';
 import { getAllUsers } from "../api/getAllUsers.ts";
 import { User } from "../../auth/types/types.ts";
-import { ReactNode, useEffect, useMemo, useState } from "react";
-import { initiateImpersonation } from "../api/initiateImpersonation.ts";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-
-interface RowData {
-  value: ReactNode;
-  align?: "right" | "left" | "center";
-}
-
-interface RowProps {
-  id: number;
-  data: RowData[];
-}
-
-function renderExpandableContent(row: RowProps) {
-  return <div>Extra details for {row.data[0].value}</div>;
-}
+import { AdminExpandableContent } from './adminExpandableContent.tsx';
+import { AdminCollapsibleTable } from './adminCollapsibleTable.tsx';
 
 export const AdminPanel = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -64,18 +50,12 @@ export const AdminPanel = () => {
       ],
     }));
   }, [users]);
-
-  async function handleActionClick(row: RowProps) {
-    await initiateImpersonation(row.id);
-  }
-
   return (
     <Grid sx={{ padding: 2 }}>
-      <CollapsibleTable
+      <AdminCollapsibleTable
         columns={columns}
         rows={rows}
-        renderExpandableContent={renderExpandableContent}
-        onActionClick={handleActionClick}
+        renderExpandableContent={AdminExpandableContent}
       />
     </Grid>
   );
