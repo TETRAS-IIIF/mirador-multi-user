@@ -15,16 +15,8 @@ export const validateUser = async (
         },
       },
     );
-
-    const responseJson = await response.json();
-
-    const { access_token } = responseJson;
-    if (!token) {
-      console.error('token is undefined', token);
-    }
-
-    return access_token;
+    return response.status;
   } catch (error) {
-    console.error('Failed to validate impersonation', error);
+    console.error('Failed to validate user', error);
   }
 };

@@ -615,9 +615,11 @@ export class LinkUserGroupService {
       }
       return await this.userService.updateUser(userToValidateId, {
         isEmailConfirmed: true,
+        termsValidatedAt: new Date(),
       });
     } catch (error) {
       if (error instanceof UnauthorizedException) {
+        this.logger.error(error.message, error.stack);
         throw new UnauthorizedException('You are not allowed to do this.');
       }
       this.logger.error(error.message, error.stack);

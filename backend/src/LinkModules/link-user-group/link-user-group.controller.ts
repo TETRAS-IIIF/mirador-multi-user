@@ -330,12 +330,9 @@ export class LinkUserGroupController {
 
   @ApiOperation({ summary: 'validate a user account' })
   @UseGuards(AuthGuard)
+  @HttpCode(201)
   @Patch('/validate-user/:userId')
   async validateUserAccount(@Param('userId') userId: number, @Req() request) {
-    if (request._isAdmin) {
-      return this.linkUserGroupService.validateUser(userId);
-    } else {
-      throw new UnauthorizedException('You are not allowed to do this.');
-    }
+    return this.linkUserGroupService.validateUser(userId, request.user.sub);
   }
 }

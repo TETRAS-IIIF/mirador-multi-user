@@ -46,7 +46,10 @@ export class UsersService {
         const hashedUpdatedPassword = await bcrypt.hash(newPassword, salt);
         dto = { ...dto, password: hashedUpdatedPassword };
       }
-      return await this.userRepository.update(userId, dto);
+      const toreturn = await this.userRepository.update(userId, dto);
+      console.log('toreturn');
+      console.log(toreturn);
+      return toreturn;
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         this.logger.error(error.message, error.stack);

@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Grid } from '@mui/material';
 import { initiateImpersonation } from '../api/initiateImpersonation.ts';
 import { validateUser } from '../api/validateUser.ts';
+import toast from 'react-hot-toast';
 
 interface RowProps {
   id: number;
@@ -16,7 +17,13 @@ export function AdminExpandableContent({ id }: RowProps) {
   }
 
   async function handleValidateUser() {
-    return await validateUser(id)
+    const validate = await validateUser(id)
+    console.log(validate)
+    if (validate === 201) {
+      toast.success(t('user_validate'));
+    } else {
+      toast.error(t('error_validate'));
+    }
   }
 
   return (
