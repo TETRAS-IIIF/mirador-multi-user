@@ -202,7 +202,7 @@ export class EmailServerService implements MailService {
     );
     const plainText = `Hi, \\nTo reset your password, click here: ${url}`;
 
-    await this.sendMail({
+    return await this.sendMail({
       to: email.to,
       subject: 'Reset password',
       text: plainText,
