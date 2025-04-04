@@ -41,11 +41,12 @@
   "createGroup": "Créer un groupe",
   "createGroupMAJ": "CRÉER LE GROUPE",
   "createProjectTitle": "CRÉER UN PROJET",
+  "createNewTemplate": "Créé un nouveau modèle",
   "createdAt": "Créé le",
   "created_at": "Date de création",
-  "updated_at": "Date de modification",
   "creator": "Créateur",
   "create_snapshot": "Génerer l'aperçus",
+  "createTemplate": "Créé le modèle",
   "created_by": "Créé par",
   "customization": "Customisation",
   "defaultProjectTitle": "Nouveau projet",
@@ -226,5 +227,10 @@
   "yes": "Oui",
   "yourAccount": "Votre compte",
   "yourTextHere": "Votre texte ici",
-  "charactersNotAllowed": "Caractères spéciaux non autorisés"
+  "charactersNotAllowed": "Caractères spéciaux non autorisés",
+  "deleteTemplate": "Supprimer le modèle",
+  "noteTemplateInfo": "Créer un ou plusieurs modèles de notes. Ceux ci seront disponibles lors de l'édition d'annotation.",
+  "templateChoice": "Choisissez un modèle",
+  "newTemplateTitle": "Nouveau modèle",
+  "newTemplateContent": "Ajouter votre contenu"
 }
