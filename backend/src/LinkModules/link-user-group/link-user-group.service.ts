@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkUserGroup } from './entities/link-user-group.entity';
@@ -601,6 +602,24 @@ export class LinkUserGroupService {
         preferredLanguage,
       );
     } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async validateUser(userToValidateId: number, requestUserId: number) {
+    try {
+      const requestUser = await this.userService.findOne(requestUserId);
+      if (!requestUser._isAdmin) {
+        throw new UnauthorizedException('You are not allowed to do this.');
+      }
+      return await this.userService.updateUser(userToValidateId, {
+        isEmailConfirmed: true,
+      });
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException('You are not allowed to do this.');
+      }
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException();
     }
