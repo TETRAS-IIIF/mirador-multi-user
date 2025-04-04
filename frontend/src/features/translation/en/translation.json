@@ -10,7 +10,7 @@
   "UpdateProfile": "Update Profile",
   "Videos": "Videos",
   "accept_terms": "Please accept the ",
-  "account-creation-title": "Create your account",
+  "account-creation-title": "Create your account",fv
   "accountCreated": "Your account was successfully created",
   "actions": "Actions",
   "actionsDial": {
@@ -221,6 +221,7 @@
   "userSuccessfullyUpdated": "user successfully updated",
   "users": "Users",
   "update_snapshot": "update",
+  "updateTemplate": "Update template",
   "user_already_exists": "a user with this email or username already exists",
   "welcome": "Welcome to {{instanceName}}",
   "yes": "Yes",
