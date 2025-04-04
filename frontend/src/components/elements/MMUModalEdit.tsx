@@ -59,6 +59,7 @@ import {
   Template,
 } from "../../features/projects/types/types.ts";
 import { TagMaker } from "./TagsFactory/TagMaker.tsx";
+import { SnapshotFactory } from "./SnapshotFactory.tsx";
 
 interface ModalItemProps<T> {
   HandleOpenModalEdit: () => void;
@@ -90,11 +91,7 @@ interface ModalItemProps<T> {
   setSearchInput: Dispatch<SetStateAction<string>>;
   thumbnailUrl?: string | null;
   updateItem?: (newItem: T) => void;
-  updateSnapshot?: (
-    snapshotTitle: string,
-    projectId: number,
-    snapshotId: number,
-  ) => void;
+  fetchItems?: () => void;
 }
 
 type MetadataFormat = {
@@ -142,9 +139,7 @@ export const MMUModalEdit = <
   getGroupByOption,
   getOptionLabel,
   handleAddAccessListItem,
-  handleCreateSnapshot,
   handleDeleteAccessListItem,
-  handleDeleteSnapshot,
   handleSelectorChange,
   isGroups,
   item,
@@ -161,7 +156,7 @@ export const MMUModalEdit = <
   setSearchInput,
   thumbnailUrl,
   updateItem,
-  updateSnapshot,
+  fetchItems,
 }: ModalItemProps<T>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
@@ -532,6 +527,9 @@ export const MMUModalEdit = <
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t("tags")} {...a11yProps(5)} />
         )}
+        {objectTypes === ObjectTypes.PROJECT && (
+          <Tab label={t("snapshots")} {...a11yProps(6)} />
+        )}
       </Tabs>
       <Grid
         item
@@ -674,8 +672,6 @@ export const MMUModalEdit = <
                 <ItemList
                   getGroupByOption={getGroupByOption}
                   handleAddAccessListItem={handleAddAccessListItem}
-                  handleCreateSnapshot={handleCreateSnapshot}
-                  handleDeleteSnapshot={handleDeleteSnapshot}
                   handleGetOptionLabel={handleGetOtpionLabel}
                   handleSearchModalEditItem={handleSearchModalEditItem}
                   item={item}
@@ -686,8 +682,6 @@ export const MMUModalEdit = <
                   searchBarLabel={searchBarLabel}
                   setItemToAdd={setItemToAdd}
                   setSearchInput={setSearchInput}
-                  snapShots={item.snapshots ? item.snapshots : []}
-                  updateSnapshot={updateSnapshot}
                 >
                   {(accessListItem) => (
                     <Selector
@@ -777,6 +771,27 @@ export const MMUModalEdit = <
               <TagMaker
                 project={item as unknown as Project}
                 handleUpdateTags={handleUpdateTags}
+              />
+            </Grid>
+          </Grid>
+        </CustomTabPanel>
+        <CustomTabPanel index={6} value={tabValue}>
+          <Grid
+            container
+            item
+            spacing={1}
+            flexDirection="column"
+            sx={{
+              minHeight: "55px",
+              height: "100%",
+              overflowY: "auto",
+            }}
+          >
+            <Grid item sx={{ height: "100%" }}>
+              <SnapshotFactory
+                fetchItems={fetchItems!}
+                objectTypes={objectTypes!}
+                item={item}
               />
             </Grid>
           </Grid>
