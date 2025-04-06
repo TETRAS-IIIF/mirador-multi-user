@@ -5,33 +5,33 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { updateProject } from "../../features/projects/api/updateProject.ts";
+} from 'react';
+import { updateProject } from '../../features/projects/api/updateProject.ts';
 import {
   CreateProjectDto,
   Project,
-} from "../../features/projects/types/types.ts";
-import IState from "../../features/mirador/interface/IState.ts";
-import { getUserAllProjects } from "../../features/projects/api/getUserAllProjects.ts";
-import { createProject } from "../../features/projects/api/createProject.ts";
-import { User } from "../../features/auth/types/types.ts";
-import { Media } from "../../features/media/types/types.ts";
-import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
+} from '../../features/projects/types/types.ts';
+import IState from '../../features/mirador/interface/IState.ts';
+import { getUserAllProjects } from '../../features/projects/api/getUserAllProjects.ts';
+import { createProject } from '../../features/projects/api/createProject.ts';
+import { User } from '../../features/auth/types/types.ts';
+import { Media } from '../../features/media/types/types.ts';
+import { getUserPersonalGroup } from '../../features/projects/api/getUserPersonalGroup.ts';
 import {
   ItemsRights,
   UserGroup,
   UserGroupTypes,
-} from "../../features/user-group/types/types.ts";
-import { getAllUserGroups } from "../../features/user-group/api/getAllUserGroups.ts";
-import { handleLock } from "../../features/projects/api/handleLock.ts";
-import { useTranslation } from "react-i18next";
-import { loadLanguage } from "../../features/translation/i18n.ts";
-import { Content } from "./SideDrawer/Content";
-import { MMUDrawer } from "./SideDrawer/MMUDrawer";
-import { getUserMedias } from "../../features/media/api/getUserMedias.ts";
+} from '../../features/user-group/types/types.ts';
+import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
+import { handleLock } from '../../features/projects/api/handleLock.ts';
+import { useTranslation } from 'react-i18next';
+import { loadLanguage } from '../../features/translation/i18n.ts';
+import { Content } from './SideDrawer/Content';
+import { MMUDrawer } from './SideDrawer/MMUDrawer';
+import { getUserMedias } from '../../features/media/api/getUserMedias.ts';
 import {
   Manifest,
-} from "../../features/manifest/types/types";
+} from '../../features/manifest/types/types';
 import { getUserManifests } from '../../features/manifest/api/getUserGroupManifests.ts';
 
 interface ISideDrawerProps {
@@ -49,22 +49,22 @@ interface MiradorViewerHandle {
 }
 
 export const MENU_ELEMENT = {
-  PROJECTS: "PROJECT",
-  GROUPS: "GROUPS",
-  MEDIA: "MEDIA",
-  MANIFEST: "MANIFEST",
-  SETTING: "SETTING",
-  ADMIN: "ADMIN",
+  PROJECTS: 'PROJECT',
+  GROUPS: 'GROUPS',
+  MEDIA: 'MEDIA',
+  MANIFEST: 'MANIFEST',
+  SETTING: 'SETTING',
+  ADMIN: 'ADMIN',
 };
 
 export const SideDrawer = ({
-  user,
-  handleDisconnect,
-  selectedProjectId,
-  setSelectedProjectId,
-  setViewer,
-  viewer,
-}: ISideDrawerProps) => {
+                             user,
+                             handleDisconnect,
+                             selectedProjectId,
+                             setSelectedProjectId,
+                             setViewer,
+                             viewer,
+                           }: ISideDrawerProps) => {
   const [selectedContent, setSelectedContent] = useState(MENU_ELEMENT.PROJECTS);
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
@@ -177,7 +177,7 @@ export const SideDrawer = ({
     const allManifests = await getUserManifests();
 
     const updatedManifests = await Promise.all(
-      allManifests.map(async (manifest : Manifest) => {
+      allManifests.map(async (manifest: Manifest) => {
         const manifestJson = await getManifestFromUrl(manifest.path);
         return { ...manifest, json: manifestJson };
       }),
@@ -215,7 +215,7 @@ export const SideDrawer = ({
       }
     } else {
       const project: CreateProjectDto = {
-        title: t("defaultProjectTitle"),
+        title: t('defaultProjectTitle'),
         ownerId: user.id,
         userWorkspace: miradorViewer!,
         metadata: {},
@@ -285,7 +285,7 @@ export const SideDrawer = ({
       });
       setUserProjects(uniqueProjects);
     } catch (error) {
-      console.error(t("errorFetchProject"), error);
+      console.error(t('errorFetchProject'), error);
     }
   }, [user.id]);
 

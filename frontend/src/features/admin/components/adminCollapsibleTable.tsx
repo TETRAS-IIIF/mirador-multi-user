@@ -9,14 +9,14 @@ import {
   TableRow,
   TableSortLabel,
   TextField,
-} from "@mui/material";
-import { Row } from "./Row.tsx";
-import { ReactNode, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+} from '@mui/material';
+import { ReactNode, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { RowAdminPanel } from './RowAdminPanel.tsx';
 
 interface RowData {
   value: ReactNode;
-  align?: "right" | "left" | "center";
+  align?: 'right' | 'left' | 'center';
 }
 
 interface RowProps {
@@ -26,36 +26,33 @@ interface RowProps {
 
 interface Column {
   label: string;
-  align?: "right" | "left" | "center";
+  align?: 'right' | 'left' | 'center';
   sortKey?: string;
 }
 
 interface CollapsibleTableProps {
   columns: Column[];
   rows: RowProps[];
-  renderExpandableContent?: (row: RowProps) => ReactNode;
-  onActionClick?: (row: RowProps) => void;
 }
 
-export default function CollapsibleTable({
-  columns,
-  rows,
-  renderExpandableContent,
-  onActionClick,
-}: CollapsibleTableProps) {
+export function AdminCollapsibleTable(
+  {
+    columns,
+    rows,
+  }: CollapsibleTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(null);
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [filter, setFilter] = useState("");
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [filter, setFilter] = useState('');
   const { t } = useTranslation();
 
   const handleSort = (key: string | undefined) => {
     if (!key) return;
 
     if (sortKey === key) {
-      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortKey(key);
-      setSortDirection("asc");
+      setSortDirection('asc');
     }
   };
 
@@ -80,13 +77,13 @@ export default function CollapsibleTable({
         (_cell, index) => columns[index]?.sortKey === sortKey,
       )?.value;
 
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return sortDirection === "asc"
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortDirection === 'asc'
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
       }
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
       }
       return 0;
     });
@@ -101,7 +98,7 @@ export default function CollapsibleTable({
             inputProps={{
               maxLength: 255,
             }}
-            label={t("filter")}
+            label={t('filter')}
             variant="outlined"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -114,12 +111,12 @@ export default function CollapsibleTable({
             <TableRow>
               <TableCell />
               {columns.map((column, index) => (
-                <TableCell key={index} align={column.align || "left"}>
+                <TableCell key={index} align={column.align || 'left'}>
                   {column.sortKey ? (
                     <TableSortLabel
                       active={sortKey === column.sortKey}
                       direction={
-                        sortKey === column.sortKey ? sortDirection : "asc"
+                        sortKey === column.sortKey ? sortDirection : 'asc'
                       }
                       onClick={() => handleSort(column.sortKey)}
                     >
@@ -130,16 +127,14 @@ export default function CollapsibleTable({
                   )}
                 </TableCell>
               ))}
-              <TableCell align="center">{t("actions")}</TableCell>
+              <TableCell align="center">{t('actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {sortedRows.map((row) => (
-              <Row
+              <RowAdminPanel
                 key={row.id}
                 row={row}
-                renderExpandableContent={renderExpandableContent}
-                onActionClick={onActionClick}
               />
             ))}
           </TableBody>
