@@ -209,6 +209,7 @@
   "userSuccessfullyUpdated": "user successfully updated",
   "users": "Users",
   "user_already_exists": "a user with this email or username already exists",
+  "userLoginFailed": "Login failed. Please check your email and password.",
   "welcome": "Welcome to {{instanceName}}",
   "yes": "Yes",
   "yourAccount": "Your account",

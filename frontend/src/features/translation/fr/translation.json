@@ -209,6 +209,7 @@
   "userSuccessfullyUpdated": "Utilisateur mis à jour avec succès",
   "users": "Utilisateurs",
   "user_already_exists": "Un utilisateur avec cet email ou ce nom existe déjà.",
+  "userLoginFailed": "Échec de la connexion de l'utilisateur. Veuillez vérifier votre adresse e-mail et votre mot de passe.",
   "welcome": "Bienvenue sur {{instanceName}}",
   "yes": "Oui",
   "yourAccount": "Votre compte",
