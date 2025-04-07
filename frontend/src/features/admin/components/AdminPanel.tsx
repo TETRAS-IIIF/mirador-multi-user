@@ -1,11 +1,9 @@
 import { Grid } from "@mui/material";
-import CollapsibleTable from "../../../components/elements/CollapsibleTable.tsx";
 import { getAllUsers } from "../api/getAllUsers.ts";
 import { User } from "../../auth/types/types.ts";
 import { useEffect, useMemo, useState } from "react";
-import { initiateImpersonation } from "../api/initiateImpersonation.ts";
 import { useTranslation } from "react-i18next";
-import { RowProps } from "../../projects/types/types.ts";
+import { AdminCollapsibleTable } from "./AdminCollapsibleTable.tsx";
 
 export const AdminPanel = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -30,7 +28,7 @@ export const AdminPanel = () => {
   ];
   useEffect(() => {
     fetchUsers();
-  });
+  }, []);
 
   const rows = useMemo(() => {
     return users.map((user) => ({
@@ -52,18 +50,9 @@ export const AdminPanel = () => {
     }));
   }, [users]);
 
-  async function handleActionClick(row: RowProps) {
-    await initiateImpersonation(row.id);
-  }
-
   return (
     <Grid sx={{ padding: 2 }}>
-      <CollapsibleTable
-        columns={columns}
-        rows={rows}
-        onActionClick={handleActionClick}
-        labelButton={t("impersonate")}
-      />
+      <AdminCollapsibleTable columns={columns} rows={rows} />
     </Grid>
   );
 };

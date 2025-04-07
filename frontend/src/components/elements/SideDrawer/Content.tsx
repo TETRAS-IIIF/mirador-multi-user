@@ -1,5 +1,5 @@
 import { Box } from "@mui/material";
-import { AdminPanel } from "../../../features/admin/components/adminPanel";
+import { AdminPanel } from "../../../features/admin/components/AdminPanel.tsx";
 import { AllProjects } from "../../../features/projects/components/AllProjects";
 import { AllMedias } from "../../../features/media/component/AllMedias";
 import { AllGroups } from "../../../features/user-group/components/AllGroups";
