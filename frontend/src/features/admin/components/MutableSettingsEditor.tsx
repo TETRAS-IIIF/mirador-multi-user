@@ -1,16 +1,47 @@
 import { useState } from 'react';
-import { Box, Button, FormControlLabel, Grid, Switch, TextField, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { Setting } from '../types/type.ts';
+import { RenderInput } from './RenderInput.tsx';
+import { fetchBackendAPIConnected } from '../../../utils/fetchBackendAPI.ts';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 
 interface IMutableSettingsEditorProps {
   settings: Setting[];
-  onSave: (settings: Setting[]) => void;
 }
 
-export const MutableSettingsEditor = ({ settings, onSave }: IMutableSettingsEditorProps) => {
+export const MutableSettingsEditor = ({ settings }: IMutableSettingsEditorProps) => {
   const [editableSettings, setEditableSettings] = useState<Setting[]>([...settings]);
+  const { t } = useTranslation();
 
-  const handleChange = (id: number, newValue: string) => {
+  const handleChange = async (id: number, newValue: string) => {
+    const settingToUpdate = editableSettings.find(s => s.id === id);
+    if (!settingToUpdate) return;
+
+    await fetchBackendAPIConnected(
+      'settings',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          key: settingToUpdate.key,
+          value: newValue,
+        }),
+      },
+      () => {
+        toast.success(
+          t('setting_updated'),
+        )
+      },
+      () => {
+        toast.error(
+          t('error_update_settings'),
+        )
+      },
+    )
+
     setEditableSettings(prev =>
       prev.map(setting =>
         setting.id === id ? { ...setting, value: newValue } : setting,
@@ -18,37 +49,9 @@ export const MutableSettingsEditor = ({ settings, onSave }: IMutableSettingsEdit
     );
   };
 
-  const renderInput = (setting: Setting) => {
-    const isBoolean = setting.value === 'true' || setting.value === 'false';
-
-    if (isBoolean) {
-      return (
-        <FormControlLabel
-          control={
-            <Switch
-              checked={setting.value === 'true'}
-              onChange={e => handleChange(setting.id, e.target.checked.toString())}
-            />
-          }
-          label={setting.key}
-        />
-      );
-    }
-
-    return (
-      <TextField
-        fullWidth
-        label={setting.key}
-        value={setting.value}
-        onChange={e => handleChange(setting.id, e.target.value)}
-      />
-    );
-  }
-
   return (
     <Grid container sx={{ p: 3 }}>
       <Grid item>
-
         <Typography variant="h6" gutterBottom>
           Mutable Settings
         </Typography>
@@ -56,19 +59,10 @@ export const MutableSettingsEditor = ({ settings, onSave }: IMutableSettingsEdit
       <Grid container item spacing={2}>
         {editableSettings.map(setting => (
           <Grid item xs={12} sm={6} key={setting.id}>
-            {renderInput(setting)}
+            <RenderInput setting={setting} handleChange={handleChange} />
           </Grid>
         ))}
       </Grid>
-      <Box mt={3} textAlign="right">
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => onSave(editableSettings)}
-        >
-          Save Changes
-        </Button>
-      </Box>
     </Grid>
   );
 }

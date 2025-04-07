@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { getAllUsers } from '../api/getAllUsers.ts';
 import { User } from '../../auth/types/types.ts';
 import { useEffect, useMemo, useState } from 'react';
@@ -53,14 +53,21 @@ export const AdminPanel = () => {
   }, [users]);
 
   return (
-    <Grid sx={{ padding: 2 }}>
-      <AdminSettings />
-      <CollapsibleTable
-        columns={columns}
-        rows={rows}
-        renderExpandableContent={(row) => (
-          <AdminExpandableContent id={row.id} />)
-        } />
+    <Grid container flexDirection="column" item sx={{ padding: 2 }} spacing={2}>
+      <Grid item>
+        <AdminSettings />
+      </Grid>
+      <Grid item>
+        <Typography variant="h6" gutterBottom>
+          Users
+        </Typography>
+        <CollapsibleTable
+          columns={columns}
+          rows={rows}
+          renderExpandableContent={(row) => (
+            <AdminExpandableContent id={row.id} />)
+          } />
+      </Grid>
     </Grid>
   );
 };

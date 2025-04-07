@@ -17,6 +17,7 @@ import * as path from 'node:path';
 @Injectable()
 export class SettingsService implements OnModuleInit {
   private readonly logger = new CustomLogger();
+  private readonly appStartedAt = new Date().toISOString();
 
   constructor(
     @InjectRepository(Setting)
@@ -59,7 +60,6 @@ export class SettingsService implements OnModuleInit {
         console.info('New setting :', key, envValue);
       }
     }
-    await this.set('LAST_STARTING_TIME', new Date().toISOString());
   }
 
   getUploadFolderSize() {
@@ -88,6 +88,7 @@ export class SettingsService implements OnModuleInit {
         ['LAST_MIGRATION', lastMigration?.toISOString() ?? null],
         ['UPLOAD_FOLDER_SIZE', uploadFileSize],
         ['DB_SIZE', dbSize],
+        ['LAST_STARTING_TIME', this.appStartedAt],
       );
       return {
         mutableSettings: settings,
@@ -105,14 +106,12 @@ export class SettingsService implements OnModuleInit {
   async set(key: string, value: string) {
     try {
       let setting = await this.settingsRepository.findOne({ where: { key } });
-
       if (setting) {
         setting.value = value;
       } else {
         setting = this.settingsRepository.create({ key, value });
       }
-
-      await this.settingsRepository.save(setting);
+      return await this.settingsRepository.save(setting);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
