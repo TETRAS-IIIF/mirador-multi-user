@@ -20,7 +20,6 @@ import { EmailServerModule } from '../../utils/email/email.module';
     UserGroupModule,
     LinkUserGroupModule,
     MetadataModule,
-    EmailServerModule,
   ],
   controllers: [LinkGroupProjectController],
   providers: [LinkGroupProjectService],

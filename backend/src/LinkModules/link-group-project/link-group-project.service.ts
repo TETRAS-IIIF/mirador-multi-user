@@ -44,7 +44,6 @@ export class LinkGroupProjectService {
     private readonly groupService: UserGroupService,
     private readonly linkUserGroupService: LinkUserGroupService,
     private readonly metadataService: MetadataService,
-    private readonly emailService: EmailServerService,
   ) {}
 
   async create(createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
