@@ -1,7 +1,7 @@
-import { useTranslation } from "react-i18next";
-import { Button, Grid } from "@mui/material";
-import { initiateImpersonation } from "../api/initiateImpersonation.ts";
-import { validateUser } from "../api/validateUser.ts";
+import { useTranslation } from 'react-i18next';
+import { Button, Grid } from '@mui/material';
+import { initiateImpersonation } from '../api/initiateImpersonation.ts';
+import { validateUser } from '../api/validateUser.ts';
 
 interface RowProps {
   id: number;
@@ -19,10 +19,10 @@ export function AdminExpandableContent({ id }: RowProps) {
   }
 
   return (
-    <Grid container spacing={2} flexDirection="row">
+    <Grid container spacing={2} flexDirection="row" sx={{ padding: 1 }}>
       <Grid item>
         <Button variant="contained" color="primary" onClick={impersonateUser}>
-          {t("impersonate")}
+          {t('impersonate')}
         </Button>
       </Grid>
       <Grid item>
@@ -31,7 +31,7 @@ export function AdminExpandableContent({ id }: RowProps) {
           color="primary"
           onClick={handleValidateUser}
         >
-          {t("validate_user")}
+          {t('validate_user')}
         </Button>
       </Grid>
     </Grid>
