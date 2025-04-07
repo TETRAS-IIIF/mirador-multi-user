@@ -60,17 +60,24 @@ export class SettingsService implements OnModuleInit {
     }
   }
 
-  getUploadFolderSize() {
-    const uploadFiles = fs.readdirSync(UPLOAD_FOLDER);
+  getUploadFolderSize(folderPath = UPLOAD_FOLDER): string {
     let totalSize = 0;
 
-    for (const file of uploadFiles) {
-      const filePath = path.join(UPLOAD_FOLDER, file);
-      const stat = fs.statSync(filePath);
-      if (stat.isFile()) {
-        totalSize += stat.size;
+    const getSizeRecursively = (dir: string) => {
+      const items = fs.readdirSync(dir);
+      for (const item of items) {
+        const itemPath = path.join(dir, item);
+        const stat = fs.statSync(itemPath);
+
+        if (stat.isDirectory()) {
+          getSizeRecursively(itemPath);
+        } else if (stat.isFile()) {
+          totalSize += stat.size;
+        }
       }
-    }
+    };
+
+    getSizeRecursively(folderPath);
 
     return (totalSize / 1024 / 1024).toFixed(2) + ' MB';
   }

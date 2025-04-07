@@ -45,6 +45,7 @@ export const AdminSettings = () => {
     fetchSettings()
   }, [])
 
+  console.log('settings :', settings)
   return (
     <>
       {
