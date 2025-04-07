@@ -31,8 +31,6 @@ export class SettingsController {
   @UseGuards(AuthGuard)
   @Post()
   async setSetting(@Body() body: SetSettingDto, @Req() request) {
-    console.log('body');
-    console.log(body);
     const isAdmin = await this.settingsService.isAdmin(request.user.sub);
     if (isAdmin) {
       await this.settingsService.set(body.key, body.value);
