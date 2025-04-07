@@ -38,12 +38,10 @@ export class SettingsService implements OnModuleInit {
     }
   }
 
-  private shouldUpdate(
+  private shouldCreate(
     existing: { value: string; isKeyMutable?: boolean } | undefined,
-    newValue: string,
   ) {
     if (!existing) return true;
-    if (existing.value === newValue) return false;
   }
 
   async syncSettingsWithEnv(requiredSettings: Record<string, any>) {
@@ -55,7 +53,7 @@ export class SettingsService implements OnModuleInit {
 
     for (const [key, envValue] of Object.entries(requiredSettings)) {
       const existing = existingMap.get(key);
-      if (this.shouldUpdate(existing, envValue)) {
+      if (this.shouldCreate(existing)) {
         await this.set(key, envValue);
         console.info('New setting :', key, envValue);
       }
