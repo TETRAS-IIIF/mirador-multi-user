@@ -66,17 +66,13 @@ export const TextEditor = (
     'color',
     'background',
   ];
-
-  console.log('editorHtml :', editorHtml);
-  console.log('modules :', modules);
-  console.log('formats :', formats);
   return (
     <StyledReactQuill
-      // value={editorHtml}
+      value={editorHtml}
       onChange={handleChange}
       placeholder={t('yourTextHere')}
-      // modules={modules}
-      // formats={formats}
+      modules={modules}
+      formats={formats}
     />
   );
 };
