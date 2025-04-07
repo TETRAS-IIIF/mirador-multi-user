@@ -10,15 +10,19 @@ import {
 import { SettingsService } from './setting.service';
 import { SetSettingDto } from './dto/setSetting.dto';
 import { AuthGuard } from '../../auth/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('settings')
 export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 
   @UseGuards(AuthGuard)
-  @Get()
+  @Get('/toto')
   async getSetting(@Req() request) {
+    console.log('getter setting');
     const isAdmin = await this.settingsService.isAdmin(request.user.sub);
+    console.log(isAdmin);
     if (isAdmin) {
       return await this.settingsService.getAll();
     } else {
