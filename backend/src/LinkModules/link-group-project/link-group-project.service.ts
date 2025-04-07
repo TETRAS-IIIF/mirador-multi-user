@@ -31,6 +31,7 @@ import {
 import { UserGroupTypes } from '../../enum/user-group-types';
 import { MetadataService } from '../../BaseEntities/metadata/metadata.service';
 import { ObjectTypes } from '../../enum/ObjectTypes';
+import { EmailServerService } from '../../utils/email/email.service';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -43,6 +44,7 @@ export class LinkGroupProjectService {
     private readonly groupService: UserGroupService,
     private readonly linkUserGroupService: LinkUserGroupService,
     private readonly metadataService: MetadataService,
+    private readonly emailService: EmailServerService,
   ) {}
 
   async create(createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
@@ -500,6 +502,11 @@ export class LinkGroupProjectService {
             ) {
               projectsMap.set(projectId, projectData);
             }
+          } else {
+            const error = new Error(
+              `personalOwnerGroup.id === null has been detected with personalOwnerGroup : ${personalOwnerGroup}`,
+            );
+            this.logger.error(error.message, error.stack);
           }
         }
       }
