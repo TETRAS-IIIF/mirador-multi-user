@@ -1,7 +1,7 @@
 import * as process from 'node:process';
 
 export const requiredSettings = {
-  ALLOW_CREATE_USER: process.env.ALLOW_CREATE_USER,
+  DISPLAY_USER_INSCRIPTION_PAGE: process.env.ALLOW_CREATE_USER,
   ALLOW_YOUTUBE_MEDIA: process.env.ALLOW_YOUTUBE_MEDIA,
   ALLOW_PEERTUBE_MEDIA: process.env.ALLOW_PEERTUBE_MEDIA,
   MAX_UPLOAD_SIZE: process.env.MAX_UPLOAD_SIZE,

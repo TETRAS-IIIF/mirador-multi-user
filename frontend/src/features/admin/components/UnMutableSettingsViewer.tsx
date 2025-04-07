@@ -9,12 +9,15 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 
 interface IUnMutableSettingsProps {
   settings: [string, string][];
 }
 
 export const UnMutableSettingsViewer = ({ settings }: IUnMutableSettingsProps) => {
+  const { t } = useTranslation();
+
   return (
     <Grid item container>
       <TableContainer component={Paper} sx={{ mt: 4 }}>
@@ -31,7 +34,7 @@ export const UnMutableSettingsViewer = ({ settings }: IUnMutableSettingsProps) =
           <TableBody>
             {settings.map(([key, value]) => (
               <TableRow key={key}>
-                <TableCell>{key}</TableCell>
+                <TableCell>{t(key.toLowerCase())}</TableCell>
                 <TableCell>{value}</TableCell>
               </TableRow>
             ))}
