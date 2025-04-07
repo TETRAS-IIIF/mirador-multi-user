@@ -1,6 +1,7 @@
 import storage from '../../../utils/storage.ts';
+import { Settings } from '../types/type.ts';
 
-export const getAdminSettings = async () => {
+export const getAdminSettings = async (): Promise<Settings> => {
   const token = storage.getToken();
   try {
     const response = await fetch(
@@ -14,6 +15,7 @@ export const getAdminSettings = async () => {
     );
     return await response.json();
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };

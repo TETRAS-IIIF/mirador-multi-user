@@ -18,7 +18,7 @@ export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 
   @UseGuards(AuthGuard)
-  @Get('/toto')
+  @Get()
   async getSetting(@Req() request) {
     console.log('getter setting');
     const isAdmin = await this.settingsService.isAdmin(request.user.sub);

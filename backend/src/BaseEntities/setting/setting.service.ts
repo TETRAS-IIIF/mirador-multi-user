@@ -47,6 +47,7 @@ export class SettingsService implements OnModuleInit {
 
   async syncSettingsWithEnv(requiredSettings: Record<string, any>) {
     const existingSettings = await this.settingsRepository.find();
+
     const existingMap = new Map(
       existingSettings.map((setting) => [setting.key, setting]),
     );
@@ -136,11 +137,7 @@ export class SettingsService implements OnModuleInit {
   async isAdmin(userId: number) {
     try {
       const user = await this.authService.findProfile(userId);
-      if (user._isAdmin) {
-        return true;
-      } else {
-        return false;
-      }
+      return user._isAdmin;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(

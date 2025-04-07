@@ -1,16 +1,34 @@
 import { Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { getAdminSettings } from '../api/getAdminSettings.ts';
+import { Settings } from '../types/type.ts';
+import { fetchBackendAPIConnected } from '../../../utils/fetchBackendAPI.ts';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
+import { MutableSettingsEditor } from './MutableSettingsEditor.tsx';
 
 export const AdminSettings = () => {
-  const [settings, setSettings] = useState()
+  const [settings, setSettings] = useState<Settings>()
+  const { t } = useTranslation();
 
-  const handleGetAdminSettings = async () => {
-    const settingRequest = await getAdminSettings()
-    setSettings(settingRequest)
-  }
+  const fetchSettings = async () => {
+    const responseSettings = await fetchBackendAPIConnected(
+      'settings',
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      undefined,
+      () => {
+        toast.error(t('error_fetch_settings'));
+      },
+    );
+    setSettings(responseSettings);
+  };
+
   useEffect(() => {
-    handleGetAdminSettings()
+    fetchSettings()
   }, [])
 
   console.log('settings :', settings)
@@ -18,7 +36,17 @@ export const AdminSettings = () => {
   return (
     <Grid container spacing={2}>
       <Grid item>
-        coco
+        {
+          settings && (
+            <MutableSettingsEditor
+              settings={settings.mutableSettings}
+              onSave={updated => {
+                console.log('Updated settings:', updated);
+              }}
+            />
+          )
+        }
+
       </Grid>
     </Grid>
   )
