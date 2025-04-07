@@ -16,6 +16,7 @@ import { json } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
   app.use(json({ limit: `${parseInt(Process.env.MAX_API_PAYLOAD_SIZE)}mb` }));
   app.useGlobalPipes(new ValidationPipe());
 

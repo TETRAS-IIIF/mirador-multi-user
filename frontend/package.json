@@ -29,7 +29,7 @@
     "manifest-editor": "^1.0.2",
     "manifesto.js": "^4.2.21",
     "mirador": "npm:mirador-video@1.0.22",
-    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.0.95",
+    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.1.0",
     "mirador-mltools-plugin-mmu": "npm:arvest-ml-tools@^0.0.16",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -44,6 +44,7 @@
     "styled-components": "^6.1.8",
     "typescript": "^5.4.5",
     "usehooks-ts": "^3.1.0",
+    "uuid": "^8.0.0",
     "uuidv4": "^6.2.13",
     "vite-tsconfig-paths": "^4.3.2",
     "zod": "^3.23.4"

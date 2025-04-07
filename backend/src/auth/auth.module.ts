@@ -5,7 +5,7 @@ import { UsersModule } from '../BaseEntities/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { EmailServerService } from '../utils/email/email.service';
-import { ImpersonationModule } from "../impersonation/impersonation.module";
+import { ImpersonationModule } from '../impersonation/impersonation.module';
 
 @Module({
   imports: [
@@ -22,5 +22,6 @@ import { ImpersonationModule } from "../impersonation/impersonation.module";
   ],
   controllers: [AuthController],
   providers: [AuthService, EmailServerService],
+  exports: [AuthService],
 })
 export class AuthModule {}
