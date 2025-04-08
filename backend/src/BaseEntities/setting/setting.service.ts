@@ -55,7 +55,7 @@ export class SettingsService implements OnModuleInit {
       const existing = existingMap.get(key);
       if (this.shouldCreate(existing)) {
         await this.set(key, envValue);
-        console.info('New setting :', key, envValue);
+        this.logger.log(`New setting: ${key} = ${envValue}`);
       }
     }
   }
@@ -146,6 +146,21 @@ export class SettingsService implements OnModuleInit {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while checking admin rights of user with id: ${userId}`,
+        error,
+      );
+    }
+  }
+
+  async get(key: string) {
+    try {
+      const dbSetting = await this.settingsRepository.findOne({
+        where: { key },
+      });
+      return dbSetting?.value ?? unMutableSettings.get(key) ?? null;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `An error occurred while finding setting with key: ${key}`,
         error,
       );
     }

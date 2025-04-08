@@ -22,9 +22,13 @@ import {
   isVideo,
   isYouTubeVideo,
 } from './utils';
+import { SettingsService } from '../../BaseEntities/setting/setting.service';
+import { requiredSettings } from '../../BaseEntities/setting/utils.setting';
 
 @Injectable()
 export class MediaLinkInterceptor implements NestInterceptor {
+  constructor(private readonly settingsService: SettingsService) {}
+
   async processImage(buffer: Buffer, uploadPath: string): Promise<void> {
     const processedFilePath = join(uploadPath, `thumbnail.webp`);
     const sharpBuffer = await sharp(buffer)
@@ -64,6 +68,13 @@ export class MediaLinkInterceptor implements NestInterceptor {
           break;
 
         case isYouTubeVideo(url):
+          const isYoutubeLinkAllowed = this.settingsService.get(
+            requiredSettings.ALLOW_YOUTUBE_MEDIA,
+          );
+          if (!isYoutubeLinkAllowed) {
+            console.error('YouTube Link Allowed is not supported');
+            throw new Error('YouTube Link Allowed is not supported');
+          }
           videoId = getYouTubeVideoID(url);
           if (videoId) {
             thumbnailBuffer = await getYoutubeThumbnail(videoId);
