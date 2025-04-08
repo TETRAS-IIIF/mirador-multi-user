@@ -168,6 +168,7 @@
   "passwordResetSuccess": "Your password has been successfully reset",
   "pathCopiedToClipboard": "Path copied to clipboard",
   "pathNotCopiedToClipboard": "Path not copied to clipboard",
+  "Peertube_not_allowed_error": "PeerTube links are not supported.",
   "placeholderProject": "My project",
   "project": "Projects",
   "projectSaved": "Project {{projectTitle}} saved",

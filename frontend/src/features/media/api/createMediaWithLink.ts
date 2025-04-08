@@ -17,8 +17,11 @@ export const createMediaLink = async (mediaLinkDto: LinkMediaDto) => {
 
   if (!response.ok) {
     if (response.status === 400) {
-      throw new Error('Youtube_not_allowed_error');
+      const errorBody = await response.json();
+      console.log('errorBody : ', errorBody);
+      throw new Error(errorBody.message);
     }
+    throw new Error('media_creation_failed');
   }
 
   return await response.json();

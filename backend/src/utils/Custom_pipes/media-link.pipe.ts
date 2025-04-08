@@ -2,7 +2,9 @@ import {
   BadRequestException,
   CallHandler,
   ExecutionContext,
+  HttpException,
   Injectable,
+  InternalServerErrorException,
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -80,7 +82,7 @@ export class MediaLinkInterceptor implements NestInterceptor {
               'YouTube Link are not supported',
               'MediaLinkInterceptor | isYoutubeVideo === true',
             );
-            throw new BadRequestException('YouTube Link are not supported');
+            throw new BadRequestException('Youtube_not_allowed_error');
           }
           videoId = getYouTubeVideoID(url);
           if (videoId) {
@@ -90,6 +92,16 @@ export class MediaLinkInterceptor implements NestInterceptor {
           break;
 
         case await isPeerTubeVideo(url):
+          const isPeertubeVideoAllowed = await this.settingsService.get(
+            requiredSettings.ALLOW_PEERTUBE_MEDIA,
+          );
+          if (!isPeertubeVideoAllowed) {
+            this.logger.error(
+              'Peertube Link are not supported',
+              'MediaLinkInterceptor | isPeertubeVideo === true',
+            );
+            throw new BadRequestException('Peertube_not_allowed_error');
+          }
           videoId = getPeerTubeVideoID(url);
           if (videoId) {
             thumbnailBuffer = await getPeerTubeThumbnail(url, videoId);
@@ -119,14 +131,14 @@ export class MediaLinkInterceptor implements NestInterceptor {
 
       return next.handle();
     } catch (error) {
-      console.log('----------------error--------------------');
-      console.log(error);
-      console.log('----------------error--------------------');
-      if (error.status === 400) {
-        throw new BadRequestException(error.response.message);
+      if (error instanceof HttpException) {
+        console.log(error);
+        throw error;
       }
       console.error(`Error processing image: ${error.message}`);
-      throw new Error(`Error processing image: ${error.message}`);
+      throw new InternalServerErrorException(
+        `Error processing image: ${error.message}`,
+      );
     }
   }
 }
