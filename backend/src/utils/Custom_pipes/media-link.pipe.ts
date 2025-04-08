@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   CallHandler,
   ExecutionContext,
   Injectable,
@@ -24,9 +25,12 @@ import {
 } from './utils';
 import { SettingsService } from '../../BaseEntities/setting/setting.service';
 import { requiredSettings } from '../../BaseEntities/setting/utils.setting';
+import { CustomLogger } from '../Logger/CustomLogger.service';
 
 @Injectable()
 export class MediaLinkInterceptor implements NestInterceptor {
+  private readonly logger = new CustomLogger();
+
   constructor(private readonly settingsService: SettingsService) {}
 
   async processImage(buffer: Buffer, uploadPath: string): Promise<void> {
@@ -68,12 +72,15 @@ export class MediaLinkInterceptor implements NestInterceptor {
           break;
 
         case isYouTubeVideo(url):
-          const isYoutubeLinkAllowed = this.settingsService.get(
+          const isYoutubeLinkAllowed = await this.settingsService.get(
             requiredSettings.ALLOW_YOUTUBE_MEDIA,
           );
           if (!isYoutubeLinkAllowed) {
-            console.error('YouTube Link Allowed is not supported');
-            throw new Error('YouTube Link Allowed is not supported');
+            this.logger.error(
+              'YouTube Link are not supported',
+              'MediaLinkInterceptor | isYoutubeVideo === true',
+            );
+            throw new BadRequestException('YouTube Link are not supported');
           }
           videoId = getYouTubeVideoID(url);
           if (videoId) {
@@ -112,6 +119,12 @@ export class MediaLinkInterceptor implements NestInterceptor {
 
       return next.handle();
     } catch (error) {
+      console.log('----------------error--------------------');
+      console.log(error);
+      console.log('----------------error--------------------');
+      if (error.status === 400) {
+        throw new BadRequestException(error.response.message);
+      }
       console.error(`Error processing image: ${error.message}`);
       throw new Error(`Error processing image: ${error.message}`);
     }

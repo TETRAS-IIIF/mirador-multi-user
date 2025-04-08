@@ -125,6 +125,7 @@
   "manifests": "Manifests",
   "max_upload_size": "Max Upload Size",
   "media": "Medias",
+  "media_creation_failed": "Failed to create media.",
   "mediaLink": "Media link",
   "mediaOriginInfo": "If media come from your media, app will upload it automatically.",
   "mediaShouldBeNoMoreThan": "Media must not exceed {{size}} MB",
@@ -254,5 +255,6 @@
   "noteTemplateInfo": "Create one or more template, their will be available inside annotation editor.",
   "templateChoice": "Choose a template",
   "newTemplateTitle": "New template",
-  "newTemplateContent": "Add your content"
+  "newTemplateContent": "Add your content",
+  "Youtube_not_allowed_error": "YouTube links are not supported."
 }

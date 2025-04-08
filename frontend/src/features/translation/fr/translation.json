@@ -125,6 +125,7 @@
   "manifestThumbnailUrl": "URL de l'aperçu du manifest",
   "max_upload_size": "Taille maximale d'envoi",
   "manifestTitle": "Titre du manifeste",
+  "media_creation_failed": "Échec de la création du média.",
   "manifests": "Manifestes",
   "media": "Médias",
   "mediaLink": "Lien du média",
@@ -255,5 +256,6 @@
   "noteTemplateInfo": "Créer un ou plusieurs modèles de notes. Ceux ci seront disponibles lors de l'édition d'annotation.",
   "templateChoice": "Choisissez un modèle",
   "newTemplateTitle": "Nouveau modèle",
-  "newTemplateContent": "Ajouter votre contenu"
+  "newTemplateContent": "Ajouter votre contenu",
+  "Youtube_not_allowed_error": "Les liens YouTube ne sont pas pris en charge."
 }

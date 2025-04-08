@@ -1,13 +1,4 @@
-import {
-  Box,
-  Grid,
-  IconButton,
-  styled,
-  Tab,
-  Tabs,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Box, Grid, IconButton, styled, Tab, Tabs, Tooltip, Typography } from '@mui/material';
 import {
   ChangeEvent,
   Dispatch,
@@ -18,59 +9,48 @@ import {
   useEffect,
   useMemo,
   useState,
-} from "react";
-import { createMedia } from "../api/createMedia.ts";
-import { User } from "../../auth/types/types.ts";
-import {
-  LinkUserGroup,
-  UserGroup,
-  UserGroupTypes,
-} from "../../user-group/types/types.ts";
-import { Media, MediaGroupRights, MediaTypes } from "../types/types.ts";
-import toast from "react-hot-toast";
-import { deleteMedia } from "../api/deleteMedia.ts";
-import { updateMedia } from "../api/updateMedia.ts";
-import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
-import { addMediaToGroup } from "../api/AddMediaToGroup.ts";
-import { ListItem } from "../../../components/types.ts";
-import { ProjectGroup } from "../../projects/types/types.ts";
-import { removeAccessToMedia } from "../api/removeAccessToMedia.ts";
-import { getAllMediaGroups } from "../api/getAllMediaGroups.ts";
-import { updateAccessToMedia } from "../api/updateAccessToMedia.ts";
-import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
-import AddLinkIcon from "@mui/icons-material/AddLink";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { DrawerLinkMedia } from "./DrawerLinkMedia.tsx";
-import { createMediaLink } from "../api/createMediaWithLink.ts";
-import { PaginationControls } from "../../../components/elements/Pagination.tsx";
-import { a11yProps } from "../../../components/elements/SideBar/allyProps.tsx";
-import { MediaCard } from "./MediaCard.tsx";
-import { useTranslation } from "react-i18next";
-import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { removeMediaFromList } from "../api/removeManifestFromList.ts";
-import { MediaFooter } from "../../../../customAssets/MediaFooter.tsx";
-import {
-  isFileSizeOverLimit,
-  isValidFileForUpload,
-} from "../../../utils/utils.ts";
-import {
-  TITLE,
-  UPDATED_AT,
-  useCurrentPageData,
-} from "../../../utils/customHooks/filterHook.ts";
+} from 'react';
+import { createMedia } from '../api/createMedia.ts';
+import { User } from '../../auth/types/types.ts';
+import { LinkUserGroup, UserGroup, UserGroupTypes } from '../../user-group/types/types.ts';
+import { Media, MediaGroupRights, MediaTypes } from '../types/types.ts';
+import toast from 'react-hot-toast';
+import { deleteMedia } from '../api/deleteMedia.ts';
+import { updateMedia } from '../api/updateMedia.ts';
+import { SearchBar } from '../../../components/elements/SearchBar.tsx';
+import { lookingForUserGroups } from '../../user-group/api/lookingForUserGroups.ts';
+import { addMediaToGroup } from '../api/AddMediaToGroup.ts';
+import { ListItem } from '../../../components/types.ts';
+import { ProjectGroup } from '../../projects/types/types.ts';
+import { removeAccessToMedia } from '../api/removeAccessToMedia.ts';
+import { getAllMediaGroups } from '../api/getAllMediaGroups.ts';
+import { updateAccessToMedia } from '../api/updateAccessToMedia.ts';
+import SpeedDialTooltipOpen from '../../../components/elements/SpeedDial.tsx';
+import AddLinkIcon from '@mui/icons-material/AddLink';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import { DrawerLinkMedia } from './DrawerLinkMedia.tsx';
+import { PaginationControls } from '../../../components/elements/Pagination.tsx';
+import { a11yProps } from '../../../components/elements/SideBar/allyProps.tsx';
+import { MediaCard } from './MediaCard.tsx';
+import { useTranslation } from 'react-i18next';
+import { SortItemSelector } from '../../../components/elements/sortItemSelector.tsx';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { removeMediaFromList } from '../api/removeManifestFromList.ts';
+import { MediaFooter } from '../../../../customAssets/MediaFooter.tsx';
+import { isFileSizeOverLimit, isValidFileForUpload } from '../../../utils/utils.ts';
+import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
+import { useCreateMediaLink } from '../hooks/useCreateMediaLink.ts';
 
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
   height: 1,
-  overflow: "hidden",
-  position: "absolute",
+  overflow: 'hidden',
+  position: 'absolute',
   bottom: 0,
   left: 0,
-  whiteSpace: "nowrap",
+  whiteSpace: 'nowrap',
   width: 1,
 });
 
@@ -91,13 +71,14 @@ const MEDIA_TYPES_TABS = {
   OTHER: 3,
 };
 
-export const AllMedias = ({
-  user,
-  userPersonalGroup,
-  medias,
-  fetchMediaForUser,
-  setMedias,
-}: IAllMediasProps) => {
+export const AllMedias = (
+  {
+    user,
+    userPersonalGroup,
+    medias,
+    fetchMediaForUser,
+    setMedias,
+  }: IAllMediasProps) => {
   const [openModalMediaId, setOpenModalMediaId] = useState<number | null>(null);
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
@@ -106,7 +87,9 @@ export const AllMedias = ({
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
   const [mediaTabShown, setMediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
   const [sortField, setSortField] = useState<keyof Media>(UPDATED_AT);
-  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortOrder, setSortOrder] = useState('desc');
+  const { mutateAsync, isPending } = useCreateMediaLink();
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -119,7 +102,7 @@ export const AllMedias = ({
   };
 
   const toggleSortOrder = () => {
-    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -165,12 +148,12 @@ export const AllMedias = ({
 
       const file = event.target.files[0];
       if (!isValidFileForUpload(file)) {
-        toast.error(t("unsupportedMedia"));
+        toast.error(t('unsupportedMedia'));
         return;
       }
       if (isFileSizeOverLimit(file)) {
         toast.error(
-          t("fileTooLarge", {
+          t('fileTooLarge', {
             maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
           }),
         );
@@ -193,7 +176,7 @@ export const AllMedias = ({
 
   const HandleCopyToClipBoard = async (path: string) => {
     await navigator.clipboard.writeText(path);
-    toast.success(t("successCopy"));
+    toast.success(t('successCopy'));
   };
 
   const HandleOpenModal = useCallback(
@@ -206,7 +189,7 @@ export const AllMedias = ({
   const HandleDeleteMedia = useCallback(
     async (mediaId: number) => {
       await deleteMedia(mediaId);
-      const updatedListOfMedias = medias.filter(function (media) {
+      const updatedListOfMedias = medias.filter(function(media) {
         return media.id != mediaId;
       });
       setMedias(updatedListOfMedias);
@@ -217,7 +200,7 @@ export const AllMedias = ({
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
       await updateMedia(mediaToUpdate);
-      const updatedListOfMedias = medias.filter(function (media) {
+      const updatedListOfMedias = medias.filter(function(media) {
         return media.id != mediaToUpdate.id;
       });
       updatedListOfMedias.push(mediaToUpdate);
@@ -229,7 +212,7 @@ export const AllMedias = ({
 
   const handleGrantAccess = async (mediaId: number) => {
     if (userToAdd == null) {
-      toast.error(t("toastSelectItem"));
+      toast.error(t('toastSelectItem'));
     }
     const linkUserGroupToAdd = userGroupsSearch.find(
       (linkUserGroup) => linkUserGroup.user_group.id === userToAdd!.id,
@@ -290,44 +273,48 @@ export const AllMedias = ({
   };
 
   const handleButtonClick = () => {
-    document.getElementById("file-upload")!.click();
+    document.getElementById('file-upload')!.click();
   };
 
   const actions = [
     {
       icon: (<AddLinkIcon />) as ReactNode,
-      name: t("actionsDial.link"),
+      name: t('actionsDial.link'),
       onClick: () => {
         setModalLinkMediaIsOpen(!modalLinkMediaIsOpen);
       },
     },
     {
       icon: (<UploadFileIcon />) as ReactNode,
-      name: t("actionsDial.upload"),
+      name: t('actionsDial.upload'),
       onClick: () => {
         handleButtonClick();
       },
     },
   ];
   const createMediaWithLink = async (link: string) => {
-    try {
-      const mediaLinked = await createMediaLink({
-        url: link,
-        idCreator: user.id,
-        user_group: userPersonalGroup,
-      });
-      fetchMediaForUser();
-      HandleOpenModal(mediaLinked.id);
-    } catch (error) {
-      console.error("Error fetching the image:", error);
-    }
+    await mutateAsync({
+      url: link,
+      idCreator: user.id,
+      user_group: userPersonalGroup,
+    }, {
+      onSuccess: (data) => {
+        toast.success('media_created');
+        fetchMediaForUser();
+        HandleOpenModal(data.id)
+      },
+      onError: (error) => {
+        console.log('error component', error)
+        toast.error(`${t('media_creation_failed')} : ${t(error.message)}`);
+      },
+    });
   };
 
   const getGroupByOption = (option: UserGroup): string => {
     if (option.type === UserGroupTypes.MULTI_USER) {
-      return "Groups";
+      return 'Groups';
     } else {
-      return "Users";
+      return 'Users';
     }
   };
 
@@ -336,10 +323,10 @@ export const AllMedias = ({
     share: string | undefined,
   ) => {
     if (share) {
-      return toast.error(t("share-media-error-message"));
+      return toast.error(t('share-media-error-message'));
     } else {
       await removeMediaFromList(mediaId);
-      toast.success(t("removedMediaFromList"));
+      toast.success(t('removedMediaFromList'));
       return fetchMediaForUser();
     }
   };
@@ -352,24 +339,24 @@ export const AllMedias = ({
           alignItems="center"
           justifyContent="space-between"
           sx={{
-            position: "sticky",
+            position: 'sticky',
             top: 0,
             zIndex: 1000,
-            backgroundColor: "#dcdcdc",
-            paddingBottom: "10px",
+            backgroundColor: '#dcdcdc',
+            paddingBottom: '10px',
           }}
         >
           <Grid item>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs
                 value={mediaTabShown}
                 onChange={handleChangeTab}
                 aria-label="basic tabs"
               >
-                <Tab label={t("All")} {...a11yProps(0)} />
-                <Tab label={t("Videos")} {...a11yProps(1)} />
-                <Tab label={t("Images")} {...a11yProps(2)} />
-                <Tab label={t("other")} {...a11yProps(3)} />
+                <Tab label={t('All')} {...a11yProps(0)} />
+                <Tab label={t('Videos')} {...a11yProps(1)} />
+                <Tab label={t('Images')} {...a11yProps(2)} />
+                <Tab label={t('other')} {...a11yProps(3)} />
               </Tabs>
             </Box>
           </Grid>
@@ -384,12 +371,12 @@ export const AllMedias = ({
             item
             container
             spacing={2}
-            sx={{ width: "auto", paddingTop: 1, paddingBottom: 1 }}
+            sx={{ width: 'auto', paddingTop: 1, paddingBottom: 1 }}
             alignItems="center"
             justifyContent="flex-end"
           >
             <Grid item>
-              <SearchBar setFilter={setMediaFilter} label={t("filterMedia")} />
+              <SearchBar setFilter={setMediaFilter} label={t('filterMedia')} />
             </Grid>
             <Grid item>
               <SortItemSelector<Media>
@@ -399,9 +386,9 @@ export const AllMedias = ({
               />
             </Grid>
             <Grid item>
-              <Tooltip title={t(sortOrder === "asc" ? "sortAsc" : "sortDesc")}>
+              <Tooltip title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}>
                 <IconButton onClick={toggleSortOrder}>
-                  {sortOrder === "asc" ? (
+                  {sortOrder === 'asc' ? (
                     <ArrowDropUpIcon />
                   ) : (
                     <ArrowDropDownIcon />
@@ -412,9 +399,9 @@ export const AllMedias = ({
           </Grid>
         </Grid>
         {!medias.length && (
-          <Grid container justifyContent={"center"}>
+          <Grid container justifyContent={'center'}>
             <Typography variant="h6" component="h2">
-              {t("noMediaYet")}
+              {t('noMediaYet')}
             </Typography>
           </Grid>
         )}
@@ -423,7 +410,7 @@ export const AllMedias = ({
           container
           spacing={1}
           flexDirection="column"
-          sx={{ marginBottom: "70px" }}
+          sx={{ marginBottom: '70px' }}
         >
           <Grid container spacing={2} direction="column">
             {medias.length > 0 &&
@@ -467,7 +454,7 @@ export const AllMedias = ({
                   alignItems="center"
                 >
                   <Typography variant="h6" component="h2">
-                    {t("noMatchingMediaFilter")}
+                    {t('noMatchingMediaFilter')}
                   </Typography>
                 </Grid>
               ))}
@@ -480,6 +467,7 @@ export const AllMedias = ({
         </Grid>
         <Grid>
           <DrawerLinkMedia
+            isPending={isPending}
             toggleModalMediaCreation={() =>
               setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)
             }
@@ -489,12 +477,12 @@ export const AllMedias = ({
         </Grid>
         <Grid
           item
-          sx={{ position: "fixed", right: "10px", bottom: "3px", zIndex: 999 }}
+          sx={{ position: 'fixed', right: '10px', bottom: '3px', zIndex: 999 }}
         >
           <SpeedDialTooltipOpen actions={actions} />
         </Grid>
       </Grid>
-      <Grid item width={"100%"} height={"100%"}>
+      <Grid item width={'100%'} height={'100%'}>
         <MediaFooter />
       </Grid>
     </Box>
