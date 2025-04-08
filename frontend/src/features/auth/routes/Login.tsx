@@ -4,13 +4,13 @@ import { Grid, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
-import { getSettingValue } from '../../../utils/utils.ts';
+import { getSettingValue, SettingKeys } from '../../../utils/utils.ts';
 
 export const Login = () => {
   const { t } = useTranslation();
   const { data: settings } = useAdminSettings();
 
-  const showInscription = getSettingValue('DISPLAY_USER_INSCRIPTION_PAGE', settings) === 'true';
+  const showInscription = getSettingValue(SettingKeys.DISPLAY_USER_INSCRIPTION_PAGE, settings) === 'true';
 
   return (
     <Layout

@@ -26,7 +26,7 @@ import {
   isYouTubeVideo,
 } from './utils';
 import { SettingsService } from '../../BaseEntities/setting/setting.service';
-import { requiredSettings } from '../../BaseEntities/setting/utils.setting';
+import { SettingKeys } from '../../BaseEntities/setting/utils.setting';
 import { CustomLogger } from '../Logger/CustomLogger.service';
 
 @Injectable()
@@ -75,7 +75,7 @@ export class MediaLinkInterceptor implements NestInterceptor {
 
         case isYouTubeVideo(url):
           const isYoutubeLinkAllowed = await this.settingsService.get(
-            requiredSettings.ALLOW_YOUTUBE_MEDIA,
+            SettingKeys.ALLOW_YOUTUBE_MEDIA,
           );
           if (!isYoutubeLinkAllowed) {
             this.logger.error(
@@ -93,7 +93,7 @@ export class MediaLinkInterceptor implements NestInterceptor {
 
         case await isPeerTubeVideo(url):
           const isPeertubeVideoAllowed = await this.settingsService.get(
-            requiredSettings.ALLOW_PEERTUBE_MEDIA,
+            SettingKeys.ALLOW_PEERTUBE_MEDIA,
           );
           if (!isPeertubeVideoAllowed) {
             this.logger.error(

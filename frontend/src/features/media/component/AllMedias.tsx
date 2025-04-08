@@ -38,9 +38,10 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { removeMediaFromList } from '../api/removeManifestFromList.ts';
 import { MediaFooter } from '../../../../customAssets/MediaFooter.tsx';
-import { isFileSizeOverLimit, isValidFileForUpload } from '../../../utils/utils.ts';
+import { getSettingValue, isFileSizeOverLimit, isValidFileForUpload, SettingKeys } from '../../../utils/utils.ts';
 import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
 import { useCreateMediaLink } from '../hooks/useCreateMediaLink.ts';
+import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -89,6 +90,8 @@ export const AllMedias = (
   const [sortField, setSortField] = useState<keyof Media>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState('desc');
   const { mutateAsync, isPending } = useCreateMediaLink();
+  const { data: settings } = useAdminSettings();
+  const [MAX_UPLOAD_SIZE] = useState<number | undefined>(Number(getSettingValue(SettingKeys.MAX_UPLOAD_SIZE, settings)))
 
   const { t } = useTranslation();
 
@@ -151,10 +154,10 @@ export const AllMedias = (
         toast.error(t('unsupportedMedia'));
         return;
       }
-      if (isFileSizeOverLimit(file)) {
+      if (isFileSizeOverLimit(file, MAX_UPLOAD_SIZE!)) {
         toast.error(
           t('fileTooLarge', {
-            maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
+            maxSize: MAX_UPLOAD_SIZE,
           }),
         );
         return;

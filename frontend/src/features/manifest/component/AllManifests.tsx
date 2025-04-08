@@ -40,6 +40,7 @@ import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHook
 import { removeManifestToGroup } from '../api/removeManifestToGroup.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
+import { getSettingValue, SettingKeys } from '../../../utils/utils.ts';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -86,6 +87,7 @@ export const AllManifests = (
   const [sortField, setSortField] = useState<keyof Manifest>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState('asc');
   const { data: settings } = useAdminSettings();
+  const [MAX_UPLOAD_SIZE] = useState<number | undefined>(Number(getSettingValue(SettingKeys.MAX_UPLOAD_SIZE, settings)))
 
   const { t } = useTranslation();
 
@@ -108,12 +110,10 @@ export const AllManifests = (
   const handleCreateManifest = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
-        const maxUploadSize =
-          import.meta.env.VITE_MAX_UPLOAD_SIZE * 1024 * 1024;
-        if (event.target.files[0].size > maxUploadSize) {
+        if (event.target.files[0].size > MAX_UPLOAD_SIZE!) {
           toast.error(
             t('fileTooLarge', {
-              maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
+              maxSize: MAX_UPLOAD_SIZE,
             }),
           );
         } else {

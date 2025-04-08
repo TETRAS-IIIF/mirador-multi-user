@@ -7,7 +7,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Setting } from './Entities/setting.entity';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
-import { requiredSettings, unMutableSettings } from './utils.setting';
+import {
+  requiredSettings,
+  SettingKeys,
+  unMutableSettings,
+} from './utils.setting';
 import { AuthService } from '../../auth/auth.service';
 import { DatabaseService } from '../database/database.service';
 import { UPLOAD_FOLDER } from '../../utils/constants';
@@ -151,7 +155,7 @@ export class SettingsService implements OnModuleInit {
     }
   }
 
-  async get(key: string) {
+  async get(key: SettingKeys) {
     try {
       const dbSetting = await this.settingsRepository.findOne({
         where: { key },

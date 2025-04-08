@@ -3,7 +3,7 @@ import { Login } from './Login.tsx';
 import { Register } from './Register.tsx';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 import { LoadingSpinner } from '../../../components/elements/loadingSpinner.tsx';
-import { getSettingValue } from '../../../utils/utils.ts';
+import { getSettingValue, SettingKeys } from '../../../utils/utils.ts';
 
 export const AuthRoutes = () => {
   const { data: settings, isLoading } = useAdminSettings();
@@ -11,7 +11,7 @@ export const AuthRoutes = () => {
   if (isLoading) return <LoadingSpinner />;
 
 
-  const showInscription = getSettingValue('DISPLAY_USER_INSCRIPTION_PAGE', settings) === 'true';
+  const showInscription = getSettingValue(SettingKeys.DISPLAY_USER_INSCRIPTION_PAGE, settings) === 'true';
 
   return (
     <Routes>

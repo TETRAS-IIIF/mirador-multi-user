@@ -7,11 +7,9 @@ export const isValidFileForUpload = (file: File) => {
 const isVideoOrAudioFile = (file: File) => {
   return file.type.startsWith('video/') || file.type.startsWith('audio/');
 };
-const maxUploadSize =
-  parseInt(import.meta.env.VITE_MAX_UPLOAD_SIZE, 10) * 1024 * 1024;
 
-export const isFileSizeOverLimit = (file: File) => {
-  return file.size >= maxUploadSize;
+export const isFileSizeOverLimit = (file: File, MAX_UPLOAD_SIZE: number) => {
+  return file.size >= MAX_UPLOAD_SIZE;
 };
 
 export const MENU_ELEMENT = {
@@ -23,7 +21,7 @@ export const MENU_ELEMENT = {
   ADMIN: 'ADMIN',
 };
 
-export const getSettingValue = (key: string, settings: Settings | undefined) => {
+export const getSettingValue = (key: SettingKeys, settings: Settings | undefined) => {
   if (!settings) return undefined;
 
   return (
@@ -31,3 +29,16 @@ export const getSettingValue = (key: string, settings: Settings | undefined) => 
     settings.unMutableSettings.find(([k]) => k === key)?.[1]
   );
 };
+
+
+export enum SettingKeys {
+  DISPLAY_USER_INSCRIPTION_PAGE = 'DISPLAY_USER_INSCRIPTION_PAGE',
+  ALLOW_YOUTUBE_MEDIA = 'ALLOW_YOUTUBE_MEDIA',
+  ALLOW_PEERTUBE_MEDIA = 'ALLOW_PEERTUBE_MEDIA',
+  MAX_UPLOAD_SIZE = 'MAX_UPLOAD_SIZE',
+  API_URL = 'API_URL',
+  CADDY_URL = 'CADDY_URL',
+  SWAGGER_URL = 'SWAGGER_URL',
+  BACKEND_LOG_LVL = 'BACKEND_LOG_LVL',
+  INSTANCE_NAME = 'INSTANCE_NAME',
+}
