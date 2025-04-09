@@ -23,6 +23,11 @@ export const AdminPanel = () => {
       align: 'center' as const,
       sortKey: 'isEmailConfirmed',
     },
+    {
+      label: t('terms_validated_at'),
+      align: 'center' as const,
+      sortKey: 'terms_validated_at',
+    },
     { label: t('createdAt'), align: 'left' as const, sortKey: 'createdAt' },
   ];
   useEffect(() => {
@@ -40,6 +45,9 @@ export const AdminPanel = () => {
         {
           value: user.isEmailConfirmed ? 'Yes' : 'No',
           align: 'center' as const,
+        },
+        {
+          value: user.termsValidatedAt ? 'Yes' : 'No', align: 'center' as const,
         },
         {
           value: new Date(user.createdAt).toLocaleString(),
