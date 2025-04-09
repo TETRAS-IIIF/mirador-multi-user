@@ -46,7 +46,7 @@ export default function CollapsibleTable({
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [filter, setFilter] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const rowsPerPage = 5;
+  const rowsPerPage = 10;
   const { t } = useTranslation();
 
   const handleSort = (key: string | undefined) => {
