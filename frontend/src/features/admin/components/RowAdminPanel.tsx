@@ -27,7 +27,6 @@ export function RowAdminPanel(
     row,
   }: SingleRowProps) {
   const [open, setOpen] = React.useState(false);
-  console.log('row :', row)
   return (
     <>
       <TableRow>
