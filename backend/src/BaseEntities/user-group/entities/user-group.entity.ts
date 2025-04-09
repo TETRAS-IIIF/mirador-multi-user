@@ -28,7 +28,7 @@ export class UserGroup {
   @IsNumberString()
   ownerId: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'longtext' })
   thumbnailUrl: string;
 
   @Column({ nullable: true })

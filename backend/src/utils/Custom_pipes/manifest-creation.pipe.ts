@@ -271,11 +271,11 @@ export class MediaInterceptor implements NestInterceptor {
       }
     };
 
-    await Promise.all(
-      manifestMedias.flatMap((item) =>
-        item.media.map((media) => fetchMediaForItem(media)),
-      ),
-    );
+    for (const item of manifestMedias) {
+      for (const media of item.media) {
+        await fetchMediaForItem(media);
+      }
+    }
 
     request.body.processedManifest = manifestToCreate;
     request.body.hash = hash;

@@ -187,7 +187,6 @@ export const MMUModalEdit = <
     jsonElementToEditInAdvancedEditor,
     setJsonElementToEditInAdvancedEditor,
   ] = useState<Record<string, string> | undefined>();
-
   const user = useUser();
   const { t } = useTranslation();
 
@@ -249,14 +248,12 @@ export const MMUModalEdit = <
   const handleUpdateItem = async () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { rights, ...dataUpdated } = item;
-
     const itemToUpdate = {
       ...(dataUpdated as T),
       description: newItemDescription,
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
     };
-
     if (
       objectTypes !== ObjectTypes.GROUP &&
       objectTypes &&
@@ -494,7 +491,6 @@ export const MMUModalEdit = <
         {objectTypes !== ObjectTypes.GROUP && (
           <Tab label={t("metadata")} {...a11yProps(1)} />
         )}
-
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
             item.origin !== manifestOrigin.LINK)) &&
@@ -691,6 +687,7 @@ export const MMUModalEdit = <
                 >
                   {(accessListItem) => (
                     <Selector
+                      rights={item.rights === ItemsRights.EDITOR ? [ItemsRights.READER, ItemsRights.EDITOR] : Object.values(ItemsRights)}
                       value={accessListItem.rights!}
                       onChange={handleSelectorChange(accessListItem)}
                     />

@@ -1,7 +1,7 @@
 import { ProjectGroup } from '../../projects/types/types.ts';
 import storage from '../../../utils/storage.ts';
 
-export const getAllMediaGroups = async (
+export const getAccessToMedia = async (
   mediaId: number,
 ): Promise<ProjectGroup[]> => {
   const token = storage.getToken();

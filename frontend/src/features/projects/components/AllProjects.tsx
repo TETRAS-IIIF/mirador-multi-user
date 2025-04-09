@@ -1,68 +1,47 @@
-import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  Project,
-  ProjectGroup,
-  ProjectGroupUpdateDto,
-} from "../types/types.ts";
-import IState from "../../mirador/interface/IState.ts";
-import { User } from "../../auth/types/types.ts";
-import { deleteProject } from "../api/Project/deleteProject.ts";
-import { updateProject } from "../api/Project/updateProject.ts";
-import { createProject } from "../api/Project/createProject.ts";
-import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
-import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
-import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { getUserPersonalGroup } from "../api/group/getUserPersonalGroup.ts";
-import {
-  ItemsRights,
-  LinkUserGroup,
-  UserGroup,
-  UserGroupTypes,
-} from "../../user-group/types/types.ts";
-import MMUCard from "../../../components/elements/MMUCard.tsx";
-import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
-import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
-import { ListItem } from "../../../components/types.ts";
-import { getGroupsAccessToProject } from "../api/group/getGroupsAccessToProject.ts";
-import AddIcon from "@mui/icons-material/Add";
-import { ModalButton } from "../../../components/elements/ModalButton.tsx";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
-import { Media } from "../../media/types/types.ts";
-import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
-import { PaginationControls } from "../../../components/elements/Pagination.tsx";
-import { updateAccessToProject } from "../api/Project/UpdateAccessToProject.ts";
-import SettingsIcon from "@mui/icons-material/Settings";
-import { ObjectTypes } from "../../tag/type.ts";
-import toast from "react-hot-toast";
-import { duplicateProject } from "../api/Project/duplicateProject.ts";
-import { getUserNameWithId } from "../../auth/api/getUserNameWithId.ts";
-import { isProjectLocked } from "../api/Project/isProjectLocked.ts";
-import { handleLock } from "../api/Project/handleLock.ts";
-import { useTranslation } from "react-i18next";
-import { dublinCoreMetadata } from "../../../utils/dublinCoreMetadata.ts";
-import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { removeProjectFromList } from "../api/Project/removeProjectFromList.ts";
-import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
-import { Manifest } from "../../manifest/types/types.ts";
-import { generateSnapshot } from "../api/snapshot/generateProjectSnapShot.ts";
-import { updateSnapshot } from "../api/snapshot/updateSnapshot.ts";
-import { deleteSnapshot } from "../api/snapshot/deleteSnapshot.ts";
-import {
-  TITLE,
-  UPDATED_AT,
-  useCurrentPageData,
-} from "../../../utils/customHooks/filterHook.ts";
+import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Project, ProjectGroup, ProjectGroupUpdateDto } from '../types/types.ts';
+import IState from '../../mirador/interface/IState.ts';
+import { User } from '../../auth/types/types.ts';
+import { deleteProject } from '../api/Project/deleteProject.ts';
+import { updateProject } from '../api/Project/updateProject.ts';
+import { createProject } from '../api/Project/createProject.ts';
+import { FloatingActionButton } from '../../../components/elements/FloatingActionButton.tsx';
+import { DrawerCreateProject } from './DrawerCreateProject.tsx';
+import { SearchBar } from '../../../components/elements/SearchBar.tsx';
+import { getUserPersonalGroup } from '../api/group/getUserPersonalGroup.ts';
+import { ItemsRights, LinkUserGroup, UserGroup, UserGroupTypes } from '../../user-group/types/types.ts';
+import MMUCard from '../../../components/elements/MMUCard.tsx';
+import { removeProjectToGroup } from '../../user-group/api/removeProjectToGroup.ts';
+import { addProjectToGroup } from '../../user-group/api/addProjectToGroup.ts';
+import { ListItem } from '../../../components/types.ts';
+import { getGroupsAccessToProject } from '../api/group/getGroupsAccessToProject.ts';
+import AddIcon from '@mui/icons-material/Add';
+import { ModalButton } from '../../../components/elements/ModalButton.tsx';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { lookingForUserGroups } from '../../user-group/api/lookingForUserGroups.ts';
+import { Media } from '../../media/types/types.ts';
+import { PaginationControls } from '../../../components/elements/Pagination.tsx';
+import { updateAccessToProject } from '../api/Project/UpdateAccessToProject.ts';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { ObjectTypes } from '../../tag/type.ts';
+import toast from 'react-hot-toast';
+import { duplicateProject } from '../api/Project/duplicateProject.ts';
+import { getUserNameWithId } from '../../auth/api/getUserNameWithId.ts';
+import { isProjectLocked } from '../api/Project/isProjectLocked.ts';
+import { handleLock } from '../api/Project/handleLock.ts';
+import { useTranslation } from 'react-i18next';
+import { dublinCoreMetadata } from '../../../utils/dublinCoreMetadata.ts';
+import { SortItemSelector } from '../../../components/elements/sortItemSelector.tsx';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { removeProjectFromList } from '../api/Project/removeProjectFromList.ts';
+import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
+import { Manifest } from '../../manifest/types/types.ts';
+import { generateSnapshot } from '../api/snapshot/generateProjectSnapShot.ts';
+import { updateSnapshot } from '../api/snapshot/updateSnapshot.ts';
+import { deleteSnapshot } from '../api/snapshot/deleteSnapshot.ts';
+import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
 
 interface AllProjectsProps {
   user: User;
@@ -72,25 +51,25 @@ interface AllProjectsProps {
   setUserProjects: (userProjects: Project[]) => void;
   userProjects: Project[];
   handleSetMiradorState: (state: IState | undefined) => void;
-  setMedias: Dispatch<SetStateAction<Media[]>>;
+  fetchMediaForUser: () => void;
   medias: Media[];
   manifests: Manifest[];
   fetchManifestForUser: () => void;
 }
 
 export const AllProjects = ({
-  setMedias,
-  medias,
-  manifests,
-  user,
-  selectedProjectId,
-  setSelectedProjectId,
-  userProjects,
-  setUserProjects,
-  handleSetMiradorState,
-  fetchProjects,
-  fetchManifestForUser,
-}: AllProjectsProps) => {
+                              fetchMediaForUser,
+                              medias,
+                              manifests,
+                              user,
+                              selectedProjectId,
+                              setSelectedProjectId,
+                              userProjects,
+                              setUserProjects,
+                              handleSetMiradorState,
+                              fetchProjects,
+                              fetchManifestForUser,
+                            }: AllProjectsProps) => {
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>();
   const [openModalProjectId, setOpenModalProjectId] = useState<number | null>(
     null,
@@ -103,17 +82,16 @@ export const AllProjects = ({
   const [projectFilter, setProjectFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<keyof Project>(UPDATED_AT);
-  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const { t } = useTranslation();
   const itemsPerPage = 10;
 
   const toggleSortOrder = () => {
-    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
 
   const totalPages = Math.ceil(userProjects.length / itemsPerPage);
-
   const currentPageData = useCurrentPageData({
     currentPage,
     sortField,
@@ -165,7 +143,7 @@ export const AllProjects = ({
         const Locked = await isProjectLocked(projectUser.id);
         if (Locked) {
           const userName = await getUserNameWithId(Locked);
-          return toast.error(t("errorProjectAlreadyOpen" + userName));
+          return toast.error(t('errorProjectAlreadyOpen') + userName);
         }
         await handleLock({ projectId: projectUser.id, lock: true });
       } catch (error) {
@@ -213,7 +191,7 @@ export const AllProjects = ({
 
   const handleAddUser = async (projectId: number) => {
     if (userToAdd == null) {
-      toast.error(t("errorAddUser"));
+      toast.error(t('errorAddUser'));
     }
     const linkUserGroupToAdd = userGroupsSearch.find(
       (linkUserGroup) => linkUserGroup.user_group.id === userToAdd!.id,
@@ -243,7 +221,10 @@ export const AllProjects = ({
     eventValue: string,
     projectId: number,
   ) => {
-    await updateAccessToProject(projectId, group.id, eventValue as ItemsRights);
+    const newRights = await updateAccessToProject(projectId, group.id, eventValue as ItemsRights);
+    if (newRights.error) {
+      toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
 
   const listOfGroup: ListItem[] = useMemo(() => {
@@ -276,16 +257,10 @@ export const AllProjects = ({
 
   const getGroupByOption = (option: UserGroup): string => {
     if (option.type === UserGroupTypes.MULTI_USER) {
-      return t("groups");
+      return t('groups');
     } else {
-      return t("users");
+      return t('users');
     }
-  };
-
-  //TODO remove this declaration and pass this function with props or create customHook
-  const fetchMediaForUser = async () => {
-    const medias = await getUserGroupMedias(userPersonalGroup!.id);
-    setMedias(medias);
   };
 
   const handleDuplicateProject = async (projectId: number) => {
@@ -298,11 +273,11 @@ export const AllProjects = ({
     share: string | undefined,
   ) => {
     if (share) {
-      toast.error(t("share-project-error-message"));
+      toast.error(t('share-project-error-message'));
       return;
     } else {
       await removeProjectFromList(projectId);
-      toast.success(t("removedProjectFromList"));
+      toast.success(t('removedProjectFromList'));
       fetchProjects();
       return;
     }
@@ -323,7 +298,7 @@ export const AllProjects = ({
 
   const handleCreateSnapshot = async (itemId: number) => {
     await generateSnapshot({
-      title: t("new_snapshot"),
+      title: t('new_snapshot'),
       projectId: itemId,
     });
     fetchProjects();
@@ -355,11 +330,11 @@ export const AllProjects = ({
             direction="row-reverse"
             alignItems="center"
             sx={{
-              position: "sticky",
+              position: 'sticky',
               top: 0,
               zIndex: 1000,
-              backgroundColor: "#dcdcdc",
-              paddingBottom: "18px",
+              backgroundColor: '#dcdcdc',
+              paddingBottom: '18px',
             }}
           >
             {!selectedProjectId && (
@@ -372,7 +347,7 @@ export const AllProjects = ({
               >
                 <Grid item>
                   <SearchBar
-                    label={t("filterProjects")}
+                    label={t('filterProjects')}
                     setFilter={setProjectFilter}
                   />
                 </Grid>
@@ -385,10 +360,10 @@ export const AllProjects = ({
                 </Grid>
                 <Grid item>
                   <Tooltip
-                    title={t(sortOrder === "asc" ? "sortAsc" : "sortDesc")}
+                    title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}
                   >
                     <IconButton onClick={toggleSortOrder}>
-                      {sortOrder === "asc" ? (
+                      {sortOrder === 'asc' ? (
                         <ArrowDropUpIcon />
                       ) : (
                         <ArrowDropDownIcon />
@@ -401,9 +376,9 @@ export const AllProjects = ({
           </Grid>
           <Grid item container spacing={1}>
             {!userProjects.length && (
-              <Grid container justifyContent={"center"}>
+              <Grid container justifyContent={'center'}>
                 <Typography variant="h6" component="h2">
-                  {t("messageNoProject")}
+                  {t('messageNoProject')}
                 </Typography>
               </Grid>
             )}
@@ -413,7 +388,7 @@ export const AllProjects = ({
                 container
                 spacing={1}
                 flexDirection="column"
-                sx={{ marginBottom: "70px" }}
+                sx={{ marginBottom: '70px' }}
               >
                 {userProjects.length > 0 &&
                   (currentPageData.length > 0 ? (
@@ -431,7 +406,7 @@ export const AllProjects = ({
                               ? projectUser.thumbnailUrl
                               : null
                           }
-                          searchBarLabel={t("searchUser")}
+                          searchBarLabel={t('searchUser')}
                           description={projectUser.description}
                           HandleOpenModal={() =>
                             HandleOpenModal(projectUser.id)
@@ -439,7 +414,7 @@ export const AllProjects = ({
                           openModal={openModalProjectId === projectUser.id}
                           DefaultButton={
                             <ModalButton
-                              tooltipButton={t("openProject")}
+                              tooltipButton={t('openProject')}
                               onClickFunction={() =>
                                 initializeMirador(
                                   projectUser.userWorkspace,
@@ -452,7 +427,7 @@ export const AllProjects = ({
                           }
                           EditorButton={
                             <ModalButton
-                              tooltipButton={t("configuration")}
+                              tooltipButton={t('configuration')}
                               onClickFunction={() =>
                                 HandleOpenModal(projectUser.id)
                               }
@@ -489,14 +464,14 @@ export const AllProjects = ({
                       alignItems="center"
                     >
                       <Typography variant="h6" component="h2">
-                        {t("noProjectMatchFilter")}
+                        {t('noProjectMatchFilter')}
                       </Typography>
                     </Grid>
                   ))}
                 <Grid item>
                   <FloatingActionButton
                     onClick={toggleModalProjectCreation}
-                    content={t("newProject")}
+                    content={t('newProject')}
                     Icon={<AddIcon />}
                   />
                   <div>

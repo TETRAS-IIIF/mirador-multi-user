@@ -1,17 +1,17 @@
-import { Media } from "../types/types.ts";
-import MMUCard from "../../../components/elements/MMUCard.tsx";
-import { ObjectTypes } from "../../tag/type.ts";
-import { ModalButton } from "../../../components/elements/ModalButton.tsx";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { ListItem } from "../../../components/types.ts";
-import { Dispatch, SetStateAction } from "react";
-import { ProjectGroup } from "../../projects/types/types.ts";
-import { LinkUserGroup } from "../../user-group/types/types.ts";
-import { useTranslation } from "react-i18next";
-import { Grid } from "@mui/material";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import placeholder from "assets/Placeholder.svg";
+import { Media } from '../types/types.ts';
+import MMUCard from '../../../components/elements/MMUCard.tsx';
+import { ObjectTypes } from '../../tag/type.ts';
+import { ModalButton } from '../../../components/elements/ModalButton.tsx';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import { ListItem } from '../../../components/types.ts';
+import { Dispatch, SetStateAction } from 'react';
+import { ProjectGroup } from '../../projects/types/types.ts';
+import { LinkUserGroup } from '../../user-group/types/types.ts';
+import { useTranslation } from 'react-i18next';
+import { Grid } from '@mui/material';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import placeholder from 'assets/Placeholder.svg';
 
 interface IMediaCardProps {
   media: Media;
@@ -19,7 +19,7 @@ interface IMediaCardProps {
   HandleCopyToClipBoard: (string: string) => void;
   HandleOpenModal: (id: number) => void;
   HandleDeleteMedia: (itemId: number) => void;
-  getAllMediaGroups: (itemId: number) => Promise<any>;
+  getAccessToMedia: (itemId: number) => Promise<any>;
   getOptionLabel: (option: any, searchInput: string) => string;
   listOfGroup: ListItem[];
   openModalMediaId: number | null;
@@ -47,26 +47,26 @@ interface IMediaCardProps {
 }
 
 export const MediaCard = ({
-  HandleCopyToClipBoard,
-  HandleDeleteMedia,
-  HandleOpenModal,
-  HandleUpdateMedia,
-  caddyUrl,
-  getAllMediaGroups,
-  getGroupByOption,
-  getOptionLabel,
-  handleChangeRights,
-  handleGrantAccess,
-  handleLookingForUserGroups,
-  handleRemoveAccessToMedia,
-  handleRemoveMediaFromList,
-  listOfGroup,
-  media,
-  openModalMediaId,
-  ownerId,
-  setGroupList,
-  setUserToAdd,
-}: IMediaCardProps) => {
+                            HandleCopyToClipBoard,
+                            HandleDeleteMedia,
+                            HandleOpenModal,
+                            HandleUpdateMedia,
+                            caddyUrl,
+                            getGroupByOption,
+                            getAccessToMedia,
+                            getOptionLabel,
+                            handleChangeRights,
+                            handleGrantAccess,
+                            handleLookingForUserGroups,
+                            handleRemoveAccessToMedia,
+                            handleRemoveMediaFromList,
+                            listOfGroup,
+                            media,
+                            openModalMediaId,
+                            ownerId,
+                            setGroupList,
+                            setUserToAdd,
+                          }: IMediaCardProps) => {
   const { t } = useTranslation();
 
   return (
@@ -75,16 +75,16 @@ export const MediaCard = ({
       objectTypes={ObjectTypes.MEDIA}
       AddAccessListItemFunction={handleGrantAccess}
       DefaultButton={
-        <Grid item container spacing={1} flexDirection={"row"} wrap="nowrap">
+        <Grid item container spacing={1} flexDirection={'row'} wrap="nowrap">
           <Grid item>
             <ModalButton
-              tooltipButton={t("tooltipMediaLink")}
+              tooltipButton={t('tooltipMediaLink')}
               onClickFunction={
                 media.path
                   ? () =>
-                      HandleCopyToClipBoard(
-                        `${caddyUrl}/${media.hash}/${media.path}`,
-                      )
+                    HandleCopyToClipBoard(
+                      `${caddyUrl}/${media.hash}/${media.path}`,
+                    )
                   : () => HandleCopyToClipBoard(media.url)
               }
               disabled={false}
@@ -93,15 +93,15 @@ export const MediaCard = ({
           </Grid>
           <Grid item>
             <ModalButton
-              tooltipButton={t("openInNewTab")}
+              tooltipButton={t('openInNewTab')}
               onClickFunction={
                 media.path
                   ? () =>
-                      window.open(
-                        `${caddyUrl}/${media.hash}/${media.path}`,
-                        "_blank",
-                      )
-                  : () => window.open(media.url, "_blank")
+                    window.open(
+                      `${caddyUrl}/${media.hash}/${media.path}`,
+                      '_blank',
+                    )
+                  : () => window.open(media.url, '_blank')
               }
               disabled={false}
               icon={<OpenInNewIcon />}
@@ -111,7 +111,7 @@ export const MediaCard = ({
       }
       EditorButton={
         <ModalButton
-          tooltipButton={t("editMedia")}
+          tooltipButton={t('editMedia')}
           onClickFunction={() => HandleOpenModal(media.id)}
           icon={<ModeEditIcon />}
           disabled={false}
@@ -120,7 +120,7 @@ export const MediaCard = ({
       HandleOpenModal={() => HandleOpenModal(media.id)}
       deleteItem={() => HandleDeleteMedia(media.id)}
       description={media.description}
-      getAccessToItem={getAllMediaGroups}
+      getAccessToItem={getAccessToMedia}
       getOptionLabel={getOptionLabel}
       id={media.id}
       item={media}
@@ -130,7 +130,7 @@ export const MediaCard = ({
       openModal={openModalMediaId === media.id}
       removeAccessListItemFunction={handleRemoveAccessToMedia}
       rights={media.rights}
-      searchBarLabel={t("search")}
+      searchBarLabel={t('search')}
       searchModalEditItem={handleLookingForUserGroups}
       setItemList={setGroupList}
       setItemToAdd={setUserToAdd}

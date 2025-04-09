@@ -1,5 +1,5 @@
-import { UpdateUserDto } from "../types/types.ts";
-import storage from "../../../utils/storage.ts";
+import { UpdateUserDto } from '../types/types.ts';
+import storage from '../../../utils/storage.ts';
 
 export const updateUser = async (updateUserDto: UpdateUserDto) => {
   const token = storage.getToken();
@@ -18,9 +18,9 @@ export const updateUser = async (updateUserDto: UpdateUserDto) => {
     if (!response.ok) {
       throw new Error("Failed to update user");
     }
-    const user = await response.json();
-    return user;
+    return await response.json();
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };

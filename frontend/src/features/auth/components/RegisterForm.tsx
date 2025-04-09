@@ -28,24 +28,22 @@ export const RegisterForm = () => {
   const [message, setMessage] = React.useState("");
 
   const onSubmit = async (data: RegisterCredentialsDTO) => {
-    try {
       await createUser(data, {
         onSuccess: () => {
-          toast.success(t("accountCreated"));
+          toast.success(t("accountCreated"),{duration:10000});
           navigate("/");
         },
+        onError: (error:any) =>
+        {
+          if(error.status === 409){
+            return setMessage(t("user_already_exists"));
+          }
+          setOpen(true);
+          setMessage(error.toString());
+
+          console.error("error creation", error);
+        }
       });
-    } catch (error: any) {
-      console.error("error", error);
-      if (
-        error.toString() ===
-        "Error: a user with this email or username already exists"
-      ) {
-        return setMessage(t("user_already_exists"));
-      }
-      setOpen(true);
-      setMessage(error.toString());
-    }
   };
 
   return (

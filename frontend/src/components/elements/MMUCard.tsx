@@ -146,6 +146,15 @@ const MMUCard = <
     useState(false);
   const [isLoading, thumbnailUrl] = useFetchThumbnailsUrl({ item });
   const { t, i18n } = useTranslation();
+
+  const fetchData = useCallback(async () => {
+    let list;
+    if (getAccessToItem && setItemList) {
+      list = await getAccessToItem(item.id);
+      setItemList(list);
+    }
+  }, [getAccessToItem, item.id, setItemList]);
+
   const handleRemoveAccessListItem = async (accessItemId: number) => {
     if (removeAccessListItemFunction) {
       await removeAccessListItemFunction(item.id, accessItemId);
@@ -160,13 +169,6 @@ const MMUCard = <
     fetchData();
   };
 
-  const fetchData = useCallback(async () => {
-    let list;
-    if (getAccessToItem && setItemList) {
-      list = await getAccessToItem(item.id);
-      setItemList(list);
-    }
-  }, [getAccessToItem, item.id, setItemList]);
 
   const handleChangeSelectedItem =
     (itemSelected: ListItem) => async (event: SelectChangeEvent) => {
@@ -182,7 +184,6 @@ const MMUCard = <
   const handleConfirmRemoveFromListModal = () => {
     setOpenRemoveItemFromListModal(!openRemoveItemFromListModal);
   };
-
   return (
     <Card>
       <Grid

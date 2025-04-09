@@ -207,6 +207,11 @@ export const AllManifests = (
     manifestCanvases: ManifestCanvases[],
   ) => {
     try {
+      for (const canvases of manifestCanvases) {
+        if (canvases.media[0].value.length <= 0) {
+          return toast.error(t("no_media_error"));
+        }
+      }
       await createManifest({
         manifestMedias: manifestCanvases,
         title: manifestTitle,
@@ -302,11 +307,14 @@ export const AllManifests = (
     eventValue: string,
     manifestId: number,
   ) => {
-    await updateAccessToManifest(
+    const newRights = await updateAccessToManifest(
       manifestId,
       group.id,
       eventValue as ManifestGroupRights,
     );
+    if(newRights.error) {
+      toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
 
   const handleRemoveManifestFromList: (

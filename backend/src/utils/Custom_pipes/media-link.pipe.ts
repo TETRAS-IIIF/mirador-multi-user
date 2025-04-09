@@ -74,9 +74,11 @@ export class MediaLinkInterceptor implements NestInterceptor {
           break;
 
         case isYouTubeVideo(url):
-          const isYoutubeLinkAllowed = await this.settingsService.get(
-            SettingKeys.ALLOW_YOUTUBE_MEDIA,
-          );
+          const isYoutubeLinkAllowed =
+            (await this.settingsService.get(
+              SettingKeys.ALLOW_YOUTUBE_MEDIA,
+            )) === 'true';
+
           if (!isYoutubeLinkAllowed) {
             this.logger.error(
               'YouTube Link are not supported',
@@ -92,9 +94,10 @@ export class MediaLinkInterceptor implements NestInterceptor {
           break;
 
         case await isPeerTubeVideo(url):
-          const isPeertubeVideoAllowed = await this.settingsService.get(
-            SettingKeys.ALLOW_PEERTUBE_MEDIA,
-          );
+          const isPeertubeVideoAllowed =
+            (await this.settingsService.get(
+              SettingKeys.ALLOW_PEERTUBE_MEDIA,
+            )) === 'true';
           if (!isPeertubeVideoAllowed) {
             this.logger.error(
               'Peertube Link are not supported',
@@ -132,10 +135,13 @@ export class MediaLinkInterceptor implements NestInterceptor {
       return next.handle();
     } catch (error) {
       if (error instanceof HttpException) {
-        console.log(error);
+        this.logger.error(error.message, error.stack);
         throw error;
       }
-      console.error(`Error processing image: ${error.message}`);
+      this.logger.error(
+        `Error processing image: ${error.message}`,
+        error.stack,
+      );
       throw new InternalServerErrorException(
         `Error processing image: ${error.message}`,
       );
