@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import { getAllUsers } from '../api/getAllUsers.ts';
 import { User } from '../../auth/types/types.ts';
 import { useEffect, useMemo, useState } from 'react';
@@ -6,9 +6,13 @@ import { useTranslation } from 'react-i18next';
 import CollapsibleTable from '../../../components/elements/CollapsibleTable.tsx';
 import { AdminExpandableContent } from './AdminExpandableContent.tsx';
 import { AdminSettings } from './AdminSettings.tsx';
+import { MMUModal } from '../../../components/elements/modal.tsx';
+import { CreateUserForm } from './CreateUserForm.tsx';
 
 export const AdminPanel = () => {
   const [users, setUsers] = useState<User[]>([]);
+  const [openAddUserModal, setopenAddUserModal] =
+    useState(false);
   const { t } = useTranslation();
 
   const fetchUsers = async () => {
@@ -65,17 +69,32 @@ export const AdminPanel = () => {
       <Grid item>
         <AdminSettings />
       </Grid>
-      <Grid item>
-        <Typography variant="h6" gutterBottom>
-          Users
-        </Typography>
-        <CollapsibleTable
-          columns={columns}
-          rows={rows}
-          renderExpandableContent={(row) => (
-            <AdminExpandableContent id={row.id} data={row.data} />)
-          } />
+      <Grid item container flexDirection="column" spacing={1}>
+        <Grid item container>
+          <Grid item container flexDirection="column" spacing={1}>
+            <Grid item>
+              <Typography variant="h6" gutterBottom>
+                Users
+              </Typography>
+            </Grid>
+            <Grid item>
+              <Button variant="contained"
+                      onClick={() => setopenAddUserModal(!openAddUserModal)}>{t('admin_create_user')}</Button>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item>
+          <CollapsibleTable
+            columns={columns}
+            rows={rows}
+            renderExpandableContent={(row) => (
+              <AdminExpandableContent id={row.id} data={row.data} />)
+            } />
+        </Grid>
       </Grid>
+      <MMUModal openModal={openAddUserModal} setOpenModal={setopenAddUserModal} width={500}>
+        <CreateUserForm setopenAddUserModal={setopenAddUserModal} />
+      </MMUModal>
     </Grid>
   );
 };
