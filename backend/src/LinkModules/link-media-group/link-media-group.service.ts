@@ -14,7 +14,7 @@ import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
 import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
 import { MediaService } from '../../BaseEntities/media/media.service';
-import { MediaGroupRights, ITEM_RIGHTS_PRIORITY } from '../../enum/rights';
+import { ITEM_RIGHTS_PRIORITY, MediaGroupRights } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { CreateMediaDto } from '../../BaseEntities/media/dto/create-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
@@ -25,7 +25,6 @@ import { mediaOrigin } from '../../enum/origins';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
 import { UserGroupTypes } from '../../enum/user-group-types';
-import { Project } from '../../BaseEntities/project/entities/project.entity';
 import { Media } from '../../BaseEntities/media/entities/media.entity';
 
 @Injectable()
@@ -354,22 +353,18 @@ export class LinkMediaGroupService {
 
   async updateMediaGroupRelation(
     mediaId: number,
-    groupId: number,
-    rights: MediaGroupRights,
-    userId: number,
+    groupToUpdateId: number,
+    rightsToAssign: MediaGroupRights,
+    requestUserId: number,
   ) {
     try {
       const userRightOnMedia = await this.getHighestRightForMedia(
-        userId,
-        mediaId,
-      );
-      const userToUpdateRights = await this.getHighestRightForMedia(
-        groupId,
+        requestUserId,
         mediaId,
       );
       if (
         ITEM_RIGHTS_PRIORITY[userRightOnMedia.rights] <
-        ITEM_RIGHTS_PRIORITY[userToUpdateRights.rights]
+        ITEM_RIGHTS_PRIORITY[rightsToAssign]
       ) {
         throw new ForbiddenException(
           'You cannot modify a user with higher privileges.',
@@ -379,15 +374,14 @@ export class LinkMediaGroupService {
         await this.linkMediaGroupRepository.findOne({
           where: {
             media: { id: mediaId },
-            user_group: { id: groupId },
+            user_group: { id: groupToUpdateId },
           },
         });
-
       if (!linkMediaGroupToUpdate) {
         throw new NotFoundException('no matching LinkMediaGroup found');
       }
 
-      linkMediaGroupToUpdate.rights = rights;
+      linkMediaGroupToUpdate.rights = rightsToAssign;
 
       return await this.linkMediaGroupRepository.save(linkMediaGroupToUpdate);
     } catch (error) {
@@ -436,6 +430,8 @@ export class LinkMediaGroupService {
 
     let linkEntities = [];
     for (const group of allGroups) {
+      console.log('group');
+      console.log(group);
       const linkGroups = await this.linkMediaGroupRepository.find({
         where: {
           user_group: { id: group.id },
