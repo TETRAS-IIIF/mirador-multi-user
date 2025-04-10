@@ -231,5 +231,7 @@
   "noteTemplateInfo": "You can create note templates. They will be available in the annotation editor.",
   "templateChoice": "Choose a template",
   "newTemplateTitle": "New template",
-  "newTemplateContent": "Add your content"
+  "newTemplateContent": "Add your content",
+  "noTemplatesAvailable": "No templates available",
+  "updateTemplate": "Update template"
 }

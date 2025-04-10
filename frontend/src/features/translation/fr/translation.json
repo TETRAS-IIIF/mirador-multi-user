@@ -232,5 +232,6 @@
   "noteTemplateInfo": "Créer un ou plusieurs modèles de notes. Ceux ci seront disponibles lors de l'édition d'annotation.",
   "templateChoice": "Choisissez un modèle",
   "newTemplateTitle": "Nouveau modèle",
-  "newTemplateContent": "Ajouter votre contenu"
+  "newTemplateContent": "Ajouter votre contenu",
+  "noTemplatesAvailable": "Aucun modèle disponible"
 }

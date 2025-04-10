@@ -102,7 +102,7 @@ export const NoteTemplate = ({
           alignItems="center"
           spacing={1}
         >
-          <Grid item>
+          <Grid item sx={{ marginBottom: 2 }}>
             <Typography>{t("noteTemplateInfo")}</Typography>
           </Grid>
           <Grid item>
@@ -122,13 +122,16 @@ export const NoteTemplate = ({
                     {temp.title}
                   </MenuItem>
                 ))}
+                {!templates.length && (
+                  <MenuItem disabled>{t("noTemplatesAvailable")}</MenuItem>
+                )}
               </Select>
             </FormControl>
           </Grid>
           <Grid item>
             <Button
               color="primary"
-              variant="outlined"
+              variant="contained"
               onClick={handleCreateNewTemplate}
             >
               {t("createNewTemplate")}
@@ -152,7 +155,7 @@ export const NoteTemplate = ({
                 onChange={handleTitleChange}
               />
             </Grid>
-            <Grid item sx={{ minHeight: "200px", maxHeight: "400px" }}>
+            <Grid item>
               <TextEditor
                 textHtml={selectedTemplate?.content || ""}
                 updateText={handleTemplateContent}

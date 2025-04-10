@@ -12,8 +12,7 @@ interface TextEditorProps {
 
 const StyledReactQuill = styled(ReactQuill)(() => ({
   ".ql-editor": {
-    height: "300px",
-    overflowY: "auto",
+    height: "200px",
     width: "100%",
   },
 }));
