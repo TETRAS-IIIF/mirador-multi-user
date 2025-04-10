@@ -157,8 +157,6 @@ export const AllMedias = (
         return;
       }
       if (isFileSizeOverLimit(file, MAX_UPLOAD_SIZE!)) {
-        console.log('MAX_UPLOAD_SIZE :', MAX_UPLOAD_SIZE)
-        console.log('isFileOverLimit');
         toast.error(
           t('fileTooLarge', {
             maxSize: MAX_UPLOAD_SIZE,

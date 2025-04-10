@@ -40,7 +40,7 @@ import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHook
 import { removeManifestToGroup } from '../api/removeManifestToGroup.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
-import { getSettingValue, SettingKeys } from '../../../utils/utils.ts';
+import { getSettingValue, isFileSizeOverLimit, SettingKeys } from '../../../utils/utils.ts';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -110,8 +110,7 @@ export const AllManifests = (
   const handleCreateManifest = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
-        if (event.target.files[0].size > MAX_UPLOAD_SIZE!) {
-          console.log('handleCreateMedia into ALL manifest')
+        if (isFileSizeOverLimit(event.target.files[0], MAX_UPLOAD_SIZE!)) {
           toast.error(
             t('fileTooLarge', {
               maxSize: MAX_UPLOAD_SIZE,
