@@ -24,7 +24,7 @@ export class Media {
   @Column({ nullable: true })
   path: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'longtext' })
   thumbnailUrl: string;
 
   @IsString()

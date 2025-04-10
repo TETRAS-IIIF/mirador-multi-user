@@ -23,7 +23,6 @@ import { addMediaToGroup } from '../api/AddMediaToGroup.ts';
 import { ListItem } from '../../../components/types.ts';
 import { ProjectGroup } from '../../projects/types/types.ts';
 import { removeAccessToMedia } from '../api/removeAccessToMedia.ts';
-import { getAllMediaGroups } from '../api/getAllMediaGroups.ts';
 import { updateAccessToMedia } from '../api/updateAccessToMedia.ts';
 import SpeedDialTooltipOpen from '../../../components/elements/SpeedDial.tsx';
 import AddLinkIcon from '@mui/icons-material/AddLink';
@@ -42,6 +41,7 @@ import { getSettingValue, isFileSizeOverLimit, isValidFileForUpload, SettingKeys
 import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
 import { useCreateMediaLink } from '../hooks/useCreateMediaLink.ts';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
+import { getAccessToMedia } from '../api/getAccessToMedia.ts';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -268,11 +268,15 @@ export const AllMedias = (
     eventValue: string,
     mediaId: number,
   ) => {
-    await updateAccessToMedia(
+    const newRights = await updateAccessToMedia(
       mediaId,
       group.id,
       eventValue as MediaGroupRights,
     );
+
+    if (newRights.error) {
+      toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
 
   const handleButtonClick = () => {
@@ -302,7 +306,7 @@ export const AllMedias = (
       user_group: userPersonalGroup,
     }, {
       onSuccess: (data) => {
-        toast.success('media_created');
+        toast.success(t('media_created'));
         fetchMediaForUser();
         HandleOpenModal(data.id)
       },
@@ -429,7 +433,7 @@ export const AllMedias = (
                             : undefined,
                       }}
                       ownerId={media.idCreator}
-                      getAllMediaGroups={getAllMediaGroups}
+                      getAccessToMedia={getAccessToMedia}
                       getOptionLabel={getOptionLabel}
                       getGroupByOption={getGroupByOption}
                       HandleOpenModal={HandleOpenModal}

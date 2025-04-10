@@ -205,6 +205,7 @@ export class LinkUserGroupController {
           grantAccessToGroupDto.groupId,
           grantAccessToGroupDto.userId,
           grantAccessToGroupDto.rights,
+          request.user.sub,
         );
       },
     );

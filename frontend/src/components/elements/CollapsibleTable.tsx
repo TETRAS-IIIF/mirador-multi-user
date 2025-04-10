@@ -109,80 +109,80 @@ export default function CollapsibleTable({
   return (
     <>
       <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
-        <Grid item xs={8}>
-          <TextField
-            fullWidth
-            inputProps={{ maxLength: 255 }}
-            label={t('filter_snapshots')}
-            variant="outlined"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          />
-        </Grid>
-        {handleCreateSnapshot && (
-          <Grid item xs={4}>
-            <Button
-              variant="contained"
-              onClick={() => handleCreateSnapshot!(itemId!)}
-            >
-              {t('create_snapshot')}
-            </Button>
-          </Grid>
-        )}
-      </Grid>
+  <Grid item xs={8}>
+    <TextField
+      fullWidth
+  inputProps={{ maxLength: 255 }}
+  label={t('filter_snapshots')}
+  variant="outlined"
+  value={filter}
+  onChange={(e) => setFilter(e.target.value)}
+  />
+  </Grid>
+  {handleCreateSnapshot && (
+    <Grid item xs={4}>
+  <Button
+    variant="contained"
+    onClick={() => handleCreateSnapshot!(itemId!)}
+  >
+    {t('create_snapshot')}
+    </Button>
+    </Grid>
+  )}
+  </Grid>
 
-      <TableContainer component={Paper}>
-        <Table aria-label="collapsible table" size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell />
-              {columns.map((column, index) => (
-                <TableCell key={index} align={column.align || 'left'}>
-                  {column.sortKey ? (
-                    <TableSortLabel
-                      active={sortKey === column.sortKey}
-                      direction={
-                        sortKey === column.sortKey ? sortDirection : 'asc'
-                      }
-                      onClick={() => handleSort(column.sortKey)}
-                    >
-                      {column.label}
-                    </TableSortLabel>
-                  ) : (
-                    column.label
-                  )}
-                </TableCell>
-              ))}
-              {onActionClick && (
-                <TableCell align="center">{t('actions')}</TableCell>
-              )}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginatedRows.map((row) => (
-              <Row
-                key={row.id}
-                row={row}
-                labelButton={labelButton}
-                renderExpandableContent={
-                  renderExpandableContent
-                    ? () => renderExpandableContent(row)
-                    : undefined
-                }
-                onActionClick={onActionClick}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+  <TableContainer component={Paper}>
+  <Table aria-label="collapsible table" size="small">
+    <TableHead>
+      <TableRow>
+        <TableCell />
+    {columns.map((column, index) => (
+        <TableCell key={index} align={column.align || 'left'}>
+      {column.sortKey ? (
+          <TableSortLabel
+            active={sortKey === column.sortKey}
+      direction={
+        sortKey === column.sortKey ? sortDirection : 'asc'
+    }
+  onClick={() => handleSort(column.sortKey)}
+>
+  {column.label}
+  </TableSortLabel>
+) : (
+    column.label
+  )}
+  </TableCell>
+))}
+  {onActionClick && (
+    <TableCell align="center">{t('actions')}</TableCell>
+  )}
+  </TableRow>
+  </TableHead>
+  <TableBody>
+  {paginatedRows.map((row) => (
+      <Row
+        key={row.id}
+    row={row}
+    labelButton={labelButton}
+    renderExpandableContent={
+      renderExpandableContent
+      ? () => renderExpandableContent(row)
+      : undefined
+  }
+  onActionClick={onActionClick}
+  />
+))}
+  </TableBody>
+  </Table>
+  </TableContainer>
 
-      {sortedRows.length > rowsPerPage && (
-        <PaginationControls
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      )}
-    </>
-  );
+  {sortedRows.length > rowsPerPage && (
+    <PaginationControls
+      currentPage={currentPage}
+    totalPages={totalPages}
+    onPageChange={handlePageChange}
+    />
+  )}
+  </>
+);
 }

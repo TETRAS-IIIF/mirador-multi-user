@@ -144,6 +144,7 @@ export class LinkGroupProjectController {
       async () => {
         return this.linkGroupProjectService.updateAccessToProject(
           updateAccessToProjectDto,
+          request.user.sub,
         );
       },
     );

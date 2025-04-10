@@ -1,57 +1,40 @@
-import { User } from "../../auth/types/types.ts";
-import { Grid, IconButton, Tooltip, Typography } from "@mui/material";
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  CreateGroupDto,
-  ItemsRights,
-  LinkUserGroup,
-  UserGroup,
-} from "../types/types.ts";
-import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
-import AddIcon from "@mui/icons-material/Add";
-import { DrawerCreateGroup } from "./DrawerCreateGroup.tsx";
-import { createGroup } from "../api/createGroup.ts";
-import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import MMUCard from "../../../components/elements/MMUCard.tsx";
-import { ChangeAccessToGroup } from "../api/ChangeAccessToGroup.ts";
-import { deleteGroup } from "../api/deleteGroup.ts";
-import { grantAccessToGroup } from "../api/grantAccessToGroup.ts";
-import { removeAccessToGroup } from "../api/removeAccessToGroup.ts";
-import { lookingForUsers } from "../api/lookingForUsers.ts";
-import { ModalButton } from "../../../components/elements/ModalButton.tsx";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { UpdateGroup } from "../api/updateGroup.ts";
-import { GetAllGroupUsers } from "../api/getAllGroupUsers.ts";
-import { ListItem } from "../../../components/types.ts";
-import { Media } from "../../media/types/types.ts";
-import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
-import { PaginationControls } from "../../../components/elements/Pagination.tsx";
-import { ObjectTypes } from "../../tag/type.ts";
-import toast from "react-hot-toast";
-import { useTranslation } from "react-i18next";
-import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { leavingGroup } from "../api/leavingGroup.ts";
-import { SidePanel } from "../../../components/elements/SidePanel/SidePanel.tsx";
-import { Manifest } from "../../manifest/types/types.ts";
-import {
-  TITLE,
-  UPDATED_AT,
-  useCurrentPageData,
-} from "../../../utils/customHooks/filterHook.ts";
+import { User } from '../../auth/types/types.ts';
+import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CreateGroupDto, ItemsRights, LinkUserGroup, UserGroup } from '../types/types.ts';
+import { FloatingActionButton } from '../../../components/elements/FloatingActionButton.tsx';
+import AddIcon from '@mui/icons-material/Add';
+import { DrawerCreateGroup } from './DrawerCreateGroup.tsx';
+import { createGroup } from '../api/createGroup.ts';
+import { SearchBar } from '../../../components/elements/SearchBar.tsx';
+import MMUCard from '../../../components/elements/MMUCard.tsx';
+import { ChangeAccessToGroup } from '../api/ChangeAccessToGroup.ts';
+import { deleteGroup } from '../api/deleteGroup.ts';
+import { grantAccessToGroup } from '../api/grantAccessToGroup.ts';
+import { removeAccessToGroup } from '../api/removeAccessToGroup.ts';
+import { lookingForUsers } from '../api/lookingForUsers.ts';
+import { ModalButton } from '../../../components/elements/ModalButton.tsx';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import { UpdateGroup } from '../api/updateGroup.ts';
+import { GetAllGroupUsers } from '../api/getAllGroupUsers.ts';
+import { ListItem } from '../../../components/types.ts';
+import { Media } from '../../media/types/types.ts';
+import { PaginationControls } from '../../../components/elements/Pagination.tsx';
+import { ObjectTypes } from '../../tag/type.ts';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
+import { SortItemSelector } from '../../../components/elements/sortItemSelector.tsx';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { leavingGroup } from '../api/leavingGroup.ts';
+import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
+import { Manifest } from '../../manifest/types/types.ts';
+import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
 
 interface allGroupsProps {
   user: User;
   medias: Media[];
-  setMedias: Dispatch<SetStateAction<Media[]>>;
+  fetchMediaForUser: () => void;
   userPersonalGroup: UserGroup;
   fetchGroups: () => void;
   groups: UserGroup[];
@@ -60,15 +43,15 @@ interface allGroupsProps {
 }
 
 export const AllGroups = ({
-  user,
-  medias,
-  setMedias,
-  userPersonalGroup,
-  fetchGroups,
-  groups,
-  manifests,
-  fetchManifestForUser,
-}: allGroupsProps) => {
+                            user,
+                            medias,
+                            fetchMediaForUser,
+                            userPersonalGroup,
+                            fetchGroups,
+                            groups,
+                            manifests,
+                            fetchManifestForUser,
+                          }: allGroupsProps) => {
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] =
     useState(false);
   const [openModalGroupId, setOpenModalGroupId] = useState<number | null>(null); // Updated state
@@ -80,12 +63,12 @@ export const AllGroups = ({
   const [currentPage, setCurrentPage] = useState(1);
 
   const [sortField, setSortField] = useState<keyof UserGroup>(UPDATED_AT);
-  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const { t } = useTranslation();
 
   const toggleSortOrder = () => {
-    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
 
   const itemsPerPage = 10;
@@ -100,11 +83,6 @@ export const AllGroups = ({
   });
 
   const totalPages = Math.ceil(groups.length / itemsPerPage);
-
-  const fetchMediaForUser = async () => {
-    const medias = await getUserGroupMedias(userPersonalGroup!.id);
-    setMedias(medias);
-  };
 
   useEffect(() => {
     fetchGroups();
@@ -147,11 +125,14 @@ export const AllGroups = ({
     const userToUpdate = userPersonalGroupList.find(
       (user) => user.user.id === group.id,
     );
-    await ChangeAccessToGroup(groupId, {
+    const newRights = await ChangeAccessToGroup(groupId, {
       groupId: group.id,
       rights: eventValue as ItemsRights,
       userId: userToUpdate!.user.id,
     });
+    if (newRights.error) {
+      toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
 
   const HandleOpenModal = useCallback(
@@ -163,6 +144,7 @@ export const AllGroups = ({
 
   const handleDeleteGroup = async (groupId: number) => {
     await deleteGroup(groupId);
+    setOpenModalGroupId(null)
     fetchGroups();
   };
 
@@ -173,7 +155,7 @@ export const AllGroups = ({
 
   const grantingAccessToGroup = async (user_group_id: number) => {
     if (userToAdd == null) {
-      toast.error(t("selectItemToast"));
+      toast.error(t('selectItemToast'));
     }
     const user_group = groups.find((groups) => groups.id === user_group_id);
     await grantAccessToGroup(userToAdd!.user, user_group!);
@@ -217,15 +199,15 @@ export const AllGroups = ({
             spacing={2}
             alignItems="center"
             sx={{
-              position: "sticky",
+              position: 'sticky',
               top: 0,
               zIndex: 1000,
-              backgroundColor: "#dcdcdc",
-              paddingBottom: "18px",
+              backgroundColor: '#dcdcdc',
+              paddingBottom: '18px',
             }}
           >
             <Grid item>
-              <SearchBar label={t("filterGroups")} setFilter={setGroupFilter} />
+              <SearchBar label={t('filterGroups')} setFilter={setGroupFilter} />
             </Grid>
             <Grid item>
               <SortItemSelector<UserGroup>
@@ -235,9 +217,9 @@ export const AllGroups = ({
               />
             </Grid>
             <Grid item>
-              <Tooltip title={t(sortOrder === "asc" ? "sortAsc" : "sortDesc")}>
+              <Tooltip title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}>
                 <IconButton onClick={toggleSortOrder}>
-                  {sortOrder === "asc" ? (
+                  {sortOrder === 'asc' ? (
                     <ArrowDropUpIcon />
                   ) : (
                     <ArrowDropDownIcon />
@@ -251,16 +233,16 @@ export const AllGroups = ({
             container
             spacing={2}
             flexDirection="column"
-            sx={{ marginBottom: "40px" }}
+            sx={{ marginBottom: '40px' }}
           >
             {!groups.length && (
               <Grid
                 container
-                justifyContent={"center"}
-                sx={{ marginTop: "10px" }}
+                justifyContent={'center'}
+                sx={{ marginTop: '10px' }}
               >
                 <Typography variant="h6" component="h2">
-                  {t("noGroupYet")}
+                  {t('noGroupYet')}
                 </Typography>
               </Grid>
             )}
@@ -275,7 +257,7 @@ export const AllGroups = ({
                       thumbnailUrl={
                         group.thumbnailUrl ? group.thumbnailUrl : null
                       }
-                      searchBarLabel={"Search Users"}
+                      searchBarLabel={'Search Users'}
                       rights={group.rights!}
                       itemLabel={group.title}
                       openModal={openModalGroupId === group.id}
@@ -288,7 +270,7 @@ export const AllGroups = ({
                       AddAccessListItemFunction={grantingAccessToGroup}
                       EditorButton={
                         <ModalButton
-                          tooltipButton={t("editGroupTooltip")}
+                          tooltipButton={t('editGroupTooltip')}
                           disabled={false}
                           icon={<ModeEditIcon />}
                           onClickFunction={() => HandleOpenModal(group.id)}
@@ -314,7 +296,7 @@ export const AllGroups = ({
                   alignItems="center"
                 >
                   <Typography variant="h6" component="h2">
-                    {t("noMatchingGroupFilter")}
+                    {t('noMatchingGroupFilter')}
                   </Typography>
                 </Grid>
               ))}
@@ -326,7 +308,7 @@ export const AllGroups = ({
           </Grid>
           <FloatingActionButton
             onClick={toggleModalGroupCreation}
-            content={t("newGroup")}
+            content={t('newGroup')}
             Icon={<AddIcon />}
           />
           <DrawerCreateGroup

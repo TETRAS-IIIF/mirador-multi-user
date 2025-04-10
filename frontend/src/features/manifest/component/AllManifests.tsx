@@ -40,7 +40,7 @@ import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHook
 import { removeManifestToGroup } from '../api/removeManifestToGroup.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
-import { getSettingValue, SettingKeys } from '../../../utils/utils.ts';
+import { getSettingValue, isFileSizeOverLimit, SettingKeys } from '../../../utils/utils.ts';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -110,7 +110,7 @@ export const AllManifests = (
   const handleCreateManifest = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
-        if (event.target.files[0].size > MAX_UPLOAD_SIZE!) {
+        if (isFileSizeOverLimit(event.target.files[0], MAX_UPLOAD_SIZE!)) {
           toast.error(
             t('fileTooLarge', {
               maxSize: MAX_UPLOAD_SIZE,
@@ -207,6 +207,11 @@ export const AllManifests = (
     manifestCanvases: ManifestCanvases[],
   ) => {
     try {
+      for (const canvases of manifestCanvases) {
+        if (canvases.media[0].value.length <= 0) {
+          return toast.error(t('no_media_error'));
+        }
+      }
       await createManifest({
         manifestMedias: manifestCanvases,
         title: manifestTitle,
@@ -302,11 +307,14 @@ export const AllManifests = (
     eventValue: string,
     manifestId: number,
   ) => {
-    await updateAccessToManifest(
+    const newRights = await updateAccessToManifest(
       manifestId,
       group.id,
       eventValue as ManifestGroupRights,
     );
+    if (newRights.error) {
+      toast.error(t('not_allowed_to_modify_rights'))
+    }
   };
 
   const handleRemoveManifestFromList: (

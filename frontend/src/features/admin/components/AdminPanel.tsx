@@ -3,11 +3,10 @@ import { getAllUsers } from '../api/getAllUsers.ts';
 import { User } from '../../auth/types/types.ts';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import CollapsibleTable from '../../../components/elements/CollapsibleTable.tsx';
-import { AdminExpandableContent } from './AdminExpandableContent.tsx';
-import { AdminSettings } from './AdminSettings.tsx';
 import { MMUModal } from '../../../components/elements/modal.tsx';
 import { CreateUserForm } from './CreateUserForm.tsx';
+import { AdminCollapsibleTable } from './adminCollapsibleTable.tsx';
+import { AdminSettings } from './AdminSettings.tsx';
 
 export const AdminPanel = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -84,12 +83,10 @@ export const AdminPanel = () => {
           </Grid>
         </Grid>
         <Grid item>
-          <CollapsibleTable
+          <AdminCollapsibleTable
             columns={columns}
             rows={rows}
-            renderExpandableContent={(row) => (
-              <AdminExpandableContent id={row.id} data={row.data} />)
-            } />
+          />
         </Grid>
       </Grid>
       <MMUModal openModal={openAddUserModal} setOpenModal={setopenAddUserModal} width={500}>

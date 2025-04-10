@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Setting } from '../types/type.ts';
+import { Setting, Settings } from '../types/type.ts';
 import { RenderInput } from './RenderInput.tsx';
 import { fetchBackendAPIConnected } from '../../../utils/fetchBackendAPI.ts';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface IMutableSettingsEditorProps {
   settings: Setting[];
@@ -12,7 +13,14 @@ interface IMutableSettingsEditorProps {
 
 export const MutableSettingsEditor = ({ settings }: IMutableSettingsEditorProps) => {
   const [editableSettings, setEditableSettings] = useState<Setting[]>([...settings]);
+  const queryClient = useQueryClient();
+
   const { t } = useTranslation();
+  
+  const handleRefreshSettings = async () => {
+    await queryClient.refetchQueries({ queryKey: ['adminSettings'] });
+    queryClient.getQueryData<Settings>(['adminSettings']);
+  };
 
   const handleChange = async (id: number, newValue: string) => {
     const settingToUpdate = editableSettings.find(s => s.id === id);
@@ -34,6 +42,7 @@ export const MutableSettingsEditor = ({ settings }: IMutableSettingsEditorProps)
         toast.success(
           t('setting_updated'),
         )
+        handleRefreshSettings()
       },
       () => {
         toast.error(
