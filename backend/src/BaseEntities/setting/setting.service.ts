@@ -17,6 +17,7 @@ import * as path from 'node:path';
 @Injectable()
 export class SettingsService implements OnModuleInit {
   private readonly logger = new CustomLogger();
+  private readonly appStartedAt = new Date().toISOString();
 
   constructor(
     @InjectRepository(Setting)
@@ -37,28 +38,26 @@ export class SettingsService implements OnModuleInit {
     }
   }
 
-  private shouldUpdate(
+  private shouldCreate(
     existing: { value: string; isKeyMutable?: boolean } | undefined,
-    newValue: string,
   ) {
     if (!existing) return true;
-    if (existing.value === newValue) return false;
   }
 
   async syncSettingsWithEnv(requiredSettings: Record<string, any>) {
     const existingSettings = await this.settingsRepository.find();
+
     const existingMap = new Map(
       existingSettings.map((setting) => [setting.key, setting]),
     );
 
     for (const [key, envValue] of Object.entries(requiredSettings)) {
       const existing = existingMap.get(key);
-      if (this.shouldUpdate(existing, envValue)) {
+      if (this.shouldCreate(existing)) {
         await this.set(key, envValue);
         console.info('New setting :', key, envValue);
       }
     }
-    await this.set('LAST_STARTING_TIME', new Date().toISOString());
   }
 
   getUploadFolderSize() {
@@ -87,6 +86,7 @@ export class SettingsService implements OnModuleInit {
         ['LAST_MIGRATION', lastMigration?.toISOString() ?? null],
         ['UPLOAD_FOLDER_SIZE', uploadFileSize],
         ['DB_SIZE', dbSize],
+        ['LAST_STARTING_TIME', this.appStartedAt],
       );
       return {
         mutableSettings: settings,
@@ -104,14 +104,12 @@ export class SettingsService implements OnModuleInit {
   async set(key: string, value: string) {
     try {
       let setting = await this.settingsRepository.findOne({ where: { key } });
-
       if (setting) {
         setting.value = value;
       } else {
         setting = this.settingsRepository.create({ key, value });
       }
-
-      await this.settingsRepository.save(setting);
+      return await this.settingsRepository.save(setting);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -136,11 +134,7 @@ export class SettingsService implements OnModuleInit {
   async isAdmin(userId: number) {
     try {
       const user = await this.authService.findProfile(userId);
-      if (user._isAdmin) {
-        return true;
-      } else {
-        return false;
-      }
+      return user._isAdmin;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(

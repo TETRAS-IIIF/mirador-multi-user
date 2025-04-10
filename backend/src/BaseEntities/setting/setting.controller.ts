@@ -10,7 +10,9 @@ import {
 import { SettingsService } from './setting.service';
 import { SetSettingDto } from './dto/setSetting.dto';
 import { AuthGuard } from '../../auth/auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
+@ApiBearerAuth()
 @Controller('settings')
 export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}

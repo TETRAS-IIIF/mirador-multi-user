@@ -1,10 +1,11 @@
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { getAllUsers } from '../api/getAllUsers.ts';
 import { User } from '../../auth/types/types.ts';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import CollapsibleTable from '../../../components/elements/CollapsibleTable.tsx';
 import { AdminExpandableContent } from './AdminExpandableContent.tsx';
+import { AdminSettings } from './AdminSettings.tsx';
 
 export const AdminPanel = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -52,13 +53,21 @@ export const AdminPanel = () => {
   }, [users]);
 
   return (
-    <Grid sx={{ padding: 2 }}>
-      <CollapsibleTable
-        columns={columns}
-        rows={rows}
-        renderExpandableContent={(row) => (
-          <AdminExpandableContent id={row.id} />)
-        } />
+    <Grid container flexDirection="column" item sx={{ padding: 2 }} spacing={2}>
+      <Grid item>
+        <AdminSettings />
+      </Grid>
+      <Grid item>
+        <Typography variant="h6" gutterBottom>
+          Users
+        </Typography>
+        <CollapsibleTable
+          columns={columns}
+          rows={rows}
+          renderExpandableContent={(row) => (
+            <AdminExpandableContent id={row.id} />)
+          } />
+      </Grid>
     </Grid>
   );
 };
