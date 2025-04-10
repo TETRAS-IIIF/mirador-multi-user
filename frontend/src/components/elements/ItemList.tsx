@@ -26,38 +26,38 @@ interface IProjectUserGroup<G, T> {
   item: T;
   snapShotHash: string;
   objectTypes: ObjectTypes;
-  ownerId:number
+  ownerId: number
 }
 
 export const ItemList = <
   G extends { title: string },
-  T extends { id: number; snapShotHash?: string,ownerId?: number,personalOwnerGroupId?: number },
+  T extends { id: number; snapShotHash?: string, ownerId?: number, personalOwnerGroupId?: number },
 >({
-  items,
-  children,
-  removeItem,
-  searchBarLabel,
-  handleAddAccessListItem,
-  setItemToAdd,
-  handleGetOptionLabel,
-  handleSearchModalEditItem,
-  setSearchInput,
-  getGroupByOption,
-  item,
-  objectTypes,
-  ownerId
-}: IProjectUserGroup<G, T>): JSX.Element => {
+    items,
+    children,
+    removeItem,
+    searchBarLabel,
+    handleAddAccessListItem,
+    setItemToAdd,
+    handleGetOptionLabel,
+    handleSearchModalEditItem,
+    setSearchInput,
+    getGroupByOption,
+    item,
+    objectTypes,
+    ownerId,
+  }: IProjectUserGroup<G, T>): JSX.Element => {
   const { t } = useTranslation();
 
-  const isActionAllowedForListItem = (listItem:ListItem) =>{
-    if(objectTypes === ObjectTypes.MANIFEST || objectTypes === ObjectTypes.MEDIA){
+  const isActionAllowedForListItem = (listItem: ListItem) => {
+    if (objectTypes === ObjectTypes.MANIFEST || objectTypes === ObjectTypes.MEDIA) {
       return (listItem.personalOwnerGroupId !== ownerId || listItem.type === UserGroupTypes.MULTI_USER)
     }
-    if(objectTypes === ObjectTypes.GROUP){
+    if (objectTypes === ObjectTypes.GROUP) {
       return item.ownerId !== listItem.id;
     }
-    if(objectTypes === ObjectTypes.PROJECT){
-      return item.personalOwnerGroupId !== listItem.personalOwnerGroupId
+    if (objectTypes === ObjectTypes.PROJECT) {
+      return item.personalOwnerGroupId !== listItem.id;
     }
   }
 
@@ -66,42 +66,42 @@ export const ItemList = <
       container
       item
       sx={{
-        minHeight: "55px",
-        height: "400px",
-        overflowY: "auto",
+        minHeight: '55px',
+        height: '400px',
+        overflowY: 'auto',
       }}
     >
-      <Grid container item spacing={2} sx={{ marginTop: "10px" }}>
+      <Grid container item spacing={2} sx={{ marginTop: '10px' }}>
         {objectTypes === ObjectTypes.PROJECT && (
           <Grid container item alignItems="center" spacing={2}>
             <Grid item>
-              <Typography variant="h5">{t("snapshot")}</Typography>
+              <Typography variant="h5">{t('snapshot')}</Typography>
             </Grid>
             <ShareLink
               itemId={item.id}
-              snapShotHash={item.snapShotHash ? item.snapShotHash : ""}
+              snapShotHash={item.snapShotHash ? item.snapShotHash : ''}
             />
           </Grid>
         )}
         <Grid container item alignItems="center" spacing={2}>
           <Grid item>
-            <Typography variant="h5">{t("Permissions")}</Typography>
+            <Typography variant="h5">{t('Permissions')}</Typography>
           </Grid>
           <Grid item>
             <MMUToolTip
               children={
                 <div>
-                  {t("MMUTooltipAdmin")}
+                  {t('MMUTooltipAdmin')}
                   <br />
-                  {t("MMUTooltipEditor")}
+                  {t('MMUTooltipEditor')}
                   <br />
-                  {t("MMUTooltipReader")}
+                  {t('MMUTooltipReader')}
                 </div>
               }
             />
           </Grid>
         </Grid>
-        <Grid item sx={{ marginLeft: "10px" }}>
+        <Grid item sx={{ marginLeft: '10px' }}>
           <SearchBar
             label={searchBarLabel}
             handleAdd={handleAddAccessListItem}
@@ -109,7 +109,7 @@ export const ItemList = <
             getOptionLabel={handleGetOptionLabel}
             fetchFunction={handleSearchModalEditItem}
             setSearchInput={setSearchInput}
-            actionButtonLabel={t("add")}
+            actionButtonLabel={t('add')}
             groupByOption={getGroupByOption}
           />
         </Grid>
@@ -143,21 +143,21 @@ export const ItemList = <
                   </Grid>
                   {isActionAllowedForListItem(listItem) && (
                     <>
-                    <Grid item>{children!(listItem)}</Grid>
+                      <Grid item>{children!(listItem)}</Grid>
                       <Grid item>
                         <IconButton
                           onClick={() => removeItem(listItem.id)}
                           aria-label="delete"
                           color="error"
-                          disabled={listItem.personalOwnerGroupId === ownerId && listItem.type !== UserGroupTypes.MULTI_USER }
+                          disabled={listItem.personalOwnerGroupId === ownerId && listItem.type !== UserGroupTypes.MULTI_USER}
                         >
                           <DeleteIcon />
                         </IconButton>
                       </Grid>
                     </>
-                    )
+                  )
                   }
-                  <Grid item xs={12} sx={{ mb: "5px" }}>
+                  <Grid item xs={12} sx={{ mb: '5px' }}>
                     <Divider />
                   </Grid>
                 </Grid>
