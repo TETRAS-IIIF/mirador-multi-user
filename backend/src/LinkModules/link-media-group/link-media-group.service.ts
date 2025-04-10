@@ -286,8 +286,6 @@ export class LinkMediaGroupService {
   async removeAccessToMedia(mediaId: number, userGroupId: number) {
     try {
       const userGroupMedias = await this.findAllMediaByUserGroupId(userGroupId);
-      console.log('userGroupMedias');
-      console.log(userGroupMedias);
       const linkMediaGroupToRemove = userGroupMedias.find(
         (userGroupMedia) => userGroupMedia.media.id == mediaId,
       );
@@ -405,11 +403,6 @@ export class LinkMediaGroupService {
 
   async removeMediaGroupRelation(mediaId: number, groupId: number) {
     try {
-      console.log('toto');
-      console.log('mediaId');
-      console.log(mediaId);
-      console.log('groupId');
-      console.log(groupId);
       const done = await this.linkMediaGroupRepository.delete({
         media: { id: mediaId },
         user_group: { id: groupId },
@@ -440,8 +433,6 @@ export class LinkMediaGroupService {
 
     let linkEntities = [];
     for (const group of allGroups) {
-      console.log('group');
-      console.log(group);
       const linkGroups = await this.linkMediaGroupRepository.find({
         where: {
           user_group: { id: group.id },
