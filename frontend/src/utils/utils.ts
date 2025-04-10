@@ -9,7 +9,8 @@ const isVideoOrAudioFile = (file: File) => {
 };
 
 export const isFileSizeOverLimit = (file: File, MAX_UPLOAD_SIZE: number) => {
-  return file.size >= MAX_UPLOAD_SIZE;
+  const fileSizeMo = file.size / (1024 * 1024);
+  return fileSizeMo >= MAX_UPLOAD_SIZE;
 };
 
 export const MENU_ELEMENT = {

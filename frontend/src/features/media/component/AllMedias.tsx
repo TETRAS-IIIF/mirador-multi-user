@@ -147,14 +147,18 @@ export const AllMedias = (
   );
   const handleCreateMedia = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
+      console.log('toto')
       if (!event.target.files || event.target.files.length === 0) return;
 
       const file = event.target.files[0];
+      console.log(isValidFileForUpload(file))
       if (!isValidFileForUpload(file)) {
         toast.error(t('unsupportedMedia'));
         return;
       }
       if (isFileSizeOverLimit(file, MAX_UPLOAD_SIZE!)) {
+        console.log('MAX_UPLOAD_SIZE :', MAX_UPLOAD_SIZE)
+        console.log('isFileOverLimit');
         toast.error(
           t('fileTooLarge', {
             maxSize: MAX_UPLOAD_SIZE,

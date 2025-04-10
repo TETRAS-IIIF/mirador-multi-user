@@ -111,6 +111,7 @@ export const AllManifests = (
     async (event: ChangeEvent<HTMLInputElement>) => {
       if (event.target.files) {
         if (event.target.files[0].size > MAX_UPLOAD_SIZE!) {
+          console.log('handleCreateMedia into ALL manifest')
           toast.error(
             t('fileTooLarge', {
               maxSize: MAX_UPLOAD_SIZE,
@@ -209,7 +210,7 @@ export const AllManifests = (
     try {
       for (const canvases of manifestCanvases) {
         if (canvases.media[0].value.length <= 0) {
-          return toast.error(t("no_media_error"));
+          return toast.error(t('no_media_error'));
         }
       }
       await createManifest({
@@ -312,7 +313,7 @@ export const AllManifests = (
       group.id,
       eventValue as ManifestGroupRights,
     );
-    if(newRights.error) {
+    if (newRights.error) {
       toast.error(t('not_allowed_to_modify_rights'))
     }
   };
