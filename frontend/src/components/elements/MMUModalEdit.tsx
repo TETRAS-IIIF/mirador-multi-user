@@ -1,5 +1,22 @@
-import { Button, Grid, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography } from '@mui/material';
-import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import {
+  Button,
+  Grid,
+  SelectChangeEvent,
+  Tab,
+  Tabs,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import { ItemList } from './ItemList.tsx';
 import { MMUModal } from './modal.tsx';
@@ -7,8 +24,14 @@ import { ModalConfirmDelete } from '../../features/projects/components/ModalConf
 import { ItemsRights } from '../../features/user-group/types/types.ts';
 import { ListItem } from '../types.ts';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { MediaGroupRights, mediaOrigin } from '../../features/media/types/types.ts';
-import { ManifestGroupRights, manifestOrigin } from '../../features/manifest/types/types.ts';
+import {
+  MediaGroupRights,
+  mediaOrigin,
+} from '../../features/media/types/types.ts';
+import {
+  ManifestGroupRights,
+  manifestOrigin,
+} from '../../features/manifest/types/types.ts';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -30,10 +53,14 @@ import { updateManifestJson } from '../../features/manifest/api/updateManifestJs
 import { Selector } from '../Selector.tsx';
 import { useTranslation } from 'react-i18next';
 import { NoteTemplate } from './CustomizationEditModal/NoteTemplate.tsx';
-import { Project, Snapshot, Template } from '../../features/projects/types/types.ts';
+import {
+  Project,
+  Snapshot,
+  Template,
+} from '../../features/projects/types/types.ts';
 import { TagMaker } from './TagsFactory/TagMaker.tsx';
 
-import { SnapshotFactory } from "./SnapshotFactory.tsx";
+import { SnapshotFactory } from './SnapshotFactory.tsx';
 
 interface ModalItemProps<T> {
   HandleOpenModalEdit: () => void;
@@ -462,8 +489,8 @@ export const MMUModalEdit = <
           <Tab label={t('metadata')} {...a11yProps(1)} />
         )}
         {(objectTypes === ObjectTypes.PROJECT ||
-            (objectTypes === ObjectTypes.MANIFEST &&
-              item.origin !== manifestOrigin.LINK)) &&
+          (objectTypes === ObjectTypes.MANIFEST &&
+            item.origin !== manifestOrigin.LINK)) &&
           !jsonElementToEditInAdvancedEditor && (
             <Tooltip
               title={
@@ -483,8 +510,8 @@ export const MMUModalEdit = <
             </Tooltip>
           )}
         {(objectTypes === ObjectTypes.PROJECT ||
-            (objectTypes === ObjectTypes.MANIFEST &&
-              item.origin !== manifestOrigin.LINK)) &&
+          (objectTypes === ObjectTypes.MANIFEST &&
+            item.origin !== manifestOrigin.LINK)) &&
           jsonElementToEditInAdvancedEditor && (
             <Tab
               label={t('advancedEdit')}
@@ -499,10 +526,10 @@ export const MMUModalEdit = <
           <Tab label={t('tags')} {...a11yProps(5)} />
         )}
         {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t("snapshots")} {...a11yProps(6)} />
+          <Tab label={t('snapshots')} {...a11yProps(6)} />
         )}
         {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t("snapshots")} {...a11yProps(6)} />
+          <Tab label={t('snapshots')} {...a11yProps(6)} />
         )}
       </Tabs>
       <Grid
@@ -659,7 +686,11 @@ export const MMUModalEdit = <
                 >
                   {(accessListItem) => (
                     <Selector
-                      rights={item.rights === ItemsRights.EDITOR ? [ItemsRights.READER, ItemsRights.EDITOR] : Object.values(ItemsRights)}
+                      rights={
+                        item.rights === ItemsRights.EDITOR
+                          ? [ItemsRights.READER, ItemsRights.EDITOR]
+                          : Object.values(ItemsRights)
+                      }
                       value={accessListItem.rights!}
                       onChange={handleSelectorChange(accessListItem)}
                     />
@@ -757,12 +788,12 @@ export const MMUModalEdit = <
             spacing={1}
             flexDirection="column"
             sx={{
-              minHeight: "55px",
-              height: "100%",
-              overflowY: "auto",
+              minHeight: '55px',
+              height: '100%',
+              overflowY: 'auto',
             }}
           >
-            <Grid item sx={{ height: "100%" }}>
+            <Grid item sx={{ height: '100%' }}>
               <SnapshotFactory
                 fetchItems={fetchItems!}
                 objectTypes={objectTypes!}
@@ -778,12 +809,12 @@ export const MMUModalEdit = <
             spacing={1}
             flexDirection="column"
             sx={{
-              minHeight: "55px",
-              height: "100%",
-              overflowY: "auto",
+              minHeight: '55px',
+              height: '100%',
+              overflowY: 'auto',
             }}
           >
-            <Grid item sx={{ height: "100%" }}>
+            <Grid item sx={{ height: '100%' }}>
               <SnapshotFactory
                 fetchItems={fetchItems!}
                 objectTypes={objectTypes!}
@@ -817,7 +848,7 @@ export const MMUModalEdit = <
               </Grid>
               <Grid item>
                 {(rights === ItemsRights.ADMIN ||
-                    rights === ItemsRights.EDITOR) &&
+                  rights === ItemsRights.EDITOR) &&
                   tabValue === 0 &&
                   duplicateItem && (
                     <Tooltip title={t('duplicate')}>
