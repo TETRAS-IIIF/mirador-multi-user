@@ -1,15 +1,15 @@
-import { Divider, Grid, IconButton, Typography } from "@mui/material";
-import { ListItem } from "../types.ts";
-import { LoadingSpinner } from "./loadingSpinner.tsx";
-import { Dispatch, ReactNode, SetStateAction } from "react";
-import DeleteIcon from "@mui/icons-material/Delete";
-import { SearchBar } from "./SearchBar.tsx";
-import { MMUToolTip } from "./MMUTootlTip.tsx";
-import { UserGroupTypes } from "../../features/user-group/types/types.ts";
-import PersonIcon from "@mui/icons-material/Person";
-import GroupsIcon from "@mui/icons-material/Groups";
-import { ObjectTypes } from "../../features/tag/type.ts";
-import { useTranslation } from "react-i18next";
+import { Divider, Grid, IconButton, Typography } from '@mui/material';
+import { ListItem } from '../types.ts';
+import { LoadingSpinner } from './loadingSpinner.tsx';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { SearchBar } from './SearchBar.tsx';
+import { MMUToolTip } from './MMUTootlTip.tsx';
+import { UserGroupTypes } from '../../features/user-group/types/types.ts';
+import PersonIcon from '@mui/icons-material/Person';
+import GroupsIcon from '@mui/icons-material/Groups';
+import { ObjectTypes } from '../../features/tag/type.ts';
+import { useTranslation } from 'react-i18next';
 
 interface IProjectUserGroup<G, T> {
   children?: (item: ListItem) => ReactNode;
@@ -35,20 +35,20 @@ export const ItemList = <
     personalOwnerGroupId?: number;
   },
 >({
-  children,
-  getGroupByOption,
-  handleAddAccessListItem,
-  handleGetOptionLabel,
-  handleSearchModalEditItem,
-  item,
-  items,
-  objectTypes,
-  ownerId,
-  removeItem,
-  searchBarLabel,
-  setItemToAdd,
-  setSearchInput,
-}: IProjectUserGroup<G, T>) => {
+    children,
+    getGroupByOption,
+    handleAddAccessListItem,
+    handleGetOptionLabel,
+    handleSearchModalEditItem,
+    item,
+    items,
+    objectTypes,
+    ownerId,
+    removeItem,
+    searchBarLabel,
+    setItemToAdd,
+    setSearchInput,
+  }: IProjectUserGroup<G, T>) => {
   const { t } = useTranslation();
 
   const isActionAllowedForListItem = (listItem: ListItem) => {
@@ -65,7 +65,7 @@ export const ItemList = <
       return item.ownerId !== listItem.id;
     }
     if (objectTypes === ObjectTypes.PROJECT) {
-      return item.personalOwnerGroupId !== listItem.personalOwnerGroupId;
+      return item.personalOwnerGroupId !== listItem.id;
     }
   };
 
@@ -74,30 +74,30 @@ export const ItemList = <
       container
       item
       sx={{
-        minHeight: "55px",
-        overflowY: "auto",
+        minHeight: '55px',
+        overflowY: 'auto',
       }}
       spacing={2}
     >
       <Grid container item alignItems="center" spacing={2}>
         <Grid item>
-          <Typography variant="h5">{t("Permissions")}</Typography>
+          <Typography variant="h5">{t('Permissions')}</Typography>
         </Grid>
         <Grid item>
           <MMUToolTip
             children={
               <div>
-                {t("MMUTooltipAdmin")}
+                {t('MMUTooltipAdmin')}
                 <br />
-                {t("MMUTooltipEditor")}
+                {t('MMUTooltipEditor')}
                 <br />
-                {t("MMUTooltipReader")}
+                {t('MMUTooltipReader')}
               </div>
             }
           />
         </Grid>
       </Grid>
-      <Grid item sx={{ marginLeft: "10px" }}>
+      <Grid item sx={{ marginLeft: '10px' }}>
         <SearchBar
           label={searchBarLabel}
           handleAdd={handleAddAccessListItem}
@@ -105,7 +105,7 @@ export const ItemList = <
           getOptionLabel={handleGetOptionLabel}
           fetchFunction={handleSearchModalEditItem}
           setSearchInput={setSearchInput}
-          actionButtonLabel={t("add")}
+          actionButtonLabel={t('add')}
           groupByOption={getGroupByOption}
         />
       </Grid>
@@ -162,7 +162,7 @@ export const ItemList = <
                     </Grid>
                   </>
                 )}
-                <Grid item xs={12} sx={{ mb: "5px" }}>
+                <Grid item xs={12} sx={{ mb: '5px' }}>
                   <Divider />
                 </Grid>
               </Grid>
