@@ -16,7 +16,7 @@ export const MutableSettingsEditor = ({ settings }: IMutableSettingsEditorProps)
   const queryClient = useQueryClient();
 
   const { t } = useTranslation();
-  
+
   const handleRefreshSettings = async () => {
     await queryClient.refetchQueries({ queryKey: ['adminSettings'] });
     queryClient.getQueryData<Settings>(['adminSettings']);
@@ -65,9 +65,9 @@ export const MutableSettingsEditor = ({ settings }: IMutableSettingsEditorProps)
           Mutable Settings
         </Typography>
       </Grid>
-      <Grid container item spacing={2}>
+      <Grid container flexDirection="column" item spacing={2}>
         {editableSettings.map(setting => (
-          <Grid item xs={12} sm={6} key={setting.id}>
+          <Grid item key={setting.id}>
             <RenderInput setting={setting} handleChange={handleChange} />
           </Grid>
         ))}

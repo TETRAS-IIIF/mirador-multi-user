@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { LandingFooter } from '../../../customAssets/landing-footer.tsx';
 import { useAdminSettings } from '../../utils/customHooks/useAdminSettings.ts';
 import { LoadingSpinner } from '../../components/elements/loadingSpinner.tsx';
+import { SettingKeys } from '../../utils/utils.ts';
 
 export const Landing = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ export const Landing = () => {
     settings?.mutableSettings.find((s) => s.key === key)?.value ??
     settings?.unMutableSettings.find(([k]) => k === key)?.[1];
 
-  const showInscription = getSettingValue('DISPLAY_USER_INSCRIPTION_PAGE') === 'true';
+  const showInscription = getSettingValue(SettingKeys.ALLOW_NEW_USER) === 'true';
 
   return (
     <Grid

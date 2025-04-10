@@ -33,7 +33,7 @@ export const getSettingValue = (key: SettingKeys, settings: Settings | undefined
 
 
 export enum SettingKeys {
-  DISPLAY_USER_INSCRIPTION_PAGE = 'DISPLAY_USER_INSCRIPTION_PAGE',
+  ALLOW_NEW_USER = 'ALLOW_NEW_USER',
   ALLOW_YOUTUBE_MEDIA = 'ALLOW_YOUTUBE_MEDIA',
   ALLOW_PEERTUBE_MEDIA = 'ALLOW_PEERTUBE_MEDIA',
   MAX_UPLOAD_SIZE = 'MAX_UPLOAD_SIZE',
