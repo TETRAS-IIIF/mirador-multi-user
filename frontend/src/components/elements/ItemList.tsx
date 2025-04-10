@@ -35,20 +35,20 @@ export const ItemList = <
     personalOwnerGroupId?: number;
   },
 >({
-    children,
-    getGroupByOption,
-    handleAddAccessListItem,
-    handleGetOptionLabel,
-    handleSearchModalEditItem,
-    item,
-    items,
-    objectTypes,
-    ownerId,
-    removeItem,
-    searchBarLabel,
-    setItemToAdd,
-    setSearchInput,
-  }: IProjectUserGroup<G, T>) => {
+  children,
+  getGroupByOption,
+  handleAddAccessListItem,
+  handleGetOptionLabel,
+  handleSearchModalEditItem,
+  item,
+  items,
+  objectTypes,
+  ownerId,
+  removeItem,
+  searchBarLabel,
+  setItemToAdd,
+  setSearchInput,
+}: IProjectUserGroup<G, T>) => {
   const { t } = useTranslation();
 
   const isActionAllowedForListItem = (listItem: ListItem) => {
