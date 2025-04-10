@@ -75,7 +75,7 @@ export class SettingsService implements OnModuleInit {
       const [sizeHuman] = stdout.trim().split(/\s+/);
       const sizeMB = parseHumanSizeToMB(sizeHuman);
 
-      return `${sizeMB.toFixed(2)} MB used`;
+      return `${sizeMB.toFixed(2)}`;
     } catch (err) {
       this.logger.error('Error executing df -h for folder:', err.message);
       return 'Error retrieving disk usage';
