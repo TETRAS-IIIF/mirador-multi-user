@@ -13,7 +13,7 @@ export const RenderInput = ({ setting, handleChange }: IRenderInputProps) => {
 
 
   const keyMap: Record<string, string> = {
-    ALLOW_CREATE_USER: 'display_user_inscription_page',
+    ALLOW_NEW_USER: 'display_user_inscription_page',
   };
 
   const tKey = keyMap[setting.key] || setting.key.toLowerCase();
@@ -25,7 +25,6 @@ export const RenderInput = ({ setting, handleChange }: IRenderInputProps) => {
     return (
       <Tooltip title={tooltip} placement="top" arrow>
         <TextField
-          fullWidth
           type="number"
           label={label}
           value={setting.value}

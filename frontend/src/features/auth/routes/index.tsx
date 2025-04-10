@@ -11,7 +11,7 @@ export const AuthRoutes = () => {
   if (isLoading) return <LoadingSpinner />;
 
 
-  const showInscription = getSettingValue(SettingKeys.DISPLAY_USER_INSCRIPTION_PAGE, settings) === 'true';
+  const showInscription = getSettingValue(SettingKeys.ALLOW_NEW_USER, settings) === 'true';
 
   return (
     <Routes>

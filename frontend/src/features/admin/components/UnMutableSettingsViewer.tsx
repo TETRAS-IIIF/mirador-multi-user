@@ -10,6 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { SettingKeys } from '../../../utils/utils.ts';
 
 interface IUnMutableSettingsProps {
   settings: [string, string][];
@@ -35,7 +36,7 @@ export const UnMutableSettingsViewer = ({ settings }: IUnMutableSettingsProps) =
             {settings.map(([key, value]) => (
               <TableRow key={key}>
                 <TableCell>{t(key.toLowerCase())}</TableCell>
-                <TableCell>{value}</TableCell>
+                <TableCell>{key === SettingKeys.UPLOAD_FOLDER_SIZE || key === SettingKeys.DB_SIZE ? value + ' ' + t('mb') : value}</TableCell>
               </TableRow>
             ))}
           </TableBody>

@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { Setting } from './Entities/setting.entity';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import {
+  parseHumanSizeToMB,
   requiredSettings,
   SettingKeys,
   unMutableSettings,
@@ -15,8 +16,10 @@ import {
 import { AuthService } from '../../auth/auth.service';
 import { DatabaseService } from '../database/database.service';
 import { UPLOAD_FOLDER } from '../../utils/constants';
-import * as fs from 'node:fs';
-import * as path from 'node:path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 @Injectable()
 export class SettingsService implements OnModuleInit {
@@ -64,26 +67,19 @@ export class SettingsService implements OnModuleInit {
     }
   }
 
-  getUploadFolderSize(folderPath = UPLOAD_FOLDER): string {
-    let totalSize = 0;
+  async getUploadFolderSize(): Promise<string> {
+    try {
+      const { stdout } = await execAsync(`du -hs "${UPLOAD_FOLDER}"`, {
+        encoding: 'utf-8',
+      });
+      const [sizeHuman] = stdout.trim().split(/\s+/);
+      const sizeMB = parseHumanSizeToMB(sizeHuman);
 
-    const getSizeRecursively = (dir: string) => {
-      const items = fs.readdirSync(dir);
-      for (const item of items) {
-        const itemPath = path.join(dir, item);
-        const stat = fs.statSync(itemPath);
-
-        if (stat.isDirectory()) {
-          getSizeRecursively(itemPath);
-        } else if (stat.isFile()) {
-          totalSize += stat.size;
-        }
-      }
-    };
-
-    getSizeRecursively(folderPath);
-
-    return (totalSize / 1024 / 1024).toFixed(2) + ' MB';
+      return `${sizeMB.toFixed(2)}`;
+    } catch (err) {
+      this.logger.error('Error executing df -h for folder:', err.message);
+      return 'Error retrieving disk usage';
+    }
   }
 
   async getAll() {
@@ -91,7 +87,7 @@ export class SettingsService implements OnModuleInit {
       const settings = await this.settingsRepository.find();
       const privateSettings = [...unMutableSettings];
       const lastMigration = await this.databaseService.getLastMigrationDate();
-      const uploadFileSize = this.getUploadFolderSize();
+      const uploadFileSize = await this.getUploadFolderSize();
       const dbSize = await this.databaseService.getDatabaseSizeMB();
       privateSettings.push(
         ['LAST_MIGRATION', lastMigration?.toISOString() ?? null],
