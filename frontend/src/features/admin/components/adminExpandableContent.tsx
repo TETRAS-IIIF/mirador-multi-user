@@ -1,13 +1,22 @@
-import { useTranslation } from "react-i18next";
-import { Button, Grid } from "@mui/material";
-import { initiateImpersonation } from "../api/initiateImpersonation.ts";
-import { validateUser } from "../api/validateUser.ts";
+import { useTranslation } from 'react-i18next';
+import { Button, Grid } from '@mui/material';
+import { initiateImpersonation } from '../api/initiateImpersonation.ts';
+import { validateUser } from '../api/validateUser.ts';
+import React from 'react';
+
+
+interface RowData {
+  value: React.ReactNode;
+  align?: 'right' | 'left' | 'center';
+}
 
 interface RowProps {
   id: number;
+  data: RowData[];
 }
 
-export function AdminExpandableContent({ id }: RowProps) {
+//TODO: this component should update platform users information and better check if terms and email are validated.
+export function AdminExpandableContent({ id, data }: RowProps) {
   const { t } = useTranslation();
 
   async function impersonateUser() {
@@ -22,7 +31,7 @@ export function AdminExpandableContent({ id }: RowProps) {
     <Grid container spacing={2} flexDirection="row">
       <Grid item>
         <Button variant="contained" color="primary" onClick={impersonateUser}>
-          {t("impersonate")}
+          {t('impersonate')}
         </Button>
       </Grid>
       <Grid item>
@@ -30,8 +39,9 @@ export function AdminExpandableContent({ id }: RowProps) {
           variant="contained"
           color="primary"
           onClick={handleValidateUser}
+          disabled={data[5].value !== 'No' || data[4].value !== 'No'}
         >
-          {t("validate_user")}
+          {t('validate_user')}
         </Button>
       </Grid>
     </Grid>

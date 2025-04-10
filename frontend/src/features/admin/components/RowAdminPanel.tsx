@@ -27,7 +27,6 @@ export function RowAdminPanel(
     row,
   }: SingleRowProps) {
   const [open, setOpen] = React.useState(false);
-
   return (
     <>
       <TableRow>
@@ -49,7 +48,7 @@ export function RowAdminPanel(
       <TableRow>
         <TableCell colSpan={row.data.length + 2}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <AdminExpandableContent id={row.id} />
+            <AdminExpandableContent id={row.id} data={row.data} />
           </Collapse>
         </TableCell>
       </TableRow>

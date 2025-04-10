@@ -127,7 +127,6 @@ export function AdminCollapsibleTable(
                   )}
                 </TableCell>
               ))}
-              <TableCell align="center">{t('actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
