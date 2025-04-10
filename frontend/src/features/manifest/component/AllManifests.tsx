@@ -249,11 +249,11 @@ export const AllManifests = (
     try {
       if (manifestToUpdate.origin === manifestOrigin.LINK) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { json, rights, ...manifestDto } = manifestToUpdate;
+        const { json, rights, personalOwnerGroupId, ...manifestDto } = manifestToUpdate;
         await updateManifest(manifestDto);
       } else {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { rights, ...manifestDto } = manifestToUpdate;
+        const { rights, personalOwnerGroupId, ...manifestDto } = manifestToUpdate;
         await updateManifest(manifestDto);
       }
       fetchManifestForUser();

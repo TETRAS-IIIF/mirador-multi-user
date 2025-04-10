@@ -1,5 +1,5 @@
-import { UserGroup } from "../../user-group/types/types.ts";
-import { Dayjs } from "dayjs";
+import { UserGroup } from '../../user-group/types/types.ts';
+import { Dayjs } from 'dayjs';
 
 export type Manifest = {
   created_at: Dayjs;
@@ -18,6 +18,7 @@ export type Manifest = {
   url: string;
   share?: string;
   shared?: boolean;
+  personalOwnerGroupId?: number;
 };
 
 export type updateManifestJsonDto = {
@@ -34,15 +35,15 @@ export type grantAccessToManifestDto = {
 };
 
 export enum ManifestGroupRights {
-  ADMIN = "admin",
-  READER = "reader",
-  EDITOR = "editor",
+  ADMIN = 'admin',
+  READER = 'reader',
+  EDITOR = 'editor',
 }
 
 export enum manifestOrigin {
-  UPLOAD = "upload",
-  LINK = "link",
-  CREATE = "create",
+  UPLOAD = 'upload',
+  LINK = 'link',
+  CREATE = 'create',
 }
 
 export type manifestCreationDto = {
