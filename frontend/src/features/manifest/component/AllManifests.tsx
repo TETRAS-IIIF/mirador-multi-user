@@ -1,4 +1,4 @@
-import { Grid, IconButton, styled, Tooltip, Typography } from "@mui/material";
+import { Grid, IconButton, styled, Tooltip, Typography } from '@mui/material';
 import {
   ChangeEvent,
   ReactNode,
@@ -6,69 +6,69 @@ import {
   useEffect,
   useMemo,
   useState,
-} from "react";
+} from 'react';
 import {
   LinkUserGroup,
   UserGroup,
   UserGroupTypes,
-} from "../../user-group/types/types.ts";
-import { User } from "../../auth/types/types.ts";
+} from '../../user-group/types/types.ts';
+import { User } from '../../auth/types/types.ts';
 import {
   Manifest,
   ManifestCanvases,
   ManifestGroupRights,
   manifestOrigin,
-} from "../types/types.ts";
-import { uploadManifest } from "../api/uploadManifest.ts";
-import MMUCard from "../../../components/elements/MMUCard.tsx";
-import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { ModalButton } from "../../../components/elements/ModalButton.tsx";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import toast from "react-hot-toast";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import CreateIcon from "@mui/icons-material/Create";
-import { ManifestCreationForm } from "./ManifestCreationForm.tsx";
-import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
-import { Media } from "../../media/types/types.ts";
-import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import AddLinkIcon from "@mui/icons-material/AddLink";
-import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
-import { linkManifest } from "../api/linkManifest.ts";
-import { createManifest } from "../api/createManifest.ts";
-import { PaginationControls } from "../../../components/elements/Pagination.tsx";
-import { updateManifest } from "../api/updateManifest.ts";
-import { deleteManifest } from "../api/deleteManifest.ts";
-import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
-import { ProjectGroup } from "../../projects/types/types.ts";
-import { grantAccessToManifest } from "../api/grantAccessToManifest.ts";
-import { getAllManifestGroups } from "../api/getAllManifestGroups.ts";
-import { ListItem } from "../../../components/types.ts";
-import { updateAccessToManifest } from "../api/updateAccessToManifest.ts";
-import { ObjectTypes } from "../../tag/type.ts";
-import { useTranslation } from "react-i18next";
-import { SortItemSelector } from "../../../components/elements/sortItemSelector.tsx";
-import { IIIFResource, ManifestResource } from "manifesto.js";
-import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import { removeManifestFromList } from "../api/removeManifestFromList.ts";
+} from '../types/types.ts';
+import { uploadManifest } from '../api/uploadManifest.ts';
+import MMUCard from '../../../components/elements/MMUCard.tsx';
+import { SearchBar } from '../../../components/elements/SearchBar.tsx';
+import { ModalButton } from '../../../components/elements/ModalButton.tsx';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import toast from 'react-hot-toast';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import CreateIcon from '@mui/icons-material/Create';
+import { ManifestCreationForm } from './ManifestCreationForm.tsx';
+import { SidePanelMedia } from '../../media/component/SidePanelMedia.tsx';
+import { Media } from '../../media/types/types.ts';
+import SpeedDialTooltipOpen from '../../../components/elements/SpeedDial.tsx';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import AddLinkIcon from '@mui/icons-material/AddLink';
+import { DrawerLinkManifest } from './DrawerLinkManifest.tsx';
+import { linkManifest } from '../api/linkManifest.ts';
+import { createManifest } from '../api/createManifest.ts';
+import { PaginationControls } from '../../../components/elements/Pagination.tsx';
+import { updateManifest } from '../api/updateManifest.ts';
+import { deleteManifest } from '../api/deleteManifest.ts';
+import { lookingForUserGroups } from '../../user-group/api/lookingForUserGroups.ts';
+import { ProjectGroup } from '../../projects/types/types.ts';
+import { grantAccessToManifest } from '../api/grantAccessToManifest.ts';
+import { getAllManifestGroups } from '../api/getAllManifestGroups.ts';
+import { ListItem } from '../../../components/types.ts';
+import { updateAccessToManifest } from '../api/updateAccessToManifest.ts';
+import { ObjectTypes } from '../../tag/type.ts';
+import { useTranslation } from 'react-i18next';
+import { SortItemSelector } from '../../../components/elements/sortItemSelector.tsx';
+import { IIIFResource, ManifestResource } from 'manifesto.js';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import { removeManifestFromList } from '../api/removeManifestFromList.ts';
 import {
   TITLE,
   UPDATED_AT,
   useCurrentPageData,
-} from "../../../utils/customHooks/filterHook.ts";
-import { removeManifestToGroup } from "../api/removeManifestToGroup.ts";
+} from '../../../utils/customHooks/filterHook.ts';
+import { removeManifestToGroup } from '../api/removeManifestToGroup.ts';
 
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
   height: 1,
-  overflow: "hidden",
-  position: "absolute",
+  overflow: 'hidden',
+  position: 'absolute',
   bottom: 0,
   left: 0,
-  whiteSpace: "nowrap",
+  whiteSpace: 'nowrap',
   width: 1,
 });
 
@@ -84,13 +84,13 @@ interface IAllManifests {
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 
 export const AllManifests = ({
-  manifests,
-  fetchManifestForUser,
-  userPersonalGroup,
-  user,
-  medias,
-  fetchMediaForUser,
-}: IAllManifests) => {
+                               manifests,
+                               fetchManifestForUser,
+                               userPersonalGroup,
+                               user,
+                               medias,
+                               fetchMediaForUser,
+                             }: IAllManifests) => {
   const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(
     null,
@@ -103,14 +103,14 @@ export const AllManifests = ({
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [openSidePanel, setOpenSidePanel] = useState(false);
   const [sortField, setSortField] = useState<keyof Manifest>(UPDATED_AT);
-  const [sortOrder, setSortOrder] = useState("desc");
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const { t } = useTranslation();
 
   const itemsPerPage = 10;
 
   const toggleSortOrder = () => {
-    setSortOrder((prevOrder) => (prevOrder === "asc" ? "desc" : "asc"));
+    setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
   const currentPageData = useCurrentPageData({
     currentPage,
@@ -130,7 +130,7 @@ export const AllManifests = ({
           import.meta.env.VITE_MAX_UPLOAD_SIZE * 1024 * 1024;
         if (event.target.files[0].size > maxUploadSize) {
           toast.error(
-            t("fileTooLarge", {
+            t('fileTooLarge', {
               maxSize: import.meta.env.VITE_MAX_UPLOAD_SIZE,
             }),
           );
@@ -163,19 +163,19 @@ export const AllManifests = ({
   const actions = [
     {
       icon: (<CreateIcon />) as ReactNode,
-      name: t("actionsDial.create"),
+      name: t('actionsDial.create'),
       onClick: HandleCreateManifestIsOpen,
     },
     {
       icon: (<UploadFileIcon />) as ReactNode,
-      name: t("actionsDial.upload"),
+      name: t('actionsDial.upload'),
       onClick: () => {
-        document.getElementById("hiddenFileInput")?.click();
+        document.getElementById('hiddenFileInput')?.click();
       },
     },
     {
       icon: (<AddLinkIcon />) as ReactNode,
-      name: t("actionsDial.link"),
+      name: t('actionsDial.link'),
       onClick: () => setModalLinkManifestIsOpen(!modalLinkManifestIsOpen),
     },
   ];
@@ -186,19 +186,19 @@ export const AllManifests = ({
 
   const HandleCopyToClipBoard = async (path: string) => {
     await navigator.clipboard.writeText(path);
-    toast.success(t("pathCopiedToClipboard"));
+    toast.success(t('pathCopiedToClipboard'));
   };
 
   const handleLinkManifest = useCallback(
     async (path: string) => {
       const response = await fetch(path, {
-        method: "GET",
+        method: 'GET',
       });
       if (response) {
         const manifest = await response.json();
         const resource = new ManifestResource(manifest, {
-          defaultLabel: "mmu-default-label",
-          locale: "mmu-default-label",
+          defaultLabel: 'mmu-default-label',
+          locale: 'mmu-default-label',
           resource: manifest as unknown as IIIFResource,
           pessimisticAccessControl: false,
         });
@@ -208,13 +208,13 @@ export const AllManifests = ({
           rights: ManifestGroupRights.ADMIN,
           idCreator: user.id,
           path: path,
-          title: manifestLabel ? manifestLabel : "new Manifest",
+          title: manifestLabel ? manifestLabel : 'new Manifest',
         });
         fetchManifestForUser();
         setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
-        return toast.success(t("manifestCreated"));
+        return toast.success(t('manifestCreated'));
       }
-      return toast.error(t("manifestCreationFailed"));
+      return toast.error(t('manifestCreationFailed'));
     },
     [fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup],
   );
@@ -227,7 +227,7 @@ export const AllManifests = ({
     try {
       for (const canvases of manifestCanvases) {
         if (canvases.media[0].value.length <= 0) {
-          return toast.error(t("no_media_error"));
+          return toast.error(t('no_media_error'));
         }
       }
       await createManifest({
@@ -239,7 +239,7 @@ export const AllManifests = ({
       fetchManifestForUser();
       setCreateManifestIsOpen(false);
     } catch (error) {
-      toast.error("Error processing media: " + error);
+      toast.error('Error processing media: ' + error);
     }
   };
 
@@ -265,18 +265,19 @@ export const AllManifests = ({
 
   const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
     try {
+      console.log('manifestToUpdate', manifestToUpdate)
       if (manifestToUpdate.origin === manifestOrigin.LINK) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { json, rights, ...manifestDto } = manifestToUpdate;
+        const { json, rights, personalOwnerGroupId, ...manifestDto } = manifestToUpdate;
         await updateManifest(manifestDto);
       } else {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { rights, ...manifestDto } = manifestToUpdate;
+        const { rights, personalOwnerGroupId, ...manifestDto } = manifestToUpdate;
         await updateManifest(manifestDto);
       }
       fetchManifestForUser();
     } catch (error) {
-      console.error("Error updating Manifest", error);
+      console.error('Error updating Manifest', error);
     }
   };
   const handleDeleteManifest = async (manifestId: number) => {
@@ -287,7 +288,7 @@ export const AllManifests = ({
 
   const handleGrantAccess = async (manifestId: number) => {
     if (userToAdd == null) {
-      toast.error("select an item in the list");
+      toast.error('select an item in the list');
     }
     const linkUserGroupToAdd = userGroupSearch.find(
       (linkUserGroup) => linkUserGroup.user_group.id === userToAdd!.id,
@@ -304,9 +305,9 @@ export const AllManifests = ({
 
   const getGroupByOption = (option: UserGroup): string => {
     if (option.type === UserGroupTypes.MULTI_USER) {
-      return "Groups";
+      return 'Groups';
     } else {
-      return "Users";
+      return 'Users';
     }
   };
 
@@ -330,7 +331,7 @@ export const AllManifests = ({
       group.id,
       eventValue as ManifestGroupRights,
     );
-    if(newRights.error) {
+    if (newRights.error) {
       toast.error(t('not_allowed_to_modify_rights'))
     }
   };
@@ -343,11 +344,11 @@ export const AllManifests = ({
     share: string | undefined,
   ) => Promise<void> = async (manifestId, share) => {
     if (share) {
-      toast.error(t("share-manifest-error-message"));
+      toast.error(t('share-manifest-error-message'));
       return;
     } else {
       await removeManifestFromList(manifestId);
-      toast.success(t("removedManifestFromList"));
+      toast.success(t('removedManifestFromList'));
       fetchManifestForUser();
     }
   };
@@ -380,11 +381,11 @@ export const AllManifests = ({
             direction="row-reverse"
             alignItems="center"
             sx={{
-              position: "sticky",
+              position: 'sticky',
               top: 0,
               zIndex: 1000,
-              backgroundColor: "#dcdcdc",
-              paddingBottom: "10px",
+              backgroundColor: '#dcdcdc',
+              paddingBottom: '10px',
               paddingTop: 0,
             }}
           >
@@ -398,7 +399,7 @@ export const AllManifests = ({
               >
                 <Grid item>
                   <SearchBar
-                    label={t("filterManifest")}
+                    label={t('filterManifest')}
                     setFilter={setManifestFilter}
                   />
                 </Grid>
@@ -411,10 +412,10 @@ export const AllManifests = ({
                 </Grid>
                 <Grid item>
                   <Tooltip
-                    title={t(sortOrder === "asc" ? "sortAsc" : "sortDesc")}
+                    title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}
                   >
                     <IconButton onClick={toggleSortOrder}>
-                      {sortOrder === "asc" ? (
+                      {sortOrder === 'asc' ? (
                         <ArrowDropUpIcon />
                       ) : (
                         <ArrowDropDownIcon />
@@ -429,9 +430,9 @@ export const AllManifests = ({
                 <Grid
                   item
                   sx={{
-                    position: "fixed",
-                    right: "10px",
-                    bottom: "3px",
+                    position: 'fixed',
+                    right: '10px',
+                    bottom: '3px',
                     zIndex: 999,
                   }}
                 >
@@ -448,9 +449,9 @@ export const AllManifests = ({
             </Grid>
           </Grid>
           {!manifests.length && !createManifestIsOpen && (
-            <Grid container justifyContent={"center"}>
+            <Grid container justifyContent={'center'}>
               <Typography variant="h6" component="h2">
-                {t("no_manifest_yet")}
+                {t('no_manifest_yet')}
               </Typography>
             </Grid>
           )}
@@ -462,7 +463,7 @@ export const AllManifests = ({
                 container
                 spacing={1}
                 flexDirection="column"
-                sx={{ marginBottom: "70px" }}
+                sx={{ marginBottom: '70px' }}
               >
                 {currentPageData.map((manifest: Manifest) => (
                   <Grid item key={manifest.id}>
@@ -475,18 +476,18 @@ export const AllManifests = ({
                           item
                           container
                           spacing={1}
-                          flexDirection={"row"}
+                          flexDirection={'row'}
                           wrap="nowrap"
                         >
                           <Grid item>
                             <ModalButton
-                              tooltipButton={t("tooltipButtonCopy")}
+                              tooltipButton={t('tooltipButtonCopy')}
                               onClickFunction={
                                 manifest.hash
                                   ? () =>
-                                      HandleCopyToClipBoard(
-                                        `${caddyUrl}/${manifest.hash}/${manifest.path}`,
-                                      )
+                                    HandleCopyToClipBoard(
+                                      `${caddyUrl}/${manifest.hash}/${manifest.path}`,
+                                    )
                                   : () => HandleCopyToClipBoard(manifest.path)
                               }
                               disabled={false}
@@ -495,19 +496,19 @@ export const AllManifests = ({
                           </Grid>
                           <Grid item>
                             <ModalButton
-                              tooltipButton={t("OpenInMirador")}
+                              tooltipButton={t('OpenInMirador')}
                               onClickFunction={
                                 manifest.hash
                                   ? () =>
-                                      window.open(
-                                        `${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`,
-                                        "_blank",
-                                      )
+                                    window.open(
+                                      `${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`,
+                                      '_blank',
+                                    )
                                   : () =>
-                                      window.open(
-                                        `${window.location.origin}/manifest/${encodeURI(manifest.path)}`,
-                                        "_blank",
-                                      )
+                                    window.open(
+                                      `${window.location.origin}/manifest/${encodeURI(manifest.path)}`,
+                                      '_blank',
+                                    )
                               }
                               disabled={false}
                               icon={<OpenInNewIcon />}
@@ -517,7 +518,7 @@ export const AllManifests = ({
                       }
                       EditorButton={
                         <ModalButton
-                          tooltipButton={t("tooltipButtonEdit")}
+                          tooltipButton={t('tooltipButtonEdit')}
                           onClickFunction={() => HandleOpenModal(manifest.id)}
                           icon={<ModeEditIcon />}
                           disabled={false}
@@ -543,7 +544,7 @@ export const AllManifests = ({
                       metadata={manifest.metadata}
                       openModal={openModalManifestId === manifest.id}
                       rights={manifest.rights!}
-                      searchBarLabel={t("searchLabel")}
+                      searchBarLabel={t('searchLabel')}
                       searchModalEditItem={handleLookingForUserGroups}
                       setItemList={setGroupList}
                       setItemToAdd={setUserToAdd}
@@ -556,7 +557,7 @@ export const AllManifests = ({
             ) : (
               <Grid item container justifyContent="center" alignItems="center">
                 <Typography variant="h6" component="h2">
-                  {t("noMatchingManifestFilter")}
+                  {t('noMatchingManifestFilter')}
                 </Typography>
               </Grid>
             ))}
@@ -566,7 +567,7 @@ export const AllManifests = ({
               container
               spacing={2}
               flexDirection="column"
-              sx={{ marginBottom: "70px", width: "100%" }}
+              sx={{ marginBottom: '70px', width: '100%' }}
             >
               <SidePanelMedia
                 display={true}
