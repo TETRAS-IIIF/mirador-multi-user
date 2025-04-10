@@ -10,15 +10,16 @@ import {
   TableRow,
   TableSortLabel,
   TextField,
-} from "@mui/material";
-import { Row } from "./Row.tsx";
-import { ReactNode, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { RowProps } from "../../features/projects/types/types.ts";
+} from '@mui/material';
+import { Row } from './Row.tsx';
+import { ReactNode, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { RowProps } from '../../features/projects/types/types.ts';
+import { PaginationControls } from './Pagination.tsx';
 
 interface Column {
   label: string;
-  align?: "right" | "left" | "center";
+  align?: 'right' | 'left' | 'center';
   sortKey?: string;
 }
 
@@ -33,38 +34,46 @@ interface CollapsibleTableProps {
 }
 
 export default function CollapsibleTable({
-  columns,
-  rows,
-  renderExpandableContent,
-  onActionClick,
-  labelButton,
-  itemId,
-  handleCreateSnapshot,
-}: CollapsibleTableProps) {
+                                           columns,
+                                           rows,
+                                           renderExpandableContent,
+                                           onActionClick,
+                                           labelButton,
+                                           itemId,
+                                           handleCreateSnapshot,
+                                         }: CollapsibleTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(null);
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [filter, setFilter] = useState("");
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [filter, setFilter] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
   const { t } = useTranslation();
 
   const handleSort = (key: string | undefined) => {
     if (!key) return;
 
     if (sortKey === key) {
-      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+      setSortDirection((prev) => (prev === 'asc' ? 'desc' : 'asc'));
     } else {
       setSortKey(key);
-      setSortDirection("asc");
+      setSortDirection('asc');
     }
   };
 
-  const filteredRows = useMemo(() => {
-    if (!filter) return rows;
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
-    return rows.filter((row) =>
-      row.data.some((cell) =>
-        String(cell.value).toLowerCase().includes(filter.toLowerCase()),
-      ),
-    );
+  const filteredRows = useMemo(() => {
+    const base = !filter
+      ? rows
+      : rows.filter((row) =>
+        row.data.some((cell) =>
+          String(cell.value).toLowerCase().includes(filter.toLowerCase()),
+        ),
+      );
+    setCurrentPage(1);
+    return base;
   }, [rows, filter]);
 
   const sortedRows = useMemo(() => {
@@ -78,17 +87,24 @@ export default function CollapsibleTable({
         (_cell, index) => columns[index]?.sortKey === sortKey,
       )?.value;
 
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return sortDirection === "asc"
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortDirection === 'asc'
           ? aValue.localeCompare(bValue)
           : bValue.localeCompare(aValue);
       }
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return sortDirection === "asc" ? aValue - bValue : bValue - aValue;
+      if (typeof aValue === 'number' && typeof bValue === 'number') {
+        return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
       }
       return 0;
     });
   }, [filteredRows, sortKey, sortDirection, columns]);
+
+  const paginatedRows = useMemo(() => {
+    const start = (currentPage - 1) * rowsPerPage;
+    return sortedRows.slice(start, start + rowsPerPage);
+  }, [sortedRows, currentPage]);
+
+  const totalPages = Math.ceil(sortedRows.length / rowsPerPage);
 
   return (
     <>
@@ -96,10 +112,8 @@ export default function CollapsibleTable({
         <Grid item xs={8}>
           <TextField
             fullWidth
-            inputProps={{
-              maxLength: 255,
-            }}
-            label={t("filter_snapshots")}
+            inputProps={{ maxLength: 255 }}
+            label={t('filter_snapshots')}
             variant="outlined"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -111,23 +125,24 @@ export default function CollapsibleTable({
               variant="contained"
               onClick={() => handleCreateSnapshot!(itemId!)}
             >
-              {t("create_snapshot")}
+              {t('create_snapshot')}
             </Button>
           </Grid>
         )}
       </Grid>
+
       <TableContainer component={Paper}>
         <Table aria-label="collapsible table" size="small">
           <TableHead>
             <TableRow>
               <TableCell />
               {columns.map((column, index) => (
-                <TableCell key={index} align={column.align || "left"}>
+                <TableCell key={index} align={column.align || 'left'}>
                   {column.sortKey ? (
                     <TableSortLabel
                       active={sortKey === column.sortKey}
                       direction={
-                        sortKey === column.sortKey ? sortDirection : "asc"
+                        sortKey === column.sortKey ? sortDirection : 'asc'
                       }
                       onClick={() => handleSort(column.sortKey)}
                     >
@@ -139,16 +154,16 @@ export default function CollapsibleTable({
                 </TableCell>
               ))}
               {onActionClick && (
-                <TableCell align="center">{t("actions")}</TableCell>
+                <TableCell align="center">{t('actions')}</TableCell>
               )}
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedRows.map((row) => (
+            {paginatedRows.map((row) => (
               <Row
-                labelButton={labelButton}
                 key={row.id}
                 row={row}
+                labelButton={labelButton}
                 renderExpandableContent={
                   renderExpandableContent
                     ? () => renderExpandableContent(row)
@@ -160,6 +175,14 @@ export default function CollapsibleTable({
           </TableBody>
         </Table>
       </TableContainer>
+
+      {sortedRows.length > rowsPerPage && (
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </>
   );
 }
