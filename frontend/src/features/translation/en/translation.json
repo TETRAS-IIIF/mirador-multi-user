@@ -228,7 +228,7 @@
   "yourTextHere": "Your text here",
   "charactersNotAllowed": "Special characters are not allowed",
   "deleteTemplate": "Delete template",
-  "noteTemplateInfo": "Create one or more template, their will be available inside annotation editor.",
+  "noteTemplateInfo": "You can create note templates. They will be available in the annotation editor.",
   "templateChoice": "Choose a template",
   "newTemplateTitle": "New template",
   "newTemplateContent": "Add your content"
