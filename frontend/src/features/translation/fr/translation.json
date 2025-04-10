@@ -223,6 +223,7 @@
   "thumbnailMissing": "Aperçu manquant",
   "thumbnailUrl": "URL de l'aperçu",
   "terms": "termes",
+  "terms_validated_at": "Date d'acceptation des conditions générales",
   "title": "Titre",
   "titleAdmin": "Vue d'ensemble de l'administration",
   "titleDisconnect": "Se déconnecter",

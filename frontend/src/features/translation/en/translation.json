@@ -223,6 +223,7 @@
   "thumbnailMissing": "Thumbnail is missing",
   "thumbnailUrl": "Thumbnail Url",
   "terms": "terms",
+  "terms_validated_at": "Date when terms and conditions were accepted",
   "title": "Title",
   "titleAdmin": "Admin overview",
   "titleDisconnect": "Disconnect",
