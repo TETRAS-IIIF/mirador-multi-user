@@ -11,7 +11,9 @@ describe('LinkGroupProjectController', () => {
       providers: [LinkGroupProjectService],
     }).compile();
 
-    controller = module.get<LinkGroupProjectController>(LinkGroupProjectController);
+    controller = module.get<LinkGroupProjectController>(
+      LinkGroupProjectController,
+    );
   });
 
   it('should be defined', () => {
