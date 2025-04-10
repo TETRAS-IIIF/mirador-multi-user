@@ -77,7 +77,7 @@ export class SettingsService implements OnModuleInit {
 
       return `${sizeMB.toFixed(2)} MB used`;
     } catch (err) {
-      console.error('Error executing df -h for folder:', err.message || err);
+      this.logger.error('Error executing df -h for folder:', err.message);
       return 'Error retrieving disk usage';
     }
   }
