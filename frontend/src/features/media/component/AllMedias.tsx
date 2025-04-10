@@ -147,11 +147,9 @@ export const AllMedias = (
   );
   const handleCreateMedia = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
-      console.log('toto')
       if (!event.target.files || event.target.files.length === 0) return;
 
       const file = event.target.files[0];
-      console.log(isValidFileForUpload(file))
       if (!isValidFileForUpload(file)) {
         toast.error(t('unsupportedMedia'));
         return;

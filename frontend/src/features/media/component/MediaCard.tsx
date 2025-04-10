@@ -69,6 +69,7 @@ export const MediaCard = ({
                           }: IMediaCardProps) => {
   const { t } = useTranslation();
 
+  console.log('media :', media)
   return (
     <MMUCard
       ownerId={ownerId}
