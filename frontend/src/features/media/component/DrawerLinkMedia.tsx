@@ -1,31 +1,24 @@
-import {
-  AppBar,
-  Button,
-  Drawer,
-  Grid,
-  Paper,
-  TextField,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
-import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { LoadingButton } from "@mui/lab";
+import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
+import { ChangeEvent, FormEvent, useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { LoadingButton } from '@mui/lab';
 
 interface IDrawerCreateMediaProps {
   modalCreateMediaIsOpen: boolean;
   toggleModalMediaCreation: () => void;
-  CreateMediaWithLink: (link: string) => void;
+  CreateMediaWithLink: (link: string) => Promise<void>;
+  isPending: boolean;
 }
 
-export const DrawerLinkMedia = ({
-  modalCreateMediaIsOpen,
-  toggleModalMediaCreation,
-  CreateMediaWithLink,
-}: IDrawerCreateMediaProps) => {
-  const [mediaLink, setMediaLink] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+export const DrawerLinkMedia = (
+  {
+    modalCreateMediaIsOpen,
+    toggleModalMediaCreation,
+    CreateMediaWithLink,
+    isPending,
+  }: IDrawerCreateMediaProps) => {
+  const [mediaLink, setMediaLink] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useTranslation();
@@ -38,15 +31,13 @@ export const DrawerLinkMedia = ({
   );
 
   const handleLinkingMedia = useCallback(
-    (event?: FormEvent) => {
+    async (event?: FormEvent) => {
       if (event) event.preventDefault();
-      toggleModalMediaCreation();
-      setIsLoading(true);
       try {
-        CreateMediaWithLink(mediaLink);
+        await CreateMediaWithLink(mediaLink);
       } finally {
-        setIsLoading(false);
-        setMediaLink("");
+        toggleModalMediaCreation();
+        setMediaLink('');
       }
     },
     [CreateMediaWithLink, mediaLink, toggleModalMediaCreation],
@@ -54,7 +45,7 @@ export const DrawerLinkMedia = ({
 
   const handleToggleModalGroupCreation = useCallback(() => {
     toggleModalMediaCreation();
-    setMediaLink("");
+    setMediaLink('');
   }, [CreateMediaWithLink]);
 
   const handleDrawerTransition = () => {
@@ -76,13 +67,13 @@ export const DrawerLinkMedia = ({
         >
           <Paper
             sx={{
-              left: "0",
+              left: '0',
               marginTop: 6,
               paddingBottom: 2,
               paddingLeft: { sm: 3, xs: 2 },
               paddingRight: { sm: 3, xs: 2 },
               paddingTop: 2,
-              right: "0",
+              right: '0',
               zIndex: 9999,
             }}
           >
@@ -91,22 +82,22 @@ export const DrawerLinkMedia = ({
                 <Button color="inherit" onClick={toggleModalMediaCreation}>
                   <ExpandMoreIcon />
                 </Button>
-                <Typography>{t("linkMedia")}</Typography>
+                <Typography>{t('linkMedia')}</Typography>
               </Toolbar>
             </AppBar>
             <form onSubmit={handleLinkingMedia}>
               <Grid container alignItems="center" spacing={2}>
                 <Grid item>
-                  <label>{t("mediaLink")}:</label>
+                  <label>{t('mediaLink')}:</label>
                 </Grid>
-                <Grid item sx={{ width: "70%" }}>
+                <Grid item sx={{ width: '70%' }}>
                   <TextField
                     inputProps={{
                       maxLength: 255,
                     }}
                     inputRef={inputRef}
                     onChange={handleNameChange}
-                    sx={{ width: "100%" }}
+                    sx={{ width: '100%' }}
                   ></TextField>
                 </Grid>
                 <Grid item>
@@ -114,9 +105,9 @@ export const DrawerLinkMedia = ({
                     size="large"
                     variant="contained"
                     onClick={handleLinkingMedia}
-                    loading={isLoading}
+                    loading={isPending}
                   >
-                    {t("add")}
+                    {t('add')}
                   </LoadingButton>
                 </Grid>
               </Grid>

@@ -7,7 +7,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Setting } from './Entities/setting.entity';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
-import { requiredSettings, unMutableSettings } from './utils.setting';
+import {
+  requiredSettings,
+  SettingKeys,
+  unMutableSettings,
+} from './utils.setting';
 import { AuthService } from '../../auth/auth.service';
 import { DatabaseService } from '../database/database.service';
 import { UPLOAD_FOLDER } from '../../utils/constants';
@@ -55,22 +59,29 @@ export class SettingsService implements OnModuleInit {
       const existing = existingMap.get(key);
       if (this.shouldCreate(existing)) {
         await this.set(key, envValue);
-        console.info('New setting :', key, envValue);
+        this.logger.log(`New setting: ${key} = ${envValue}`);
       }
     }
   }
 
-  getUploadFolderSize() {
-    const uploadFiles = fs.readdirSync(UPLOAD_FOLDER);
+  getUploadFolderSize(folderPath = UPLOAD_FOLDER): string {
     let totalSize = 0;
 
-    for (const file of uploadFiles) {
-      const filePath = path.join(UPLOAD_FOLDER, file);
-      const stat = fs.statSync(filePath);
-      if (stat.isFile()) {
-        totalSize += stat.size;
+    const getSizeRecursively = (dir: string) => {
+      const items = fs.readdirSync(dir);
+      for (const item of items) {
+        const itemPath = path.join(dir, item);
+        const stat = fs.statSync(itemPath);
+
+        if (stat.isDirectory()) {
+          getSizeRecursively(itemPath);
+        } else if (stat.isFile()) {
+          totalSize += stat.size;
+        }
       }
-    }
+    };
+
+    getSizeRecursively(folderPath);
 
     return (totalSize / 1024 / 1024).toFixed(2) + ' MB';
   }
@@ -139,6 +150,21 @@ export class SettingsService implements OnModuleInit {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while checking admin rights of user with id: ${userId}`,
+        error,
+      );
+    }
+  }
+
+  async get(key: SettingKeys) {
+    try {
+      const dbSetting = await this.settingsRepository.findOne({
+        where: { key },
+      });
+      return dbSetting?.value ?? unMutableSettings.get(key) ?? null;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `An error occurred while finding setting with key: ${key}`,
         error,
       );
     }
