@@ -129,6 +129,7 @@ export class LinkManifestGroupService {
       );
     }
   }
+
   async updateManifest(updateManifestDto: UpdateManifestDto) {
     try {
       return await this.manifestService.update(
@@ -233,13 +234,9 @@ export class LinkManifestGroupService {
         userId,
         updateManifestGroupRelation.manifestId,
       );
-      const userToUpdateRights = await this.getHighestRightForManifest(
-        updateManifestGroupRelation.userGroupId,
-        updateManifestGroupRelation.manifestId,
-      );
       if (
         ITEM_RIGHTS_PRIORITY[userRightsOnManifest.rights] <
-        ITEM_RIGHTS_PRIORITY[userToUpdateRights.rights]
+        ITEM_RIGHTS_PRIORITY[updateManifestGroupRelation.rights]
       ) {
         throw new ForbiddenException(
           'ou cannot modify a user with higher privileges.',
@@ -280,7 +277,7 @@ export class LinkManifestGroupService {
         );
       }
       return await this.removeManifestGroupRelation(
-        manifestToRemove.id,
+        manifestToRemove.manifest.id,
         userGroupId,
       );
     } catch (error) {

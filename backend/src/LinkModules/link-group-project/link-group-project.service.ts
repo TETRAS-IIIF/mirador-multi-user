@@ -269,13 +269,9 @@ export class LinkGroupProjectService {
         updateAccessToProjectDto.projectId,
       );
 
-      const userToUpdateRights = await this.getHighestRightForProject(
-        updateAccessToProjectDto.groupId,
-        updateAccessToProjectDto.projectId,
-      );
       if (
         ITEM_RIGHTS_PRIORITY[userRightOnProject.rights] <
-        ITEM_RIGHTS_PRIORITY[userToUpdateRights.rights]
+        ITEM_RIGHTS_PRIORITY[updateAccessToProjectDto.rights]
       ) {
         throw new ForbiddenException(
           'You cannot modify a user with higher privileges.',

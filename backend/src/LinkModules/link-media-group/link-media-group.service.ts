@@ -354,22 +354,18 @@ export class LinkMediaGroupService {
 
   async updateMediaGroupRelation(
     mediaId: number,
-    groupId: number,
-    rights: MediaGroupRights,
-    userId: number,
+    groupToUpdateId: number,
+    rightsToAssign: MediaGroupRights,
+    requestUserId: number,
   ) {
     try {
       const userRightOnMedia = await this.getHighestRightForMedia(
-        userId,
-        mediaId,
-      );
-      const userToUpdateRights = await this.getHighestRightForMedia(
-        groupId,
+        requestUserId,
         mediaId,
       );
       if (
         ITEM_RIGHTS_PRIORITY[userRightOnMedia.rights] <
-        ITEM_RIGHTS_PRIORITY[userToUpdateRights.rights]
+        ITEM_RIGHTS_PRIORITY[rightsToAssign]
       ) {
         throw new ForbiddenException(
           'You cannot modify a user with higher privileges.',
@@ -379,15 +375,14 @@ export class LinkMediaGroupService {
         await this.linkMediaGroupRepository.findOne({
           where: {
             media: { id: mediaId },
-            user_group: { id: groupId },
+            user_group: { id: groupToUpdateId },
           },
         });
-
       if (!linkMediaGroupToUpdate) {
         throw new NotFoundException('no matching LinkMediaGroup found');
       }
 
-      linkMediaGroupToUpdate.rights = rights;
+      linkMediaGroupToUpdate.rights = rightsToAssign;
 
       return await this.linkMediaGroupRepository.save(linkMediaGroupToUpdate);
     } catch (error) {
