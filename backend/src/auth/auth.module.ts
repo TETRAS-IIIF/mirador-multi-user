@@ -6,12 +6,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationModule } from '../impersonation/impersonation.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from '../jwt.stategy';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: './src/config/.env.old.dev',
     }),
+    PassportModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
@@ -21,7 +24,7 @@ import { ImpersonationModule } from '../impersonation/impersonation.module';
     ImpersonationModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, EmailServerService],
+  providers: [AuthService, EmailServerService, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}
