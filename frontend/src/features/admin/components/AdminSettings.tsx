@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { UnMutableSettingsViewer } from './UnMutableSettingsViewer.tsx';
 import { MutableSettingsEditor } from './MutableSettingsEditor.tsx';
 import dayjs from 'dayjs';
+import { AdminActions } from './AdminActions.tsx';
 
 export const AdminSettings = () => {
   const [settings, setSettings] = useState<Settings>()
@@ -53,6 +54,7 @@ export const AdminSettings = () => {
             <MutableSettingsEditor
               settings={settings.mutableSettings}
             />
+            <AdminActions />
             <UnMutableSettingsViewer settings={settings.unMutableSettings} />
           </>
         )

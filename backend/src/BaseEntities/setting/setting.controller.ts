@@ -33,4 +33,15 @@ export class SettingsController {
       return new UnauthorizedException('You are not allowed to do this');
     }
   }
+
+  @UseGuards(AuthGuard)
+  @Get('logs')
+  async getLogs(@Req() request) {
+    const isAdmin = await this.settingsService.isAdmin(request.user.sub);
+    if (isAdmin) {
+      return this.settingsService.getLogs();
+    } else {
+      return new UnauthorizedException('You are not allowed to do this');
+    }
+  }
 }

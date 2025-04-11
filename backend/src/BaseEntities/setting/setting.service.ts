@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   OnModuleInit,
+  StreamableFile,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,6 +19,8 @@ import { DatabaseService } from '../database/database.service';
 import { UPLOAD_FOLDER } from '../../utils/constants';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import * as path from 'node:path';
+import * as fs from 'node:fs';
 
 const execAsync = promisify(exec);
 
@@ -161,6 +164,24 @@ export class SettingsService implements OnModuleInit {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while finding setting with key: ${key}`,
+        error,
+      );
+    }
+  }
+
+  async getLogs() {
+    try {
+      const logFilePath = path.join('./', process.env.LOG_FOLDER, 'app.log');
+
+      const fileStream = fs.createReadStream(logFilePath);
+      return new StreamableFile(fileStream, {
+        type: 'text/plain',
+        disposition: `attachment; filename="${process.env.INSTANCE_SHORT_NAME}_logs.txt"`,
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `An error occurred while getting app logs`,
         error,
       );
     }
