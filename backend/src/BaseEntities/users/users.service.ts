@@ -26,7 +26,9 @@ export class UsersService {
   async updateUser(userId: number, updateUserDto: UpdateUserDto) {
     try {
       if ('_isAdmin' in updateUserDto || 'admin' in updateUserDto) {
-        throw new UnauthorizedException('Admin field cannot be updated.');
+        throw new InternalServerErrorException(
+          'Admin field cannot be updated.',
+        );
       }
       const { oldPassword, confirmPassword, newPassword, ...newDto } =
         updateUserDto;
@@ -40,7 +42,7 @@ export class UsersService {
           userToUpdate.password,
         );
         if (!isMatch && confirmPassword === newPassword) {
-          throw new UnauthorizedException();
+          throw new UnauthorizedException("passwords don't match");
         }
         const salt = await bcrypt.genSalt();
         const hashedUpdatedPassword = await bcrypt.hash(newPassword, salt);
@@ -50,9 +52,7 @@ export class UsersService {
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         this.logger.error(error.message, error.stack);
-        throw new InternalServerErrorException(
-          'Someone try to promote a user to Admin',
-        );
+        throw error;
       }
       this.logger.error(error.message, error.stack);
       throw new UnauthorizedException(
