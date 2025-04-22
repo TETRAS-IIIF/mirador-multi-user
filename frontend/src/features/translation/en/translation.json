@@ -185,7 +185,7 @@
   "sort_by": "Sort By",
   "submit": "Submit",
   "successCopy": "path copied to clipboard",
-  "successResetPassword": "A password reset link has been sent to your email.",
+  "successResetPassword": "If an account exist with provided email, we will send you an email to reset your password",
   "thumbnailMissing": "Thumbnail is missing",
   "thumbnailUrl": "Thumbnail Url",
   "terms": "terms",
