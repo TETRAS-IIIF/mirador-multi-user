@@ -23,11 +23,11 @@ export const NotConfirmedAccount = () => {
     const email = storage.getUserEmail();
     const confirmationStatus = await ResendConfirmationMail(email!, navigator.language.split('-')[0]);
     if (confirmationStatus === 200) {
-      toast.success(t('messageConfirmationLink'));
+      toast.success(t('messageConfirmationLink'), { duration: 10000 });
       storage.clearUserEmail()
       setTimeout(() => navigate('/'), 2000);
     } else {
-      toast.error(t('resendError'));
+      toast.error(t('resendError'), { duration: 10000 });
       setIsLoading(false);
     }
   };
