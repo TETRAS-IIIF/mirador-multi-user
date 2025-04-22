@@ -27,11 +27,6 @@ export class UsersService {
 
   async updateUser(userId: number, updateUserDto: UpdateUserDto) {
     try {
-      if (updateUserDto.newPassword.length < PASSWORD_MINIMUM_LENGTH) {
-        throw new BadRequestException(
-          `password must be at least ${PASSWORD_MINIMUM_LENGTH} characters`,
-        );
-      }
       if ('_isAdmin' in updateUserDto || 'admin' in updateUserDto) {
         throw new InternalServerErrorException(
           'Admin field cannot be updated.',
