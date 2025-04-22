@@ -96,10 +96,10 @@ export class AuthService {
   async forgotPassword(email: string): Promise<void> {
     try {
       const user = await this.usersService.findOneByMail(email);
-      const { mail, name } = user;
       if (!user) {
         throw new NotFoundException(`No user found for email: ${email}`);
       }
+      const { mail, name } = user;
 
       const payload = { mail, name };
 
@@ -117,6 +117,9 @@ export class AuthService {
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new InternalServerErrorException(
         `an error occurred`,
         error.message,

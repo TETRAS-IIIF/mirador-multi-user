@@ -186,7 +186,7 @@
   "sort_by": "Trier par",
   "submit": "Envoyer",
   "successCopy": "Chemin copié dans le presse-papier",
-  "successResetPassword": "Un lien de réinitialisation du mot de passe a été envoyé à votre e-mail.",
+  "successResetPassword": "S'il existe un compte avec l'adresse e-mail fournie, nous vous enverrons un e-mail pour réinitialiser votre mot de passe.",
   "thumbnailMissing": "Aperçu manquant",
   "thumbnailUrl": "URL de l'aperçu",
   "terms": "termes",
