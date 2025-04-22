@@ -8,6 +8,10 @@ import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationModule } from '../impersonation/impersonation.module';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '../jwt.stategy';
+import { JwtAuthGuard } from './jwtauth.guard';
+import { OidcAuthGuard } from '../OidcAuthGuard';
+import { DynamicPassportGuard } from './dynamicAuth.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -24,7 +28,18 @@ import { JwtStrategy } from '../jwt.stategy';
     ImpersonationModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, EmailServerService, JwtStrategy],
-  exports: [AuthService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: DynamicPassportGuard,
+    },
+    AuthService,
+    EmailServerService,
+    JwtStrategy,
+    JwtAuthGuard,
+    OidcAuthGuard,
+    DynamicPassportGuard,
+  ],
+  exports: [AuthService, DynamicPassportGuard],
 })
 export class AuthModule {}

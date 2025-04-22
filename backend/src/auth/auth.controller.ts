@@ -6,18 +6,18 @@ import {
   HttpStatus,
   Post,
   Request,
-  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
+import { Public } from './dynamicAuth.guard';
 
 @ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @ApiOperation({ summary: 'Login with your credentials' })
   @HttpCode(HttpStatus.OK)
   @Post('login')
@@ -30,12 +30,12 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'get your profile' })
-  @UseGuards(AuthGuard('jwt'))
   @Get('profile')
   getProfile(@Request() req) {
     return this.authService.findProfile(req.user.sub);
   }
 
+  @Public()
   @ApiOperation({ summary: 'send recovery password link' })
   @HttpCode(200)
   @Post('forgot-password')
@@ -43,6 +43,7 @@ export class AuthController {
     return this.authService.forgotPassword(email);
   }
 
+  @Public()
   @ApiOperation({ summary: 'reset password' })
   @HttpCode(200)
   @Post('reset-password')
