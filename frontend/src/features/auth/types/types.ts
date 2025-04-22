@@ -66,5 +66,5 @@ export const LoginSchema: ZodType<LoginFormData> = z.object({
       invalid_type_error: 'Email must be a string',
     })
     .email(),
-  password: z.string().min(PASSWORD_MINIMUM_LENGTH, { message: 'Password is too short' }),
+  password: z.string(),
 });
