@@ -1,15 +1,15 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
   Param,
+  Post,
   UseGuards,
-  Delete, Query
-} from "@nestjs/common";
+} from '@nestjs/common';
 import { AnnotationPageService } from './annotation-page.service';
 import { CreateAnnotationPageDto } from './dto/create-annotation-page.dto';
-import { AuthGuard } from '../../auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('annotation-page')
@@ -17,13 +17,14 @@ export class AnnotationPageController {
   constructor(private readonly annotationPageService: AnnotationPageService) {}
 
   @ApiOperation({ summary: 'upsert annotation page' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   create(@Body() createAnnotationPageDto: CreateAnnotationPageDto) {
     return this.annotationPageService.create(createAnnotationPageDto);
   }
+
   @ApiOperation({ summary: 'finding all annotation page' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/:annotPageId/:projectId')
   findAll(
     @Param('projectId') projectId: number,
@@ -33,7 +34,7 @@ export class AnnotationPageController {
   }
 
   @ApiOperation({ summary: 'finding an annotation page' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get(':annotationPageId/:projectId')
   findOne(
     @Param('annotationPageId') annotationPageId: string,

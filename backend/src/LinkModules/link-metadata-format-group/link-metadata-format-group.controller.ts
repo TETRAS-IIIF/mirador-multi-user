@@ -1,16 +1,16 @@
 import {
-  Controller,
-  Post,
   Body,
-  UseGuards,
+  Controller,
   Get,
   Param,
+  Post,
   Req,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import { LinkMetadataFormatGroupService } from './link-metadata-format-group.service';
 import { CreateLinkMetadataFormatGroupDto } from './dto/create-link-metadata-format-group.dto';
-import { AuthGuard } from '../../auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
 
 @Controller('link-metadata-format-group')
@@ -20,7 +20,7 @@ export class LinkMetadataFormatGroupController {
   ) {}
 
   @ApiOperation({ summary: 'createMetadataFormat' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   create(
     @Body() createLinkMetadataFormatGroupDto: CreateLinkMetadataFormatGroupDto,
@@ -31,7 +31,7 @@ export class LinkMetadataFormatGroupController {
   }
 
   @ApiOperation({ summary: 'getMetadataFormatForUser' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/:userId')
   getMetadataFormatForUser(@Param('userId') userId: number, @Req() request) {
     if (userId == request.user.sub) {

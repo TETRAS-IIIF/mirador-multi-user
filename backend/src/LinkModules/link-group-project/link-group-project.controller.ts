@@ -13,7 +13,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { LinkGroupProjectService } from './link-group-project.service';
-import { AuthGuard } from '../../auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
 import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.dto';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
@@ -39,7 +39,7 @@ export class LinkGroupProjectController {
   @ApiOperation({
     summary: 'Find all Link between group and project for a specific group Id',
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/:groupId')
   async getAllGroupProjects(@Param('groupId') groupId: number) {
     return await this.linkGroupProjectService.findAllGroupProjectByUserGroupId(
@@ -47,14 +47,14 @@ export class LinkGroupProjectController {
     );
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/project/relation/:projectId')
   getProjectRelation(@Param('projectId') projectId: number) {
     return this.linkGroupProjectService.getProjectRelations(projectId);
   }
 
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/project/lock')
   async handleLockProject(
     @Body() lockProjectDto: LockProjectDto,
@@ -82,7 +82,7 @@ export class LinkGroupProjectController {
     isArray: true,
   })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/updateProject/')
   async update(
     @Body() updateProjectGroupDto: UpdateProjectGroupDto,
@@ -109,7 +109,7 @@ export class LinkGroupProjectController {
     isArray: true,
   })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/project/add')
   async addProjectToGroup(
     @Body() addProjectToGroupDto: AddProjectToGroupDto,
@@ -130,7 +130,7 @@ export class LinkGroupProjectController {
   @ApiOperation({ summary: 'Change access to a project for a specific group' })
   @ApiBody({ type: UpdateAccessToProjectDto })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/change-rights')
   @HttpCode(204)
   async updateAccessToProject(
@@ -152,7 +152,7 @@ export class LinkGroupProjectController {
 
   @ApiOperation({ summary: 'delete a project' })
   @SetMetadata('action', ActionType.DELETE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Delete('/delete/project/:projectId')
   async deleteProject(@Param('projectId') project_id: number, @Req() request) {
     return await this.linkGroupProjectService.checkPolicies(
@@ -169,7 +169,7 @@ export class LinkGroupProjectController {
 
   @ApiOperation({ summary: 'Remove access to a project to a specific group' })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Delete('/project/:projectId/:groupId')
   async deleteGroupProjectLink(
     @Param('projectId') projectId: number,
@@ -190,7 +190,7 @@ export class LinkGroupProjectController {
   }
 
   @ApiOperation({ summary: "Remove a project from user's list" })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Delete('/remove-project/:projectId')
   async removeProjectFromUser(
     @Param('projectId') projectId: number,
@@ -210,7 +210,7 @@ export class LinkGroupProjectController {
     type: LinkGroupProject,
     isArray: true,
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/search/:UserGroupId/:partialProjectName')
   lookingForProject(
     @Param('partialProjectName') partialProjectName: string,
@@ -224,7 +224,7 @@ export class LinkGroupProjectController {
 
   @ApiOperation({ summary: 'Project creation' })
   @ApiBody({ type: CreateProjectDto })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/project/')
   createProject(@Body() createProjectDto: CreateProjectDto) {
     return this.linkGroupProjectService.createProject(createProjectDto);
@@ -236,7 +236,7 @@ export class LinkGroupProjectController {
     type: LinkGroupProject,
     isArray: true,
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/user/projects/:userId')
   async getAllUsersProjects(@Param('userId') userId: number, @Req() request) {
     if (request.user.sub == userId) {
@@ -255,7 +255,7 @@ export class LinkGroupProjectController {
     isArray: true,
   })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/project/duplicate/:projectId')
   async duplicateProject(
     @Param('projectId') projectId: number,
@@ -276,7 +276,7 @@ export class LinkGroupProjectController {
 
   @ApiOperation({ summary: 'Create project snapshot' })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/snapshot/')
   async generateSnapshot(
     @Body() createSnapshotDto: CreateSnapshotDto,
@@ -298,7 +298,7 @@ export class LinkGroupProjectController {
 
   @ApiOperation({ summary: 'update Snapshot' })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/snapshot/update')
   async updateSnapshot(@Body() updateSnapshotDto, @Req() request) {
     return await this.linkGroupProjectService.checkPolicies(
@@ -317,7 +317,7 @@ export class LinkGroupProjectController {
 
   @ApiOperation({ summary: 'delete snapshot' })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Delete('/snapshot/delete/:snapshotId/:projectId')
   async deleteSnapshot(
     @Param('snapshotId') snapshotId: number,
@@ -335,7 +335,7 @@ export class LinkGroupProjectController {
   }
 
   @ApiOperation({ summary: 'Check if project is lock and user can access it' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/project/isLocked/:projectId')
   async isLocked(@Param('projectId') projectId: number, @Req() request) {
     return await this.linkGroupProjectService.isProjectLocked(

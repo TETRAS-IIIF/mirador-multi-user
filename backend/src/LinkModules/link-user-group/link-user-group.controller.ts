@@ -15,7 +15,7 @@ import {
 import { LinkUserGroupService } from './link-user-group.service';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
-import { AuthGuard } from '../../auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { CreateUserGroupDto } from '../../BaseEntities/user-group/dto/create-user-group.dto';
 import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import { ActionType } from '../../enum/actions';
@@ -37,7 +37,7 @@ export class LinkUserGroupController {
     isArray: true,
   })
   @SetMetadata('action', ActionType.READ)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/users/:groupId')
   async getAllUsersForGroup(@Param('groupId') groupId: number, @Req() request) {
     return await this.linkUserGroupService.checkPolicies(
@@ -59,7 +59,7 @@ export class LinkUserGroupController {
     isArray: true,
   })
   @SetMetadata('action', ActionType.READ)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/groups/:userId')
   getAllGroupForUser(@Param('userId') userId: number, @Req() request) {
     if (userId == request.user.sub) {
@@ -72,7 +72,7 @@ export class LinkUserGroupController {
     description: 'Does the user can access to userGroup ?',
     isArray: false,
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/access/:userId/:groupId')
   getAccessToGroup(
     @Param('userId') userId: number,
@@ -99,7 +99,7 @@ export class LinkUserGroupController {
     type: CreateUserGroupDto,
     isArray: false,
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/group')
   createGroup(@Body() createUserGroupDto: CreateUserGroupDto) {
     return this.linkUserGroupService.createUserGroup(createUserGroupDto);
@@ -112,7 +112,7 @@ export class LinkUserGroupController {
     isArray: false,
   })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/access')
   async grantAccess(
     @Body() grantAccessToGroupDto: CreateLinkUserGroupDto,
@@ -147,7 +147,7 @@ export class LinkUserGroupController {
     description: 'Looking for for user',
     isArray: false,
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/looking-for-user/:partialString')
   lookingForUser(@Param('partialString') partialString: string) {
     return this.linkUserGroupService.searchForUserGroup(partialString);
@@ -160,7 +160,7 @@ export class LinkUserGroupController {
     description: 'Looking for userGroup',
     isArray: false,
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/looking-for-userGroups/:partialString')
   lookingForUserGroups(@Param('partialString') partialString: string) {
     return this.linkUserGroupService.searchForGroups(partialString);
@@ -172,7 +172,7 @@ export class LinkUserGroupController {
     type: LinkGroupProject,
     isArray: true,
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/user-personal-group/:userId')
   getUserPersonalGroup(@Param('userId') userId: number, @Req() request) {
     if (userId == request.user.sub) {
@@ -190,7 +190,7 @@ export class LinkUserGroupController {
     isArray: true,
   })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/change-access')
   async changeAccess(
     @Body() grantAccessToGroupDto: UpdateLinkUserGroupDto,
@@ -213,7 +213,7 @@ export class LinkUserGroupController {
 
   @ApiOperation({ summary: 'Update group' })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/update-group')
   async updateGroup(
     @Body() updateGroupDto: UpdateUserGroupDto,
@@ -235,7 +235,7 @@ export class LinkUserGroupController {
     isArray: false,
   })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Delete('/remove-access/:groupId/:userId')
   async removeAccess(
     @Param('groupId') groupId: number,
@@ -258,7 +258,7 @@ export class LinkUserGroupController {
   @ApiOperation({ summary: 'Remove a user from a group' })
   @SetMetadata('action', ActionType.DELETE)
   @Delete('/group/:groupId')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   async remove(@Param('groupId') id: number, @Req() request) {
     return await this.linkUserGroupService.checkPolicies(
       request.metadata.action,
@@ -271,7 +271,7 @@ export class LinkUserGroupController {
   }
 
   @ApiOperation({ summary: 'get user name with id' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/user/name/:userId')
   async getUserNameWithId(@Param('userId') userId: number) {
     return await this.linkUserGroupService.getUserNameWithId(userId);
@@ -280,7 +280,7 @@ export class LinkUserGroupController {
   @ApiOperation({ summary: 'Get all users' })
   @SetMetadata('action', ActionType.ADMIN)
   @Get('/users')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   async getAllUsers(@Req() request) {
     const userPersonalGroup =
       await this.linkUserGroupService.findUserPersonalGroup(request.user.sub);
@@ -297,7 +297,7 @@ export class LinkUserGroupController {
   @ApiOperation({ summary: 'update user preferred language' })
   @SetMetadata('action', ActionType.UPDATE)
   @Patch('/updateLanguage/:userId')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   async updateUserLanguage(
     @Param('userId') userId: number,
     @Req() request,
@@ -320,7 +320,7 @@ export class LinkUserGroupController {
 
   @ApiOperation({ summary: 'leaving group' })
   @Delete('/leaving-group/:groupId')
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   async leavingGroup(@Param('groupId') groupId: number, @Req() request) {
     return this.linkUserGroupService.RemoveAccessToUserGroup(
       groupId,
@@ -329,7 +329,7 @@ export class LinkUserGroupController {
   }
 
   @ApiOperation({ summary: 'validate a user account' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(201)
   @Patch('/validate-user/:userId')
   async validateUserAccount(@Param('userId') userId: number, @Req() request) {

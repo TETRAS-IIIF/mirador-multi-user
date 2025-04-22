@@ -1,21 +1,21 @@
 import {
+  Body,
   Controller,
-  Post,
   Param,
-  UseGuards,
+  Post,
   Req,
   Res,
-  Body,
+  UseGuards,
 } from '@nestjs/common';
 import { ImpersonationService } from './impersonation.service';
-import { AuthGuard } from '../auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { ImpersonateDto } from './dto/impersonateDto';
 
 @Controller('impersonation')
 export class ImpersonationController {
   constructor(private readonly impersonationService: ImpersonationService) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post(':id/impersonate')
   async impersonateUser(@Param('id') userId: number, @Req() req, @Res() res) {
     const adminUserId = req.user.sub;
@@ -29,7 +29,7 @@ export class ImpersonationController {
     return res.json({ redirectUrl: redirectUrl, user: impersonation.user });
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/impersonate')
   async impersonate(@Body() impersonateDto: ImpersonateDto) {
     return this.impersonationService.impersonateUserData(impersonateDto);

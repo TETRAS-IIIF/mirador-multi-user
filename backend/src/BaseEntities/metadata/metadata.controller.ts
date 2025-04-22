@@ -1,30 +1,23 @@
-import {
-  Controller,
-  Post,
-  Body,
-  UseGuards,
-  Req,
-  Get,
-  Param,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { MetadataService } from './metadata.service';
 import { CreateMetadataDto } from './dto/create-metadata.dto';
-import { AuthGuard } from '../../auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiOperation } from '@nestjs/swagger';
 import { ObjectTypes } from '../../enum/ObjectTypes';
+
 @Controller('metadata')
 export class MetadataController {
   constructor(private readonly metadataService: MetadataService) {}
 
   @ApiOperation({ summary: 'InitMetadataForObject' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   create(@Body() createMetadataDto: CreateMetadataDto) {
     return this.metadataService.create(createMetadataDto);
   }
 
   @ApiOperation({ summary: 'GetMetadataForObject' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/:objectType/:objectId')
   async getMetadataForObject(
     @Param('objectType') objectType: ObjectTypes,

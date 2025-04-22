@@ -15,7 +15,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { LinkMediaGroupService } from './link-media-group.service';
-import { AuthGuard } from '../../auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
@@ -44,7 +44,7 @@ export class LinkMediaGroupController {
   ) {}
 
   @ApiOperation({ summary: 'Upload a media' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/media/upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -102,7 +102,7 @@ export class LinkMediaGroupController {
   }
 
   @ApiOperation({ summary: 'Create a media with an url' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/media/link')
   @UseInterceptors(MediaLinkInterceptor)
   @HttpCode(201)
@@ -126,14 +126,14 @@ export class LinkMediaGroupController {
     type: LinkMediaGroup,
     isArray: true,
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/medias')
   async getUserMedias(@Req() request) {
     return this.linkMediaGroupService.getAllMediasForUser(request.user.sub);
   }
 
   @ApiOperation({ summary: 'Get all group that can access a specific media' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('/media/:mediaId')
   async getMediaById(@Param('mediaId') mediaId: number) {
     return this.linkMediaGroupService.getAllMediaGroup(mediaId);
@@ -141,7 +141,7 @@ export class LinkMediaGroupController {
 
   @ApiOperation({ summary: 'Delete a media' })
   @SetMetadata('action', ActionType.DELETE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Delete('/media/:mediaId')
   async deleteMedia(@Param('mediaId') mediaId: number, @Req() request) {
     return await this.linkMediaGroupService.checkPolicies(
@@ -161,7 +161,7 @@ export class LinkMediaGroupController {
     isArray: false,
   })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Patch('/media')
   async updateMedia(
     @Body() updateGroupMediaDto: UpdateMediaDto,
@@ -179,7 +179,7 @@ export class LinkMediaGroupController {
 
   @ApiOperation({ summary: 'update media and group relation' })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(204)
   @Patch('/relation')
   async updateMediaGroupRelation(
@@ -208,7 +208,7 @@ export class LinkMediaGroupController {
     type: Media,
     isArray: true,
   })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post('/media/add')
   addMediaToGroup(@Body() addMediaToGroupDto: AddMediaToGroupDto) {
     return this.linkMediaGroupService.addMediaToGroup(addMediaToGroupDto);
@@ -216,7 +216,7 @@ export class LinkMediaGroupController {
 
   @ApiOperation({ summary: 'Remove access to a media' })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Delete('/media/:mediaId/:groupId')
   async deleteMediaById(
     @Param('mediaId') mediaId: number,
@@ -237,7 +237,7 @@ export class LinkMediaGroupController {
   }
 
   @ApiOperation({ summary: "Remove a media from user's list" })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Delete('/remove-media/:mediaId')
   async removeMediaFromUser(@Param('mediaId') mediaId: number, @Req() request) {
     return await this.linkMediaGroupService.removeMediaFromUser(

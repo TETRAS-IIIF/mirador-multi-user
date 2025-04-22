@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { SettingsService } from './setting.service';
 import { SetSettingDto } from './dto/setSetting.dto';
-import { AuthGuard } from '../../auth/auth.guard';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 @ApiBearerAuth()
@@ -22,7 +22,7 @@ export class SettingsController {
     return await this.settingsService.getAll();
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Post()
   async setSetting(@Body() body: SetSettingDto, @Req() request) {
     const isAdmin = await this.settingsService.isAdmin(request.user.sub);
@@ -34,7 +34,7 @@ export class SettingsController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('logs')
   async getLogs(@Req() request) {
     const isAdmin = await this.settingsService.isAdmin(request.user.sub);
