@@ -1,5 +1,6 @@
 import { z, ZodType } from 'zod';
 import { UserGroup } from '../../user-group/types/types.ts';
+import { PASSWORD_MINIMUM_LENGTH } from '../../../utils/utils.ts';
 
 export type User = {
   access_token: string;
@@ -25,14 +26,6 @@ export type UserResponse = {
   access_token: string;
   user: User;
 };
-// export type UserResponse = {
-//   sub:number;
-//   "access_token":string;
-//   name:string;
-//   iat:number;
-//   exp:number;
-//   user:string
-// }
 
 export type RegisterFormData = {
   name: string;
@@ -58,12 +51,12 @@ export const UserSchema: ZodType<RegisterFormData> = z
       required_error: 'Name is required',
       invalid_type_error: 'Name must be a string',
     }),
-    password: z.string().min(8, { message: 'Password is too short' }),
+    password: z.string().min(PASSWORD_MINIMUM_LENGTH, { message: 'Password is too short' }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
-    path: ['confirmPassword'], // path of error
+    path: ['confirmPassword'],
   });
 
 export const LoginSchema: ZodType<LoginFormData> = z.object({
@@ -73,5 +66,5 @@ export const LoginSchema: ZodType<LoginFormData> = z.object({
       invalid_type_error: 'Email must be a string',
     })
     .email(),
-  password: z.string().min(8, { message: 'Password is too short' }),
+  password: z.string().min(PASSWORD_MINIMUM_LENGTH, { message: 'Password is too short' }),
 });
