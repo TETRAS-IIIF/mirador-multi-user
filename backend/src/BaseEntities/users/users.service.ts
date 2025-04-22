@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -14,6 +15,7 @@ import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { Language } from '../../utils/email/utils';
+import { PASSWORD_MINIMUM_LENGTH } from '../../auth/utils';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +27,11 @@ export class UsersService {
 
   async updateUser(userId: number, updateUserDto: UpdateUserDto) {
     try {
+      if (updateUserDto.newPassword.length < PASSWORD_MINIMUM_LENGTH) {
+        throw new BadRequestException(
+          `password must be at least ${PASSWORD_MINIMUM_LENGTH} characters`,
+        );
+      }
       if ('_isAdmin' in updateUserDto || 'admin' in updateUserDto) {
         throw new InternalServerErrorException(
           'Admin field cannot be updated.',
@@ -50,7 +57,10 @@ export class UsersService {
       }
       return await this.userRepository.update(userId, dto);
     } catch (error) {
-      if (error instanceof UnauthorizedException) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof BadRequestException
+      ) {
         this.logger.error(error.message, error.stack);
         throw error;
       }
@@ -63,6 +73,11 @@ export class UsersService {
 
   async create(dto: CreateUserDto): Promise<User> {
     try {
+      if (dto.password.length < PASSWORD_MINIMUM_LENGTH) {
+        throw new BadRequestException(
+          `password must be at least ${PASSWORD_MINIMUM_LENGTH} characters`,
+        );
+      }
       if ('_isAdmin' in dto || 'admin' in dto) {
         throw new InternalServerErrorException('Admin field cannot be set.');
       }
@@ -74,6 +89,9 @@ export class UsersService {
       }
       return await this.userRepository.save(dto);
     } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       if (error instanceof UnauthorizedException) {
         this.logger.error(error.message, error.stack);
         throw new InternalServerErrorException(
