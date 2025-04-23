@@ -21,7 +21,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       'action',
       context.getHandler(),
     );
-    console.log('JWT GUARD');
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     request.metadata = { action };
     return super.canActivate(context);

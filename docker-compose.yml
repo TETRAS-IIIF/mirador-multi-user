@@ -74,6 +74,7 @@ services:
       ALLOW_YOUTUBE_MEDIA: ${ALLOW_YOUTUBE_MEDIA}
       ALLOW_CREATE_USER: ${ALLOW_CREATE_USER}
       LOG_FOLDER: ${LOG_FOLDER}
+      AUTH_CONFIGURATION: ${AUTH_CONFIGURATION}
     depends_on:
       - db
     restart: ${RESTART}
