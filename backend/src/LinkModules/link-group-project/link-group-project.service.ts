@@ -31,7 +31,8 @@ import {
 import { UserGroupTypes } from '../../enum/user-group-types';
 import { MetadataService } from '../../BaseEntities/metadata/metadata.service';
 import { ObjectTypes } from '../../enum/ObjectTypes';
-import { EmailServerService } from '../../utils/email/email.service';
+import { AnnotationPageService } from '../../BaseEntities/annotation-page/annotation-page.service';
+import { constructSnapshotWorkspace } from './snapshot.utils';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -44,6 +45,7 @@ export class LinkGroupProjectService {
     private readonly groupService: UserGroupService,
     private readonly linkUserGroupService: LinkUserGroupService,
     private readonly metadataService: MetadataService,
+    private readonly annotationPageService: AnnotationPageService,
   ) {}
 
   async create(createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
@@ -607,11 +609,16 @@ export class LinkGroupProjectService {
         `${project.title}${Date.now().toString()}`,
       );
       const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
-
+      const projectAnnotationPages =
+        await this.annotationPageService.findAllProjectAnnotation(project.id);
       fs.mkdirSync(uploadPath, { recursive: true });
+      const snapshotWorkspace = constructSnapshotWorkspace(
+        projectAnnotationPages,
+        project.userWorkspace,
+      );
       const workspaceData = {
         generated_at: Date.now(),
-        workspace: project.userWorkspace,
+        workspace: snapshotWorkspace,
       };
       const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
       fs.writeFileSync(

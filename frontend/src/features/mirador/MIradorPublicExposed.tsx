@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
-import "./style/mirador.css";
-import { Grid } from "@mui/material";
-import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
-import Mirador from "mirador";
+import { useEffect, useRef, useState } from 'react';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import './style/mirador.css';
+import { Grid } from '@mui/material';
+import LocalStorageAdapter from 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js';
+import Mirador from 'mirador';
 
 export const MiradorPublicExposed = () => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
@@ -15,14 +15,14 @@ export const MiradorPublicExposed = () => {
   useEffect(() => {
     const fetchAndSetupMirador = async () => {
       const url = window.location.href;
-      let updatedUrl = "";
-      const miradorIndex = url.indexOf("/mirador/");
+      let updatedUrl = '';
+      const miradorIndex = url.indexOf('/mirador/');
       if (miradorIndex !== -1) {
         const newPath = url.substring(miradorIndex + 8);
         updatedUrl = `${import.meta.env.VITE_CADDY_URL}/${newPath}`;
       }
       try {
-        const response = await fetch(updatedUrl, { method: "GET" });
+        const response = await fetch(updatedUrl, { method: 'GET' });
         const miradorWorkspace = await response.json();
         if (viewerRef.current) {
           const config = {
@@ -33,7 +33,7 @@ export const MiradorPublicExposed = () => {
               exportLocalStorageAnnotations: false, // display annotation JSON export button
             },
             annotations: {
-              htmlSanitizationRuleSet: "liberal",
+              htmlSanitizationRuleSet: 'liberal',
             },
           };
 
@@ -52,7 +52,7 @@ export const MiradorPublicExposed = () => {
           setViewer(loadingMiradorViewer);
         }
       } catch (error) {
-        console.error("Error fetching mirador workspace:", error);
+        console.error('Error fetching mirador workspace:', error);
       }
     };
 
