@@ -20,6 +20,8 @@ export class OidcStrategy extends PassportStrategy(Strategy, 'openidconnect') {
   }
 
   async validate(payload: any) {
+    console.log('✅ OIDC Token payload:', payload);
+
     return payload;
   }
 }

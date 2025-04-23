@@ -175,6 +175,7 @@ export class AuthService {
   }
 
   async findProfile(id: number) {
+    console.log('findprofile', id);
     try {
       const user = await this.usersService.findOne(id);
       if (!user) {

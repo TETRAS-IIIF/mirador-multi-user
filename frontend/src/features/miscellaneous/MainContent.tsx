@@ -11,6 +11,7 @@ export const MainContent = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<
     number | undefined
   >(undefined);
+  console.log('MAIN CONTENT')
   const [viewer, setViewer] = useState<any>(undefined);
   if (!user || !user.data) {
     return <Loading />;

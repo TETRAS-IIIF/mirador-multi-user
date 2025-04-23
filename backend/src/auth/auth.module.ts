@@ -12,6 +12,7 @@ import { JwtAuthGuard } from './jwtauth.guard';
 import { OidcAuthGuard } from '../OidcAuthGuard';
 import { DynamicPassportGuard } from './dynamicAuth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { OidcStrategy } from '../oidc.strategy';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { APP_GUARD } from '@nestjs/core';
     JwtStrategy,
     JwtAuthGuard,
     OidcAuthGuard,
+    OidcStrategy,
     DynamicPassportGuard,
   ],
   exports: [AuthService, DynamicPassportGuard],
