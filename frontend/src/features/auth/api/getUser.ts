@@ -4,8 +4,6 @@ import { User } from '../types/types.ts';
 export const getUser = async (): Promise<User> => {
   const token = storage.getToken();
 
-  console.log('getUser()')
-  console.log('token', token);
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/auth/profile`,

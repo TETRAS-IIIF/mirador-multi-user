@@ -32,8 +32,6 @@ export class AuthController {
   @ApiOperation({ summary: 'get your profile' })
   @Get('profile')
   getProfile(@Request() req) {
-    console.log('getProfile');
-    console.log(req.user);
     return this.authService.findProfile(req.user.sub);
   }
 
