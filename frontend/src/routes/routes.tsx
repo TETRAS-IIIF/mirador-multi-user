@@ -14,8 +14,6 @@ export function AppRoutes() {
       element: <Landing />,
     },
   ];
-  console.log('token')
-  console.log(token)
   let routes;
   if (token) {
     routes = protectedRoutes;

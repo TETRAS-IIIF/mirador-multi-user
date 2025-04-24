@@ -1,24 +1,35 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { LoadingSpinner } from '../../../components/elements/loadingSpinner.tsx';
-import storage from '../../../utils/storage.ts';
+import { useOpenIdLogin } from '../api/useOpenIdLogin.ts';
 
 export const OpenIdConnect = () => {
   const navigate = useNavigate();
-  console.log('OPEN ID CONNECT')
+  const { mutateAsync } = useOpenIdLogin();
+  const hasRun = useRef(false);
   useEffect(() => {
-    const hash = window.location.hash;
-    const params = new URLSearchParams(hash.substring(1));
+    const tryToIdentify = async () => {
+      if (hasRun.current) return;
+      hasRun.current = true;
 
-    const accessToken = params.get('access_token');
-    if (accessToken) {
-      storage.setToken(accessToken);
-      console.log('accessToken', accessToken);
-      // navigate('/app/my-projects');
-    } else {
-      navigate('/login');
-    }
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const redirectUri = window.location.origin + '/auth/openId-callback';
+
+      if (!code) {
+        navigate('/login');
+        return;
+      }
+      try {
+        await mutateAsync({ code, redirectUri });
+        navigate('/app/my-projects');
+      } catch (err) {
+        navigate('/login');
+      }
+    };
+
+    tryToIdentify();
   }, []);
 
   return <LoadingSpinner />;
-}
+};

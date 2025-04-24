@@ -8,6 +8,7 @@ import {
 import { JwtAuthGuard } from './jwtauth.guard';
 import { OidcAuthGuard } from '../OidcAuthGuard';
 import { Reflector } from '@nestjs/core';
+import { AUTH_CONFIGURATION_TYPE } from './utils';
 
 export const IS_PUBLIC_KEY = 'isPublic';
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true);
@@ -25,43 +26,26 @@ export class DynamicPassportGuard implements CanActivate {
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    console.log('CAN ACTIVATE');
     const isPublic = this.reflector.get<boolean>(
       IS_PUBLIC_KEY,
       context.getHandler(),
     );
 
-    console.log('isPublic');
-    console.log(isPublic);
     if (isPublic) {
       return true;
     }
 
-    console.log('process.env.AUTH_CONFIGURATION');
-    console.log(process.env.AUTH_CONFIGURATION);
-    console.log('process.env.KEYCLOAK_ISSUER');
-    console.log(process.env.KEYCLOAK_ISSUER);
-    console.log('process.env.KEYCLOAK_CLIENT_ID');
-    console.log(process.env.KEYCLOAK_CLIENT_ID);
     const guard =
-      process.env.AUTH_CONFIGURATION === 'openidconnect'
+      process.env.AUTH_CONFIGURATION === AUTH_CONFIGURATION_TYPE.openidconnect
         ? this.oidcGuard
         : this.jwtGuard;
 
-    console.log('guard');
-    console.log(guard);
     const result = guard.canActivate(context);
-    console.log('result', result);
     if (isObservable(result)) {
       return await lastValueFrom(result);
     } else if (isPromise(result)) {
-      console.log('pending');
       return await result;
     }
-
-    console.log('result');
-    console.log(result);
-
     return result;
   }
 }

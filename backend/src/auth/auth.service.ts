@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationService } from '../impersonation/impersonation.service';
 import { CustomLogger } from '../utils/Logger/CustomLogger.service';
+import { AUTH_CONFIGURATION_TYPE } from './utils';
 
 @Injectable()
 export class AuthService {
@@ -178,9 +179,19 @@ export class AuthService {
     console.log('findprofile', id);
     try {
       const user = await this.usersService.findOne(id);
+      if (
+        process.env.AUTH_CONFIGURATION ===
+          AUTH_CONFIGURATION_TYPE.openidconnect &&
+        !user
+      ) {
+        //TODO Create User if user is openIdConnected
+      }
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
+
+      console.log('-----user-------');
+      console.log(user);
       return {
         id: user.id,
         mail: user.mail,
@@ -195,5 +206,36 @@ export class AuthService {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error.message);
     }
+  }
+
+  async exchangeKeycloakCode(code: string, redirectUri: string) {
+    const response = await fetch(
+      `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          grant_type: 'authorization_code',
+          code,
+          redirect_uri: redirectUri,
+          client_id: process.env.KEYCLOAK_CLIENT_ID!,
+          client_secret: process.env.KEYCLOACK_CLIENT_SECRET,
+        }),
+      },
+    );
+
+    const result = await response.json();
+    if (!response.ok) {
+      console.error('❌ Token exchange failed:', result);
+      throw new UnauthorizedException('Token exchange failed');
+    }
+
+    return {
+      access_token: result.access_token,
+      id_token: result.id_token,
+      expires_in: result.expires_in,
+    };
   }
 }

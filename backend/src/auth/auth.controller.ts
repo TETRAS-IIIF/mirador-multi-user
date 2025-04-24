@@ -32,6 +32,8 @@ export class AuthController {
   @ApiOperation({ summary: 'get your profile' })
   @Get('profile')
   getProfile(@Request() req) {
+    console.log('getProfile');
+    console.log(req.user);
     return this.authService.findProfile(req.user.sub);
   }
 
@@ -51,5 +53,14 @@ export class AuthController {
     @Body() { token, password }: { token: string; password: string },
   ): Promise<void> {
     return this.authService.resetPassword(token, password);
+  }
+
+  @Public()
+  @Post('openid-exchange')
+  async exchangeCode(@Body() body: { code: string; redirectUri: string }) {
+    return await this.authService.exchangeKeycloakCode(
+      body.code,
+      body.redirectUri,
+    );
   }
 }
