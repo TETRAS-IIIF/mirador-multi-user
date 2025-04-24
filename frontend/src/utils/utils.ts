@@ -13,3 +13,6 @@ const maxUploadSize = import.meta.env.VITE_MAX_UPLOAD_SIZE * 1024 * 1024;
 export const isFileSizeUnderLimit = (file: File) => {
   return file.size <= maxUploadSize;
 };
+
+// Note : you need to update also constant in backend/src/auth/utils.ts
+export const PASSWORD_MINIMUM_LENGTH = 16;
