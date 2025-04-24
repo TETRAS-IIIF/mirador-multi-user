@@ -9,7 +9,7 @@ import { ProjectModule } from '../../BaseEntities/project/project.module';
 import { UserGroupModule } from '../../BaseEntities/user-group/user-group.module';
 import { LinkUserGroupModule } from '../link-user-group/link-user-group.module';
 import { MetadataModule } from '../../BaseEntities/metadata/metadata.module';
-import { EmailServerModule } from '../../utils/email/email.module';
+import { AnnotationPageModule } from '../../BaseEntities/annotation-page/annotation-page.module';
 
 //TODO: The import on LinkUserGroupModule there is a toxic pattern and should be removed because it could lead to circular dependencies. The logic where we need LinkGroupProjectService and another LinkModule should be moved in a different module.
 @Module({
@@ -20,6 +20,7 @@ import { EmailServerModule } from '../../utils/email/email.module';
     UserGroupModule,
     LinkUserGroupModule,
     MetadataModule,
+    AnnotationPageModule,
   ],
   controllers: [LinkGroupProjectController],
   providers: [LinkGroupProjectService],
