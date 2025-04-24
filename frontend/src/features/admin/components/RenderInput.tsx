@@ -14,13 +14,31 @@ export const RenderInput = ({ setting, handleChange }: IRenderInputProps) => {
 
   const keyMap: Record<string, string> = {
     ALLOW_NEW_USER: 'display_user_inscription_page',
+    OPEN_ID_CONNECT_ALLOWED: 'openid_connect',
   };
 
   const tKey = keyMap[setting.key] || setting.key.toLowerCase();
   const label = t(tKey, { defaultValue: setting.key });
   const tooltip = t(`${tKey}_tooltip`, { defaultValue: '' });
 
-
+  if (isBoolean || setting.key === 'OPEN_ID_CONNECT_ALLOWED') {
+    return (
+      <Tooltip title={tooltip} placement="top" arrow>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={setting.value === 'true' || setting.value === '1'}
+              onChange={e =>
+                handleChange(setting.id, e.target.checked ? '1' : '0')
+              }
+            />
+          }
+          label={label}
+        />
+      </Tooltip>
+    );
+  }
+  
   if (setting.key === 'MAX_UPLOAD_SIZE') {
     return (
       <Tooltip title={tooltip} placement="top" arrow>

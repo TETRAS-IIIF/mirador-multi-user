@@ -36,6 +36,7 @@
   "api_url": "API URL",
   "areYouSureDuplicate": "Are you sure you want to duplicate",
   "backend_log_lvl": "Niveau de log du backend",
+  "button_openid_connect": "OpenID Connect",
   "caddy_url": "URL Caddy",
   "cancel": "CANCEL",
   "canvasRemoving": "Remove canvas {{index}}",

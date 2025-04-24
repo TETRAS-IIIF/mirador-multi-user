@@ -7,11 +7,14 @@ import { useLogin } from '../../../utils/auth.tsx';
 import { LoginCredentialsDTO } from '../api/login.ts';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { getSettingValue, SettingKeys } from '../../../utils/utils.ts';
+import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 
 export const LoginForm = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { mutateAsync: loginUser } = useLogin();
+  const { data: settings } = useAdminSettings();
 
   const {
     register,
@@ -42,6 +45,7 @@ export const LoginForm = () => {
     window.location.href = fullLoginUrl; // ✅ Only this line
   };
 
+  const showOpenIdConnect = getSettingValue(SettingKeys.OPEN_ID_CONNECT_ALLOWED, settings) === '1';
   return (
     <form>
       <Grid container flexDirection="column" spacing={2}>
@@ -87,13 +91,17 @@ export const LoginForm = () => {
           </Button>
         </Grid>
         <Grid item container>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={openIdAuth}
-          >
-            {t('openid_connect')}
-          </Button>
+          {
+            showOpenIdConnect && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={openIdAuth}
+              >
+                {t('button_openid_connect')}
+              </Button>
+            )
+          }
         </Grid>
       </Grid>
     </form>
