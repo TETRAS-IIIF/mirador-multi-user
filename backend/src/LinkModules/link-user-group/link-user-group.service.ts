@@ -112,10 +112,11 @@ export class LinkUserGroupService {
   async createUser(createUserDto: CreateUserDto) {
     try {
       const userToSave = createUserDto;
-      const salt = await bcrypt.genSalt();
-      userToSave.password = await bcrypt.hash(createUserDto.password, salt);
+      if (userToSave.password) {
+        const salt = await bcrypt.genSalt();
+        userToSave.password = await bcrypt.hash(createUserDto.password, salt);
+      }
       const savedUser = await this.userService.create(userToSave);
-
       const userPersonalGroup = await this.groupService.create({
         title: savedUser.name,
         ownerId: savedUser.id,
@@ -138,12 +139,15 @@ export class LinkUserGroupService {
         metadata: dublinCoreSample,
       });
 
-      await this.sendConfirmationLink(
+      const confirmationLink = await this.sendConfirmationLink(
         savedUser.mail,
         savedUser.preferredLanguage,
       );
 
-      return savedUser;
+      return {
+        ...savedUser,
+        confirmationLink: confirmationLink,
+      };
     } catch (error) {
       this.logger.error(error.message, error.stack);
       if (error.status === 409) {
@@ -160,11 +164,11 @@ export class LinkUserGroupService {
 
   public async sendConfirmationLink(email: string, language: string) {
     try {
-      const user = await this.userService.findOneByMail(email);
+      const user = await this.userService.findOneByEmail(email);
       if (user.isEmailConfirmed && user.termsValidatedAt) {
         throw new BadRequestException('Email and terms already confirmed');
       }
-      await this.emailService.sendConfirmationEmail({
+      return await this.emailService.sendConfirmationEmail({
         to: user.mail,
         subject: 'Account creation',
         userName: user.name,

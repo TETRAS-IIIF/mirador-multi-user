@@ -20,9 +20,7 @@ export async function handleTokenResponse(data: UserResponse) {
 
 async function loadUser(): Promise<User | null> {
   if (storage.getToken()) {
-    console.log('loadUser')
-    const data = await getUser();
-    return data;
+    return await getUser();
   }
   return null;
 }

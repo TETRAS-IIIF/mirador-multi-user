@@ -94,7 +94,7 @@ export class UsersService {
     }
   }
 
-  async findOneByMail(mail: string): Promise<User> {
+  async findOneByEmail(mail: string): Promise<User> {
     try {
       return await this.userRepository.findOneBy({ mail });
     } catch (error) {

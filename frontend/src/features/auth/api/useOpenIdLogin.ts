@@ -6,12 +6,6 @@ type OpenIdLoginParams = {
   redirectUri: string;
 };
 
-type OpenIdLoginResponse = {
-  access_token: string;
-  id_token?: string;
-  expires_in: number;
-};
-
 const openIdLogin = async ({ code, redirectUri }: OpenIdLoginParams) => {
   try {
     const response = await fetch(
@@ -28,9 +22,11 @@ const openIdLogin = async ({ code, redirectUri }: OpenIdLoginParams) => {
     if (!response.ok) {
       throw new Error(data.message || 'OpenID login failed');
     }
+    if (data.urlConfirmationLink) {
+      return window.location.assign(data.urlConfirmationLink);
+    }
     storage.setToken(data.access_token);
-    console.log('data', data);
-    return data;
+    return data
   } catch (err) {
     console.error('❌ OpenID token exchange failed', err);
     throw err;
@@ -38,6 +34,6 @@ const openIdLogin = async ({ code, redirectUri }: OpenIdLoginParams) => {
 }
 
 export const useOpenIdLogin = () =>
-  useMutation<OpenIdLoginResponse, Error, OpenIdLoginParams>({
+  useMutation({
     mutationFn: openIdLogin,
   });

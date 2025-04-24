@@ -19,6 +19,7 @@ export class SettingsController {
   @Public()
   @Get()
   async getSetting() {
+    console.log('Getting Setting');
     return await this.settingsService.getAll();
   }
 

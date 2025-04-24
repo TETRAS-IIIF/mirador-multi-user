@@ -12,7 +12,9 @@ import * as bcrypt from 'bcrypt';
 import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationService } from '../impersonation/impersonation.service';
 import { CustomLogger } from '../utils/Logger/CustomLogger.service';
-import { AUTH_CONFIGURATION_TYPE } from './utils';
+import * as jwt from 'jsonwebtoken';
+import { LinkUserGroupService } from '../LinkModules/link-user-group/link-user-group.service';
+import { Language } from '../utils/email/utils';
 
 @Injectable()
 export class AuthService {
@@ -23,6 +25,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly emailService: EmailServerService,
     private readonly impersonationService: ImpersonationService,
+    private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
 
   async signIn(
@@ -37,7 +40,7 @@ export class AuthService {
         if (!impersonation) {
           throw new UnauthorizedException('token is invalid');
         }
-        const user = await this.usersService.findOneByMail(
+        const user = await this.usersService.findOneByEmail(
           impersonation.user.mail,
         );
         if (!user) {
@@ -55,9 +58,8 @@ export class AuthService {
         };
       }
 
-      const user = await this.usersService.findOneByMail(mail);
+      const user = await this.usersService.findOneByEmail(mail);
 
-      // No user found with this email
       if (!user) {
         throw new UnauthorizedException();
       }
@@ -75,6 +77,7 @@ export class AuthService {
         user: user.name,
         isEmailConfirmed: user.isEmailConfirmed,
         termsValidatedAt: user.termsValidatedAt,
+        authSource: 'jwt',
       };
 
       return {
@@ -96,7 +99,7 @@ export class AuthService {
 
   async forgotPassword(email: string): Promise<void> {
     try {
-      const user = await this.usersService.findOneByMail(email);
+      const user = await this.usersService.findOneByEmail(email);
       const { mail, name } = user;
       if (!user) {
         throw new NotFoundException(`No user found for email: ${email}`);
@@ -152,7 +155,7 @@ export class AuthService {
     try {
       const decodeData = await this.decodeConfirmationToken(token);
 
-      const user = await this.usersService.findOneByMail(decodeData.mail);
+      const user = await this.usersService.findOneByEmail(decodeData.mail);
       if (!user) {
         throw new NotFoundException(
           `No user found for email: ${decodeData.mail}`,
@@ -176,22 +179,12 @@ export class AuthService {
   }
 
   async findProfile(id: number) {
-    console.log('findprofile', id);
     try {
       const user = await this.usersService.findOne(id);
-      if (
-        process.env.AUTH_CONFIGURATION ===
-          AUTH_CONFIGURATION_TYPE.openidconnect &&
-        !user
-      ) {
-        //TODO Create User if user is openIdConnected
-      }
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
 
-      console.log('-----user-------');
-      console.log(user);
       return {
         id: user.id,
         mail: user.mail,
@@ -228,14 +221,45 @@ export class AuthService {
 
     const result = await response.json();
     if (!response.ok) {
-      console.error('❌ Token exchange failed:', result);
+      console.error('Token exchange failed:', result);
       throw new UnauthorizedException('Token exchange failed');
     }
+    const { id_token } = result;
 
+    const payload = jwt.decode(id_token) as any;
+
+    if (!payload?.email) {
+      throw new UnauthorizedException('Email not found in Keycloak token');
+    }
+
+    let user = await this.usersService.findOneByEmail(payload.email);
+    let savedUser;
+    if (!user) {
+      savedUser = await this.linkUserGroupService.createUser({
+        mail: payload.email,
+        name: `${payload.given_name || ''} ${payload.family_name || ''}`.trim(),
+        keycloakId: payload.sub,
+        isEmailConfirmed: payload.email_verified ?? true,
+        Projects: [],
+        preferredLanguage: Language.ENGLISH,
+        password: null,
+      });
+      user = savedUser;
+    }
+
+    const internalToken = await this.jwtService.signAsync({
+      sub: user.id,
+      email: user.mail,
+      authSource: 'oidc',
+      termsValidatedAt: user.termsValidatedAt,
+      isEmailConfirmed: user.isEmailConfirmed,
+    });
     return {
-      access_token: result.access_token,
-      id_token: result.id_token,
+      access_token: internalToken,
       expires_in: result.expires_in,
+      urlConfirmationLink: savedUser?.confirmationLink
+        ? savedUser.confirmationLink
+        : null,
     };
   }
 }

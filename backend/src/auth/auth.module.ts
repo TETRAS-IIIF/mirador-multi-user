@@ -13,6 +13,7 @@ import { OidcAuthGuard } from '../OidcAuthGuard';
 import { DynamicPassportGuard } from './dynamicAuth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { OidcStrategy } from '../oidc.strategy';
+import { LinkUserGroupModule } from '../LinkModules/link-user-group/link-user-group.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { OidcStrategy } from '../oidc.strategy';
     }),
     UsersModule,
     ImpersonationModule,
+    LinkUserGroupModule,
   ],
   controllers: [AuthController],
   providers: [

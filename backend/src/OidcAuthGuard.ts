@@ -12,7 +12,6 @@ export class OidcAuthGuard extends AuthGuard('openidconnect') {
   }
 
   handleRequest(error: any, user: any, info: any) {
-    console.log('toto');
     if (error) {
       console.error('❌ OIDC Guard Error:', error.message);
     }
@@ -24,7 +23,6 @@ export class OidcAuthGuard extends AuthGuard('openidconnect') {
         info?.message || 'Unauthorized from Keycloak',
       );
     }
-
     return user;
   }
 }
