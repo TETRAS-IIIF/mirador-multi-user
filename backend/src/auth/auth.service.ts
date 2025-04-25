@@ -191,6 +191,7 @@ export class AuthService {
         name: user.name,
         _isAdmin: user._isAdmin,
         preferredLanguage: user.preferredLanguage,
+        keycloakId: user.keycloakId,
       };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
@@ -231,8 +232,21 @@ export class AuthService {
     if (!payload?.email) {
       throw new UnauthorizedException('Email not found in Keycloak token');
     }
-
     let user = await this.usersService.findOneByEmail(payload.email);
+    let keycloack_user = await this.usersService.findOneByKeycloackId(
+      payload.sub,
+    );
+    if (user && !keycloack_user) {
+      const userWithKeycloackId = await this.usersService.updateUser(user.id, {
+        keycloakId: payload.sub,
+      });
+      keycloack_user = userWithKeycloackId;
+    }
+    if (user && keycloack_user.id !== user.id) {
+      await this.usersService.updateUser(user.id, {
+        mail: keycloack_user.mail,
+      });
+    }
     let savedUser;
     if (!user) {
       savedUser = await this.linkUserGroupService.createUser({

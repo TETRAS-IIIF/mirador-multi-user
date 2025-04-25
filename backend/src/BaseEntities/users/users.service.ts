@@ -46,7 +46,8 @@ export class UsersService {
         const hashedUpdatedPassword = await bcrypt.hash(newPassword, salt);
         dto = { ...dto, password: hashedUpdatedPassword };
       }
-      return await this.userRepository.update(userId, dto);
+      await this.userRepository.update(userId, dto);
+      return await this.userRepository.findOne({ where: { id: userId } });
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         this.logger.error(error.message, error.stack);
@@ -100,6 +101,17 @@ export class UsersService {
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new NotFoundException(`User no found ${mail}`);
+    }
+  }
+
+  async findOneByKeycloackId(keycloackId: string): Promise<User> {
+    try {
+      return await this.userRepository.findOneBy({ keycloakId: keycloackId });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new NotFoundException(
+        `User no found with keycloack id : ${keycloackId}`,
+      );
     }
   }
 

@@ -113,6 +113,7 @@
   "instance_name": "Instance Name",
   "iframe_copied": "Iframe copied to clipboard",
   "key": "Key",
+  "keycloakFieldTooltip": "This field is managed by your identity provider (Keycloak) and cannot be edited here.",
   "labelApiToken": "API Token",
   "labelProjectTitle": "Project's title:",
   "last_migration": "Last Migration",

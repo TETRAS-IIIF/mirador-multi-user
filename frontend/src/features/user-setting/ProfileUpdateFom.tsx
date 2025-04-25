@@ -1,27 +1,20 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import toast from "react-hot-toast";
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useState } from 'react';
+import { Box, Button, IconButton, InputAdornment, TextField, Tooltip, Typography } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../../utils/auth.tsx';
 import { useUpdateUser } from '../../utils/customHooks/useUpdateProfile.ts';
 
-export const ProfileUpdateForm = () => {
+export const ProfileUpdateForm = (isKeycloackUser: boolean) => {
   const user = useUser();
   const { t } = useTranslation();
   const [formValues, setFormValues] = useState({
-    name: "",
-    mail: "",
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    name: '',
+    mail: '',
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState({
     oldPassword: false,
@@ -29,20 +22,20 @@ export const ProfileUpdateForm = () => {
     confirmPassword: false,
   });
   const [errors, setErrors] = useState({
-    name: "",
-    mail: "",
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    name: '',
+    mail: '',
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   });
 
   const updateUserMutation = useUpdateUser();
   useEffect(() => {
-      setFormValues((prev) => ({
-        ...prev,
-        name: user.data!.name,
-        mail: user.data!.mail,
-      }));
+    setFormValues((prev) => ({
+      ...prev,
+      name: user.data!.name,
+      mail: user.data!.mail,
+    }));
   }, [user.data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,28 +47,28 @@ export const ProfileUpdateForm = () => {
   const validateForm = () => {
     let valid = true;
     const newErrors = {
-      name: "",
-      mail: "",
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
+      name: '',
+      mail: '',
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
     };
 
     if (
       formValues.mail.trim() &&
       !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formValues.mail)
     ) {
-      newErrors.mail = t("mailIsNotValid");
+      newErrors.mail = t('mailIsNotValid');
       valid = false;
     }
 
     if (formValues.newPassword && formValues.newPassword.length < 6) {
-      newErrors.newPassword = t("characterLimitForPassword");
+      newErrors.newPassword = t('characterLimitForPassword');
       valid = false;
     }
 
     if (formValues.newPassword !== formValues.confirmPassword) {
-      newErrors.confirmPassword = t("passwordMismatch");
+      newErrors.confirmPassword = t('passwordMismatch');
       valid = false;
     }
 
@@ -89,10 +82,10 @@ export const ProfileUpdateForm = () => {
     if (validateForm()) {
       updateUserMutation.mutate(formValues, {
         onSuccess: () => {
-          toast.success(t("userSuccessfullyUpdated"));
+          toast.success(t('userSuccessfullyUpdated'));
         },
         onError: () => {
-          toast.error(t("toastErrorUpdateUser"));
+          toast.error(t('toastErrorUpdateUser'));
         },
       });
     }
@@ -107,21 +100,21 @@ export const ProfileUpdateForm = () => {
       component="form"
       onSubmit={handleSubmit}
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "40%",
-        maxWidth: "400px",
+        display: 'flex',
+        flexDirection: 'column',
+        width: '40%',
+        maxWidth: '400px',
       }}
     >
       <Typography variant="h5" sx={{ mb: 3 }}>
-        {t("UpdateProfile")}
+        {t('UpdateProfile')}
       </Typography>
 
       <TextField
         inputProps={{
           maxLength: 255,
         }}
-        label={t("name")}
+        label={t('name')}
         name="name"
         value={formValues.name}
         onChange={handleChange}
@@ -131,100 +124,128 @@ export const ProfileUpdateForm = () => {
         sx={{ mb: 2 }}
       />
 
-      <TextField
-        inputProps={{
-          maxLength: 255,
-        }}
-        label={t("mail")}
-        name="mail"
-        type="mail"
-        value={formValues.mail}
-        onChange={handleChange}
-        error={!!errors.mail}
-        helperText={errors.mail}
-        fullWidth
-        sx={{ mb: 2 }}
-      />
+      <Tooltip
+        title={isKeycloackUser ? t('keycloakFieldTooltip') : ''}
+        disableHoverListener={!isKeycloackUser}
+        placement="top"
+      >
+        <div>
+          <TextField
+            inputProps={{ maxLength: 255 }}
+            disabled={isKeycloackUser}
+            label={t('mail')}
+            name="mail"
+            type="mail"
+            value={formValues.mail}
+            onChange={handleChange}
+            error={!!errors.mail}
+            helperText={errors.mail}
+            fullWidth
+            sx={{ mb: 2 }}
+          />
+        </div>
+      </Tooltip>
 
-      <TextField
-        label={t("oldPassword")}
-        name="oldPassword"
-        type={showPassword.oldPassword ? "text" : "password"}
-        value={formValues.oldPassword}
-        onChange={handleChange}
-        error={!!errors.oldPassword}
-        helperText={errors.oldPassword}
-        fullWidth
-        sx={{ mb: 2 }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={() => togglePasswordVisibility("oldPassword")}
-                edge="end"
-              >
-                {showPassword.oldPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }
-      }
-        inputProps={{ maxLength: 255 }}
-      />
+      <Tooltip
+        title={isKeycloackUser ? t('keycloakFieldTooltip') : ''}
+        disableHoverListener={!isKeycloackUser}
+        placement="top"
+      >
+        <TextField
+          label={t('oldPassword')}
+          name="oldPassword"
+          disabled={isKeycloackUser}
+          type={showPassword.oldPassword ? 'text' : 'password'}
+          value={formValues.oldPassword}
+          onChange={handleChange}
+          error={!!errors.oldPassword}
+          helperText={errors.oldPassword}
+          fullWidth
+          sx={{ mb: 2 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => togglePasswordVisibility('oldPassword')}
+                  edge="end"
+                >
+                  {showPassword.oldPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }
+          }
+          inputProps={{ maxLength: 255 }}
+        />
+      </Tooltip>
 
-      <TextField
-        label={t("newPassword")}
-        name="newPassword"
-        type={showPassword.newPassword ? "text" : "password"}
-        value={formValues.newPassword}
-        onChange={handleChange}
-        error={!!errors.newPassword}
-        helperText={errors.newPassword}
-        fullWidth
-        sx={{ mb: 2 }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={() => togglePasswordVisibility("newPassword")}
-                edge="end"
-              >
-                {showPassword.newPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        inputProps={{ maxLength: 255 }}
-      />
+      <Tooltip
+        title={isKeycloackUser ? t('keycloakFieldTooltip') : ''}
+        disableHoverListener={!isKeycloackUser}
+        placement="top"
+      >
+        <TextField
+          label={t('newPassword')}
+          name="newPassword"
+          disabled={isKeycloackUser}
+          type={showPassword.newPassword ? 'text' : 'password'}
+          value={formValues.newPassword}
+          onChange={handleChange}
+          error={!!errors.newPassword}
+          helperText={errors.newPassword}
+          fullWidth
+          sx={{ mb: 2 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => togglePasswordVisibility('newPassword')}
+                  edge="end"
+                >
+                  {showPassword.newPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          inputProps={{ maxLength: 255 }}
+        />
+      </Tooltip>
 
-      <TextField
-        label={t("confirmPassword")}
-        name="confirmPassword"
-        type={showPassword.confirmPassword ? "text" : "password"}
-        value={formValues.confirmPassword}
-        onChange={handleChange}
-        error={!!errors.confirmPassword}
-        helperText={errors.confirmPassword}
-        fullWidth
-        sx={{ mb: 2 }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={() => togglePasswordVisibility("confirmPassword")}
-                edge="end"
-              >
-                {showPassword.confirmPassword ? (
-                  <VisibilityOff />
-                ) : (
-                  <Visibility />
-                )}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        inputProps={{ maxLength: 255 }}
-      />
+      <Tooltip
+        title={isKeycloackUser ? t('keycloakFieldTooltip') : ''}
+        disableHoverListener={!isKeycloackUser}
+        placement="top"
+      >
+        <TextField
+          label={t('confirmPassword')}
+          name="confirmPassword"
+          disabled={isKeycloackUser}
+          type={showPassword.confirmPassword ? 'text' : 'password'}
+          value={formValues.confirmPassword}
+          onChange={handleChange}
+          error={!!errors.confirmPassword}
+          helperText={errors.confirmPassword}
+          fullWidth
+          sx={{ mb: 2 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => togglePasswordVisibility('confirmPassword')}
+                  edge="end"
+                >
+                  {showPassword.confirmPassword ? (
+                    <VisibilityOff />
+                  ) : (
+                    <Visibility />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          inputProps={{ maxLength: 255 }}
+        />
+      </Tooltip>
 
       <Button
         type="submit"
@@ -233,7 +254,7 @@ export const ProfileUpdateForm = () => {
         fullWidth
         sx={{ mt: 2 }}
       >
-        {t("saveChanges")}
+        {t('saveChanges')}
       </Button>
     </Box>
   );

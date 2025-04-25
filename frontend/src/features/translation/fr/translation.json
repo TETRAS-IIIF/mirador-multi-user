@@ -113,6 +113,7 @@
   "instance_name": "Nom de l'instance",
   "invalidToken": "Jeton de réinitialisation invalide ou manquant",
   "key": "Clé",
+  "keycloakFieldTooltip": "Ce champ est géré par votre fournisseur d'identité (Keycloak) et ne peut pas être modifié ici.",
   "iframe_copied": "Code de l'Iframe copié dans le presse papier",
   "labelApiToken": "Jeton API",
   "labelProjectTitle": "Titre du projet :",
