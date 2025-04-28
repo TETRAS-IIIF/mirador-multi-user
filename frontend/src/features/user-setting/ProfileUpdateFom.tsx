@@ -6,7 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { useUser } from '../../utils/auth.tsx';
 import { useUpdateUser } from '../../utils/customHooks/useUpdateProfile.ts';
 
-export const ProfileUpdateForm = (isKeycloackUser: boolean) => {
+interface IisKeycloakUser {
+  isKeycloakUser: boolean;
+}
+
+export const ProfileUpdateForm = ({ isKeycloakUser }: IisKeycloakUser) => {
   const user = useUser();
   const { t } = useTranslation();
   const [formValues, setFormValues] = useState({
@@ -125,14 +129,14 @@ export const ProfileUpdateForm = (isKeycloackUser: boolean) => {
       />
 
       <Tooltip
-        title={isKeycloackUser ? t('keycloakFieldTooltip') : ''}
-        disableHoverListener={!isKeycloackUser}
+        title={isKeycloakUser ? t('keycloakFieldTooltip') : ''}
+        disableHoverListener={!isKeycloakUser}
         placement="top"
       >
         <div>
           <TextField
             inputProps={{ maxLength: 255 }}
-            disabled={isKeycloackUser}
+            disabled={isKeycloakUser}
             label={t('mail')}
             name="mail"
             type="mail"
@@ -147,14 +151,14 @@ export const ProfileUpdateForm = (isKeycloackUser: boolean) => {
       </Tooltip>
 
       <Tooltip
-        title={isKeycloackUser ? t('keycloakFieldTooltip') : ''}
-        disableHoverListener={!isKeycloackUser}
+        title={isKeycloakUser ? t('keycloakFieldTooltip') : ''}
+        disableHoverListener={!isKeycloakUser}
         placement="top"
       >
         <TextField
           label={t('oldPassword')}
           name="oldPassword"
-          disabled={isKeycloackUser}
+          disabled={isKeycloakUser}
           type={showPassword.oldPassword ? 'text' : 'password'}
           value={formValues.oldPassword}
           onChange={handleChange}
@@ -180,14 +184,14 @@ export const ProfileUpdateForm = (isKeycloackUser: boolean) => {
       </Tooltip>
 
       <Tooltip
-        title={isKeycloackUser ? t('keycloakFieldTooltip') : ''}
-        disableHoverListener={!isKeycloackUser}
+        title={isKeycloakUser ? t('keycloakFieldTooltip') : ''}
+        disableHoverListener={!isKeycloakUser}
         placement="top"
       >
         <TextField
           label={t('newPassword')}
           name="newPassword"
-          disabled={isKeycloackUser}
+          disabled={isKeycloakUser}
           type={showPassword.newPassword ? 'text' : 'password'}
           value={formValues.newPassword}
           onChange={handleChange}
@@ -212,14 +216,14 @@ export const ProfileUpdateForm = (isKeycloackUser: boolean) => {
       </Tooltip>
 
       <Tooltip
-        title={isKeycloackUser ? t('keycloakFieldTooltip') : ''}
-        disableHoverListener={!isKeycloackUser}
+        title={isKeycloakUser ? t('keycloakFieldTooltip') : ''}
+        disableHoverListener={!isKeycloakUser}
         placement="top"
       >
         <TextField
           label={t('confirmPassword')}
           name="confirmPassword"
-          disabled={isKeycloackUser}
+          disabled={isKeycloakUser}
           type={showPassword.confirmPassword ? 'text' : 'password'}
           value={formValues.confirmPassword}
           onChange={handleChange}

@@ -79,7 +79,7 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
       </Grid>
 
       <Grid container item xs={12}>
-        <ProfileUpdateForm isKeycloackUser={!!user.keycloakId} />
+        <ProfileUpdateForm isKeycloakUser={!!user.keycloakId} />
       </Grid>
       <Grid item spacing={2} sx={{ width: '100%' }}>
         <Button
