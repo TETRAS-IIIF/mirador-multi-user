@@ -249,6 +249,7 @@
   "toastErrorUpdateUser": "An error occurred while updating user's information.",
   "toastSelectItem": "Select an item in the list",
   "toastSuccessSnapshot": "Snapshot URL copied to clipboard",
+  "usernameAlreadyTaken": "This username or email is already taken. Please choose another one.",
   "userValidated": "User account was successfully validated",
   "userValidationFail": "User account validation failed",
   "validate_user": "Validate terms of use and mail",

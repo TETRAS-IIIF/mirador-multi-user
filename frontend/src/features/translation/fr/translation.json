@@ -249,6 +249,7 @@
   "toastErrorUpdateUser": "Une erreur est survenue lors de la mise à jour des informations de l'utilisateur.",
   "toastSelectItem": "Sélectionnez un élément dans la liste",
   "toastSuccessSnapshot": "URL de l'aperçu copiée dans le presse-papier",
+  "usernameAlreadyTaken": "Ce nom d'utilisateur ou cette adresse mail est déjà pris. Veuillez en choisir un autre.",
   "userValidated": "Le compte de l'utilisateur a été validé",
   "userValidationFail": "Échec de la validation de l'utilisateur",
   "validate_user": "Valider l'email et les termes",
