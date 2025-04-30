@@ -48,4 +48,4 @@ export enum SettingKeys {
 }
 
 export const KC_URL = import.meta.env.VITE_KEYCLOAK_URL;
-export const KC_CLIENT = import.meta.env.VITE_KEYCLOAK_CLIENT
+export const KC_CLIENT = import.meta.env.VITE_KEYCLOAK_CLIENT_ID
