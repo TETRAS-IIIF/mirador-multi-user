@@ -46,3 +46,6 @@ export enum SettingKeys {
   DB_SIZE = 'DB_SIZE',
   OPEN_ID_CONNECT_ALLOWED = 'OPEN_ID_CONNECT_ALLOWED'
 }
+
+export const KC_URL = import.meta.env.VITE_KEYCLOAK_URL;
+export const KC_CLIENT = import.meta.env.KEYCLOAK_CLIENT

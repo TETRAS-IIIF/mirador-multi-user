@@ -7,7 +7,7 @@ import { useLogin } from '../../../utils/auth.tsx';
 import { LoginCredentialsDTO } from '../api/login.ts';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { getSettingValue, SettingKeys } from '../../../utils/utils.ts';
+import { getSettingValue, KC_CLIENT, KC_URL, SettingKeys } from '../../../utils/utils.ts';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 
 export const LoginForm = () => {
@@ -35,14 +35,13 @@ export const LoginForm = () => {
   };
 
   const openIdAuth = () => {
-    const keycloakUrl = 'https://keycloak.tetras-libre.fr/realms/MMU-test/protocol/openid-connect/auth';
+
+    const keycloakUrl = `${KC_URL}/protocol/openid-connect/auth`;
     const redirectUri = window.location.origin + '/auth/openId-callback';
 
-    const fullLoginUrl = `${keycloakUrl}?client_id=mmu-test-client&redirect_uri=${encodeURIComponent(
+    window.location.href = `${keycloakUrl}?client_id=${KC_CLIENT}&redirect_uri=${encodeURIComponent(
       redirectUri,
     )}&response_type=code&scope=openid email profile`;
-
-    window.location.href = fullLoginUrl; // ✅ Only this line
   };
 
   const showOpenIdConnect = getSettingValue(SettingKeys.OPEN_ID_CONNECT_ALLOWED, settings) === '1';
