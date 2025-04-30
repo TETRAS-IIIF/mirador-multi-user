@@ -32,6 +32,7 @@ services:
       MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE}
       VITE_KEYCLOAK_URL: ${KEYCLOAK_ISSUER}
       VITE_KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
+      VITE_KEYCLOAK_CLIENT: ${KEYCLOAK_CLIENT}
     depends_on:
       - backend
     restart: always
@@ -79,7 +80,6 @@ services:
       KEYCLOAK_ISSUER: ${KEYCLOAK_ISSUER}
       KEYCLOAK_CLIENT_ID: ${KEYCLOAK_CLIENT_ID}
       KEYCLOACK_CLIENT_SECRET: ${KEYCLOACK_CLIENT_SECRET}
-      KEYCLOAK_CLIENT: ${KEYCLOAK_CLIENT}
     depends_on:
       - db
     restart: ${RESTART}
