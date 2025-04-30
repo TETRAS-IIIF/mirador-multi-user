@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { Button, Card, CardContent, Grid, Snackbar, Typography } from '@mui/material';
+import { Button, Grid, Snackbar, Typography } from '@mui/material';
 import FormField from 'components/elements/FormField.tsx';
 import { RegisterFormData, UserSchema } from '../types/types.ts';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,7 +7,7 @@ import { useRegister } from '../../../utils/auth.tsx';
 import { RegisterCredentialsDTO } from '../api/register.ts';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { SuccessCard } from './SuccesCard.tsx';
 
 export const RegisterForm = () => {
   const { t } = useTranslation();
@@ -44,17 +44,14 @@ export const RegisterForm = () => {
   return (
     <>
       {successRegister ? (
-        <Card sx={{ maxWidth: 500, mx: 'auto', mt: 4, textAlign: 'center', p: 3 }}>
-          <CardContent>
-            <CheckCircleIcon color="success" sx={{ fontSize: 60, mb: 2 }} />
-            <Typography variant="h5" gutterBottom>
-              {t('account_created_success')}
-            </Typography>
-            <Typography variant="body1" sx={{ mb: 2 }}>
-              {t('check_email_to_confirm')}
-            </Typography>
-          </CardContent>
-        </Card>
+        <SuccessCard>
+          <Typography variant="h5" gutterBottom>
+            {t('account_created_success')}
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 2 }}>
+            {t('check_email_to_confirm')}
+          </Typography>
+        </SuccessCard>
       ) : (
         <form>
           <Snackbar open={open} message={message} autoHideDuration={10} />

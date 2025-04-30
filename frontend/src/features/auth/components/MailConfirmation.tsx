@@ -1,4 +1,4 @@
-import { Button, Card, CardContent, Checkbox, FormControlLabel, Grid, Link, Typography } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Grid, Link, Typography } from '@mui/material';
 import { confirmationMail } from '../api/confirmationMail.ts';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -6,7 +6,7 @@ import { Layout } from './layout.tsx';
 import { useTranslation } from 'react-i18next';
 import storage from '../../../utils/storage.ts';
 import { useState } from 'react';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { SuccessCard } from './SuccesCard.tsx';
 
 export const MailConfirmation = () => {
   const location = useLocation();
@@ -45,14 +45,11 @@ export const MailConfirmation = () => {
     <Layout title={t('mail-confirmation-title')}>
       <>
         {successConfirmation ? (
-          <Card sx={{ maxWidth: 500, mx: 'auto', mt: 4, textAlign: 'center', p: 3 }}>
-            <CardContent>
-              <CheckCircleIcon color="success" sx={{ fontSize: 60, mb: 2 }} />
-              <Typography variant="h5" gutterBottom>
-                {t('emailConfirmed')}
-              </Typography>
-            </CardContent>
-          </Card>
+          <SuccessCard>
+            <Typography variant="h5" gutterBottom>
+              {t('emailConfirmed')}
+            </Typography>
+          </SuccessCard>
         ) : (
           <Grid item container flexDirection="column" justifyContent="center" alignItems="center">
 
