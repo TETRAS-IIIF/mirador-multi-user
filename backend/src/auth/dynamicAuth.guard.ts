@@ -30,7 +30,6 @@ export class DynamicPassportGuard implements CanActivate {
     private readonly jwtService: JwtService,
   ) {}
 
-  //TODO : if we don't support onpenID but only keycloack remove this logic to only use jwt.guard and place the bearer handling into jwt.guard.
   async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
       const isPublic = this.reflector.get<boolean>(
