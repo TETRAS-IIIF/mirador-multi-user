@@ -1,6 +1,6 @@
-import { Grid } from "@mui/material";
-import { SnapShotList } from "../../features/projects/components/SnapShotList.tsx";
-import { Snapshot } from "../../features/projects/types/types.ts";
+import { Grid } from '@mui/material';
+import { SnapShotList } from '../../features/projects/components/SnapShotList.tsx';
+import { Snapshot } from '../../features/projects/types/types.ts';
 
 interface IShareLinkProps {
   itemId: number;
@@ -15,24 +15,24 @@ interface IShareLinkProps {
 }
 
 export const ShareLink = ({
-  itemId,
-  snapShots,
-  updateSnapshot,
-  handleDeleteSnapshot,
-  handleCreateSnapshot,
-}: IShareLinkProps) => {
+                            itemId,
+                            snapShots,
+                            updateSnapshot,
+                            handleDeleteSnapshot,
+                            handleCreateSnapshot,
+                          }: IShareLinkProps) => {
   return (
     <Grid
       container
       item
       spacing={2}
-      sx={{ width: "100%", padding: 0, margin: 0 }}
+      sx={{ width: '100%', padding: 0, margin: 0 }}
     >
       <Grid
         item
         container
         spacing={1}
-        sx={{ width: "100%", padding: 0, margin: 0 }}
+        sx={{ width: '100%', padding: 0, margin: 0 }}
       >
         <Grid
           container
@@ -40,9 +40,9 @@ export const ShareLink = ({
           flexDirection="row"
           alignItems="center"
           spacing={2}
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
         >
-          <Grid item sx={{ width: "100%" }}>
+          <Grid item sx={{ width: '100%' }}>
             <SnapShotList
               handleCreateSnapshot={handleCreateSnapshot}
               handleDeleteSnapshot={handleDeleteSnapshot}
