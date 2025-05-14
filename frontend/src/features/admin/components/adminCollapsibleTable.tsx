@@ -13,6 +13,7 @@ import {
 import { ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RowAdminPanel } from './RowAdminPanel.tsx';
+import { PaginationControls } from '../../../components/elements/Pagination.tsx';
 
 interface RowData {
   value: ReactNode;
@@ -42,6 +43,8 @@ export function AdminCollapsibleTable(
   }: CollapsibleTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
   const [filter, setFilter] = useState('');
   const { t } = useTranslation();
 
@@ -56,9 +59,13 @@ export function AdminCollapsibleTable(
     }
   };
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   const filteredRows = useMemo(() => {
     if (!filter) return rows;
-
+    setCurrentPage(1);
     return rows.filter((row) =>
       row.data.some((cell) =>
         String(cell.value).toLowerCase().includes(filter.toLowerCase()),
@@ -89,6 +96,12 @@ export function AdminCollapsibleTable(
     });
   }, [filteredRows, sortKey, sortDirection, columns]);
 
+  const paginatedRows = useMemo(() => {
+    const start = (currentPage - 1) * rowsPerPage;
+    return sortedRows.slice(start, start + rowsPerPage);
+  }, [sortedRows, currentPage]);
+
+  const totalPages = Math.ceil(sortedRows.length / rowsPerPage);
   return (
     <>
       <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
@@ -130,7 +143,7 @@ export function AdminCollapsibleTable(
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedRows.map((row) => (
+            {paginatedRows.map((row) => (
               <RowAdminPanel
                 key={row.id}
                 row={row}
@@ -139,6 +152,13 @@ export function AdminCollapsibleTable(
           </TableBody>
         </Table>
       </TableContainer>
+      {sortedRows.length > rowsPerPage && (
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      )}
     </>
   );
 }
