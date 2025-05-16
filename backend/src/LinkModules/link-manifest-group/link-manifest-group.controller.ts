@@ -104,7 +104,9 @@ export class LinkManifestGroupController {
       origin: manifestOrigin.UPLOAD,
       path: `${file.filename}`,
       hash: `${(req as any).generatedHash}`,
-      description: 'your manifest description',
+      description: createGroupManifestDto.description
+        ? createGroupManifestDto.description
+        : 'your manifest description',
       title: file.originalname,
       idCreator: createGroupManifestDto.idCreator,
     };
