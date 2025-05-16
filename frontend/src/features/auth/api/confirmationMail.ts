@@ -3,18 +3,18 @@ export const confirmationMail = async (token: string) => {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/email-confirmation/confirm`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ token }),
       },
     );
-    return response.status;
+    return await response.json();
   } catch (error) {
-    console.error("Network error:", error);
+    console.error('Network error:', error);
     return {
-      message: "email not confirmed",
+      message: 'email not confirmed',
       status: 500,
     };
   }

@@ -20,19 +20,14 @@ export const MailConfirmation = () => {
 
     const token = extractToken();
     if (token) {
-      const returnStatus = await confirmationMail(token);
-      let toastMessage: string;
-      if (returnStatus === 201) {
-        toastMessage = t('emailConfirmed');
+      const apiResponse = await confirmationMail(token);
+      if (apiResponse.access_token) {
+        toast.success(t('emailConfirmed'));
+        storage.setToken(apiResponse.access_token);
+        navigate('/app/my-projects');
       } else {
-        toastMessage = t('error_occurred');
-      }
-      storage.clearToken();
-      if (returnStatus === 201) {
-        toast.success(toastMessage);
-        navigate('/');
-      } else {
-        toast.error(toastMessage);
+        toast.error(t('error_occurred'));
+        storage.clearToken();
       }
     } else {
       console.error('Token not found in the URL');
@@ -41,11 +36,17 @@ export const MailConfirmation = () => {
 
   const handleCheckBox = () => {
     setChecked(!checked);
-  }
+  };
 
   return (
     <Layout title={t('mail-confirmation-title')}>
-      <Grid item container flexDirection="column" justifyContent="center" alignItems="center">
+      <Grid
+        item
+        container
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+      >
         <Grid item>
           <FormControlLabel
             required
@@ -61,7 +62,12 @@ export const MailConfirmation = () => {
           />
         </Grid>
         <Grid item>
-          <Button variant="contained" color="primary" onClick={handleConfirmMail} disabled={!checked}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleConfirmMail}
+            disabled={!checked}
+          >
             {t('confirm-mail')}
           </Button>
         </Grid>
