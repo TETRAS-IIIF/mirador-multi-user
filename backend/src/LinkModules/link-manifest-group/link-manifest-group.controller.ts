@@ -12,11 +12,9 @@ import {
   Req,
   SetMetadata,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { LinkManifestGroupService } from './link-manifest-group.service';
-import { AuthGuard } from '../../auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
@@ -57,7 +55,6 @@ export class LinkManifestGroupController {
     type: LinkManifestGroup,
     isArray: true,
   })
-  @UseGuards(AuthGuard)
   @Get('/manifests')
   async getManifestByUserId(@Req() request) {
     return this.linkManifestGroupService.findAllManifestByUserId(
@@ -72,7 +69,6 @@ export class LinkManifestGroupController {
     isArray: false,
   })
   @ApiBody({ type: CreateGroupManifestDto })
-  @UseGuards(AuthGuard)
   @Post('/manifest/upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -120,7 +116,6 @@ export class LinkManifestGroupController {
     isArray: false,
   })
   @ApiBody({ type: CreateGroupManifestDto })
-  @UseGuards(AuthGuard)
   @Post('/manifest/link')
   linkManifest(@Body() createLinkDto: CreateLinkGroupManifestDto) {
     const manifestToCreate = {
@@ -138,7 +133,6 @@ export class LinkManifestGroupController {
     isArray: false,
   })
   @ApiBody({ type: manifestCreationDto })
-  @UseGuards(AuthGuard)
   @Post('/manifest/creation')
   @UseInterceptors(MediaInterceptor)
   async createManifest(@Body() createManifestDto: manifestCreationDto) {
@@ -180,7 +174,6 @@ export class LinkManifestGroupController {
   }
 
   @ApiOperation({ summary: 'updateManifest' })
-  @UseGuards(AuthGuard)
   @Patch('/manifest/updateJson')
   async UpdateManifest(@Body() updateManifestJsonDto: UpdateManifestJsonDto) {
     return await this.linkManifestGroupService.updateManifestJson(
@@ -191,14 +184,12 @@ export class LinkManifestGroupController {
   @ApiOperation({
     summary: 'Get all group that can access a manifest with his Id',
   })
-  @UseGuards(AuthGuard)
   @Get('/manifest/:manifestId')
   async getManifestById(@Param('manifestId') manifestId: number) {
     return this.linkManifestGroupService.getAllManifestsGroup(manifestId);
   }
 
   @SetMetadata('action', ActionType.DELETE)
-  @UseGuards(AuthGuard)
   @Delete('/manifest/:manifestId')
   async deleteManifest(
     @Param('manifestId') manifestId: number,
@@ -222,7 +213,6 @@ export class LinkManifestGroupController {
   })
   @ApiBody({ type: UpdateManifestDto })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
   @Patch('manifest')
   async updateManifest(
     @Body() updateManifestDto: UpdateManifestDto,
@@ -244,7 +234,6 @@ export class LinkManifestGroupController {
   @ApiBody({ type: UpdateManifestGroupRelation })
   @SetMetadata('action', ActionType.UPDATE)
   @HttpCode(204)
-  @UseGuards(AuthGuard)
   @Patch('/relation')
   async updateManifestGroupRelation(
     @Body() updateManifestGroupRelation: UpdateManifestGroupRelation,
@@ -276,7 +265,6 @@ export class LinkManifestGroupController {
     isArray: true,
   })
   @ApiBody({ type: AddManifestToGroupDto })
-  @UseGuards(AuthGuard)
   @Post('/manifest/add')
   addManifestToGroup(@Body() addManifestToGroup: AddManifestToGroupDto) {
     return this.linkManifestGroupService.addManifestToGroup(addManifestToGroup);
@@ -284,7 +272,6 @@ export class LinkManifestGroupController {
 
   @ApiOperation({ summary: 'remove access to a manifest' })
   @SetMetadata('action', ActionType.UPDATE)
-  @UseGuards(AuthGuard)
   @Delete('/manifest/:manifestId/:groupId')
   async removeManifestGroupLink(
     @Param('manifestId') manifestId: number,
@@ -305,7 +292,6 @@ export class LinkManifestGroupController {
   }
 
   @ApiOperation({ summary: "Remove a manifest from user's list" })
-  @UseGuards(AuthGuard)
   @Delete('/remove-manifest/:manifestId')
   async removeManifestFromUser(
     @Param('manifestId') manifestId: number,

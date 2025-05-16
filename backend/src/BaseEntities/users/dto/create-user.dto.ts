@@ -10,7 +10,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   name: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   password: string;
 
   @Type(() => CreateProjectDto)
@@ -18,4 +18,10 @@ export class CreateUserDto {
   Projects: CreateProjectDto[];
 
   preferredLanguage: Language;
+
+  @IsOptional()
+  keycloakId: string;
+
+  @IsOptional()
+  isEmailConfirmed: boolean;
 }

@@ -12,6 +12,9 @@ import * as bcrypt from 'bcrypt';
 import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationService } from '../impersonation/impersonation.service';
 import { CustomLogger } from '../utils/Logger/CustomLogger.service';
+import * as jwt from 'jsonwebtoken';
+import { LinkUserGroupService } from '../LinkModules/link-user-group/link-user-group.service';
+import { Language } from '../utils/email/utils';
 
 @Injectable()
 export class AuthService {
@@ -22,6 +25,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly emailService: EmailServerService,
     private readonly impersonationService: ImpersonationService,
+    private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
 
   async signIn(
@@ -36,7 +40,7 @@ export class AuthService {
         if (!impersonation) {
           throw new UnauthorizedException('token is invalid');
         }
-        const user = await this.usersService.findOneByMail(
+        const user = await this.usersService.findOneByEmail(
           impersonation.user.mail,
         );
         if (!user) {
@@ -54,9 +58,8 @@ export class AuthService {
         };
       }
 
-      const user = await this.usersService.findOneByMail(mail);
+      const user = await this.usersService.findOneByEmail(mail);
 
-      // No user found with this email
       if (!user) {
         throw new UnauthorizedException();
       }
@@ -74,6 +77,7 @@ export class AuthService {
         user: user.name,
         isEmailConfirmed: user.isEmailConfirmed,
         termsValidatedAt: user.termsValidatedAt,
+        authSource: 'jwt',
       };
 
       return {
@@ -95,7 +99,7 @@ export class AuthService {
 
   async forgotPassword(email: string): Promise<void> {
     try {
-      const user = await this.usersService.findOneByMail(email);
+      const user = await this.usersService.findOneByEmail(email);
       const { mail, name } = user;
       if (!user) {
         throw new NotFoundException(`No user found for email: ${email}`);
@@ -151,7 +155,7 @@ export class AuthService {
     try {
       const decodeData = await this.decodeConfirmationToken(token);
 
-      const user = await this.usersService.findOneByMail(decodeData.mail);
+      const user = await this.usersService.findOneByEmail(decodeData.mail);
       if (!user) {
         throw new NotFoundException(
           `No user found for email: ${decodeData.mail}`,
@@ -180,12 +184,14 @@ export class AuthService {
       if (!user) {
         throw new UnauthorizedException('User not found');
       }
+
       return {
         id: user.id,
         mail: user.mail,
         name: user.name,
         _isAdmin: user._isAdmin,
         preferredLanguage: user.preferredLanguage,
+        keycloakId: user.keycloakId,
       };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
@@ -194,5 +200,141 @@ export class AuthService {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error.message);
     }
+  }
+
+  async exchangeKeycloakCode(code: string, redirectUri: string) {
+    const tokenResult = await this.fetchKeycloakToken(code, redirectUri);
+    const payload = this.decodeAndValidateToken(tokenResult.id_token);
+
+    let user = await this.reconcileUser(payload);
+
+    if (!user) {
+      user = await this.createUserIfNeeded(payload);
+      await this.logoutFromKeycloak(tokenResult.refresh_token);
+    }
+
+    const confirmationLink = await this.maybeSendConfirmationLink(user);
+
+    const internalToken = await this.buildInternalToken(user);
+
+    return {
+      access_token: internalToken,
+      expires_in: tokenResult.expires_in,
+      redirectUrl: payload.redirectUrl,
+      urlConfirmationLink: confirmationLink,
+    };
+  }
+
+  private async fetchKeycloakToken(code: string, redirectUri: string) {
+    const response = await fetch(
+      `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          grant_type: 'authorization_code',
+          code,
+          redirect_uri: redirectUri,
+          client_id: process.env.KEYCLOAK_CLIENT_ID!,
+          client_secret: process.env.KEYCLOACK_CLIENT_SECRET!,
+        }),
+      },
+    );
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error('Token exchange failed:', result);
+      throw new UnauthorizedException('Token exchange failed');
+    }
+
+    return result;
+  }
+
+  // 2. Decode and validate ID token
+  private decodeAndValidateToken(idToken: string) {
+    const payload = jwt.decode(idToken) as any;
+
+    if (!payload?.email) {
+      throw new UnauthorizedException('Email not found in Keycloak token');
+    }
+
+    return payload;
+  }
+
+  private async reconcileUser(payload: any) {
+    const userByEmail = await this.usersService.findOneByEmail(payload.email);
+    const userByKeycloakId = await this.usersService.findOneByKeycloackId(
+      payload.sub,
+    );
+
+    if (userByEmail && !userByKeycloakId) {
+      return await this.usersService.updateUser(userByEmail.id, {
+        keycloakId: payload.sub,
+      });
+    }
+
+    if (userByEmail && userByKeycloakId?.id !== userByEmail.id) {
+      await this.usersService.updateUser(userByEmail.id, {
+        mail: userByKeycloakId.mail,
+      });
+    }
+
+    return userByEmail ?? userByKeycloakId ?? null;
+  }
+
+  private async createUserIfNeeded(payload: any) {
+    const newUser = await this.linkUserGroupService.createUser({
+      mail: payload.email,
+      name: `${payload.given_name || ''} ${payload.family_name || ''}`.trim(),
+      keycloakId: payload.sub,
+      isEmailConfirmed: payload.email_verified ?? true,
+      Projects: [],
+      preferredLanguage: Language.ENGLISH,
+      password: null,
+    });
+
+    return newUser;
+  }
+
+  private async logoutFromKeycloak(refreshToken: string) {
+    await fetch(
+      `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/logout`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: process.env.KEYCLOAK_CLIENT_ID!,
+          client_secret: process.env.KEYCLOACK_CLIENT_SECRET!,
+          refresh_token: refreshToken,
+        }),
+      },
+    );
+  }
+
+  private async maybeSendConfirmationLink(
+    user: any,
+  ): Promise<string | undefined> {
+    if (!user.termsValidatedAt) {
+      return await this.linkUserGroupService.sendConfirmationLink(
+        user.mail,
+        user.preferredLanguage,
+      );
+    }
+    return undefined;
+  }
+
+  private async buildInternalToken(user: any) {
+    return await this.jwtService.signAsync({
+      sub: user.id,
+      email: user.mail,
+      authSource: 'oidc',
+      termsValidatedAt: user.termsValidatedAt,
+      isEmailConfirmed: user.isEmailConfirmed,
+    });
   }
 }

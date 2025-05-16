@@ -5,24 +5,23 @@ import {
   Post,
   Req,
   UnauthorizedException,
-  UseGuards,
 } from '@nestjs/common';
 import { SettingsService } from './setting.service';
 import { SetSettingDto } from './dto/setSetting.dto';
-import { AuthGuard } from '../../auth/auth.guard';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { Public } from '../../auth/dynamicAuth.guard';
 
 @ApiBearerAuth()
 @Controller('settings')
 export class SettingsController {
   constructor(private readonly settingsService: SettingsService) {}
 
+  @Public()
   @Get()
   async getSetting() {
     return await this.settingsService.getAll();
   }
 
-  @UseGuards(AuthGuard)
   @Post()
   async setSetting(@Body() body: SetSettingDto, @Req() request) {
     const isAdmin = await this.settingsService.isAdmin(request.user.sub);
@@ -34,7 +33,6 @@ export class SettingsController {
     }
   }
 
-  @UseGuards(AuthGuard)
   @Get('logs')
   async getLogs(@Req() request) {
     const isAdmin = await this.settingsService.isAdmin(request.user.sub);

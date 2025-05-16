@@ -1,5 +1,5 @@
-import storage from "./storage.ts";
-import { getUser } from "../features/auth/api/getUser.ts";
+import storage from './storage.ts';
+import { getUser } from '../features/auth/api/getUser.ts';
 import {
   login,
   LoginCredentialsDTO,
@@ -7,9 +7,9 @@ import {
   RegisterCredentialsDTO,
   User,
   UserResponse,
-} from "../features/auth/export.ts";
-import { configureAuth } from "react-query-auth";
-import { CircularProgress, Grid } from "@mui/material";
+} from '../features/auth/export.ts';
+import { configureAuth } from 'react-query-auth';
+import { CircularProgress, Grid } from '@mui/material';
 
 export async function handleTokenResponse(data: UserResponse) {
   const { access_token, user } = data;
@@ -19,8 +19,7 @@ export async function handleTokenResponse(data: UserResponse) {
 
 async function loadUser(): Promise<User | null> {
   if (storage.getToken()) {
-    const data = await getUser();
-    return data;
+    return await getUser();
   }
   return null;
 }
@@ -32,8 +31,7 @@ async function loginFn(data: LoginCredentialsDTO) {
 
 async function registerFn(data: RegisterCredentialsDTO) {
   const response = await register(data);
-  const user = await handleTokenResponse(response);
-  return user;
+  return await handleTokenResponse(response);
 }
 
 async function logoutFn() {
