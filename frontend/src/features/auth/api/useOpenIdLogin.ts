@@ -22,16 +22,20 @@ const openIdLogin = async ({ code, redirectUri }: OpenIdLoginParams) => {
     if (!response.ok) {
       throw new Error(data.message || 'OpenID login failed');
     }
+    console.log('data :', data);
+    if (data.redirectUrl) {
+      return window.location.assign(data.redirectUrl);
+    }
     if (data.urlConfirmationLink) {
       return window.location.assign(data.urlConfirmationLink);
     }
     storage.setToken(data.access_token);
-    return data
+    return data;
   } catch (err) {
     console.error('❌ OpenID token exchange failed', err);
     throw err;
   }
-}
+};
 
 export const useOpenIdLogin = () =>
   useMutation({

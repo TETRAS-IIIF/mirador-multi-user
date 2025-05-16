@@ -203,6 +203,29 @@ export class AuthService {
   }
 
   async exchangeKeycloakCode(code: string, redirectUri: string) {
+    const tokenResult = await this.fetchKeycloakToken(code, redirectUri);
+    const payload = this.decodeAndValidateToken(tokenResult.id_token);
+
+    let user = await this.reconcileUser(payload);
+
+    if (!user) {
+      user = await this.createUserIfNeeded(payload);
+      await this.logoutFromKeycloak(tokenResult.refresh_token);
+    }
+
+    const confirmationLink = await this.maybeSendConfirmationLink(user);
+
+    const internalToken = await this.buildInternalToken(user);
+
+    return {
+      access_token: internalToken,
+      expires_in: tokenResult.expires_in,
+      redirectUrl: payload.redirectUrl,
+      urlConfirmationLink: confirmationLink,
+    };
+  }
+
+  private async fetchKeycloakToken(code: string, redirectUri: string) {
     const response = await fetch(
       `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/token`,
       {
@@ -215,65 +238,103 @@ export class AuthService {
           code,
           redirect_uri: redirectUri,
           client_id: process.env.KEYCLOAK_CLIENT_ID!,
-          client_secret: process.env.KEYCLOACK_CLIENT_SECRET,
+          client_secret: process.env.KEYCLOACK_CLIENT_SECRET!,
         }),
       },
     );
 
     const result = await response.json();
+
     if (!response.ok) {
       console.error('Token exchange failed:', result);
       throw new UnauthorizedException('Token exchange failed');
     }
-    const { id_token } = result;
 
-    const payload = jwt.decode(id_token) as any;
+    return result;
+  }
+
+  // 2. Decode and validate ID token
+  private decodeAndValidateToken(idToken: string) {
+    const payload = jwt.decode(idToken) as any;
 
     if (!payload?.email) {
       throw new UnauthorizedException('Email not found in Keycloak token');
     }
-    let user = await this.usersService.findOneByEmail(payload.email);
-    let keycloack_user = await this.usersService.findOneByKeycloackId(
+
+    return payload;
+  }
+
+  private async reconcileUser(payload: any) {
+    const userByEmail = await this.usersService.findOneByEmail(payload.email);
+    const userByKeycloakId = await this.usersService.findOneByKeycloackId(
       payload.sub,
     );
-    if (user && !keycloack_user) {
-      const userWithKeycloackId = await this.usersService.updateUser(user.id, {
+
+    if (userByEmail && !userByKeycloakId) {
+      return await this.usersService.updateUser(userByEmail.id, {
         keycloakId: payload.sub,
       });
-      keycloack_user = userWithKeycloackId;
-    }
-    if (user && keycloack_user.id !== user.id) {
-      await this.usersService.updateUser(user.id, {
-        mail: keycloack_user.mail,
-      });
-    }
-    let savedUser;
-    if (!user) {
-      savedUser = await this.linkUserGroupService.createUser({
-        mail: payload.email,
-        name: `${payload.given_name || ''} ${payload.family_name || ''}`.trim(),
-        keycloakId: payload.sub,
-        isEmailConfirmed: payload.email_verified ?? true,
-        Projects: [],
-        preferredLanguage: Language.ENGLISH,
-        password: null,
-      });
-      user = savedUser;
     }
 
-    const internalToken = await this.jwtService.signAsync({
+    if (userByEmail && userByKeycloakId?.id !== userByEmail.id) {
+      await this.usersService.updateUser(userByEmail.id, {
+        mail: userByKeycloakId.mail,
+      });
+    }
+
+    return userByEmail ?? userByKeycloakId ?? null;
+  }
+
+  private async createUserIfNeeded(payload: any) {
+    const newUser = await this.linkUserGroupService.createUser({
+      mail: payload.email,
+      name: `${payload.given_name || ''} ${payload.family_name || ''}`.trim(),
+      keycloakId: payload.sub,
+      isEmailConfirmed: payload.email_verified ?? true,
+      Projects: [],
+      preferredLanguage: Language.ENGLISH,
+      password: null,
+    });
+
+    return newUser;
+  }
+
+  private async logoutFromKeycloak(refreshToken: string) {
+    await fetch(
+      `${process.env.KEYCLOAK_ISSUER}/protocol/openid-connect/logout`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          client_id: process.env.KEYCLOAK_CLIENT_ID!,
+          client_secret: process.env.KEYCLOACK_CLIENT_SECRET!,
+          refresh_token: refreshToken,
+        }),
+      },
+    );
+  }
+
+  private async maybeSendConfirmationLink(
+    user: any,
+  ): Promise<string | undefined> {
+    if (!user.termsValidatedAt) {
+      return await this.linkUserGroupService.sendConfirmationLink(
+        user.mail,
+        user.preferredLanguage,
+      );
+    }
+    return undefined;
+  }
+
+  private async buildInternalToken(user: any) {
+    return await this.jwtService.signAsync({
       sub: user.id,
       email: user.mail,
       authSource: 'oidc',
       termsValidatedAt: user.termsValidatedAt,
       isEmailConfirmed: user.isEmailConfirmed,
     });
-    return {
-      access_token: internalToken,
-      expires_in: result.expires_in,
-      urlConfirmationLink: savedUser?.confirmationLink
-        ? savedUser.confirmationLink
-        : null,
-    };
   }
 }

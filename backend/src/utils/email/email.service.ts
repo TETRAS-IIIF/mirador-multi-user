@@ -196,6 +196,7 @@ If you're seeing this, then your mail service is working properly ✅
         text: plainText,
         body: renderedTemplate,
       });
+      console.log(url);
       return url;
     } catch (error) {
       this.logger.error(error.message, error.stack);

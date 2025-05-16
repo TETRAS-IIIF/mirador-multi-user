@@ -24,6 +24,7 @@ export const OpenIdConnect = () => {
         await mutateAsync({ code, redirectUri });
         navigate('/app/my-projects');
       } catch (err) {
+        console.log(err);
         navigate('/login');
       }
     };
