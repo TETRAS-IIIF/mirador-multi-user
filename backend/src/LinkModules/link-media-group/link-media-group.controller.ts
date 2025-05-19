@@ -86,12 +86,16 @@ export class LinkMediaGroupController {
     if (file.size > maxUploadSize) {
       throw new BadRequestException('File size exceeds the maximum allowed.');
     }
+    console.log('CreateMediaDto.description');
+    console.log(CreateMediaDto.description);
     const userGroup = JSON.parse(CreateMediaDto.user_group);
     // TODO TRAD 'your media description'
     const mediaToCreate = {
       ...CreateMediaDto,
       title: file.originalname,
-      description: 'your media description',
+      description: CreateMediaDto.description
+        ? CreateMediaDto.description
+        : 'your media description',
       user_group: userGroup,
       path: `${file.filename}`,
       hash: req.generatedHash,
