@@ -1,13 +1,11 @@
 # Mirador multi user 
 
-Mirador Multi user is a project that aims to create a multi-user environment for the Mirador 4 viewer.
+Mirador Multi user is a project that aims to create a multi-user environment for the Mirador 4 viewer. It is the core component of the tool [Arvest](https://arvest.app/en).
 
 # Demo 
+[https://workspace.arvest.app/](https://workspace.arvest.app/)
 
-[https://mirador-multi-user.tetras-libre.fr/](https://mirador-multi-user.tetras-libre.fr/).
-Contributions, issues report and feedback are welcomed.
-
-If you want custom demo (like specific Mirador plugins or config) please contact us at mirador-multi-user@tetras-libre.fr
+Contributions, issues report and feedback are welcome.
 
 # Features
 
@@ -44,7 +42,7 @@ Now you can access :
 
 - ## Installation PROD (Docker)
 
-- `git clone git@github.com:TETRAS-IIIF/mirador-multi-user.git`
+- `git clone git@github.com:ARVEST-APP/mirador-multi-user.git`
 - `cd mirador-multi-user`
 - `cp .env.prod.sample .env`. 
 
@@ -60,11 +58,10 @@ In an other terminal, run following commands to generate the database
 - `docker-compose exec backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
 
 
-## Wiki 
+## Docs 
 
-https://github.com/TETRAS-IIIF/mirador-multi-user/wiki 
+[https://github.com/ARVEST-APP/documentation](https://github.com/ARVEST-APP/documentation)
 
 ## Maintainers
 
-- Tetras Libre SARL (https://tetraslibre.com)
-- mirador-multi-user@tetras-libre.fr
+- contact@arvest.app
