@@ -94,10 +94,11 @@ export class LinkManifestGroupService {
       const manifestsForGroup = [];
       const manifest = await this.manifestService.findOne(manifestId);
       const group = await this.groupService.findOne(userGroupId);
+      if (!group) {
+        throw new NotFoundException(`group with id ${group.id} not found`);
+      }
       if (!manifest) {
-        throw new InternalServerErrorException(
-          `Project with id ${manifestId} not found`,
-        );
+        throw new NotFoundException(`Project with id ${manifestId} not found`);
       }
       await this.create({
         rights: addManifestToGroupDto.rights
@@ -112,6 +113,9 @@ export class LinkManifestGroupService {
       return manifestsForGroup;
     } catch (error) {
       this.logger.error(error.message, error.stack);
+      if (error instanceof NotFoundException) {
+        return error;
+      }
       throw new InternalServerErrorException(
         `An Error occurred while adding manifests to userGroup with id ${userGroupId} : ${error.message}`,
       );
