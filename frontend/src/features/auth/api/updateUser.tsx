@@ -7,16 +7,18 @@ export const updateUser = async (updateUserDto: UpdateUserDto) => {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/users/update`,
       {
-        method: "PATCH",
+        method: 'PATCH',
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(updateUserDto),
       },
     );
     if (!response.ok) {
-      throw new Error("Failed to update user");
+      const error = new Error('Failed to update user');
+      (error as any).status = response.status;
+      throw error;
     }
     return await response.json();
   } catch (error) {
