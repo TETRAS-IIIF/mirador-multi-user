@@ -48,15 +48,20 @@ export class UsersService {
       }
       return await this.userRepository.update(userId, dto);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
+
       if (error instanceof UnauthorizedException) {
-        this.logger.error(error.message, error.stack);
-        throw new InternalServerErrorException(
-          'Someone try to promote a user to Admin',
+        throw error;
+      }
+
+      if (error.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException(
+          'Duplicate entry. The value already exists.',
         );
       }
-      this.logger.error(error.message, error.stack);
-      throw new UnauthorizedException(
-        'An error occurred while updating the user',
+
+      throw new InternalServerErrorException(
+        'An unexpected error occurred while updating the user.',
       );
     }
   }
