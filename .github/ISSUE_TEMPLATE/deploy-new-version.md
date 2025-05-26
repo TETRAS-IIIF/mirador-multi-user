@@ -7,66 +7,127 @@ assignees: ''
 
 ---
 
-body:
-  - type: markdown
-    attributes:
-      value: |
-        ## 🚀 Deploy on Server
+## 🚀 Deploy MMU on Server
 
-        Use this template to track and document the deployment of software to a specific server.
+Use this template to track and document the deployment
 
-  - type: input
-    id: old-version
-    attributes:
-      label: Current commit id
-      description: The commit id of previous version
-      placeholder: 
-    validations:
-      required: true
+---
 
-  - type: input
-    id: version
-    attributes:
-      label: Commit id deployed
-      description: The commit id of deployed version
-      placeholder:
-    validations:
-      required: true
+### 🔁 Current Commit ID
 
-  - type: input
-    id: instance
-    attributes:
-      label: Instance
-      description: Instance and server name 
-      placeholder: Houston / Larus
-    validations:
-      required: true
+_The commit ID of the previous version_
 
-  - type: textarea
-    id: steps
-    attributes:
-      label: Deployment Steps
-      description: Describe the steps to deploy the application
-      placeholder: |
-        1. SSH into the server
-        2. Pull latest code from Git
-        3. Stop the stack 
-        4. Build new container
-        5. Relaunch
-        6. Check .env variable (all needed are set)
-        7. Migration
-    validations:
-      required: true
+```
+<insert previous commit ID>
+```
 
-  - type: textarea
-    id: post_deploy
-    attributes:
-      label: Post-deployment Checks
-      description: Steps to verify deployment success
-      placeholder: |
-        - [ ] Application is running
-        - [ ] Logs are clean
-        - [ ] Functionality tested :
-        - [ ] TODO include https://github.com/TETRAS-IIIF/mirador-multi-user/issues/322
-    validations:
-      required: true
+---
+
+### ✅ Commit ID Deployed
+
+_The commit ID of the deployed version_
+
+```
+<insert new commit ID>
+```
+
+---
+
+### 🖥️ Instance
+
+_Instance and server name (e.g., Houston / Larus)_
+
+```
+<insert instance/server name>
+```
+
+---
+
+### 📦 Deployment Steps
+
+```
+1. SSH into the server  
+2. Pull latest code from Git  
+3. Stop the stack  
+4. Build new container  
+5. Relaunch  
+6. Check `.env` variables (all needed are set)  
+7. Run migrations  
+```
+
+---
+
+### ✅ Post-deployment Checks
+
+_Steps to verify deployment success:_
+
+- [ ] Application is running  
+- [ ] Logs are clean  
+
+# Functionality tested  
+## Account 
+- [ ] Create account
+- [ ] Valid mail
+- [ ] Use Forgot password
+- [ ] Change password
+- [ ] Connect with new password
+- [ ] Go to settings
+- [ ] Change name
+- [ ] Change password
+- [ ] Change Mail
+
+## Project
+- [ ] Create a project
+- [ ] Change name , created date, thumbnail and description of this project
+- [ ] Add a user to the project
+- [ ] Change right of the user
+- [ ] Remove user from project
+- [ ] Set Metadata
+- [ ] Duplicate Project
+- [ ] Delete Project
+- [ ] Filter projects
+- [ ] Generate a snapShot
+- [ ] share snapShot
+
+## Manifest 
+- [ ] Create a manifest
+- [ ] Change name , created date, thumbnail and description of this manifest
+- [ ] Add a user to the manifest
+- [ ] Change right of the user
+- [ ] Remove user from manifest
+- [ ] Set Metadata
+- [ ] Duplicate manifest
+- [ ] Delete manifest
+- [ ] Filter manifest
+- [ ] Upload manifest
+- [ ] Link manifest 
+
+### Create Manifest
+
+- Add media video and images
+- set thumbnail
+- change name
+
+### Advances edit mode 
+
+- Change some field in advanced edit
+
+## Media
+- [ ] Upload media
+- [ ] Link media 
+- [ ] Change name , created date, thumbnail and description of this media
+- [ ] Add a user to the media
+- [ ] Change right of the user
+- [ ] Remove user from media
+- [ ] Set Metadata
+- [ ] Duplicate media
+- [ ] Delete media
+- [ ] Filter media
+
+## Group 
+
+- [ ] Create a group
+- [ ] Change name , created date, thumbnail and description of this group
+- [ ] Add a user to the group
+- [ ] Change right of the user
+- [ ] Remove user from group
