@@ -31,6 +31,8 @@ export const getSettingValue = (key: SettingKeys, settings: Settings | undefined
   );
 };
 
+// Note : you need to update also constant in backend/src/auth/utils.ts
+export const PASSWORD_MINIMUM_LENGTH = 16;
 
 export enum SettingKeys {
   ALLOW_NEW_USER = 'ALLOW_NEW_USER',
