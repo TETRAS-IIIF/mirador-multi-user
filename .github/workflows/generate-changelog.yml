@@ -3,25 +3,23 @@ name: Generate Changelog
 on:
   push:
     tags:
-      - 'v*'  # trigger on new version tags
+      - 'v*'  # runs only on new version tags
 
 jobs:
   changelog:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install git-cliff
-        run: |
-          curl -sSL https://github.com/orhun/git-cliff/archive/refs/tags/v2.8.0.tar.gz | tar -xz
-          sudo mv git-cliff-2.8.0 /usr/local/bin/
+      - name: Generate changelog with git-cliff
+        uses: orhun/git-cliff-action@v2
+        with:
+          config: ./cliff.toml
+          output: ./CHANGELOG.md
 
-      - name: Generate changelog
-        run: git-cliff -o CHANGELOG.md
-
-      - name: Commit changelog
+      - name: Commit and push changelog
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
@@ -30,4 +28,3 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
