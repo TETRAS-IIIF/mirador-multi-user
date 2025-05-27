@@ -10,20 +10,26 @@ on:
 
 jobs:
   changelog:
+    name: Generate changelog
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required to get tags
+          fetch-depth: 0
 
-      - name: Generate changelog
-        uses: orhun/git-cliff-action@v2
+      - name: Generate a changelog
+        uses: orhun/git-cliff-action@v4
+        id: git-cliff
         with:
-          config: ./cliff.toml
-          output: ./CHANGELOG.md
+          config: cliff.toml
+          args: --verbose
+        env:
+          OUTPUT: CHANGELOG.md
 
+      - name: Print the changelog
+        run: cat "${{ steps.git-cliff.outputs.changelog }}"
+        
       - name: Commit and push changelog to main
         run: |
           git config user.name "github-actions"
