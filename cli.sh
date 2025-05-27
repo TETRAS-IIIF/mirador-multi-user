@@ -76,39 +76,43 @@ case $action in
         $cmdlogs backend
         ;;
     "changelog")
-         # Extract only new commits not already in CHANGELOG.md
-         commits=$(git log --date=short --pretty=format:"%ad|%s|%h" | sort -r)
+        if [[ $(git rev-parse --abbrev-ref HEAD) == "merge-arvest-and-update-deps" ]]; then
+          # Extract only new commits not already in CHANGELOG.md
+           commits=$(git log --date=short --pretty=format:"%ad|%s|%h" | sort -r)
 
-         awk -F'|' -v changelog="CHANGELOG.md" '
-         BEGIN {
-           current = ""
-           while ((getline line < changelog) > 0) {
-             if (index(line, "(") && index(line, ")")) {
-               split(line, parts, "(")
-               split(parts[2], hashPart, ")")
-               hash = hashPart[1]
-               if (length(hash) >= 7) {
-                 existing[hash] = 1
+           awk -F'|' -v changelog="CHANGELOG.md" '
+           BEGIN {
+             current = ""
+             while ((getline line < changelog) > 0) {
+               if (index(line, "(") && index(line, ")")) {
+                 split(line, parts, "(")
+                 split(parts[2], hashPart, ")")
+                 hash = hashPart[1]
+                 if (length(hash) >= 7) {
+                   existing[hash] = 1
+                 }
                }
              }
+             print "# New Commits"
            }
-           print "# New Commits"
-         }
-         {
-           hash = $3
-           if (!(hash in existing)) {
-             if ($1 != current) {
-               current = $1
-               print "\n## " current
+           {
+             hash = $3
+             if (!(hash in existing)) {
+               if ($1 != current) {
+                 current = $1
+                 print "\n## " current
+               }
+               print "- " $2 " (" hash ")"
              }
-             print "- " $2 " (" hash ")"
-           }
-         }' <<< "$commits" > CHANGELOG.tmp
+           }' <<< "$commits" > CHANGELOG.tmp
 
-         # Prepend to the existing changelog
-         cat CHANGELOG.md >> CHANGELOG.tmp
-         mv CHANGELOG.tmp CHANGELOG.md
-
+           # Prepend to the existing changelog
+           cat CHANGELOG.md >> CHANGELOG.tmp
+           mv CHANGELOG.tmp CHANGELOG.md
+           echo "Changelog updated."
+        else
+          echo "Not on main, skipping changelog update."
+        fi
         ;;
     "create_migration")
         $cmd_backend npm run typeorm:generate-migration --name="$1"
