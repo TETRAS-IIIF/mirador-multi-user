@@ -1,6 +1,6 @@
 # Mirador multi user
 
-Mirador Multi user is a project that aims to create a multi-user environment for the Mirador 4 viewer.
+Mirador Multi user is a project that aims to create a multi-user environment for the Mirador 4 viewer. It is the core component of the tool [Arvest](https://arvest.app/en).
 
 Forked from original work of https://github.com/ARVEST-APP/mirador-multi-user 
 
@@ -34,7 +34,7 @@ mirador-multi-user@tetras-libre.fr
 - `cd ..`
 - `docker-compose up --build`
 
-In an other terminal, run following commands to generate the database
+In another terminal, run following commands to generate the database
 
 - `docker-compose exec backend npm run typeorm:generate-migration --name=db-init`
 - `docker-compose exec backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
@@ -66,7 +66,7 @@ In an other terminal, run following commands to generate the database
 
 ## Wiki
 
-https://github.com/TETRAS-IIIF/mirador-multi-user/wiki
+https://github.com/TETRAS-IIIF/mirador-multi-user/wiki 
 
 ## Maintainers
 
