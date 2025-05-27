@@ -2,6 +2,7 @@ name: Generate Changelog
 
 permissions:
   contents: write  # Required to push changes to the repository
+  workflows: write
 
 on:
   push:
