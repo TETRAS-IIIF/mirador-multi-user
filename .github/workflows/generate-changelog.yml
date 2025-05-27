@@ -35,7 +35,6 @@ jobs:
           git pull origin main
 
           # Copy generated changelog from tag context to main branch
-          cp ../CHANGELOG.md ./CHANGELOG.md
 
           git add CHANGELOG.md
           git diff --cached --quiet || git commit -m "docs: update changelog for ${{ github.ref_name }}"
