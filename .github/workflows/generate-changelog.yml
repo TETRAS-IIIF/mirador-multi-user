@@ -5,8 +5,8 @@ permissions:
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 
 jobs:
   changelog:
@@ -28,13 +28,6 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-
-          # Switch to main (your default dev branch)
-          git fetch origin main
-          git checkout main
-          git pull origin main
-
-          # Copy generated changelog from tag context to main branch
 
           git add CHANGELOG.md
           git diff --cached --quiet || git commit -m "docs: update changelog for ${{ github.ref_name }}"
