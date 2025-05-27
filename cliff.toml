@@ -2,14 +2,26 @@
 tag_pattern = ".*"
 sort_commits = "date"
 body = true
-filter_unconventional = false
 parse_commits = true
+filter_unconventional = false  # Required to include non-conforming commits
 
 [changelog]
 header = "# Changelog"
 trim = true
 
 [changelog.commit_types]
+# Standard types (used if you adopt Conventional Commits later)
 feat = { name = "Features", symbol = "✨" }
 fix = { name = "Bug Fixes", symbol = "🐛" }
+docs = { name = "Documentation", symbol = "📝" }
+style = { name = "Style", symbol = "🎨" }
+refactor = { name = "Refactoring", symbol = "🔨" }
+perf = { name = "Performance", symbol = "⚡" }
+test = { name = "Tests", symbol = "✅" }
+chore = { name = "Chores", symbol = "🧹" }
+ci = { name = "CI", symbol = "👷" }
+build = { name = "Build System", symbol = "🏗" }
+revert = { name = "Reverts", symbol = "⏪" }
+
+# Catch-all for anything unrecognized
 _ = { name = "Other", symbol = "🔧" }
