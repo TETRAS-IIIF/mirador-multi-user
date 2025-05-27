@@ -69,5 +69,8 @@
     "mirador-mltools-plugin-mmu": {
       "mirador": "npm:mirador-video@^1.0.28"
     }
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.9.5"
   }
 }
