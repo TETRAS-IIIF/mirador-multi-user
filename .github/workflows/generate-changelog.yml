@@ -1,0 +1,36 @@
+name: Generate Changelog
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - merge-arvest-and-update-deps
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required to get tags
+
+      - name: Generate changelog
+        uses: orhun/git-cliff-action@v2
+        with:
+          config: ./cliff.toml
+          output: ./CHANGELOG.md
+
+      - name: Commit and push changelog to main
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add CHANGELOG.md
+          git diff --cached --quiet || git commit -m "docs: update changelog for ${{ github.ref_name }}"
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
