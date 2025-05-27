@@ -31,6 +31,6 @@ jobs:
 
           git add CHANGELOG.md
           git diff --cached --quiet || git commit -m "docs: update changelog for ${{ github.ref_name }}"
-          git push origin main
+          git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
