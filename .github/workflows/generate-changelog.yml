@@ -1,5 +1,8 @@
 name: Generate Changelog
 
+permissions:
+  contents: write  # Required to push changes to the repository
+
 on:
   push:
     tags:
@@ -26,6 +29,6 @@ jobs:
           git checkout -b temp-branch # Create a temporary branch
           git add *
           git commit -m "docs: update changelog for ${{ github.ref_name }}"
-          git push origin temp-branch:main # Push changes to the main branch
+          git push origin temp-branch:changelog # Push changes to the main branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
