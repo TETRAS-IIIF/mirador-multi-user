@@ -1,5 +1,5 @@
 [cliff]
-tag_pattern = ".*"
+tag_pattern = "v*"
 sort_commits = "date"
 body = true
 parse_commits = true
