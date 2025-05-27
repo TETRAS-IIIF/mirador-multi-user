@@ -23,8 +23,9 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+          git checkout -b temp-branch # Create a temporary branch
           git add *
           git commit -m "docs: update changelog for ${{ github.ref_name }}"
-          git push
+          git push origin temp-branch:main # Push changes to the main branch
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
