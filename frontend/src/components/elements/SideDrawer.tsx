@@ -1,13 +1,27 @@
-import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Dispatch,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { updateProject } from '../../features/projects/api/Project/updateProject.ts';
-import { CreateProjectDto, Project } from '../../features/projects/types/types.ts';
+import {
+  CreateProjectDto,
+  Project,
+} from '../../features/projects/types/types.ts';
 import IState from '../../features/mirador/interface/IState.ts';
 import { getUserAllProjects } from '../../features/projects/api/Project/getUserAllProjects.ts';
 import { createProject } from '../../features/projects/api/Project/createProject.ts';
 import { User } from '../../features/auth/types/types.ts';
 import { Media } from '../../features/media/types/types.ts';
 import { getUserPersonalGroup } from '../../features/projects/api/group/getUserPersonalGroup.ts';
-import { ItemsRights, UserGroup, UserGroupTypes } from '../../features/user-group/types/types.ts';
+import {
+  ItemsRights,
+  UserGroup,
+  UserGroupTypes,
+} from '../../features/user-group/types/types.ts';
 import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
 import { handleLock } from '../../features/projects/api/Project/handleLock.ts';
 import { useTranslation } from 'react-i18next';
@@ -38,13 +52,13 @@ interface MiradorViewerHandle {
 }
 
 export const SideDrawer = ({
-                             user,
-                             handleDisconnect,
-                             selectedProjectId,
-                             setSelectedProjectId,
-                             setViewer,
-                             viewer,
-                           }: ISideDrawerProps) => {
+  user,
+  handleDisconnect,
+  selectedProjectId,
+  setSelectedProjectId,
+  setViewer,
+  viewer,
+}: ISideDrawerProps) => {
   const [selectedContent, setSelectedContent] = useState(MENU_ELEMENT.PROJECTS);
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [showSignOutModal, setShowSignOutModal] = useState(false);
@@ -185,7 +199,24 @@ export const SideDrawer = ({
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { rights, share, shared, ...projectWithoutRights } =
           projectToUpdate;
-        await updateProject({ project: projectWithoutRights });
+        const updatedResponse = await updateProject({
+          project: projectWithoutRights,
+        });
+        if (updatedResponse) {
+          toast.success(
+            <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+              {t('projectSaved', { projectTitle: updatedResponse.title })}
+            </div>,
+          );
+        } else {
+          toast.error(
+            <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+              {t('projectSavedFailed', {
+                projectTitle: projectToUpdate.title,
+              })}
+            </div>,
+          );
+        }
       }
     } else {
       const project: CreateProjectDto = {

@@ -1,5 +1,20 @@
-import { Button, Grid, ImageList, styled, Tab, Tabs, Tooltip, Typography } from '@mui/material';
-import { ChangeEvent, SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import {
+  Button,
+  Grid,
+  ImageList,
+  styled,
+  Tab,
+  Tabs,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import {
+  ChangeEvent,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import toast from 'react-hot-toast';
 import { Media, MediaTypes } from '../types/types.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
@@ -13,7 +28,7 @@ import { PaginationControls } from '../../../components/elements/Pagination.tsx'
 import { a11yProps } from '../../../components/elements/SideBar/allyProps.tsx';
 import { useTranslation } from 'react-i18next';
 import { useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
-import { ImageBox } from './ImageBox.tsx';
+import { MediaImageBox } from './MediaImageBox.tsx';
 import { DrawerLinkMedia } from './DrawerLinkMedia.tsx';
 
 const VisuallyHiddenInput = styled('input')({
@@ -46,12 +61,12 @@ const MEDIA_TYPES_TABS = {
 };
 
 export const ContentSidePanelMedia = ({
-                                        medias,
-                                        userPersonalGroup,
-                                        user,
-                                        fetchMediaForUser,
-                                        open,
-                                      }: PopUpMediaProps) => {
+  medias,
+  userPersonalGroup,
+  user,
+  fetchMediaForUser,
+  open,
+}: PopUpMediaProps) => {
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [mediaTabShown, setMediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
@@ -212,7 +227,7 @@ export const ContentSidePanelMedia = ({
           rowHeight={200}
         >
           {currentPageData.map((media) => (
-            <ImageBox
+            <MediaImageBox
               media={media}
               caddyUrl={caddyUrl}
               handleCopyToClipBoard={handleCopyToClipBoard}

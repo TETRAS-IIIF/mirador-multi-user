@@ -61,6 +61,7 @@ import {
 import { TagMaker } from './TagsFactory/TagMaker.tsx';
 
 import { SnapshotFactory } from './SnapshotFactory.tsx';
+import { isValidUrl } from '../../utils/utils.ts';
 
 interface ModalItemProps<T> {
   HandleOpenModalEdit: () => void;
@@ -461,12 +462,6 @@ export const MMUModalEdit = <
     }
   };
 
-  function isValidUrl(string: string) {
-    const pattern =
-      /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
-    return pattern.test(string);
-  }
-
   return (
     <Grid
       container
@@ -524,9 +519,6 @@ export const MMUModalEdit = <
         )}
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t('tags')} {...a11yProps(5)} />
-        )}
-        {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t('snapshots')} {...a11yProps(6)} />
         )}
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t('snapshots')} {...a11yProps(6)} />
