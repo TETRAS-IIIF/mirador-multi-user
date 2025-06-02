@@ -49,7 +49,7 @@
   "confirm_remove_item_from_list": "Are you sure you want to remove <b>{{itemName}}</b> from your list ? This action is <b>irreversible</b>.",
   "confirm-new-password": "Confirm New Password",
   "Copy_iframe_code": "Copy Iframe Code",
-  "confirmation_link_expired": "The confirmation link has expired. Please request a new one.",
+  "confirmation_link_invalid": "The confirmation link is invalid. Please request a new one.",
   "create-account": "Create account",
   "createGroup": "Create Group",
   "create_user_form": "Create user",

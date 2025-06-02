@@ -37,7 +37,7 @@ export const MailConfirmation = () => {
       } else if (returnStatus === 400) {
         toast.error(t('error_already_confirmed'));
       } else if (returnStatus === 401) {
-        toast.error(t('confirmation_link_expired'));
+        toast.error(t('confirmation_link_invalid'));
       } else {
         toast.error(t('error_occurred'));
       }
