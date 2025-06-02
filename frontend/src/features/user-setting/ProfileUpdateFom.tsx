@@ -1,15 +1,8 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import toast from "react-hot-toast";
-import { useTranslation } from "react-i18next";
+import React, { useEffect, useState } from 'react';
+import { Box, Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../../utils/auth.tsx';
 import { useUpdateUser } from '../../utils/customHooks/useUpdateProfile.ts';
 
@@ -17,11 +10,11 @@ export const ProfileUpdateForm = () => {
   const user = useUser();
   const { t } = useTranslation();
   const [formValues, setFormValues] = useState({
-    name: "",
-    mail: "",
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    name: '',
+    mail: '',
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   });
   const [showPassword, setShowPassword] = useState({
     oldPassword: false,
@@ -29,20 +22,20 @@ export const ProfileUpdateForm = () => {
     confirmPassword: false,
   });
   const [errors, setErrors] = useState({
-    name: "",
-    mail: "",
-    oldPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    name: '',
+    mail: '',
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   });
 
   const updateUserMutation = useUpdateUser();
   useEffect(() => {
-      setFormValues((prev) => ({
-        ...prev,
-        name: user.data!.name,
-        mail: user.data!.mail,
-      }));
+    setFormValues((prev) => ({
+      ...prev,
+      name: user.data!.name,
+      mail: user.data!.mail,
+    }));
   }, [user.data]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,28 +47,28 @@ export const ProfileUpdateForm = () => {
   const validateForm = () => {
     let valid = true;
     const newErrors = {
-      name: "",
-      mail: "",
-      oldPassword: "",
-      newPassword: "",
-      confirmPassword: "",
+      name: '',
+      mail: '',
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
     };
 
     if (
       formValues.mail.trim() &&
       !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formValues.mail)
     ) {
-      newErrors.mail = t("mailIsNotValid");
+      newErrors.mail = t('mailIsNotValid');
       valid = false;
     }
 
     if (formValues.newPassword && formValues.newPassword.length < 6) {
-      newErrors.newPassword = t("characterLimitForPassword");
+      newErrors.newPassword = t('characterLimitForPassword');
       valid = false;
     }
 
     if (formValues.newPassword !== formValues.confirmPassword) {
-      newErrors.confirmPassword = t("passwordMismatch");
+      newErrors.confirmPassword = t('passwordMismatch');
       valid = false;
     }
 
@@ -89,10 +82,14 @@ export const ProfileUpdateForm = () => {
     if (validateForm()) {
       updateUserMutation.mutate(formValues, {
         onSuccess: () => {
-          toast.success(t("userSuccessfullyUpdated"));
+          toast.success(t('userSuccessfullyUpdated'));
         },
-        onError: () => {
-          toast.error(t("toastErrorUpdateUser"));
+        onError: (error: any) => {
+          if (error?.status === 409) {
+            toast.error(t('usernameAlreadyTaken'));
+          } else {
+            toast.error(t('toastErrorUpdateUser'));
+          }
         },
       });
     }
@@ -107,21 +104,21 @@ export const ProfileUpdateForm = () => {
       component="form"
       onSubmit={handleSubmit}
       sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "40%",
-        maxWidth: "400px",
+        display: 'flex',
+        flexDirection: 'column',
+        width: '40%',
+        maxWidth: '400px',
       }}
     >
       <Typography variant="h5" sx={{ mb: 3 }}>
-        {t("UpdateProfile")}
+        {t('UpdateProfile')}
       </Typography>
 
       <TextField
         inputProps={{
           maxLength: 255,
         }}
-        label={t("name")}
+        label={t('name')}
         name="name"
         value={formValues.name}
         onChange={handleChange}
@@ -135,7 +132,7 @@ export const ProfileUpdateForm = () => {
         inputProps={{
           maxLength: 255,
         }}
-        label={t("mail")}
+        label={t('mail')}
         name="mail"
         type="mail"
         value={formValues.mail}
@@ -147,9 +144,9 @@ export const ProfileUpdateForm = () => {
       />
 
       <TextField
-        label={t("oldPassword")}
+        label={t('oldPassword')}
         name="oldPassword"
-        type={showPassword.oldPassword ? "text" : "password"}
+        type={showPassword.oldPassword ? 'text' : 'password'}
         value={formValues.oldPassword}
         onChange={handleChange}
         error={!!errors.oldPassword}
@@ -160,7 +157,7 @@ export const ProfileUpdateForm = () => {
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
-                onClick={() => togglePasswordVisibility("oldPassword")}
+                onClick={() => togglePasswordVisibility('oldPassword')}
                 edge="end"
               >
                 {showPassword.oldPassword ? <VisibilityOff /> : <Visibility />}
@@ -168,14 +165,14 @@ export const ProfileUpdateForm = () => {
             </InputAdornment>
           ),
         }
-      }
+        }
         inputProps={{ maxLength: 255 }}
       />
 
       <TextField
-        label={t("newPassword")}
+        label={t('newPassword')}
         name="newPassword"
-        type={showPassword.newPassword ? "text" : "password"}
+        type={showPassword.newPassword ? 'text' : 'password'}
         value={formValues.newPassword}
         onChange={handleChange}
         error={!!errors.newPassword}
@@ -186,7 +183,7 @@ export const ProfileUpdateForm = () => {
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
-                onClick={() => togglePasswordVisibility("newPassword")}
+                onClick={() => togglePasswordVisibility('newPassword')}
                 edge="end"
               >
                 {showPassword.newPassword ? <VisibilityOff /> : <Visibility />}
@@ -198,9 +195,9 @@ export const ProfileUpdateForm = () => {
       />
 
       <TextField
-        label={t("confirmPassword")}
+        label={t('confirmPassword')}
         name="confirmPassword"
-        type={showPassword.confirmPassword ? "text" : "password"}
+        type={showPassword.confirmPassword ? 'text' : 'password'}
         value={formValues.confirmPassword}
         onChange={handleChange}
         error={!!errors.confirmPassword}
@@ -211,7 +208,7 @@ export const ProfileUpdateForm = () => {
           endAdornment: (
             <InputAdornment position="end">
               <IconButton
-                onClick={() => togglePasswordVisibility("confirmPassword")}
+                onClick={() => togglePasswordVisibility('confirmPassword')}
                 edge="end"
               >
                 {showPassword.confirmPassword ? (
@@ -233,7 +230,7 @@ export const ProfileUpdateForm = () => {
         fullWidth
         sx={{ mt: 2 }}
       >
-        {t("saveChanges")}
+        {t('saveChanges')}
       </Button>
     </Box>
   );

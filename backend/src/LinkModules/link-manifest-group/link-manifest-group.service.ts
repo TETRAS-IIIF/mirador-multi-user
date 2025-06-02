@@ -188,7 +188,10 @@ export class LinkManifestGroupService {
       if (!manifestToRemove) {
         throw new HttpException('Manifest not found', HttpStatus.NOT_FOUND);
       }
-      if (manifestToRemove.origin === manifestOrigin.UPLOAD) {
+      if (
+        manifestToRemove.origin === manifestOrigin.UPLOAD ||
+        manifestToRemove.origin === manifestOrigin.CREATE
+      ) {
         const filePath = join(
           __dirname,
           '..',

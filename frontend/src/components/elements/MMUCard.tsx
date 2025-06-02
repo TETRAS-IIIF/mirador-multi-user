@@ -42,6 +42,9 @@ import LinkIcon from '@mui/icons-material/Link';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CreateIcon from '@mui/icons-material/Create';
 import DescriptionIcon from '@mui/icons-material/Description';
+import { isValidUrl } from '../../utils/utils.ts';
+import placeholder from '../../assets/Placeholder.svg';
+
 
 interface IMMUCardProps<T, X> {
   id: number;
@@ -175,6 +178,7 @@ const MMUCard = <
   const handleConfirmRemoveFromListModal = () => {
     setOpenRemoveItemFromListModal(!openRemoveItemFromListModal);
   };
+
   return (
     <Card>
       <Grid
@@ -198,7 +202,11 @@ const MMUCard = <
               <LoadingSpinner />
             ) : (
               <img
-                src={thumbnailUrl as string}
+                src={
+                  thumbnailUrl && isValidUrl(thumbnailUrl as string)
+                    ? (thumbnailUrl as string)
+                    : placeholder
+                }
                 alt={t('thumbnailMissing')}
                 style={{
                   height: 100,

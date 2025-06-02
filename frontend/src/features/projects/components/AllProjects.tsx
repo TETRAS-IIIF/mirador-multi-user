@@ -1,6 +1,10 @@
 import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Project, ProjectGroup, ProjectGroupUpdateDto } from '../types/types.ts';
+import {
+  Project,
+  ProjectGroup,
+  ProjectGroupUpdateDto,
+} from '../types/types.ts';
 import IState from '../../mirador/interface/IState.ts';
 import { User } from '../../auth/types/types.ts';
 import { deleteProject } from '../api/Project/deleteProject.ts';
@@ -10,7 +14,12 @@ import { FloatingActionButton } from '../../../components/elements/FloatingActio
 import { DrawerCreateProject } from './DrawerCreateProject.tsx';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
 import { getUserPersonalGroup } from '../api/group/getUserPersonalGroup.ts';
-import { ItemsRights, LinkUserGroup, UserGroup, UserGroupTypes } from '../../user-group/types/types.ts';
+import {
+  ItemsRights,
+  LinkUserGroup,
+  UserGroup,
+  UserGroupTypes,
+} from '../../user-group/types/types.ts';
 import MMUCard from '../../../components/elements/MMUCard.tsx';
 import { removeProjectToGroup } from '../../user-group/api/removeProjectToGroup.ts';
 import { addProjectToGroup } from '../../user-group/api/addProjectToGroup.ts';
@@ -38,7 +47,11 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { removeProjectFromList } from '../api/Project/removeProjectFromList.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { Manifest } from '../../manifest/types/types.ts';
-import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from '../../../utils/customHooks/filterHook.ts';
 
 interface AllProjectsProps {
   user: User;
@@ -55,18 +68,18 @@ interface AllProjectsProps {
 }
 
 export const AllProjects = ({
-                              fetchMediaForUser,
-                              medias,
-                              manifests,
-                              user,
-                              selectedProjectId,
-                              setSelectedProjectId,
-                              userProjects,
-                              setUserProjects,
-                              handleSetMiradorState,
-                              fetchProjects,
-                              fetchManifestForUser,
-                            }: AllProjectsProps) => {
+  fetchMediaForUser,
+  medias,
+  manifests,
+  user,
+  selectedProjectId,
+  setSelectedProjectId,
+  userProjects,
+  setUserProjects,
+  handleSetMiradorState,
+  fetchProjects,
+  fetchManifestForUser,
+}: AllProjectsProps) => {
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>();
   const [openModalProjectId, setOpenModalProjectId] = useState<number | null>(
     null,
@@ -130,7 +143,22 @@ export const AllProjects = ({
         group: userPersonalGroup,
       };
     }
-    await updateProject({ ...updatedProject });
+    const updatedResponse = await updateProject({ ...updatedProject });
+    if (updatedResponse) {
+      toast.success(
+        <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+          {t('projectSaved', { projectTitle: updatedResponse.title })}
+        </div>,
+      );
+    } else {
+      toast.error(
+        <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+          {t('projectSavedFailed', {
+            projectTitle: updatedProject.project.title,
+          })}
+        </div>,
+      );
+    }
     fetchProjects();
   };
 
@@ -218,9 +246,13 @@ export const AllProjects = ({
     eventValue: string,
     projectId: number,
   ) => {
-    const newRights = await updateAccessToProject(projectId, group.id, eventValue as ItemsRights);
+    const newRights = await updateAccessToProject(
+      projectId,
+      group.id,
+      eventValue as ItemsRights,
+    );
     if (newRights.error) {
-      toast.error(t('not_allowed_to_modify_rights'))
+      toast.error(t('not_allowed_to_modify_rights'));
     }
   };
 
