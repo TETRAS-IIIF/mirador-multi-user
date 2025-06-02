@@ -1,5 +1,22 @@
-import { Button, Grid, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography } from '@mui/material';
-import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useCallback, useEffect, useState } from 'react';
+import {
+  Button,
+  Grid,
+  SelectChangeEvent,
+  Tab,
+  Tabs,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import { ItemList } from './ItemList.tsx';
 import { MMUModal } from './modal.tsx';
@@ -7,8 +24,14 @@ import { ModalConfirmDelete } from '../../features/projects/components/ModalConf
 import { ItemsRights } from '../../features/user-group/types/types.ts';
 import { ListItem } from '../types.ts';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { MediaGroupRights, mediaOrigin } from '../../features/media/types/types.ts';
-import { ManifestGroupRights, manifestOrigin } from '../../features/manifest/types/types.ts';
+import {
+  MediaGroupRights,
+  mediaOrigin,
+} from '../../features/media/types/types.ts';
+import {
+  ManifestGroupRights,
+  manifestOrigin,
+} from '../../features/manifest/types/types.ts';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -30,10 +53,15 @@ import { updateManifestJson } from '../../features/manifest/api/updateManifestJs
 import { Selector } from '../Selector.tsx';
 import { useTranslation } from 'react-i18next';
 import { NoteTemplate } from './CustomizationEditModal/NoteTemplate.tsx';
-import { Project, Snapshot, Template } from '../../features/projects/types/types.ts';
+import {
+  Project,
+  Snapshot,
+  Template,
+} from '../../features/projects/types/types.ts';
 import { TagMaker } from './TagsFactory/TagMaker.tsx';
 
 import { SnapshotFactory } from './SnapshotFactory.tsx';
+import { isValidUrl } from '../../utils/utils.ts';
 
 interface ModalItemProps<T> {
   HandleOpenModalEdit: () => void;
@@ -105,33 +133,33 @@ export const MMUModalEdit = <
     userWorkspace?: Record<string, string>;
   },
 >({
-    HandleOpenModalEdit,
-    deleteItem,
-    description,
-    duplicateItem,
-    fetchData,
-    getGroupByOption,
-    getOptionLabel,
-    handleAddAccessListItem,
-    handleDeleteAccessListItem,
-    handleSelectorChange,
-    isGroups,
-    item,
-    itemLabel,
-    listOfItem,
-    metadata,
-    objectTypes,
-    ownerId,
-    rights,
-    searchBarLabel,
-    searchInput,
-    searchModalEditItem,
-    setItemToAdd,
-    setSearchInput,
-    thumbnailUrl,
-    updateItem,
-    fetchItems,
-  }: ModalItemProps<T>) => {
+  HandleOpenModalEdit,
+  deleteItem,
+  description,
+  duplicateItem,
+  fetchData,
+  getGroupByOption,
+  getOptionLabel,
+  handleAddAccessListItem,
+  handleDeleteAccessListItem,
+  handleSelectorChange,
+  isGroups,
+  item,
+  itemLabel,
+  listOfItem,
+  metadata,
+  objectTypes,
+  ownerId,
+  rights,
+  searchBarLabel,
+  searchInput,
+  searchModalEditItem,
+  setItemToAdd,
+  setSearchInput,
+  thumbnailUrl,
+  updateItem,
+  fetchItems,
+}: ModalItemProps<T>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
   const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
@@ -434,12 +462,6 @@ export const MMUModalEdit = <
     }
   };
 
-  function isValidUrl(string: string) {
-    const pattern =
-      /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
-    return pattern.test(string);
-  }
-
   return (
     <Grid
       container
@@ -462,8 +484,8 @@ export const MMUModalEdit = <
           <Tab label={t('metadata')} {...a11yProps(1)} />
         )}
         {(objectTypes === ObjectTypes.PROJECT ||
-            (objectTypes === ObjectTypes.MANIFEST &&
-              item.origin !== manifestOrigin.LINK)) &&
+          (objectTypes === ObjectTypes.MANIFEST &&
+            item.origin !== manifestOrigin.LINK)) &&
           !jsonElementToEditInAdvancedEditor && (
             <Tooltip
               title={
@@ -483,8 +505,8 @@ export const MMUModalEdit = <
             </Tooltip>
           )}
         {(objectTypes === ObjectTypes.PROJECT ||
-            (objectTypes === ObjectTypes.MANIFEST &&
-              item.origin !== manifestOrigin.LINK)) &&
+          (objectTypes === ObjectTypes.MANIFEST &&
+            item.origin !== manifestOrigin.LINK)) &&
           jsonElementToEditInAdvancedEditor && (
             <Tab
               label={t('advancedEdit')}
@@ -497,9 +519,6 @@ export const MMUModalEdit = <
         )}
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t('tags')} {...a11yProps(5)} />
-        )}
-        {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t('snapshots')} {...a11yProps(6)} />
         )}
         {objectTypes === ObjectTypes.PROJECT && (
           <Tab label={t('snapshots')} {...a11yProps(6)} />
@@ -800,7 +819,7 @@ export const MMUModalEdit = <
               </Grid>
               <Grid item>
                 {(rights === ItemsRights.ADMIN ||
-                    rights === ItemsRights.EDITOR) &&
+                  rights === ItemsRights.EDITOR) &&
                   tabValue === 0 &&
                   duplicateItem && (
                     <Tooltip title={t('duplicate')}>
@@ -857,9 +876,15 @@ export const MMUModalEdit = <
           <ModalConfirmDelete
             deleteItem={deleteItem}
             itemId={item.id}
-            content={t('deleteConfirmation', {
-              itemName: itemLabel,
-            })}
+            content={
+              objectTypes === ObjectTypes.MANIFEST
+                ? t('deleteConfirmationManifest')
+                : objectTypes === ObjectTypes.MEDIA
+                  ? t('deleteConfirmationMedia')
+                  : t('deleteConfirmation', {
+                      itemName: itemLabel,
+                    })
+            }
             buttonLabel={t('deleteDefinitely')}
           />
         </MMUModal>
