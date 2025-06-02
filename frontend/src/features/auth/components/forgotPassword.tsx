@@ -76,6 +76,7 @@ const ForgotPassword = () => {
             <Button
               variant="contained"
               color="primary"
+              disabled={!email}
               fullWidth
               sx={{ mt: 3 }}
               onClick={handleForgotPassword}
