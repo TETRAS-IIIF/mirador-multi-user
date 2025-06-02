@@ -1,29 +1,29 @@
-import { Box, Button, ImageListItemBar, styled } from "@mui/material";
-import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
-import ImageIcon from "@mui/icons-material/Image";
-import { Media, MediaTypes } from "../types/types";
-import placeholder from "../../../assets/Placeholder.svg";
-import videoPlaceHolder from "../../../assets/video_placeholder.webp";
-import otherPlaceHolder from "../../../assets/other_placeholder.webp";
+import { Box, Button, ImageListItemBar, styled } from '@mui/material';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import ImageIcon from '@mui/icons-material/Image';
+import { Media, MediaTypes } from '../types/types';
+import placeholder from '../../../assets/Placeholder.svg';
+import videoPlaceHolder from '../../../assets/video_placeholder.webp';
+import otherPlaceHolder from '../../../assets/other_placeholder.webp';
 
-const CustomImageItem = styled("div")({
-  position: "relative",
-  "&:hover img": {
+const CustomImageItem = styled('div')({
+  position: 'relative',
+  '&:hover img': {
     opacity: 0.4,
   },
-  "&:hover .overlayButton": {
+  '&:hover .overlayButton': {
     opacity: 1,
   },
 });
 
 const CustomButton = styled(Button)({
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  textAlign: "center",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  textAlign: 'center',
   opacity: 0,
-  transition: "opacity 0.3s ease",
+  transition: 'opacity 0.3s ease',
 });
 
 interface ImageBoxProps {
@@ -32,7 +32,7 @@ interface ImageBoxProps {
   handleCopyToClipBoard: (path: string) => void;
 }
 
-export const ImageBox = ({
+export const MediaImageBox = ({
   media,
   caddyUrl,
   handleCopyToClipBoard,
@@ -61,34 +61,34 @@ export const ImageBox = ({
         alt={media.title}
         loading="lazy"
         sx={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          "@media(min-resolution: 2dppx)": {
-            width: "100%",
-            height: "100%",
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          '@media(min-resolution: 2dppx)': {
+            width: '100%',
+            height: '100%',
           },
         }}
       />
       <ImageListItemBar
         title={media.title}
         sx={{
-          position: "absolute",
+          position: 'absolute',
           bottom: 0,
-          color: "white",
+          color: 'white',
         }}
       />
       <Box
         sx={{
-          position: "absolute",
+          position: 'absolute',
           top: 8,
           right: 8,
-          color: "white",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          padding: "4px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          color: 'white',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          padding: '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         {media.mediaTypes === MediaTypes.VIDEO ? (
