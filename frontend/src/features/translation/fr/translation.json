@@ -50,6 +50,7 @@
   "confirm_remove_item_from_list": "Êtes-vous sûr de vouloir retirer <b>{{itemName}}</b> de votre liste ? Cette action est <b>irréversible</b>.",
   "confirm-new-password": "Confirmer le nouveau mot de passe",
   "Copy_iframe_code": "Copier le code de l'Iframe",
+  "confirmation_link_expired": "Le lien de confirmation a expiré. Veuillez en demander un nouveau.",
   "crateGroupMAJ": "CRÉER UN GROUPE",
   "create-account": "Créer un compte",
   "create_user_form": "Créer un utilisateur",

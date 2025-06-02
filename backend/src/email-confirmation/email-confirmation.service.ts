@@ -1,9 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../BaseEntities/users/users.service';
+import { CustomLogger } from '../utils/Logger/CustomLogger.service';
 
 @Injectable()
 export class EmailConfirmationService {
+  private readonly logger = new CustomLogger();
+
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
@@ -28,8 +35,9 @@ export class EmailConfirmationService {
       }
       throw new BadRequestException();
     } catch (error) {
+      this.logger.error('An error occured', error);
       if (error?.name === 'TokenExpiredError') {
-        throw new BadRequestException('Email confirmation token expired');
+        throw new UnauthorizedException('Email confirmation token expired');
       }
       throw new BadRequestException('Bad confirmation token');
     }

@@ -1,4 +1,11 @@
-import { Button, Checkbox, FormControlLabel, Grid, Link, Typography } from '@mui/material';
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Link,
+  Typography,
+} from '@mui/material';
 import { confirmationMail } from '../api/confirmationMail.ts';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -25,10 +32,12 @@ export const MailConfirmation = () => {
       const returnStatus = await confirmationMail(token);
       storage.clearToken();
       if (returnStatus === 201) {
-        setsuccessConfirmation(true)
+        setsuccessConfirmation(true);
         toast.success('emailConfirmed');
       } else if (returnStatus === 400) {
         toast.error(t('error_already_confirmed'));
+      } else if (returnStatus === 401) {
+        toast.error(t('confirmation_link_expired'));
       } else {
         toast.error(t('error_occurred'));
       }
@@ -39,7 +48,7 @@ export const MailConfirmation = () => {
 
   const handleCheckBox = () => {
     setChecked(!checked);
-  }
+  };
 
   return (
     <Layout title={t('mail-confirmation-title')}>
@@ -51,8 +60,13 @@ export const MailConfirmation = () => {
             </Typography>
           </SuccessCard>
         ) : (
-          <Grid item container flexDirection="column" justifyContent="center" alignItems="center">
-
+          <Grid
+            item
+            container
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+          >
             <Grid item>
               <FormControlLabel
                 required
@@ -68,14 +82,17 @@ export const MailConfirmation = () => {
               />
             </Grid>
             <Grid item>
-              <Button variant="contained" color="primary" onClick={handleConfirmMail} disabled={!checked}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleConfirmMail}
+                disabled={!checked}
+              >
                 {t('confirm-mail')}
               </Button>
             </Grid>
           </Grid>
-        )
-        }
-
+        )}
       </>
     </Layout>
   );
