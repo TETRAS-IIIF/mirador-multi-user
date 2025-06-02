@@ -37,13 +37,14 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import ShareIcon from '@mui/icons-material/Share';
 import useFetchThumbnailsUrl from '../../utils/customHooks/useFetchThumbnailsUrl.ts';
 import { LoadingSpinner } from './loadingSpinner.tsx';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { Snapshot } from '../../features/projects/types/types.ts';
 import LinkIcon from '@mui/icons-material/Link';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import CreateIcon from '@mui/icons-material/Create';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { isValidUrl } from '../../utils/utils.ts';
 import placeholder from '../../assets/Placeholder.svg';
+
 
 interface IMMUCardProps<T, X> {
   id: number;
@@ -241,7 +242,7 @@ const MMUCard = <
           {objectTypes === ObjectTypes.MEDIA &&
             item.mediaTypes === MediaTypes.OTHER && (
               <Grid item xs={12} sm={1}>
-                <AttachFileIcon />
+                <DescriptionIcon />
               </Grid>
             )}
           <Grid item xs={12} sm={3}>
@@ -332,7 +333,7 @@ const MMUCard = <
                 thumbnailUrl={thumbnailUrl as string}
                 HandleOpenModalEdit={HandleOpenModal}
                 description={description}
-                searchBarLabel={searchBarLabel ? searchBarLabel : ''}
+                searchBarLabel={searchBarLabel ?? ''}
                 itemLabel={itemLabel}
                 handleSelectorChange={handleChangeSelectedItem}
                 fetchData={fetchData}
@@ -366,7 +367,7 @@ const MMUCard = <
           itemId={item.id}
           share={item.share}
           content={t('confirm_remove_item_from_list', {
-            itemName: item.title ? item.title : 'item',
+            itemName: item.title ?? 'item',
           })}
           buttonLabel={t('deleteDefinitely')}
         />
