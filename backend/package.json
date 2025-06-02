@@ -37,7 +37,7 @@
     "@nestjs/swagger": "^7.4.2",
     "@nestjs/typeorm": "^10.0.2",
     "@types/nodemailer": "^6.4.16",
-    "bcrypt": "^5.1.1",
+    "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "crypto": "^1.0.1",
