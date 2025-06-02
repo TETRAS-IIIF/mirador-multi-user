@@ -14,7 +14,6 @@ export function AppRoutes() {
       element: <Landing />,
     },
   ];
-
   let routes;
   if (token) {
     routes = protectedRoutes;

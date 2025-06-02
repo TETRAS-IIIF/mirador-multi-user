@@ -27,7 +27,7 @@ export class User {
   resetToken: string;
 
   @Index()
-  @Column({ length: 300 })
+  @Column({ length: 300, nullable: true })
   password: string;
 
   @Index()
@@ -60,4 +60,7 @@ export class User {
 
   @Column({ nullable: true })
   termsValidatedAt: Date;
+
+  @Column({ nullable: true })
+  keycloakId: string;
 }

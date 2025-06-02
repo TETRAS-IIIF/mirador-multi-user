@@ -5,6 +5,7 @@ export const requiredSettings = {
   ALLOW_YOUTUBE_MEDIA: process.env.ALLOW_YOUTUBE_MEDIA,
   ALLOW_PEERTUBE_MEDIA: process.env.ALLOW_PEERTUBE_MEDIA,
   MAX_UPLOAD_SIZE: process.env.MAX_UPLOAD_SIZE,
+  OPEN_ID_CONNECT_ALLOWED: !!process.env.KEYCLOAK_ISSUER,
 };
 
 export const unMutableSettings = new Map<string, string | undefined>([
@@ -28,6 +29,7 @@ export enum SettingKeys {
   SWAGGER_URL = 'SWAGGER_URL',
   BACKEND_LOG_LVL = 'BACKEND_LOG_LVL',
   INSTANCE_NAME = 'INSTANCE_NAME',
+  KEYCLOAK_ISSUER = 'KEYCLOAK_ISSUER',
 }
 
 export const parseHumanSizeToMB = (humanSize: string): number => {

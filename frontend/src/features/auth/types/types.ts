@@ -12,6 +12,7 @@ export type User = {
   createdAt: Date;
   preferredLanguage: string;
   termsValidatedAt: Date;
+  keycloakId?: number
 };
 
 export type UpdateUserDto = {
