@@ -876,9 +876,15 @@ export const MMUModalEdit = <
           <ModalConfirmDelete
             deleteItem={deleteItem}
             itemId={item.id}
-            content={t('deleteConfirmation', {
-              itemName: itemLabel,
-            })}
+            content={
+              objectTypes === ObjectTypes.MANIFEST
+                ? t('deleteConfirmationManifest')
+                : objectTypes === ObjectTypes.MEDIA
+                  ? t('deleteConfirmationMedia')
+                  : t('deleteConfirmation', {
+                      itemName: itemLabel,
+                    })
+            }
             buttonLabel={t('deleteDefinitely')}
           />
         </MMUModal>
