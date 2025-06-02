@@ -66,6 +66,8 @@
   "defaultProjectTitle": "new project",
   "delete": "DELETE",
   "deleteConfirmation": "Are you sure you want to delete <b>{{itemName}}</b>? This action is <b>irreversible</b>.",
+  "deleteConfirmationManifest": "This manifest could be used into projects or snapshots. Deleting it will break the links.",
+  "deleteConfirmationMedia": "This media could be used in manifests or as thumbnails. Deleting it will break the links.",
   "deleteDefinitely": "DELETE INDEFINITELY",
   "deleteItem": "Delete item",
   "description": "Description",
