@@ -66,7 +66,7 @@
   "db_size": "Taille de la base de données",
   "defaultProjectTitle": "Nouveau projet",
   "delete": "SUPPRIMER",
-  "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer <b>{{itemName}}</b>? Cette action est <b>irréversible</b>.",
+  "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer <b>{{itemName}}</b>? </br></br> Cette action est <b>irréversible</b>.",
   "deleteDefinitely": "SUPPRIMER DÉFINITIVEMENT",
   "deleteItem": "Supprimer l'élément",
   "description": "Description",
