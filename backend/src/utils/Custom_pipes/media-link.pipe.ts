@@ -4,7 +4,6 @@ import {
   ExecutionContext,
   HttpException,
   Injectable,
-  InternalServerErrorException,
   NestInterceptor,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
@@ -142,9 +141,7 @@ export class MediaLinkInterceptor implements NestInterceptor {
         `Error processing image: ${error.message}`,
         error.stack,
       );
-      throw new InternalServerErrorException(
-        `Error processing image: ${error.message}`,
-      );
+      throw new BadRequestException(`Error processing image: ${error.message}`);
     }
   }
 }
