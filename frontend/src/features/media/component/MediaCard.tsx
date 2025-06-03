@@ -47,29 +47,28 @@ interface IMediaCardProps {
 }
 
 export const MediaCard = ({
-                            HandleCopyToClipBoard,
-                            HandleDeleteMedia,
-                            HandleOpenModal,
-                            HandleUpdateMedia,
-                            caddyUrl,
-                            getGroupByOption,
-                            getAccessToMedia,
-                            getOptionLabel,
-                            handleChangeRights,
-                            handleGrantAccess,
-                            handleLookingForUserGroups,
-                            handleRemoveAccessToMedia,
-                            handleRemoveMediaFromList,
-                            listOfGroup,
-                            media,
-                            openModalMediaId,
-                            ownerId,
-                            setGroupList,
-                            setUserToAdd,
-                          }: IMediaCardProps) => {
+  HandleCopyToClipBoard,
+  HandleDeleteMedia,
+  HandleOpenModal,
+  HandleUpdateMedia,
+  caddyUrl,
+  getGroupByOption,
+  getAccessToMedia,
+  getOptionLabel,
+  handleChangeRights,
+  handleGrantAccess,
+  handleLookingForUserGroups,
+  handleRemoveAccessToMedia,
+  handleRemoveMediaFromList,
+  listOfGroup,
+  media,
+  openModalMediaId,
+  ownerId,
+  setGroupList,
+  setUserToAdd,
+}: IMediaCardProps) => {
   const { t } = useTranslation();
 
-  console.log('media :', media)
   return (
     <MMUCard
       ownerId={ownerId}
@@ -83,9 +82,9 @@ export const MediaCard = ({
               onClickFunction={
                 media.path
                   ? () =>
-                    HandleCopyToClipBoard(
-                      `${caddyUrl}/${media.hash}/${media.path}`,
-                    )
+                      HandleCopyToClipBoard(
+                        `${caddyUrl}/${media.hash}/${media.path}`,
+                      )
                   : () => HandleCopyToClipBoard(media.url)
               }
               disabled={false}
@@ -98,10 +97,10 @@ export const MediaCard = ({
               onClickFunction={
                 media.path
                   ? () =>
-                    window.open(
-                      `${caddyUrl}/${media.hash}/${media.path}`,
-                      '_blank',
-                    )
+                      window.open(
+                        `${caddyUrl}/${media.hash}/${media.path}`,
+                        '_blank',
+                      )
                   : () => window.open(media.url, '_blank')
               }
               disabled={false}
