@@ -34,6 +34,13 @@ export const ResetPassword = () => {
   const handlePasswordReset = async () => {
     setError('');
     setSuccess('');
+    setError('');
+    setSuccess('');
+
+    if (password.length < 8) {
+      setError(t('passwordTooShort'));
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError(t('passwordMismatch'));
@@ -41,13 +48,14 @@ export const ResetPassword = () => {
     }
     if (!token) {
       setError(t('invalidToken'));
+      return;
     }
     if (token) {
       const response = await resetPassword(token, password);
       if (response) {
-        setSuccess(t('passwordResetSuccess'));
+        setSuccess(t("passwordResetSuccess"));
       } else {
-        setSuccess(t('passwordResetError'));
+        setSuccess(t("passwordResetError"));
       }
     }
   };
@@ -80,10 +88,8 @@ export const ResetPassword = () => {
             required
           />
           <TextField
-            inputProps={{
-              maxLength: 255,
-            }}
-            label="Confirm New Password"
+            inputProps={{ maxLength: 255 }}
+            label={t('confirm-new-password')}
             type="password"
             fullWidth
             margin="normal"
@@ -105,6 +111,7 @@ export const ResetPassword = () => {
             variant="contained"
             color="primary"
             fullWidth
+            disabled={!password || !confirmPassword}
             sx={{ mt: 3 }}
             onClick={handlePasswordReset}
           >
