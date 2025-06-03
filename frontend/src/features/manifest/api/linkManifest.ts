@@ -17,7 +17,6 @@ export const linkManifest = async (
       body: JSON.stringify(createManifestDto),
     },
   );
-
   if (!response.ok) {
     throw new Error(`Error: ${response.statusText}`);
   }

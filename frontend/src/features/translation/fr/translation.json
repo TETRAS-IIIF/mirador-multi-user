@@ -133,7 +133,7 @@
   "mailIsNotValid": "L'adresse e-mail n'est pas valide",
   "manifest": "Manifeste",
   "manifestCreated": "Manifeste créé avec succès",
-  "manifestCreationFailed": "Échec de la création du manifeste",
+  "manifestCreationFailed": "Échec de la création du manifest",
   "manifestLink": "Lien du manifest",
   "manifestLinked": "Manifeste lié avec succès",
   "manifestLinkingFailed": "Échec du lien du manifeste",

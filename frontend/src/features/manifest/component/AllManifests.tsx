@@ -199,41 +199,49 @@ export const AllManifests = ({
 
   const handleLinkManifest = useCallback(
     async (path: string) => {
-      const response = await fetch(path, {
-        method: 'GET',
-      });
-      if (response) {
+      try {
+        const response = await fetch(path);
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+
         const manifest = await response.json();
+
+        if (
+          !manifest ||
+          !manifest['@context'] ||
+          !(manifest['@id'] || manifest['id']) ||
+          manifest.type !== 'Manifest'
+        ) {
+          throw new Error('Invalid IIIF manifest structure');
+        }
+
         const resource = new ManifestResource(manifest, {
           defaultLabel: 'mmu-default-label',
           locale: 'mmu-default-label',
           resource: manifest as unknown as IIIFResource,
           pessimisticAccessControl: false,
         });
+
         const manifestLabel = resource.getLabel()[0]._value as string;
-        await mutateAsync(
-          {
-            url: path,
-            rights: ManifestGroupRights.ADMIN,
-            idCreator: user.id,
-            path: path,
-            title: manifestLabel ? manifestLabel : 'new Manifest',
-          },
-          {
-            onSuccess: () => {
-              toast.success(t('manifestCreated'));
-              fetchManifestForUser();
-              setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
-            },
-            onError: (error) => {
-              console.log('error component', error);
-              toast.error(t('manifestCreationFailed'));
-            },
-          },
-        );
+
+        await mutateAsync({
+          url: path,
+          rights: ManifestGroupRights.ADMIN,
+          idCreator: user.id,
+          path,
+          title: manifestLabel ? manifestLabel : 'new manifest',
+        });
+
+        toast.success(t('manifestCreated'));
+        fetchManifestForUser();
+        setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
+      } catch (error) {
+        console.error('Error linking manifest:', error);
+        toast.error(t('manifestCreationFailed'));
       }
     },
-    [fetchManifestForUser, modalLinkManifestIsOpen, mutateAsync],
+    [fetchManifestForUser, modalLinkManifestIsOpen, mutateAsync, t, user.id],
   );
 
   const handleSubmitManifestCreationForm = async (
