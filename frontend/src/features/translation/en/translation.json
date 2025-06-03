@@ -233,7 +233,7 @@
   "sort_by": "Sort By",
   "submit": "Submit",
   "successCopy": "path copied to clipboard",
-  "successResetPassword": "A password reset link has been sent to your email.",
+  "ResetPasswordFeedback": "If a user exists with this email, we sent you a link to reset your password",
   "success_download_logs": "Logs downloaded successfully",
   "success_send_mail": "Test mail sent successfully.",
   "system_settings": "System Settings",

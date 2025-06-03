@@ -233,7 +233,7 @@
   "sort_by": "Trier par",
   "submit": "Envoyer",
   "successCopy": "Chemin copié dans le presse-papier",
-  "successResetPassword": "Un lien de réinitialisation du mot de passe a été envoyé à votre e-mail.",
+  "ResetPasswordFeedback": "Si un utilisateur existe avec cet e-mail, un lien de réinitialisation du mot de passe vous a été envoyé.",
   "success_download_logs": "Logs downloaded successfully",
   "success_send_mail": "E-mail de test envoyé avec succès.",
   "system_settings": "Paramètres système",
