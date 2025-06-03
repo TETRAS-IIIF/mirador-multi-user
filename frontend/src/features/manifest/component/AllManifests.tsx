@@ -33,7 +33,6 @@ import SpeedDialTooltipOpen from '../../../components/elements/SpeedDial.tsx';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import { DrawerLinkManifest } from './DrawerLinkManifest.tsx';
-import { linkManifest } from '../api/linkManifest.ts';
 import { createManifest } from '../api/createManifest.ts';
 import { PaginationControls } from '../../../components/elements/Pagination.tsx';
 import { updateManifest } from '../api/updateManifest.ts';
@@ -65,6 +64,7 @@ import {
   isFileSizeOverLimit,
   SettingKeys,
 } from '../../../utils/utils.ts';
+import { useLinkManifest } from '../hooks/useLinkManifest.ts';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -109,6 +109,7 @@ export const AllManifests = ({
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [sortField, setSortField] = useState<keyof Manifest>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState('asc');
+  const { mutateAsync, isPending } = useLinkManifest();
   const { data: settings } = useAdminSettings();
   const [MAX_UPLOAD_SIZE] = useState<number | undefined>(
     Number(getSettingValue(SettingKeys.MAX_UPLOAD_SIZE, settings)),
@@ -210,20 +211,29 @@ export const AllManifests = ({
           pessimisticAccessControl: false,
         });
         const manifestLabel = resource.getLabel()[0]._value as string;
-        await linkManifest({
-          url: path,
-          rights: ManifestGroupRights.ADMIN,
-          idCreator: user.id,
-          path: path,
-          title: manifestLabel ? manifestLabel : 'new Manifest',
-        });
-        fetchManifestForUser();
-        setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
-        return toast.success(t('manifestCreated'));
+        await mutateAsync(
+          {
+            url: path,
+            rights: ManifestGroupRights.ADMIN,
+            idCreator: user.id,
+            path: path,
+            title: manifestLabel ? manifestLabel : 'new Manifest',
+          },
+          {
+            onSuccess: () => {
+              toast.success(t('manifestCreated'));
+              fetchManifestForUser();
+              setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
+            },
+            onError: (error) => {
+              console.log('error component', error);
+              toast.error(t('manifestCreationFailed'));
+            },
+          },
+        );
       }
-      return toast.error(t('manifestCreationFailed'));
     },
-    [fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup],
+    [fetchManifestForUser, modalLinkManifestIsOpen, mutateAsync],
   );
 
   const handleSubmitManifestCreationForm = async (
@@ -597,6 +607,7 @@ export const AllManifests = ({
               toggleModalManifestCreation={() =>
                 setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)
               }
+              isPending={isPending}
             />
           </Grid>
           {!createManifestIsOpen && (
