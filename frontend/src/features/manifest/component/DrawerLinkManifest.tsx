@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 interface IDrawerCreateManifestProps {
   modalCreateManifestIsOpen: boolean;
   toggleModalManifestCreation: () => void;
-  linkingManifest: (link: string) => Promise<void>;
+  linkingManifest: (link: string) => Promise<string>;
   isPending: boolean;
 }
 
