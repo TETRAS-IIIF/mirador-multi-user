@@ -137,10 +137,11 @@ export const ContentSidePanelManifest = ({
 
         fetchManifestForUser();
         setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
-        return toast.success(t('manifestCreated'));
+        toast.success(t('manifestCreated'));
+        return;
       } catch (error) {
-        console.error(error);
-        return toast.error(t('manifestLinkingFailed'));
+        toast.error(t('manifestLinkingFailed'));
+        return;
       }
     },
     [
