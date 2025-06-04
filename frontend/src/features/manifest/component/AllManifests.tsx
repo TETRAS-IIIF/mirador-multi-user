@@ -1,8 +1,24 @@
 import { Grid, IconButton, styled, Tooltip, Typography } from '@mui/material';
-import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import { LinkUserGroup, UserGroup, UserGroupTypes } from '../../user-group/types/types.ts';
+import {
+  ChangeEvent,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {
+  LinkUserGroup,
+  UserGroup,
+  UserGroupTypes,
+} from '../../user-group/types/types.ts';
 import { User } from '../../auth/types/types.ts';
-import { Manifest, ManifestCanvases, ManifestGroupRights, manifestOrigin } from '../types/types.ts';
+import {
+  Manifest,
+  ManifestCanvases,
+  ManifestGroupRights,
+  manifestOrigin,
+} from '../types/types.ts';
 import { uploadManifest } from '../api/uploadManifest.ts';
 import MMUCard from '../../../components/elements/MMUCard.tsx';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
@@ -17,7 +33,6 @@ import SpeedDialTooltipOpen from '../../../components/elements/SpeedDial.tsx';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import { DrawerLinkManifest } from './DrawerLinkManifest.tsx';
-import { linkManifest } from '../api/linkManifest.ts';
 import { createManifest } from '../api/createManifest.ts';
 import { PaginationControls } from '../../../components/elements/Pagination.tsx';
 import { updateManifest } from '../api/updateManifest.ts';
@@ -36,11 +51,20 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { removeManifestFromList } from '../api/removeManifestFromList.ts';
-import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from '../../../utils/customHooks/filterHook.ts';
 import { removeManifestToGroup } from '../api/removeManifestToGroup.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
-import { getSettingValue, isFileSizeOverLimit, SettingKeys } from '../../../utils/utils.ts';
+import {
+  getSettingValue,
+  isFileSizeOverLimit,
+  SettingKeys,
+} from '../../../utils/utils.ts';
+import { useLinkManifest } from '../hooks/useLinkManifest.ts';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -65,15 +89,14 @@ interface IAllManifests {
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 
-export const AllManifests = (
-  {
-    manifests,
-    fetchManifestForUser,
-    userPersonalGroup,
-    user,
-    medias,
-    fetchMediaForUser,
-  }: IAllManifests) => {
+export const AllManifests = ({
+  manifests,
+  fetchManifestForUser,
+  userPersonalGroup,
+  user,
+  medias,
+  fetchMediaForUser,
+}: IAllManifests) => {
   const [createManifestIsOpen, setCreateManifestIsOpen] = useState(false);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(
     null,
@@ -86,8 +109,11 @@ export const AllManifests = (
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [sortField, setSortField] = useState<keyof Manifest>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState('asc');
+  const { mutateAsync, isPending } = useLinkManifest();
   const { data: settings } = useAdminSettings();
-  const [MAX_UPLOAD_SIZE] = useState<number | undefined>(Number(getSettingValue(SettingKeys.MAX_UPLOAD_SIZE, settings)))
+  const [MAX_UPLOAD_SIZE] = useState<number | undefined>(
+    Number(getSettingValue(SettingKeys.MAX_UPLOAD_SIZE, settings)),
+  );
 
   const { t } = useTranslation();
 
@@ -173,32 +199,49 @@ export const AllManifests = (
 
   const handleLinkManifest = useCallback(
     async (path: string) => {
-      const response = await fetch(path, {
-        method: 'GET',
-      });
-      if (response) {
+      try {
+        const response = await fetch(path);
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+
         const manifest = await response.json();
+
+        if (
+          !manifest ||
+          !manifest['@context'] ||
+          !(manifest['@id'] || manifest['id']) ||
+          manifest.type !== 'Manifest'
+        ) {
+          throw new Error('Invalid IIIF manifest structure');
+        }
+
         const resource = new ManifestResource(manifest, {
           defaultLabel: 'mmu-default-label',
           locale: 'mmu-default-label',
           resource: manifest as unknown as IIIFResource,
           pessimisticAccessControl: false,
         });
+
         const manifestLabel = resource.getLabel()[0]._value as string;
-        await linkManifest({
+
+        await mutateAsync({
           url: path,
           rights: ManifestGroupRights.ADMIN,
           idCreator: user.id,
-          path: path,
-          title: manifestLabel ? manifestLabel : 'new Manifest',
+          path,
+          title: manifestLabel ? manifestLabel : 'new manifest',
         });
+
+        toast.success(t('manifestCreated'));
         fetchManifestForUser();
         setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
-        return toast.success(t('manifestCreated'));
+      } catch (error) {
+        console.error('Error linking manifest:', error);
+        toast.error(t('manifestCreationFailed'));
       }
-      return toast.error(t('manifestCreationFailed'));
     },
-    [fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup],
+    [fetchManifestForUser, modalLinkManifestIsOpen, mutateAsync, t, user.id],
   );
 
   const handleSubmitManifestCreationForm = async (
@@ -249,11 +292,13 @@ export const AllManifests = (
     try {
       if (manifestToUpdate.origin === manifestOrigin.LINK) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { json, rights, personalOwnerGroupId, ...manifestDto } = manifestToUpdate;
+        const { json, rights, personalOwnerGroupId, ...manifestDto } =
+          manifestToUpdate;
         await updateManifest(manifestDto);
       } else {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { rights, personalOwnerGroupId, ...manifestDto } = manifestToUpdate;
+        const { rights, personalOwnerGroupId, ...manifestDto } =
+          manifestToUpdate;
         await updateManifest(manifestDto);
       }
       fetchManifestForUser();
@@ -313,7 +358,7 @@ export const AllManifests = (
       eventValue as ManifestGroupRights,
     );
     if (newRights.error) {
-      toast.error(t('not_allowed_to_modify_rights'))
+      toast.error(t('not_allowed_to_modify_rights'));
     }
   };
 
@@ -463,9 +508,9 @@ export const AllManifests = (
                               onClickFunction={
                                 manifest.hash
                                   ? () =>
-                                    HandleCopyToClipBoard(
-                                      `${caddyUrl}/${manifest.hash}/${manifest.path}`,
-                                    )
+                                      HandleCopyToClipBoard(
+                                        `${caddyUrl}/${manifest.hash}/${manifest.path}`,
+                                      )
                                   : () => HandleCopyToClipBoard(manifest.path)
                               }
                               disabled={false}
@@ -478,15 +523,15 @@ export const AllManifests = (
                               onClickFunction={
                                 manifest.hash
                                   ? () =>
-                                    window.open(
-                                      `${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`,
-                                      '_blank',
-                                    )
+                                      window.open(
+                                        `${window.location.origin}/manifest/${manifest.hash}/${manifest.path}`,
+                                        '_blank',
+                                      )
                                   : () =>
-                                    window.open(
-                                      `${window.location.origin}/manifest/${encodeURI(manifest.path)}`,
-                                      '_blank',
-                                    )
+                                      window.open(
+                                        `${window.location.origin}/manifest/${encodeURI(manifest.path)}`,
+                                        '_blank',
+                                      )
                               }
                               disabled={false}
                               icon={<OpenInNewIcon />}
@@ -570,6 +615,7 @@ export const AllManifests = (
               toggleModalManifestCreation={() =>
                 setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)
               }
+              isPending={isPending}
             />
           </Grid>
           {!createManifestIsOpen && (

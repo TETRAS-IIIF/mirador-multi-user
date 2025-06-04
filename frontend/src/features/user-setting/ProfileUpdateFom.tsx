@@ -70,12 +70,26 @@ export const ProfileUpdateForm = () => {
       valid = false;
     }
 
-    if (formValues.oldPassword.length < 1) {
-      newErrors.oldPassword = t('passwordIsEmpty')
+    if (
+      formValues.oldPassword.length > 0 &&
+      formValues.newPassword.length === 0
+    ) {
+      newErrors.newPassword = t('passwordIsEmpty');
       valid = false;
     }
 
-    if (formValues.newPassword && formValues.newPassword.length < PASSWORD_MINIMUM_LENGTH) {
+    if (
+      formValues.oldPassword.length < 1 &&
+      formValues.newPassword.length > 0
+    ) {
+      newErrors.oldPassword = t('passwordIsEmpty');
+      valid = false;
+    }
+
+    if (
+      formValues.newPassword &&
+      formValues.newPassword.length < PASSWORD_MINIMUM_LENGTH
+    ) {
       newErrors.newPassword = t('characterLimitForPassword', {
         PASSWORD_MINIMUM_LENGTH: PASSWORD_MINIMUM_LENGTH,
       });
@@ -91,7 +105,6 @@ export const ProfileUpdateForm = () => {
     return valid;
   };
 
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
@@ -99,8 +112,12 @@ export const ProfileUpdateForm = () => {
         onSuccess: () => {
           toast.success(t('userSuccessfullyUpdated'));
         },
-        onError: () => {
-          toast.error(t('toastErrorUpdateUser'));
+        onError: (error: any) => {
+          if (error?.status === 409) {
+            toast.error(t('usernameAlreadyTaken'));
+          } else {
+            toast.error(t('toastErrorUpdateUser'));
+          }
         },
       });
     }
@@ -175,8 +192,7 @@ export const ProfileUpdateForm = () => {
               </IconButton>
             </InputAdornment>
           ),
-        }
-        }
+        }}
         inputProps={{ maxLength: 255 }}
       />
 

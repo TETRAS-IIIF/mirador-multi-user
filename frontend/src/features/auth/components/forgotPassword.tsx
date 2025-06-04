@@ -11,19 +11,23 @@ import { Layout } from './layout.tsx';
 import { forgotPassword } from '../api/forgotPassword.ts';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import toast from 'react-hot-toast';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
+  const [userFeedBack, setUserFeedBack] = useState('');
   const { t } = useTranslation();
 
   const handleForgotPassword = async () => {
+    setError('');
+    setUserFeedBack('');
+
     if (!email) {
-      toast.error(t('errorMail'));
+      setError(t('errorMail'));
       return;
     }
     await forgotPassword(email);
-    toast.success(t('successResetPassword'));
+    setUserFeedBack(t('ResetPasswordFeedback'));
   };
 
   return (
@@ -58,9 +62,20 @@ const ForgotPassword = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
+            {error && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {userFeedBack}
+              </Alert>
+            )}
+            {userFeedBack && (
+              <Alert severity="info" sx={{ mt: 2 }}>
+                {userFeedBack}
+              </Alert>
+            )}
             <Button
               variant="contained"
               color="primary"
+              disabled={!email}
               fullWidth
               sx={{ mt: 3 }}
               onClick={handleForgotPassword}

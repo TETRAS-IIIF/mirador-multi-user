@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -7,17 +7,17 @@ import {
   Grid,
   TextField,
   Typography,
-} from "@mui/material";
-import { Layout } from "./layout.tsx";
-import { resetPassword } from "../api/resetPassword.ts";
-import { NavLink } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+} from '@mui/material';
+import { Layout } from './layout.tsx';
+import { resetPassword } from '../api/resetPassword.ts';
+import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const ResetPassword = () => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [token, setToken] = useState<string | null>(null);
   const { t } = useTranslation();
 
@@ -27,20 +27,28 @@ export const ResetPassword = () => {
     if (match) {
       setToken(match[1]);
     } else {
-      setError(t("errorToken"));
+      setError(t('errorToken'));
     }
   }, []);
 
   const handlePasswordReset = async () => {
-    setError("");
-    setSuccess("");
+    setError('');
+    setSuccess('');
+    setError('');
+    setSuccess('');
+
+    if (password.length < 8) {
+      setError(t('passwordTooShort'));
+      return;
+    }
 
     if (password !== confirmPassword) {
-      setError(t("passwordMismatch"));
+      setError(t('passwordMismatch'));
       return;
     }
     if (!token) {
-      setError(t("invalidToken"));
+      setError(t('invalidToken'));
+      return;
     }
     if (token) {
       const response = await resetPassword(token, password);
@@ -53,11 +61,11 @@ export const ResetPassword = () => {
   };
   return (
     <Layout
-      title={t("reset-password-title")}
+      title={t('reset-password-title')}
       rightButton={
         <Grid>
           <NavLink to="/auth/login">
-            <Typography variant="button">{t("login")}</Typography>
+            <Typography variant="button">{t('login')}</Typography>
           </NavLink>
         </Grid>
       }
@@ -65,13 +73,13 @@ export const ResetPassword = () => {
       <Container maxWidth="sm">
         <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3 }}>
           <Typography variant="h5" align="center" gutterBottom>
-            {t("reset-password")}
+            {t('reset-password')}
           </Typography>
           <TextField
             inputProps={{
               maxLength: 255,
             }}
-            label={t("new-password")}
+            label={t('new-password')}
             type="password"
             fullWidth
             margin="normal"
@@ -80,11 +88,9 @@ export const ResetPassword = () => {
             required
           />
           <TextField
-            inputProps={{
-              maxLength: 255,
-            }}
-            label="Confirm New Password"
-            type={t("password")}
+            inputProps={{ maxLength: 255 }}
+            label={t('confirm-new-password')}
+            type="password"
             fullWidth
             margin="normal"
             value={confirmPassword}
@@ -105,10 +111,11 @@ export const ResetPassword = () => {
             variant="contained"
             color="primary"
             fullWidth
+            disabled={!password || !confirmPassword}
             sx={{ mt: 3 }}
             onClick={handlePasswordReset}
           >
-            {t("reset-password")}
+            {t('reset-password')}
           </Button>
         </Box>
       </Container>

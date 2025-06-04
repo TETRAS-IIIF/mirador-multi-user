@@ -1,20 +1,26 @@
-import { Button, Checkbox, FormControlLabel, Grid, Link } from '@mui/material';
-import { confirmationMail } from "../api/confirmationMail.ts";
-import { useLocation, useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-import { Layout } from "./layout.tsx";
-import { useTranslation } from "react-i18next";
-import storage from "../../../utils/storage.ts";
-import { Link as RouterLink } from "react-router-dom";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Link,
+  Typography,
+} from '@mui/material';
+import { confirmationMail } from '../api/confirmationMail.ts';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
+import toast from 'react-hot-toast';
+import { Layout } from './layout.tsx';
+import { useTranslation } from 'react-i18next';
+import storage from '../../../utils/storage.ts';
 import { useState } from 'react';
+import { SuccessCard } from './SuccesCard.tsx';
 
 export const MailConfirmation = () => {
   const location = useLocation();
-  const navigate = useNavigate();
+  const [successConfirmation, setsuccessConfirmation] = useState(false);
   const [checked, setChecked] = useState(false);
   const { t } = useTranslation();
   const handleConfirmMail = async () => {
-    // Extract token from the URL
     const extractToken = () => {
       const tokenMatch = location.pathname.match(/token\/([^/]+)/);
       return tokenMatch ? tokenMatch[1] : null;
@@ -24,51 +30,70 @@ export const MailConfirmation = () => {
 
     if (token) {
       const returnStatus = await confirmationMail(token);
-      let toastMessage: string;
-      if (returnStatus === 201) {
-        toastMessage = t("emailConfirmed");
-      } else {
-        toastMessage = t("error_occurred");
-      }
       storage.clearToken();
       if (returnStatus === 201) {
-        toast.success(toastMessage);
-        navigate("/");
+        setsuccessConfirmation(true);
+        toast.success('emailConfirmed');
+      } else if (returnStatus === 400) {
+        toast.error(t('error_already_confirmed'));
+      } else if (returnStatus === 401) {
+        toast.error(t('confirmation_link_invalid'));
       } else {
-        toast.error(toastMessage);
+        toast.error(t('error_occurred'));
       }
     } else {
-      console.error("Token not found in the URL");
+      console.error('Token not found in the URL');
     }
   };
 
   const handleCheckBox = () => {
     setChecked(!checked);
-  }
+  };
 
   return (
-    <Layout title={t("mail-confirmation-title")}>
-      <Grid item container flexDirection="column" justifyContent="center" alignItems="center">
-        <Grid item>
-          <FormControlLabel
-            required
-            control={<Checkbox onChange={handleCheckBox}/>}
-            label={
-            <>
-                {t("accept_terms")}
-                <Link component={RouterLink} to="/terms" target="_blank">
-                  {t("terms")}
-                </Link>
-            </>
-            }
-          />
-        </Grid>
-        <Grid item>
-        <Button variant="contained" color="primary" onClick={handleConfirmMail} disabled={!checked}>
-          {t("confirm-mail")}
-        </Button>
-        </Grid>
-      </Grid>
+    <Layout title={t('mail-confirmation-title')}>
+      <>
+        {successConfirmation ? (
+          <SuccessCard>
+            <Typography variant="h5" gutterBottom>
+              {t('emailConfirmed')}
+            </Typography>
+          </SuccessCard>
+        ) : (
+          <Grid
+            item
+            container
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+          >
+            <Grid item>
+              <FormControlLabel
+                required
+                control={<Checkbox onChange={handleCheckBox} />}
+                label={
+                  <>
+                    {t('accept_terms')}
+                    <Link component={RouterLink} to="/terms" target="_blank">
+                      {t('terms')}
+                    </Link>
+                  </>
+                }
+              />
+            </Grid>
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleConfirmMail}
+                disabled={!checked}
+              >
+                {t('confirm-mail')}
+              </Button>
+            </Grid>
+          </Grid>
+        )}
+      </>
     </Layout>
   );
 };

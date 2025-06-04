@@ -117,6 +117,9 @@ export class AuthService {
         language: user.preferredLanguage,
       });
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       this.logger.error(error.message, error.stack);
       if (error instanceof NotFoundException) {
         throw error;

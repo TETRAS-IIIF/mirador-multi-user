@@ -5,43 +5,46 @@ import {
   SelectChangeEvent,
   Tooltip,
   Typography,
-} from "@mui/material";
-import { MMUModal } from "./modal.tsx";
+} from '@mui/material';
+import { MMUModal } from './modal.tsx';
 import {
   Dispatch,
   ReactElement,
   SetStateAction,
   useCallback,
   useState,
-} from "react";
-import { MMUModalEdit } from "./MMUModalEdit.tsx";
-import { ListItem } from "../types.ts";
-import { ItemsRights } from "../../features/user-group/types/types.ts";
+} from 'react';
+import { MMUModalEdit } from './MMUModalEdit.tsx';
+import { ListItem } from '../types.ts';
+import { ItemsRights } from '../../features/user-group/types/types.ts';
 import {
   MediaGroupRights,
   mediaOrigin,
   MediaTypes,
-} from "../../features/media/types/types.ts";
+} from '../../features/media/types/types.ts';
 import {
   ManifestGroupRights,
   manifestOrigin,
-} from "../../features/manifest/types/types.ts";
-import dayjs, { Dayjs } from "dayjs";
-import { ObjectTypes } from "../../features/tag/type.ts";
-import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
-import ImageIcon from "@mui/icons-material/Image";
-import { useTranslation } from "react-i18next";
-import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
-import { ModalButton } from "./ModalButton.tsx";
-import CancelIcon from "@mui/icons-material/Cancel";
-import ShareIcon from "@mui/icons-material/Share";
-import useFetchThumbnailsUrl from "../../utils/customHooks/useFetchThumbnailsUrl.ts";
-import { LoadingSpinner } from "./loadingSpinner.tsx";
-import AttachFileIcon from "@mui/icons-material/AttachFile";
-import { Snapshot } from "../../features/projects/types/types.ts";
-import LinkIcon from "@mui/icons-material/Link";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import CreateIcon from "@mui/icons-material/Create";
+} from '../../features/manifest/types/types.ts';
+import dayjs, { Dayjs } from 'dayjs';
+import { ObjectTypes } from '../../features/tag/type.ts';
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import ImageIcon from '@mui/icons-material/Image';
+import { useTranslation } from 'react-i18next';
+import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
+import { ModalButton } from './ModalButton.tsx';
+import CancelIcon from '@mui/icons-material/Cancel';
+import ShareIcon from '@mui/icons-material/Share';
+import useFetchThumbnailsUrl from '../../utils/customHooks/useFetchThumbnailsUrl.ts';
+import { LoadingSpinner } from './loadingSpinner.tsx';
+import { Snapshot } from '../../features/projects/types/types.ts';
+import LinkIcon from '@mui/icons-material/Link';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import CreateIcon from '@mui/icons-material/Create';
+import DescriptionIcon from '@mui/icons-material/Description';
+import { isValidUrl } from '../../utils/utils.ts';
+import placeholder from '../../assets/Placeholder.svg';
+
 
 interface IMMUCardProps<T, X> {
   id: number;
@@ -133,7 +136,7 @@ const MMUCard = <
   updateItem,
   fetchItems,
 }: IMMUCardProps<T, X>) => {
-  const [searchInput, setSearchInput] = useState<string>("");
+  const [searchInput, setSearchInput] = useState<string>('');
   const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
     useState(false);
   const [isLoading, thumbnailUrl] = useFetchThumbnailsUrl({ item });
@@ -161,7 +164,6 @@ const MMUCard = <
     fetchData();
   };
 
-
   const handleChangeSelectedItem =
     (itemSelected: ListItem) => async (event: SelectChangeEvent) => {
       if (handleSelectorChange) {
@@ -176,6 +178,7 @@ const MMUCard = <
   const handleConfirmRemoveFromListModal = () => {
     setOpenRemoveItemFromListModal(!openRemoveItemFromListModal);
   };
+
   return (
     <Card>
       <Grid
@@ -184,7 +187,7 @@ const MMUCard = <
         flexDirection="row"
         wrap="nowrap"
         justifyContent="space-between"
-        sx={{ minHeight: "120px" }}
+        sx={{ minHeight: '120px' }}
       >
         <Grid
           item
@@ -199,13 +202,17 @@ const MMUCard = <
               <LoadingSpinner />
             ) : (
               <img
-                src={thumbnailUrl as string}
-                alt={t("thumbnailMissing")}
+                src={
+                  thumbnailUrl && isValidUrl(thumbnailUrl as string)
+                    ? (thumbnailUrl as string)
+                    : placeholder
+                }
+                alt={t('thumbnailMissing')}
                 style={{
                   height: 100,
                   width: 100,
-                  objectFit: "contain",
-                  marginLeft: "10px",
+                  objectFit: 'contain',
+                  marginLeft: '10px',
                 }}
               />
             )}
@@ -215,7 +222,7 @@ const MMUCard = <
             {item.origin === manifestOrigin.UPLOAD && <UploadFileIcon />}
             {item.origin === manifestOrigin.CREATE && <CreateIcon />}
             {item.shared && (
-              <Tooltip title={t("shared")}>
+              <Tooltip title={t('shared')}>
                 <ShareIcon />
               </Tooltip>
             )}
@@ -235,7 +242,7 @@ const MMUCard = <
           {objectTypes === ObjectTypes.MEDIA &&
             item.mediaTypes === MediaTypes.OTHER && (
               <Grid item xs={12} sm={1}>
-                <AttachFileIcon />
+                <DescriptionIcon />
               </Grid>
             )}
           <Grid item xs={12} sm={3}>
@@ -243,10 +250,10 @@ const MMUCard = <
               <Typography
                 variant="subtitle1"
                 sx={{
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  maxWidth: "400px",
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  maxWidth: '400px',
                 }}
               >
                 {itemLabel}
@@ -258,10 +265,10 @@ const MMUCard = <
               <Typography
                 variant="subtitle1"
                 sx={{
-                  textOverflow: "ellipsis",
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  maxWidth: "400px",
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  maxWidth: '400px',
                 }}
               >
                 {description}
@@ -273,21 +280,21 @@ const MMUCard = <
               <Tooltip
                 title={dayjs(item.updated_at)
                   .locale(i18n.language)
-                  .format("LLLL")
+                  .format('LLLL')
                   .toString()}
               >
                 <Typography
                   variant="subtitle1"
                   sx={{
-                    textOverflow: "ellipsis",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                    maxWidth: "200px",
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    whiteSpace: 'nowrap',
+                    maxWidth: '200px',
                   }}
                 >
                   {dayjs(item.updated_at)
                     .locale(i18n.language)
-                    .format("ddd, D MMM")}
+                    .format('ddd, D MMM')}
                 </Typography>
               </Tooltip>
             )}
@@ -297,10 +304,10 @@ const MMUCard = <
           <CardActions sx={{ padding: 1 }}>
             <Grid container flexDirection="row" wrap="nowrap" spacing={1}>
               {id && (
-                <Grid item alignContent={"center"}>
+                <Grid item alignContent={'center'}>
                   {rights === ItemsRights.READER ? (
                     <ModalButton
-                      tooltipButton={t("removeProjectFromList")}
+                      tooltipButton={t('removeProjectFromList')}
                       onClickFunction={handleConfirmRemoveFromListModal}
                       icon={<CancelIcon />}
                       disabled={false}
@@ -326,7 +333,7 @@ const MMUCard = <
                 thumbnailUrl={thumbnailUrl as string}
                 HandleOpenModalEdit={HandleOpenModal}
                 description={description}
-                searchBarLabel={searchBarLabel ? searchBarLabel : ""}
+                searchBarLabel={searchBarLabel ?? ''}
                 itemLabel={itemLabel}
                 handleSelectorChange={handleChangeSelectedItem}
                 fetchData={fetchData}
@@ -359,10 +366,10 @@ const MMUCard = <
           deleteItem={handleRemoveFromList!}
           itemId={item.id}
           share={item.share}
-          content={t("confirm_remove_item_from_list", {
-            itemName: item.title ? item.title : "item",
+          content={t('confirm_remove_item_from_list', {
+            itemName: item.title ?? 'item',
           })}
-          buttonLabel={t("deleteDefinitely")}
+          buttonLabel={t('deleteDefinitely')}
         />
       </MMUModal>
     </Card>

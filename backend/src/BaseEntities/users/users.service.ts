@@ -52,16 +52,20 @@ export class UsersService {
       }
       return await this.userRepository.update(userId, dto);
     } catch (error) {
-      if (
-        error instanceof UnauthorizedException ||
-        error instanceof BadRequestException
-      ) {
-        this.logger.error(error.message, error.stack);
+      this.logger.error(error.message, error.stack);
+
+      if (error instanceof UnauthorizedException) {
         throw error;
       }
-      this.logger.error(error.message, error.stack);
-      throw new UnauthorizedException(
-        'An error occurred while updating the user',
+
+      if (error.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException(
+          'Duplicate entry. The value already exists.',
+        );
+      }
+
+      throw new InternalServerErrorException(
+        'An unexpected error occurred while updating the user.',
       );
     }
   }
@@ -87,11 +91,12 @@ export class UsersService {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      if (error instanceof UnauthorizedException) {
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof BadRequestException
+      ) {
         this.logger.error(error.message, error.stack);
-        throw new InternalServerErrorException(
-          'Someone try to promote a user to Admin',
-        );
+        throw error;
       }
       if (error instanceof QueryFailedError) {
         this.logger.warn(`Conflict during user creation: ${error.message}`);

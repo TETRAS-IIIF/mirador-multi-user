@@ -22,7 +22,10 @@ export const MENU_ELEMENT = {
   ADMIN: 'ADMIN',
 };
 
-export const getSettingValue = (key: SettingKeys, settings: Settings | undefined) => {
+export const getSettingValue = (
+  key: SettingKeys,
+  settings: Settings | undefined,
+) => {
   if (!settings) return undefined;
 
   return (
@@ -45,5 +48,11 @@ export enum SettingKeys {
   BACKEND_LOG_LVL = 'BACKEND_LOG_LVL',
   INSTANCE_NAME = 'INSTANCE_NAME',
   UPLOAD_FOLDER_SIZE = 'UPLOAD_FOLDER_SIZE',
-  DB_SIZE = 'DB_SIZE'
+  DB_SIZE = 'DB_SIZE',
+}
+
+export function isValidUrl(string: string) {
+  const pattern =
+    /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
+  return pattern.test(string);
 }

@@ -4,7 +4,6 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Timestamp,
   UpdateDateColumn,
 } from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
@@ -75,5 +74,4 @@ export class Project {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   public updated_at: Date;
-
 }

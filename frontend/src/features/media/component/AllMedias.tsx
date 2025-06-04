@@ -1,4 +1,13 @@
-import { Box, Grid, IconButton, styled, Tab, Tabs, Tooltip, Typography } from '@mui/material';
+import {
+  Box,
+  Grid,
+  IconButton,
+  styled,
+  Tab,
+  Tabs,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import {
   ChangeEvent,
   Dispatch,
@@ -12,7 +21,11 @@ import {
 } from 'react';
 import { createMedia } from '../api/createMedia.ts';
 import { User } from '../../auth/types/types.ts';
-import { LinkUserGroup, UserGroup, UserGroupTypes } from '../../user-group/types/types.ts';
+import {
+  LinkUserGroup,
+  UserGroup,
+  UserGroupTypes,
+} from '../../user-group/types/types.ts';
 import { Media, MediaGroupRights, MediaTypes } from '../types/types.ts';
 import toast from 'react-hot-toast';
 import { deleteMedia } from '../api/deleteMedia.ts';
@@ -37,8 +50,17 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { removeMediaFromList } from '../api/removeManifestFromList.ts';
 import { MediaFooter } from '../../../../customAssets/MediaFooter.tsx';
-import { getSettingValue, isFileSizeOverLimit, isValidFileForUpload, SettingKeys } from '../../../utils/utils.ts';
-import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
+import {
+  getSettingValue,
+  isFileSizeOverLimit,
+  isValidFileForUpload,
+  SettingKeys,
+} from '../../../utils/utils.ts';
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from '../../../utils/customHooks/filterHook.ts';
 import { useCreateMediaLink } from '../hooks/useCreateMediaLink.ts';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 import { getAccessToMedia } from '../api/getAccessToMedia.ts';
@@ -72,14 +94,13 @@ const MEDIA_TYPES_TABS = {
   OTHER: 3,
 };
 
-export const AllMedias = (
-  {
-    user,
-    userPersonalGroup,
-    medias,
-    fetchMediaForUser,
-    setMedias,
-  }: IAllMediasProps) => {
+export const AllMedias = ({
+  user,
+  userPersonalGroup,
+  medias,
+  fetchMediaForUser,
+  setMedias,
+}: IAllMediasProps) => {
   const [openModalMediaId, setOpenModalMediaId] = useState<number | null>(null);
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([]);
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
@@ -91,7 +112,9 @@ export const AllMedias = (
   const [sortOrder, setSortOrder] = useState('desc');
   const { mutateAsync, isPending } = useCreateMediaLink();
   const { data: settings } = useAdminSettings();
-  const [MAX_UPLOAD_SIZE] = useState<number | undefined>(Number(getSettingValue(SettingKeys.MAX_UPLOAD_SIZE, settings)))
+  const [MAX_UPLOAD_SIZE] = useState<number | undefined>(
+    Number(getSettingValue(SettingKeys.MAX_UPLOAD_SIZE, settings)),
+  );
 
   const { t } = useTranslation();
 
@@ -192,7 +215,7 @@ export const AllMedias = (
   const HandleDeleteMedia = useCallback(
     async (mediaId: number) => {
       await deleteMedia(mediaId);
-      const updatedListOfMedias = medias.filter(function(media) {
+      const updatedListOfMedias = medias.filter(function (media) {
         return media.id != mediaId;
       });
       setMedias(updatedListOfMedias);
@@ -203,7 +226,7 @@ export const AllMedias = (
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
       await updateMedia(mediaToUpdate);
-      const updatedListOfMedias = medias.filter(function(media) {
+      const updatedListOfMedias = medias.filter(function (media) {
         return media.id != mediaToUpdate.id;
       });
       updatedListOfMedias.push(mediaToUpdate);
@@ -275,7 +298,7 @@ export const AllMedias = (
     );
 
     if (newRights.error) {
-      toast.error(t('not_allowed_to_modify_rights'))
+      toast.error(t('not_allowed_to_modify_rights'));
     }
   };
 
@@ -285,36 +308,38 @@ export const AllMedias = (
 
   const actions = [
     {
-      icon: (<AddLinkIcon />) as ReactNode,
-      name: t('actionsDial.link'),
-      onClick: () => {
-        setModalLinkMediaIsOpen(!modalLinkMediaIsOpen);
-      },
-    },
-    {
       icon: (<UploadFileIcon />) as ReactNode,
       name: t('actionsDial.upload'),
       onClick: () => {
         handleButtonClick();
       },
     },
+    {
+      icon: (<AddLinkIcon />) as ReactNode,
+      name: t('actionsDial.link'),
+      onClick: () => {
+        setModalLinkMediaIsOpen(!modalLinkMediaIsOpen);
+      },
+    },
   ];
   const createMediaWithLink = async (link: string) => {
-    await mutateAsync({
-      url: link,
-      idCreator: user.id,
-      user_group: userPersonalGroup,
-    }, {
-      onSuccess: (data) => {
-        toast.success(t('media_created'));
-        fetchMediaForUser();
-        HandleOpenModal(data.id)
+    await mutateAsync(
+      {
+        url: link,
+        idCreator: user.id,
+        user_group: userPersonalGroup,
       },
-      onError: (error) => {
-        console.log('error component', error)
-        toast.error(`${t('media_creation_failed')} : ${t(error.message)}`);
+      {
+        onSuccess: (data) => {
+          toast.success(t('media_created'));
+          fetchMediaForUser();
+          HandleOpenModal(data.id);
+        },
+        onError: (error) => {
+          toast.error(`${t('media_creation_failed')} : ${t(error.message)}`);
+        },
       },
-    });
+    );
   };
 
   const getGroupByOption = (option: UserGroup): string => {
