@@ -336,7 +336,6 @@ export const AllMedias = ({
           HandleOpenModal(data.id);
         },
         onError: (error) => {
-          console.log('error component', error);
           toast.error(`${t('media_creation_failed')}`);
         },
       },
