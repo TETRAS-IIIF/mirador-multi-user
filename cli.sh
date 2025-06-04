@@ -76,39 +76,46 @@ case $action in
         $cmdlogs backend
         ;;
     "changelog")
-        if [[ $(git rev-parse --abbrev-ref HEAD) == "merge-arvest-and-update-deps" ]]; then
-            # Extract only new commits not already in CHANGELOG.md
-            commits=$(git log --date=short --pretty=format:"%ad|%s|%h" | sort -r)
+      if [[ $(git rev-parse --abbrev-ref HEAD) == "main" ]]; then
+        # Get all commits in "date|subject|hash" format
+        commits=$(git log --date=short --pretty=format:"%ad|%s|%h")
 
-            awk -F'|' -v changelog="CHANGELOG.md" '
-            BEGIN {
-              while ((getline line < changelog) > 0) {
-                if (index(line, "(") && index(line, ")")) {
-                  split(line, parts, "(")
-                  split(parts[2], hashPart, ")")
-                  hash = hashPart[1]
-                  if (length(hash) >= 7) {
-                    existing[hash] = 1
-                  }
-                }
-              }
-              print "# New Commits"
-            }
-            {
-              hash = $3
-              if (!(hash in existing)) {
-                print "- " $2 " (" hash ")"
-              }
-            }' <<< "$commits" > CHANGELOG.tmp
+        # Extract all existing hashes from CHANGELOG.md (any 7+ hex digits inside parentheses)
+        existing_hashes=$(grep -oE '\([a-f0-9]{7,}\)' CHANGELOG.md | tr -d '()')
+        declare -A existing
+        for hash in $existing_hashes; do
+          existing["$hash"]=1
+        done
 
-            # Prepend to the existing changelog
-            cat CHANGELOG.md >> CHANGELOG.tmp
-            mv CHANGELOG.tmp CHANGELOG.md
-            echo "Changelog updated."
+        # Prepare new changelog section
+        new_section=""
+        while IFS='|' read -r date subject hash; do
+          if [[ -z "${existing[$hash]}" ]]; then
+            # First time we encounter a new commit, add the heading
+            if [[ -z "$new_section" ]]; then
+              new_section="## Changelog update ($(date +%Y-%m-%d))\n"
+            fi
+            new_section+="- $subject ($hash)\n"
+          fi
+        done <<< "$commits"
+
+        # Only prepend if we found any new commits
+        if [[ -n "$new_section" ]]; then
+          {
+            echo -e "$new_section"
+            echo ""
+            cat CHANGELOG.md
+          } > CHANGELOG.tmp
+          mv CHANGELOG.tmp CHANGELOG.md
+          echo "Changelog updated."
         else
-          echo "Not on main, skipping changelog update."
+          echo "No new commits to add."
         fi
-        ;;
+      else
+        echo "Not on main, skipping changelog update."
+      fi
+
+      ;;
     "create_migration")
         $cmd_backend npm run typeorm:generate-migration --name="$1"
         ;;
