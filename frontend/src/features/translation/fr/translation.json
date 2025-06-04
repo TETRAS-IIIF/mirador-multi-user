@@ -289,7 +289,7 @@
   "noteTemplateInfo": "Créer un ou plusieurs modèles de notes. Ceux ci seront disponibles lors de l'édition d'annotation.",
   "templateChoice": "Choisissez un modèle",
   "newTemplateTitle": "Nouveau modèle",
-  "noTemplatesAvailable": "Aucun modèle disponible"
+  "noTemplatesAvailable": "Aucun modèle disponible",
   "newTemplateContent": "Ajouter votre contenu",
   "Youtube_not_allowed_error": "Les liens YouTube ne sont pas pris en charge.",
   "validURLToManifest": "URL valide vers un manifeste",
