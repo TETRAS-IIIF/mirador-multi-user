@@ -26,7 +26,7 @@ export class Project {
   @Column({ nullable: true, type: 'longtext' })
   thumbnailUrl: string;
 
-  @Column()
+  @Column({ update: false })
   ownerId: number;
 
   @Column({ type: 'json', nullable: true })

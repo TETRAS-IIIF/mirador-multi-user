@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -14,6 +15,7 @@ import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { Language } from '../../utils/email/utils';
+import { PASSWORD_MINIMUM_LENGTH } from '../../auth/utils';
 
 @Injectable()
 export class UsersService {
@@ -26,7 +28,9 @@ export class UsersService {
   async updateUser(userId: number, updateUserDto: UpdateUserDto) {
     try {
       if ('_isAdmin' in updateUserDto || 'admin' in updateUserDto) {
-        throw new UnauthorizedException('Admin field cannot be updated.');
+        throw new InternalServerErrorException(
+          'Admin field cannot be updated.',
+        );
       }
       const { oldPassword, confirmPassword, newPassword, ...newDto } =
         updateUserDto;
@@ -40,7 +44,7 @@ export class UsersService {
           userToUpdate.password,
         );
         if (!isMatch && confirmPassword === newPassword) {
-          throw new UnauthorizedException();
+          throw new UnauthorizedException("passwords don't match");
         }
         const salt = await bcrypt.genSalt();
         const hashedUpdatedPassword = await bcrypt.hash(newPassword, salt);
@@ -48,21 +52,31 @@ export class UsersService {
       }
       return await this.userRepository.update(userId, dto);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
+
       if (error instanceof UnauthorizedException) {
-        this.logger.error(error.message, error.stack);
-        throw new InternalServerErrorException(
-          'Someone try to promote a user to Admin',
+        throw error;
+      }
+
+      if (error.code === 'ER_DUP_ENTRY') {
+        throw new ConflictException(
+          'Duplicate entry. The value already exists.',
         );
       }
-      this.logger.error(error.message, error.stack);
-      throw new UnauthorizedException(
-        'An error occurred while updating the user',
+
+      throw new InternalServerErrorException(
+        'An unexpected error occurred while updating the user.',
       );
     }
   }
 
   async create(dto: CreateUserDto): Promise<User> {
     try {
+      if (dto.password.length < PASSWORD_MINIMUM_LENGTH) {
+        throw new BadRequestException(
+          `password must be at least ${PASSWORD_MINIMUM_LENGTH} characters`,
+        );
+      }
       if ('_isAdmin' in dto || 'admin' in dto) {
         throw new InternalServerErrorException('Admin field cannot be set.');
       }
@@ -74,11 +88,15 @@ export class UsersService {
       }
       return await this.userRepository.save(dto);
     } catch (error) {
-      if (error instanceof UnauthorizedException) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      if (
+        error instanceof UnauthorizedException ||
+        error instanceof BadRequestException
+      ) {
         this.logger.error(error.message, error.stack);
-        throw new InternalServerErrorException(
-          'Someone try to promote a user to Admin',
-        );
+        throw error;
       }
       if (error instanceof QueryFailedError) {
         this.logger.warn(`Conflict during user creation: ${error.message}`);

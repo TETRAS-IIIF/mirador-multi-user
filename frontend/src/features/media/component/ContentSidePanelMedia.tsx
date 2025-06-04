@@ -7,39 +7,39 @@ import {
   Tabs,
   Tooltip,
   Typography,
-} from "@mui/material";
+} from '@mui/material';
 import {
   ChangeEvent,
   SyntheticEvent,
   useCallback,
   useEffect,
   useState,
-} from "react";
-import toast from "react-hot-toast";
-import { Media, MediaTypes } from "../types/types.ts";
-import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { UserGroup } from "../../user-group/types/types.ts";
-import { createMedia } from "../api/createMedia.ts";
-import { User } from "../../auth/types/types.ts";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import AddLinkIcon from "@mui/icons-material/AddLink";
-import { createMediaLink } from "../api/createMediaWithLink.ts";
-import { PaginationControls } from "../../../components/elements/Pagination.tsx";
-import { a11yProps } from "../../../components/elements/SideBar/allyProps.tsx";
-import { useTranslation } from "react-i18next";
-import { useCurrentPageData } from "../../../utils/customHooks/filterHook.ts";
-import { ImageBox } from "./ImageBox.tsx";
-import { DrawerLinkMedia } from "./DrawerLinkMedia.tsx";
+} from 'react';
+import toast from 'react-hot-toast';
+import { Media, MediaTypes } from '../types/types.ts';
+import { SearchBar } from '../../../components/elements/SearchBar.tsx';
+import { UserGroup } from '../../user-group/types/types.ts';
+import { createMedia } from '../api/createMedia.ts';
+import { User } from '../../auth/types/types.ts';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import AddLinkIcon from '@mui/icons-material/AddLink';
+import { createMediaLink } from '../api/createMediaWithLink.ts';
+import { PaginationControls } from '../../../components/elements/Pagination.tsx';
+import { a11yProps } from '../../../components/elements/SideBar/allyProps.tsx';
+import { useTranslation } from 'react-i18next';
+import { useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
+import { MediaImageBox } from './MediaImageBox.tsx';
+import { DrawerLinkMedia } from './DrawerLinkMedia.tsx';
 
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
   height: 1,
-  overflow: "hidden",
-  position: "absolute",
+  overflow: 'hidden',
+  position: 'absolute',
   bottom: 0,
   left: 0,
-  whiteSpace: "nowrap",
+  whiteSpace: 'nowrap',
   width: 1,
 });
 
@@ -71,16 +71,16 @@ export const ContentSidePanelMedia = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [mediaTabShown, setMediaTabShown] = useState(MEDIA_TYPES_TABS.ALL);
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
-  const [sortField] = useState<keyof Media>("title");
-  const [sortOrder] = useState("asc");
+  const [sortField] = useState<keyof Media>('title');
+  const [sortOrder] = useState('asc');
   const itemsPerPage = 6;
   const { t } = useTranslation();
   const handleCopyToClipBoard = async (path: string) => {
     try {
       await navigator.clipboard.writeText(path);
-      toast.success(t("pathCopiedToClipboard"));
+      toast.success(t('pathCopiedToClipboard'));
     } catch (error) {
-      toast.error(t("pathNotCopiedToClipboard"));
+      toast.error(t('pathNotCopiedToClipboard'));
     }
   };
 
@@ -159,12 +159,12 @@ export const ContentSidePanelMedia = ({
       });
       fetchMediaForUser();
     } catch (error) {
-      console.error("Error fetching the image:", error);
+      console.error('Error fetching the image:', error);
     }
   };
 
   const handleButtonClick = () => {
-    document.getElementById("file-upload")!.click();
+    document.getElementById('file-upload')!.click();
   };
 
   return (
@@ -172,12 +172,12 @@ export const ContentSidePanelMedia = ({
       <Grid
         container
         spacing={2}
-        sx={{ padding: "20px" }}
+        sx={{ padding: '20px' }}
         alignItems="center"
         flexDirection="row"
       >
         <Grid item>
-          <SearchBar label={t("search")} setFilter={setMediaFilter} />
+          <SearchBar label={t('search')} setFilter={setMediaFilter} />
         </Grid>
         <Grid item>
           <Grid container direction="column" spacing={1}>
@@ -202,22 +202,22 @@ export const ContentSidePanelMedia = ({
         </Grid>
       </Grid>
       <Tabs value={mediaTabShown} onChange={handleChangeTab} aria-label="tabs">
-        <Tab label={t("All")} {...a11yProps(0)} />
-        <Tab label={t("Videos")} {...a11yProps(1)} />
-        <Tab label={t("Images")} {...a11yProps(2)} />
-        <Tab label={t("other")} {...a11yProps(3)} />
+        <Tab label={t('All')} {...a11yProps(0)} />
+        <Tab label={t('Videos')} {...a11yProps(1)} />
+        <Tab label={t('Images')} {...a11yProps(2)} />
+        <Tab label={t('other')} {...a11yProps(3)} />
       </Tabs>
       {!medias.length && (
-        <Grid container justifyContent={"center"}>
+        <Grid container justifyContent={'center'}>
           <Typography variant="h6" component="h2">
-            {t("noMediaYet")}
+            {t('noMediaYet')}
           </Typography>
         </Grid>
       )}
       {medias.length === 0 ? (
         <Grid container justifyContent="center">
           <Typography variant="h6" component="h2">
-            {t("noMediaYet")}
+            {t('noMediaYet')}
           </Typography>
         </Grid>
       ) : currentPageData.length > 0 ? (
@@ -227,7 +227,7 @@ export const ContentSidePanelMedia = ({
           rowHeight={200}
         >
           {currentPageData.map((media) => (
-            <ImageBox
+            <MediaImageBox
               media={media}
               caddyUrl={caddyUrl}
               handleCopyToClipBoard={handleCopyToClipBoard}
@@ -237,7 +237,7 @@ export const ContentSidePanelMedia = ({
       ) : (
         <Grid item container justifyContent="center" alignItems="center">
           <Typography variant="h6" component="h2">
-            {t("noMatchingMediaFilter")}
+            {t('noMatchingMediaFilter')}
           </Typography>
         </Grid>
       )}
@@ -255,6 +255,7 @@ export const ContentSidePanelMedia = ({
       </Grid>
       <Grid>
         <DrawerLinkMedia
+          isPending={false}
           toggleModalMediaCreation={() =>
             setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)
           }

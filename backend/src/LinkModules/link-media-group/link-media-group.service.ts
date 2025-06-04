@@ -14,7 +14,7 @@ import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
 import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
 import { MediaService } from '../../BaseEntities/media/media.service';
-import { MediaGroupRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
+import { ITEM_RIGHTS_PRIORITY, MediaGroupRights } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { CreateMediaDto } from '../../BaseEntities/media/dto/create-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
@@ -24,6 +24,8 @@ import { ActionType } from '../../enum/actions';
 import { mediaOrigin } from '../../enum/origins';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
+import { UserGroupTypes } from '../../enum/user-group-types';
+import { Media } from '../../BaseEntities/media/entities/media.entity';
 
 @Injectable()
 export class LinkMediaGroupService {
@@ -134,9 +136,41 @@ export class LinkMediaGroupService {
     }
   }
 
-  async getAllMediasForUserGroup(userGroupId: number) {
+  async getAllMediasForUser(userId: number) {
     try {
-      return await this.findAllMediaByUserGroupId(userGroupId);
+      const usersGroups =
+        await this.linkUserGroupService.findALlGroupsForUser(userId);
+      const mediasMap: Map<number, Media & { rights: string; share?: string }> =
+        new Map();
+
+      for (const userGroup of usersGroups) {
+        const linkMediaGroups: LinkMediaGroup[] =
+          await this.findAllMediaByUserGroupId(userGroup.id);
+        for (const linkMediaGroup of linkMediaGroups) {
+          const media = linkMediaGroup.media;
+          const mediaId = media.id;
+          const currentRights = ITEM_RIGHTS_PRIORITY[linkMediaGroup.rights];
+          const existingMedia = mediasMap.get(mediaId);
+          const personalOwnerGroup =
+            await this.groupService.findUserPersonalGroup(media.idCreator);
+          const mediaData = {
+            ...media,
+            rights: linkMediaGroup.rights,
+            shared: Number(media.idCreator) !== Number(userId),
+            ...(linkMediaGroup.user_group.type ===
+              UserGroupTypes.MULTI_USER && { share: 'group' }),
+            personalOwnerGroupId: personalOwnerGroup.id,
+          };
+
+          if (
+            !existingMedia ||
+            currentRights > ITEM_RIGHTS_PRIORITY[existingMedia.rights]
+          ) {
+            mediasMap.set(mediaId, mediaData);
+          }
+        }
+      }
+      return Array.from(mediasMap.values());
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -252,15 +286,18 @@ export class LinkMediaGroupService {
   async removeAccessToMedia(mediaId: number, userGroupId: number) {
     try {
       const userGroupMedias = await this.findAllMediaByUserGroupId(userGroupId);
-      const mediaToRemove = userGroupMedias.find(
-        (userGroupMedia) => userGroupMedia.id == mediaId,
+      const linkMediaGroupToRemove = userGroupMedias.find(
+        (userGroupMedia) => userGroupMedia.media.id == mediaId,
       );
-      if (!mediaToRemove) {
+      if (!linkMediaGroupToRemove) {
         throw new NotFoundException(
           `No association between Media with ID ${mediaId} and group with ID ${userGroupId}`,
         );
       }
-      return await this.removeMediaGroupRelation(mediaToRemove.id, userGroupId);
+      return await this.removeMediaGroupRelation(
+        linkMediaGroupToRemove.media.id,
+        userGroupId,
+      );
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -271,17 +308,12 @@ export class LinkMediaGroupService {
 
   async findAllMediaByUserGroupId(id: number) {
     try {
-      const userPersonalGroup = await this.groupService.findOne(id);
       const request = await this.linkMediaGroupRepository.find({
         where: { user_group: { id } },
         relations: ['user_group'],
       });
       return request.map((linkGroup: LinkMediaGroup) => ({
-        ...linkGroup.media,
-        rights: linkGroup.rights,
-        shared:
-          Number(linkGroup.media.idCreator) !==
-          Number(userPersonalGroup.ownerId),
+        ...linkGroup,
       }));
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -324,27 +356,44 @@ export class LinkMediaGroupService {
 
   async updateMediaGroupRelation(
     mediaId: number,
-    groupId: number,
-    rights: MediaGroupRights,
+    groupToUpdateId: number,
+    rightsToAssign: MediaGroupRights,
+    requestUserId: number,
   ) {
     try {
+      const userRightOnMedia = await this.getHighestRightForMedia(
+        requestUserId,
+        mediaId,
+      );
+      if (
+        ITEM_RIGHTS_PRIORITY[userRightOnMedia.rights] <
+        ITEM_RIGHTS_PRIORITY[rightsToAssign]
+      ) {
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
+      }
       const linkMediaGroupToUpdate =
         await this.linkMediaGroupRepository.findOne({
           where: {
             media: { id: mediaId },
-            user_group: { id: groupId },
+            user_group: { id: groupToUpdateId },
           },
         });
-
       if (!linkMediaGroupToUpdate) {
         throw new NotFoundException('no matching LinkMediaGroup found');
       }
 
-      linkMediaGroupToUpdate.rights = rights;
+      linkMediaGroupToUpdate.rights = rightsToAssign;
 
       return await this.linkMediaGroupRepository.save(linkMediaGroupToUpdate);
     } catch (error) {
       this.logger.error(error.message, error.stack);
+      if (error instanceof ForbiddenException) {
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
+      }
       throw new InternalServerErrorException(
         'An error occurred while updating the linkMediaGroup',
         error,
@@ -400,8 +449,8 @@ export class LinkMediaGroupService {
     }
 
     return linkEntities.reduce((prev, current) => {
-      const prevRight = PROJECT_RIGHTS_PRIORITY[prev.rights] || 0;
-      const currentRight = PROJECT_RIGHTS_PRIORITY[current.rights] || 0;
+      const prevRight = ITEM_RIGHTS_PRIORITY[prev.rights] || 0;
+      const currentRight = ITEM_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
     });
   }

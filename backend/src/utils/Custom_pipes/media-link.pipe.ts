@@ -1,6 +1,8 @@
 import {
+  BadRequestException,
   CallHandler,
   ExecutionContext,
+  HttpException,
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
@@ -22,9 +24,16 @@ import {
   isVideo,
   isYouTubeVideo,
 } from './utils';
+import { SettingsService } from '../../BaseEntities/setting/setting.service';
+import { SettingKeys } from '../../BaseEntities/setting/utils.setting';
+import { CustomLogger } from '../Logger/CustomLogger.service';
 
 @Injectable()
 export class MediaLinkInterceptor implements NestInterceptor {
+  private readonly logger = new CustomLogger();
+
+  constructor(private readonly settingsService: SettingsService) {}
+
   async processImage(buffer: Buffer, uploadPath: string): Promise<void> {
     const processedFilePath = join(uploadPath, `thumbnail.webp`);
     const sharpBuffer = await sharp(buffer)
@@ -64,6 +73,18 @@ export class MediaLinkInterceptor implements NestInterceptor {
           break;
 
         case isYouTubeVideo(url):
+          const isYoutubeLinkAllowed =
+            (await this.settingsService.get(
+              SettingKeys.ALLOW_YOUTUBE_MEDIA,
+            )) === 'true';
+
+          if (!isYoutubeLinkAllowed) {
+            this.logger.error(
+              'YouTube Link are not supported',
+              'MediaLinkInterceptor | isYoutubeVideo === true',
+            );
+            throw new BadRequestException('Youtube_not_allowed_error');
+          }
           videoId = getYouTubeVideoID(url);
           if (videoId) {
             thumbnailBuffer = await getYoutubeThumbnail(videoId);
@@ -72,6 +93,17 @@ export class MediaLinkInterceptor implements NestInterceptor {
           break;
 
         case await isPeerTubeVideo(url):
+          const isPeertubeVideoAllowed =
+            (await this.settingsService.get(
+              SettingKeys.ALLOW_PEERTUBE_MEDIA,
+            )) === 'true';
+          if (!isPeertubeVideoAllowed) {
+            this.logger.error(
+              'Peertube Link are not supported',
+              'MediaLinkInterceptor | isPeertubeVideo === true',
+            );
+            throw new BadRequestException('Peertube_not_allowed_error');
+          }
           videoId = getPeerTubeVideoID(url);
           if (videoId) {
             thumbnailBuffer = await getPeerTubeThumbnail(url, videoId);
@@ -101,8 +133,15 @@ export class MediaLinkInterceptor implements NestInterceptor {
 
       return next.handle();
     } catch (error) {
-      console.error(`Error processing image: ${error.message}`);
-      throw new Error(`Error processing image: ${error.message}`);
+      if (error instanceof HttpException) {
+        this.logger.error(error.message, error.stack);
+        throw error;
+      }
+      this.logger.error(
+        `Error processing image: ${error.message}`,
+        error.stack,
+      );
+      throw new BadRequestException(`Error processing image: ${error.message}`);
     }
   }
 }

@@ -12,6 +12,7 @@ import * as bcrypt from 'bcrypt';
 import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationService } from '../impersonation/impersonation.service';
 import { CustomLogger } from '../utils/Logger/CustomLogger.service';
+import { PASSWORD_MINIMUM_LENGTH } from './utils';
 
 @Injectable()
 export class AuthService {
@@ -96,10 +97,10 @@ export class AuthService {
   async forgotPassword(email: string): Promise<void> {
     try {
       const user = await this.usersService.findOneByMail(email);
-      const { mail, name } = user;
       if (!user) {
         throw new NotFoundException(`No user found for email: ${email}`);
       }
+      const { mail, name } = user;
 
       const payload = { mail, name };
 
@@ -116,6 +117,9 @@ export class AuthService {
         language: user.preferredLanguage,
       });
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred`,
@@ -149,6 +153,11 @@ export class AuthService {
 
   async resetPassword(token: string, password: string): Promise<void> {
     try {
+      if (password.length < PASSWORD_MINIMUM_LENGTH) {
+        throw new BadRequestException(
+          `password must be at least ${PASSWORD_MINIMUM_LENGTH} characters`,
+        );
+      }
       const decodeData = await this.decodeConfirmationToken(token);
 
       const user = await this.usersService.findOneByMail(decodeData.mail);
@@ -169,6 +178,9 @@ export class AuthService {
         throw new UnauthorizedException('invalid token');
       }
     } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error.message);
     }

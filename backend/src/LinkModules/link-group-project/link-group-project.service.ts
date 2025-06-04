@@ -10,7 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { Repository } from 'typeorm';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
-import { GroupProjectRights, PROJECT_RIGHTS_PRIORITY } from '../../enum/rights';
+import { GroupProjectRights, ITEM_RIGHTS_PRIORITY } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { ProjectService } from '../../BaseEntities/project/project.service';
@@ -33,6 +33,8 @@ import * as fs from 'node:fs';
 import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
 import { AnnotationPageService } from '../../BaseEntities/annotation-page/annotation-page.service';
 import { constructSnapshotWorkspace } from './utils/snapshot.utils';
+import { MetadataService } from '../../BaseEntities/metadata/metadata.service';
+import { ObjectTypes } from '../../enum/ObjectTypes';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -46,6 +48,7 @@ export class LinkGroupProjectService {
     private readonly linkUserGroupService: LinkUserGroupService,
     private readonly snapshotService: SnapshotService,
     private readonly annotationPageService: AnnotationPageService,
+    private readonly metadataService: MetadataService,
   ) {}
 
   async create(createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
@@ -125,11 +128,32 @@ export class LinkGroupProjectService {
       if (!originalProject) {
         throw new NotFoundException(`Object with ID ${projectId} not found`);
       }
-      return await this.createProject({
-        title: originalProject.project.title,
+
+      const {
+        /* eslint-disable @typescript-eslint/no-unused-vars */
+        created_at,
+        id,
+        linkGroupProjectsIds,
+        lockedAt,
+        lockedByUserId,
+        ownerId,
+        updated_at,
+        /* eslint-enable @typescript-eslint/no-unused-vars */
+        ...dataToDuplicate
+      } = originalProject.project;
+
+      const duplicatedProject = await this.createProject({
         ownerId: userId,
-        metadata: originalProject.project.metadata,
+        ...dataToDuplicate,
       });
+
+      await this.metadataService.duplicateMetadata(
+        ObjectTypes.PROJECT,
+        originalProject.project.id,
+        duplicatedProject.project.id,
+      );
+
+      return duplicatedProject;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
@@ -242,8 +266,21 @@ export class LinkGroupProjectService {
 
   async updateAccessToProject(
     updateAccessToProjectDto: UpdateAccessToProjectDto,
+    userId: number,
   ) {
     try {
+      const userRightOnProject = await this.getHighestRightForProject(
+        userId,
+        updateAccessToProjectDto.projectId,
+      );
+      if (
+        ITEM_RIGHTS_PRIORITY[userRightOnProject.rights] <
+        ITEM_RIGHTS_PRIORITY[updateAccessToProjectDto.rights]
+      ) {
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
+      }
       const projectToUpdate = await this.projectService.findOne(
         updateAccessToProjectDto.projectId,
       );
@@ -256,7 +293,7 @@ export class LinkGroupProjectService {
           user_group: { id: groupToUpdate.id },
         },
       });
-      const updateRights = await this.linkGroupProjectRepository.update(
+      return await this.linkGroupProjectRepository.update(
         linkGroupToUpdate.id,
         {
           user_group: groupToUpdate,
@@ -264,10 +301,13 @@ export class LinkGroupProjectService {
           rights: updateAccessToProjectDto.rights,
         },
       );
-
-      return updateRights;
     } catch (error) {
       this.logger.error(error.message, error.stack);
+      if (error instanceof ForbiddenException) {
+        throw new ForbiddenException(
+          'You cannot modify a user with higher privileges.',
+        );
+      }
       throw new InternalServerErrorException(
         `an error occurred while trying to update access to project with id ${updateAccessToProjectDto.projectId} to group with id: ${updateAccessToProjectDto.groupId}`,
         error,
@@ -434,29 +474,36 @@ export class LinkGroupProjectService {
         );
         for (const groupProject of groupProjects) {
           const projectId = groupProject.project.id;
-          const currentRights =
-            PROJECT_RIGHTS_PRIORITY[groupProject.rights] || 0;
+          const currentRights = ITEM_RIGHTS_PRIORITY[groupProject.rights] || 0;
 
           const existingProject = projectsMap.get(projectId);
           const personalOwnerGroup =
             await this.groupService.findUserPersonalGroup(
               groupProject.project.ownerId,
             );
-          const projectData = {
-            ...groupProject.project,
-            rights: groupProject.rights,
-            shared: Number(groupProject.project.ownerId) !== Number(userId),
-            ...(groupProject.user_group.type === UserGroupTypes.MULTI_USER && {
-              share: 'group',
-            }),
-            personalOwnerGroupId: personalOwnerGroup.id,
-          };
+          if (personalOwnerGroup !== null) {
+            const projectData = {
+              ...groupProject.project,
+              rights: groupProject.rights,
+              shared: Number(groupProject.project.ownerId) !== Number(userId),
+              ...(groupProject.user_group.type ===
+                UserGroupTypes.MULTI_USER && {
+                share: 'group',
+              }),
+              personalOwnerGroupId: personalOwnerGroup.id,
+            };
 
-          if (
-            !existingProject ||
-            currentRights > PROJECT_RIGHTS_PRIORITY[existingProject.rights]
-          ) {
-            projectsMap.set(projectId, projectData);
+            if (
+              !existingProject ||
+              currentRights > ITEM_RIGHTS_PRIORITY[existingProject.rights]
+            ) {
+              projectsMap.set(projectId, projectData);
+            }
+          } else {
+            const error = new Error(
+              `personalOwnerGroup.id === null has been detected with personalOwnerGroup : ${personalOwnerGroup}`,
+            );
+            this.logger.error(error.message, error.stack);
           }
         }
       }
@@ -495,8 +542,8 @@ export class LinkGroupProjectService {
     }
 
     return linkEntities.reduce((prev, current) => {
-      const prevRight = PROJECT_RIGHTS_PRIORITY[prev.rights] || 0;
-      const currentRight = PROJECT_RIGHTS_PRIORITY[current.rights] || 0;
+      const prevRight = ITEM_RIGHTS_PRIORITY[prev.rights] || 0;
+      const currentRight = ITEM_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
     });
   }

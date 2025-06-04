@@ -39,7 +39,6 @@ export const SearchBar = ({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState<string>("");
-
   const handleFetchData = async (partialDataName: string) => {
     try {
       if (fetchFunction) {
@@ -93,7 +92,7 @@ export const SearchBar = ({
   };
 
   return (
-    <Grid container flexDirection="column" spacing={1}>
+    <Grid container flexDirection="column">
       <Grid container spacing={2} alignItems="center">
         {fetchFunction ? (
           <Grid item>
@@ -105,12 +104,7 @@ export const SearchBar = ({
               id="combo-box-demo"
               options={suggestions}
               clearOnBlur={false}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label={label}
-                />
-              )}
+              renderInput={(params) => <TextField {...params} label={label} />}
               getOptionLabel={getOptionLabel}
               groupBy={groupByOption}
               noOptionsText={t("noOptions")}

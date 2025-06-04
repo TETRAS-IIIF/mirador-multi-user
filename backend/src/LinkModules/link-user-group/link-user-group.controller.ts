@@ -205,6 +205,7 @@ export class LinkUserGroupController {
           grantAccessToGroupDto.groupId,
           grantAccessToGroupDto.userId,
           grantAccessToGroupDto.rights,
+          request.user.sub,
         );
       },
     );
@@ -325,5 +326,13 @@ export class LinkUserGroupController {
       groupId,
       request.user.sub,
     );
+  }
+
+  @ApiOperation({ summary: 'validate a user account' })
+  @UseGuards(AuthGuard)
+  @HttpCode(201)
+  @Patch('/validate-user/:userId')
+  async validateUserAccount(@Param('userId') userId: number, @Req() request) {
+    return this.linkUserGroupService.validateUser(userId, request.user.sub);
   }
 }

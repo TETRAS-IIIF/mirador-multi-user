@@ -24,7 +24,9 @@ export class ProjectService {
     try {
       return this.projectRepository.save({
         ...dto,
-        description: 'Your project description here',
+        description: dto.description
+          ? dto.description
+          : 'Your project description here',
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);

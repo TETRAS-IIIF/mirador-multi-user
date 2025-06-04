@@ -5,47 +5,45 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { updateProject } from "../../features/projects/api/Project/updateProject.ts";
+} from 'react';
+import { updateProject } from '../../features/projects/api/Project/updateProject.ts';
 import {
   CreateProjectDto,
   Project,
-} from "../../features/projects/types/types.ts";
-import IState from "../../features/mirador/interface/IState.ts";
-import { getUserAllProjects } from "../../features/projects/api/Project/getUserAllProjects.ts";
-import { createProject } from "../../features/projects/api/Project/createProject.ts";
-import { User } from "../../features/auth/types/types.ts";
-import { Media, MediaGroupRights } from "../../features/media/types/types.ts";
-import { getUserPersonalGroup } from "../../features/projects/api/group/getUserPersonalGroup.ts";
+} from '../../features/projects/types/types.ts';
+import IState from '../../features/mirador/interface/IState.ts';
+import { getUserAllProjects } from '../../features/projects/api/Project/getUserAllProjects.ts';
+import { createProject } from '../../features/projects/api/Project/createProject.ts';
+import { User } from '../../features/auth/types/types.ts';
+import { Media } from '../../features/media/types/types.ts';
+import { getUserPersonalGroup } from '../../features/projects/api/group/getUserPersonalGroup.ts';
 import {
   ItemsRights,
   UserGroup,
   UserGroupTypes,
-} from "../../features/user-group/types/types.ts";
-import { getAllUserGroups } from "../../features/user-group/api/getAllUserGroups.ts";
-import { handleLock } from "../../features/projects/api/Project/handleLock.ts";
-import { useTranslation } from "react-i18next";
-import { loadLanguage } from "../../features/translation/i18n.ts";
-import { Content } from "./SideDrawer/Content";
-import { MMUDrawer } from "./SideDrawer/MMUDrawer";
-import { getUserGroupMedias } from "../../features/media/api/getUserGroupMedias";
-import {
-  Manifest,
-  ManifestGroupRights,
-} from "../../features/manifest/types/types";
-import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests";
-import { MENU_ELEMENT } from "../../utils/utils.ts";
-import { generateSnapshot } from "../../features/projects/api/snapshot/generateProjectSnapShot.ts";
-import toast from "react-hot-toast";
-import dayjs from "dayjs";
+} from '../../features/user-group/types/types.ts';
+import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
+import { handleLock } from '../../features/projects/api/Project/handleLock.ts';
+import { useTranslation } from 'react-i18next';
+import { loadLanguage } from '../../features/translation/i18n.ts';
+import { Content } from './SideDrawer/Content';
+import { MMUDrawer } from './SideDrawer/MMUDrawer';
+import { getUserMedias } from '../../features/media/api/getUserMedias.ts';
+
+import { Manifest } from '../../features/manifest/types/types';
+import { MENU_ELEMENT } from '../../utils/utils.ts';
+import { generateSnapshot } from '../../features/projects/api/snapshot/generateProjectSnapShot.ts';
+import toast from 'react-hot-toast';
+import dayjs from 'dayjs';
+import { getUserManifests } from '../../features/manifest/api/getUserGroupManifests.ts';
 
 interface ISideDrawerProps {
-  user: User;
   handleDisconnect: () => void;
   selectedProjectId?: number;
   setSelectedProjectId: (id?: number) => void;
-  viewer: any;
   setViewer: Dispatch<any>;
+  user: User;
+  viewer: any;
 }
 
 interface MiradorViewerHandle {
@@ -170,49 +168,10 @@ export const SideDrawer = ({
   };
 
   const fetchManifestForUser = async () => {
-    const allManifests: Manifest[] = [];
+    const allManifests = await getUserManifests();
 
-    // Fetch user manifests
-    const userManifests = await getUserGroupManifests(userPersonalGroup!.id);
-    allManifests.push(...userManifests);
-
-    // Fetch group manifests
-    for (const group of groups) {
-      const manifestsGroup = await getUserGroupManifests(group!.id);
-      for (const manifest of manifestsGroup) {
-        allManifests.push({ ...manifest, share: "group" });
-      }
-    }
-
-    const rightsPriority = {
-      [ManifestGroupRights.ADMIN]: 3,
-      [ManifestGroupRights.EDITOR]: 2,
-      [ManifestGroupRights.READER]: 1,
-    };
-
-    const uniqueManifestsMap = new Map<number, Manifest>();
-
-    allManifests.forEach((manifest) => {
-      const existing = uniqueManifestsMap.get(manifest.id);
-      if (
-        !existing ||
-        (manifest.rights &&
-          rightsPriority[manifest.rights] >
-            (existing.rights ? rightsPriority[existing.rights] : 0))
-      ) {
-        // Add or replace with the manifest that has higher rights
-        uniqueManifestsMap.set(manifest.id, manifest);
-      } else if (existing && manifest.share && !existing.share) {
-        // Propagate the `share` field if it's missing in the existing manifest
-        existing.share = manifest.share;
-      }
-    });
-
-    const uniqueManifests = Array.from(uniqueManifestsMap.values());
-
-    // Fetch and add manifest JSON
     const updatedManifests = await Promise.all(
-      uniqueManifests.map(async (manifest) => {
+      allManifests.map(async (manifest: Manifest) => {
         const manifestJson = await getManifestFromUrl(manifest.path);
         return { ...manifest, json: manifestJson };
       }),
@@ -240,11 +199,28 @@ export const SideDrawer = ({
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { rights, share, shared, ...projectWithoutRights } =
           projectToUpdate;
-        await updateProject({ project: projectWithoutRights });
+        const updatedResponse = await updateProject({
+          project: projectWithoutRights,
+        });
+        if (updatedResponse) {
+          toast.success(
+            <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+              {t('projectSaved', { projectTitle: updatedResponse.title })}
+            </div>,
+          );
+        } else {
+          toast.error(
+            <div style={{ wordBreak: 'break-word', whiteSpace: 'pre-wrap' }}>
+              {t('projectSavedFailed', {
+                projectTitle: projectToUpdate.title,
+              })}
+            </div>,
+          );
+        }
       }
     } else {
       const project: CreateProjectDto = {
-        title: t("defaultProjectTitle"),
+        title: t('defaultProjectTitle'),
         ownerId: user.id,
         userWorkspace: miradorViewer!,
         metadata: {},
@@ -265,7 +241,7 @@ export const SideDrawer = ({
   const handleGenerateSnapshot = async (projectId: number) => {
     const generated_at = dayjs(Date.now())
       .locale(i18n.language)
-      .format("LLLL")
+      .format('LLLL')
       .toString();
 
     const snapshot = await generateSnapshot({
@@ -277,7 +253,7 @@ export const SideDrawer = ({
 
     fetchProjects();
     if (snapshot) {
-      toast.success(t("snapshot_success"));
+      toast.success(t('snapshot_success'));
     }
   };
 
@@ -333,61 +309,13 @@ export const SideDrawer = ({
       });
       setUserProjects(uniqueProjects);
     } catch (error) {
-      console.error(t("errorFetchProject"), error);
+      console.error(t('errorFetchProject'), error);
     }
   }, [user.id]);
 
   const fetchMediaForUser = async () => {
-    const allMedias: Media[] = [];
-
-    // Handle the case where `userPersonalGroup` might be null on the first render
-    if (!userPersonalGroup) {
-      console.warn("userPersonalGroup is null on first render");
-      return;
-    }
-
-    // Fetch personal group media
-    const personalGroupMedias = await getUserGroupMedias(userPersonalGroup.id);
-    allMedias.push(...personalGroupMedias);
-
-    // Fetch group media
-    for (const group of groups) {
-      const groupMedias = await getUserGroupMedias(group.id);
-      for (const media of groupMedias) {
-        // Ensure media from groups includes the "share" field
-        allMedias.push({ ...media, share: "group" });
-      }
-    }
-
-    const rightsPriority = {
-      [MediaGroupRights.ADMIN]: 3,
-      [MediaGroupRights.EDITOR]: 2,
-      [MediaGroupRights.READER]: 1,
-    };
-
-    // Create a map to store unique media items based on their `id`
-    const uniqueMediasMap = new Map<number, Media>();
-
-    allMedias.forEach((media) => {
-      const existing = uniqueMediasMap.get(media.id);
-
-      if (
-        !existing ||
-        (media.rights &&
-          rightsPriority[media.rights] >
-            (existing.rights ? rightsPriority[existing.rights] : 0))
-      ) {
-        // Add or replace the media item with higher rights
-        uniqueMediasMap.set(media.id, media);
-      } else if (existing && media.share && !existing.share) {
-        // Propagate the `share` field if it's missing in the existing media item
-        existing.share = media.share;
-      }
-    });
-
-    const uniqueMedias = Array.from(uniqueMediasMap.values());
-
-    setMedias(uniqueMedias);
+    const allMedias = await getUserMedias();
+    setMedias(allMedias);
   };
 
   const initializedWorkspace = async () => {
@@ -424,6 +352,7 @@ export const SideDrawer = ({
         handleGenerateSnapshot={handleGenerateSnapshot}
       />
       <Content
+        setMedias={setMedias}
         HandleSetIsRunning={HandleSetIsRunning}
         HandleSetUserProjects={HandleSetUserProjects}
         fetchGroups={fetchGroups}
@@ -440,7 +369,6 @@ export const SideDrawer = ({
         saveMiradorState={saveMiradorState}
         selectedContent={selectedContent}
         selectedProjectId={selectedProjectId}
-        setMedias={setMedias}
         setSelectedProjectId={setSelectedProjectId}
         setShowSignOutModal={setShowSignOutModal}
         setViewer={setViewer}

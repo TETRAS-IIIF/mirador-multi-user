@@ -1,5 +1,5 @@
-import { Button, Grid, Typography } from "@mui/material";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { Button, Grid, Typography } from '@mui/material';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 interface IModalConfirmDeleteProps {
   deleteItem?: (itemId: number, share?: string) => void;
@@ -19,11 +19,14 @@ export const ModalConfirmDelete = ({
   return (
     <Grid container wrap="nowrap" spacing={2}>
       <Grid item>
-        <WarningAmberIcon sx={{ color: "red" }} fontSize="large" />
+        <WarningAmberIcon sx={{ color: 'red' }} fontSize="large" />
       </Grid>
       <Grid item container spacing={2}>
         <Grid item>
-          <Typography dangerouslySetInnerHTML={{ __html: content }} />
+          <Typography
+            sx={{ 'word-break': ' break-word' }}
+            dangerouslySetInnerHTML={{ __html: content }}
+          />
         </Grid>
         <Grid item>
           {deleteItem && (

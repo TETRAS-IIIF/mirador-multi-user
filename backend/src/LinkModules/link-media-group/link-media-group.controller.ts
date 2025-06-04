@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -31,11 +32,16 @@ import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Media } from '../../BaseEntities/media/entities/media.entity';
 import { UPLOAD_FOLDER } from '../../utils/constants';
 import { fileFilterMedia } from '../../BaseEntities/media/utils/fileFilterMedia';
+import { SettingsService } from '../../BaseEntities/setting/setting.service';
+import { SettingKeys } from '../../BaseEntities/setting/utils.setting';
 
 @ApiBearerAuth()
 @Controller('link-media-group')
 export class LinkMediaGroupController {
-  constructor(private readonly linkMediaGroupService: LinkMediaGroupService) {}
+  constructor(
+    private readonly linkMediaGroupService: LinkMediaGroupService,
+    private readonly settingService: SettingsService,
+  ) {}
 
   @ApiOperation({ summary: 'Upload a media' })
   @UseGuards(AuthGuard)
@@ -58,10 +64,6 @@ export class LinkMediaGroupController {
         },
       }),
       fileFilter: fileFilterMedia,
-      limits: {
-        fileSize:
-          (parseInt(process.env.MAX_UPLOAD_SIZE, 10) || 1000) * 1024 * 1024,
-      },
     }),
     SharpPipeInterceptor,
   )
@@ -70,12 +72,28 @@ export class LinkMediaGroupController {
     @Body() CreateMediaDto,
     @Req() req,
   ) {
+    // We fetch MAX_UPLOAD_SIZE there to handle the potential updates of this value.
+    const maxUploadSize =
+      parseInt(
+        (await this.settingService.get(SettingKeys.MAX_UPLOAD_SIZE)) ??
+          process.env.MAX_UPLOAD_SIZE ??
+          '1000',
+        10,
+      ) *
+      1024 *
+      1024;
+
+    if (file.size > maxUploadSize) {
+      throw new BadRequestException('File size exceeds the maximum allowed.');
+    }
     const userGroup = JSON.parse(CreateMediaDto.user_group);
     // TODO TRAD 'your media description'
     const mediaToCreate = {
       ...CreateMediaDto,
       title: file.originalname,
-      description: 'your media description',
+      description: CreateMediaDto.description
+        ? CreateMediaDto.description
+        : 'your media description',
       user_group: userGroup,
       path: `${file.filename}`,
       hash: req.generatedHash,
@@ -111,9 +129,9 @@ export class LinkMediaGroupController {
     isArray: true,
   })
   @UseGuards(AuthGuard)
-  @Get('/group/:userGroupId')
-  async getMediaByUserGroupId(@Param('userGroupId') userGroupId: number) {
-    return this.linkMediaGroupService.getAllMediasForUserGroup(userGroupId);
+  @Get('/medias')
+  async getUserMedias(@Req() request) {
+    return this.linkMediaGroupService.getAllMediasForUser(request.user.sub);
   }
 
   @ApiOperation({ summary: 'Get all group that can access a specific media' })
@@ -180,6 +198,7 @@ export class LinkMediaGroupController {
           mediaId,
           userGroupId,
           rights,
+          request.user.sub,
         );
       },
     );

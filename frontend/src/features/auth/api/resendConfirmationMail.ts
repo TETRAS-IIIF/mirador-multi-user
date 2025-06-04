@@ -1,4 +1,4 @@
-import storage from "../../../utils/storage.ts";
+import storage from '../../../utils/storage.ts';
 
 export const ResendConfirmationMail = async (
   email: string,
@@ -8,15 +8,15 @@ export const ResendConfirmationMail = async (
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/link-user-group/resend-confirmation-link/${email}/${language}`,
       {
-        method: "GET",
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       },
     );
     storage.clearToken();
-    return await response.json();
+    return response.status;
   } catch (error) {
-    console.error("Network error:", error);
+    console.error('Network error:', error);
   }
 };

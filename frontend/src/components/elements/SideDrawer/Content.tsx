@@ -1,20 +1,20 @@
-import { Box } from "@mui/material";
-import { AdminPanel } from "../../../features/admin/components/adminPanel";
-import { AllProjects } from "../../../features/projects/components/AllProjects";
-import { AllMedias } from "../../../features/media/component/AllMedias";
-import { AllGroups } from "../../../features/user-group/components/AllGroups";
-import { AllManifests } from "../../../features/manifest/component/AllManifests";
-import { UserSettings } from "../../../features/user-setting/UserSettings";
-import { MMUModal } from "../modal";
-import { ConfirmDisconnect } from "../../../features/auth/components/confirmDisconect";
-import { ProjectWorkspace } from "./ProjectWorkspace";
-import { User } from "../../../features/auth/types/types.ts";
-import { UserGroup } from "../../../features/user-group/types/types.ts";
-import { Manifest } from "../../../features/manifest/types/types.ts";
-import { Media } from "../../../features/media/types/types.ts";
-import { Project } from "../../../features/projects/types/types.ts";
-import { Dispatch, SetStateAction } from "react";
-import { MENU_ELEMENT } from "../../../utils/utils.ts";
+import { Box } from '@mui/material';
+import { AllProjects } from '../../../features/projects/components/AllProjects';
+import { AllMedias } from '../../../features/media/component/AllMedias';
+import { AllGroups } from '../../../features/user-group/components/AllGroups';
+import { AllManifests } from '../../../features/manifest/component/AllManifests';
+import { UserSettings } from '../../../features/user-setting/UserSettings';
+import { MMUModal } from '../modal';
+import { ConfirmDisconnect } from '../../../features/auth/components/confirmDisconect';
+import { ProjectWorkspace } from './ProjectWorkspace';
+import { User } from '../../../features/auth/types/types.ts';
+import { UserGroup } from '../../../features/user-group/types/types.ts';
+import { Manifest } from '../../../features/manifest/types/types.ts';
+import { Media } from '../../../features/media/types/types.ts';
+import { Project } from '../../../features/projects/types/types.ts';
+import { Dispatch, SetStateAction } from 'react';
+import { MENU_ELEMENT } from '../../../utils/utils.ts';
+import { AdminPanel } from '../../../features/admin/components/AdminPanel.tsx';
 
 interface ContentProps {
   HandleSetIsRunning: () => void;
@@ -46,37 +46,37 @@ interface ContentProps {
 }
 
 export function Content({
-  HandleSetIsRunning,
-  HandleSetUserProjects,
-  fetchGroups,
-  fetchProjects,
-  fetchManifestForUser,
-  fetchMediaForUser,
-  groups,
-  handleDisconnectUser,
-  handleSetMiradorState,
-  manifests,
-  medias,
-  miradorState,
-  miradorViewerRef,
-  projectSelected,
-  saveMiradorState,
-  selectedContent,
-  selectedProjectId,
-  setMedias,
-  setSelectedProjectId,
-  setShowSignOutModal,
-  setViewer,
-  showSignOutModal,
-  user,
-  userPersonalGroup,
-  userProjects,
-  viewer,
-}: ContentProps) {
+                          HandleSetIsRunning,
+                          HandleSetUserProjects,
+                          fetchGroups,
+                          fetchProjects,
+                          fetchManifestForUser,
+                          fetchMediaForUser,
+                          groups,
+                          handleDisconnectUser,
+                          handleSetMiradorState,
+                          manifests,
+                          medias,
+                          miradorState,
+                          miradorViewerRef,
+                          projectSelected,
+                          saveMiradorState,
+                          selectedContent,
+                          selectedProjectId,
+                          setMedias,
+                          setSelectedProjectId,
+                          setShowSignOutModal,
+                          setViewer,
+                          showSignOutModal,
+                          user,
+                          userPersonalGroup,
+                          userProjects,
+                          viewer,
+                        }: ContentProps) {
   return (
     <Box
       component="main"
-      sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: "100vh" }}
+      sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: '100vh' }}
     >
       {selectedProjectId && projectSelected && (
         <ProjectWorkspace
@@ -108,7 +108,6 @@ export function Content({
             handleSetMiradorState={handleSetMiradorState}
             medias={medias}
             selectedProjectId={selectedProjectId}
-            setMedias={setMedias}
             setSelectedProjectId={setSelectedProjectId}
             setUserProjects={HandleSetUserProjects}
             user={user}
@@ -116,6 +115,7 @@ export function Content({
             fetchProjects={fetchProjects}
             fetchManifestForUser={fetchManifestForUser}
             manifests={manifests}
+            fetchMediaForUser={fetchMediaForUser}
           />
         )}
       {user &&
@@ -137,9 +137,9 @@ export function Content({
           medias={medias}
           manifests={manifests}
           fetchManifestForUser={fetchManifestForUser}
-          setMedias={setMedias}
           user={user}
           userPersonalGroup={userPersonalGroup}
+          fetchMediaForUser={fetchMediaForUser}
         />
       )}
       {user && user.id && selectedContent === MENU_ELEMENT.MANIFEST && (

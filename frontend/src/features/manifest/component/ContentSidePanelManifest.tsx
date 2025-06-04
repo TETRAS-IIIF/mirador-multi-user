@@ -8,33 +8,35 @@ import {
   styled,
   Tooltip,
   Typography,
-} from "@mui/material";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import toast from "react-hot-toast";
-import { Manifest, ManifestGroupRights } from "../types/types.ts";
-import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { UserGroup } from "../../user-group/types/types.ts";
-import { User } from "../../auth/types/types.ts";
-import AddLinkIcon from "@mui/icons-material/AddLink";
-import { PaginationControls } from "../../../components/elements/Pagination.tsx";
-import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
-import { linkManifest } from "../api/linkManifest.ts";
-import { useTranslation } from "react-i18next";
-import { useFetchThumbnails } from "../customHooks/useFetchManifestThumbnails.ts";
+} from '@mui/material';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import toast from 'react-hot-toast';
+import { Manifest, ManifestGroupRights } from '../types/types.ts';
+import { SearchBar } from '../../../components/elements/SearchBar.tsx';
+import { UserGroup } from '../../user-group/types/types.ts';
+import { User } from '../../auth/types/types.ts';
+import AddLinkIcon from '@mui/icons-material/AddLink';
+import { PaginationControls } from '../../../components/elements/Pagination.tsx';
+import { DrawerLinkManifest } from './DrawerLinkManifest.tsx';
+import { useTranslation } from 'react-i18next';
+import { useFetchThumbnails } from '../customHooks/useFetchManifestThumbnails.ts';
+import { isValidUrl } from '../../../utils/utils.ts';
+import placeholder from '../../../assets/Placeholder.svg';
+import { useLinkManifest } from '../hooks/useLinkManifest.ts';
 
 const CustomButton = styled(Button)({
-  position: "absolute",
-  top: "40%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  textAlign: "center",
+  position: 'absolute',
+  top: '40%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  textAlign: 'center',
   opacity: 0,
-  transition: "opacity 0.3s ease",
+  transition: 'opacity 0.3s ease',
 });
 
 const StyledImageListItem = styled(ImageListItem)({
-  position: "relative",
-  "&:hover .overlayButton": {
+  position: 'relative',
+  '&:hover .overlayButton': {
     opacity: 1,
   },
 });
@@ -56,7 +58,7 @@ export const ContentSidePanelManifest = ({
 }: PopUpManifestProps) => {
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const { mutateAsync, isPending } = useLinkManifest();
   const itemsPerPage = 6;
   const [manifestFilter, setManifestFilter] = useState<string | null>(null);
 
@@ -99,34 +101,57 @@ export const ContentSidePanelManifest = ({
 
     try {
       await navigator.clipboard.writeText(manifestURL);
-      toast.success(t("pathCopiedToClipboard"));
+      toast.success(t('pathCopiedToClipboard'));
     } catch (error) {
-      toast.error(t("pathNotCopiedToClipboard"));
+      toast.error(t('pathNotCopiedToClipboard'));
     }
   };
 
   const handleLinkManifest = useCallback(
     async (path: string) => {
-      const response = await fetch(path, {
-        method: "GET",
-      });
-      if (response) {
+      try {
+        const response = await fetch(path);
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+
         const manifest = await response.json();
-        await linkManifest({
+
+        if (
+          !manifest ||
+          !manifest['@context'] ||
+          !(manifest['@id'] || manifest['id']) ||
+          manifest.type !== 'Manifest'
+        ) {
+          throw new Error('Invalid IIIF manifest structure');
+        }
+
+        await mutateAsync({
           url: path,
           rights: ManifestGroupRights.ADMIN,
           idCreator: user.id,
           user_group: userPersonalGroup!,
           path: path,
-          title: manifest.label.en ? manifest.label.en[0] : t("newManifest"),
+          title: manifest.label?.en?.[0] ?? t('newManifest'),
         });
+
         fetchManifestForUser();
         setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
-        return toast.success(t("manifestLinked"));
+        toast.success(t('manifestCreated'));
+        return;
+      } catch (error) {
+        toast.error(t('manifestLinkingFailed'));
+        return;
       }
-      return toast.error(t("manifestLinkingFailed"));
     },
-    [fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup],
+    [
+      fetchManifestForUser,
+      modalLinkManifestIsOpen,
+      user.id,
+      userPersonalGroup,
+      mutateAsync,
+      t,
+    ],
   );
 
   useEffect(() => {
@@ -138,14 +163,14 @@ export const ContentSidePanelManifest = ({
         item
         container
         spacing={1}
-        sx={{ padding: "20px" }}
+        sx={{ padding: '20px' }}
         alignItems="center"
       >
         <Grid item>
-          <SearchBar label={t("search")} setFilter={setManifestFilter} />
+          <SearchBar label={t('search')} setFilter={setManifestFilter} />
         </Grid>
         <Grid item>
-          <Tooltip title={t("linkManifest")}>
+          <Tooltip title={t('linkManifest')}>
             <Button
               variant="contained"
               onClick={() =>
@@ -168,25 +193,29 @@ export const ContentSidePanelManifest = ({
               <StyledImageListItem key={manifest.id}>
                 <Box
                   component="img"
-                  src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                  src={
+                    isValidUrl(thumbnailUrls[index])
+                      ? `${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`
+                      : placeholder
+                  }
                   alt={manifest.title}
                   loading="lazy"
                   sx={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    "@media(min-resolution: 2dppx)": {
-                      width: "100%",
-                      height: "100%",
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    '@media(min-resolution: 2dppx)': {
+                      width: '100%',
+                      height: '100%',
                     },
                   }}
                 />
                 <ImageListItemBar
                   title={manifest.title}
                   sx={{
-                    position: "absolute",
+                    position: 'absolute',
                     bottom: 0,
-                    color: "white",
+                    color: 'white',
                   }}
                 />
                 <CustomButton
@@ -194,7 +223,7 @@ export const ContentSidePanelManifest = ({
                   disableRipple
                   onClick={() => handleCopyToClipBoard(manifest!)}
                 >
-                  {t("copyPathToClipboard")}
+                  {t('copyPathToClipboard')}
                 </CustomButton>
               </StyledImageListItem>
             </>
@@ -205,10 +234,10 @@ export const ContentSidePanelManifest = ({
           item
           container
           sx={{ minWidth: 400, padding: 1, width: 400, minHeight: 400 }}
-          alignItems={"center"}
-          justifyContent={"center"}
+          alignItems={'center'}
+          justifyContent={'center'}
         >
-          <Typography>{t("noMatchingManifestFilter")}</Typography>
+          <Typography>{t('noMatchingManifestFilter')}</Typography>
         </Grid>
       )}
       <PaginationControls
@@ -223,6 +252,7 @@ export const ContentSidePanelManifest = ({
             setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)
           }
           linkingManifest={handleLinkManifest}
+          isPending={isPending}
         />
       </Grid>
     </>

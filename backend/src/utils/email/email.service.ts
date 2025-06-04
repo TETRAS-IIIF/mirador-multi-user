@@ -50,6 +50,38 @@ export class EmailServerService implements MailService {
     }
   }
 
+  async sendTestMail() {
+    try {
+      const subject = 'Test Mail';
+      const mailBody = `
+      <h2>📬 Test Email</h2>
+      <p>This is a test email sent from your NestJS backend.</p>
+      <p>If you're seeing this, then your mail service is working properly ✅</p>
+      <hr />
+      <p style="font-size: 12px; color: gray;">This is an automated message. No action is required.</p>
+    `;
+
+      const textBody = `
+Test Email
+
+This is a test email sent from your NestJS backend.
+
+If you're seeing this, then your mail service is working properly ✅
+
+(This is an automated message. No action is required.)
+    `;
+      await this.sendMail({
+        to: process.env.ADMIN_MAIL,
+        subject: subject,
+        body: mailBody,
+        text: textBody,
+      });
+    } catch (error) {
+      this.logger.error('An error occured', error);
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   //UNCOMMENT FOR TESTS
   async sendMailSandBox() // email: CreateEmailServerDto
   : Promise<void> {
@@ -183,9 +215,11 @@ export class EmailServerService implements MailService {
         text: content.text,
         html: content.body,
       });
-      console.log('Email sent');
+      this.logger.log(
+        `email sent to : ${content.to} with subject ${content.subject}`,
+      );
     } catch (error) {
-      console.log('Error sending email', error);
+      this.logger.error('Error sending email', error);
       throw new InternalServerErrorException('Failed to send email', error);
     }
   }
@@ -200,7 +234,7 @@ export class EmailServerService implements MailService {
     );
     const plainText = `Hi, \\nTo reset your password, click here: ${url}`;
 
-    return this.sendMail({
+    return await this.sendMail({
       to: email.to,
       subject: 'Reset password',
       text: plainText,

@@ -27,6 +27,8 @@ import { MetadataModule } from './BaseEntities/metadata/metadata.module';
 import { ImpersonationModule } from './impersonation/impersonation.module';
 import { AnnotationPageModule } from './BaseEntities/annotation-page/annotation-page.module';
 import { SnapshotModule } from './BaseEntities/snapshot/snapshot.module';
+import { SettingsModule } from './BaseEntities/setting/setting.module';
+import { DatabaseModule } from './BaseEntities/database/database.module';
 
 @Module({
   imports: [
@@ -87,6 +89,8 @@ import { SnapshotModule } from './BaseEntities/snapshot/snapshot.module';
     ImpersonationModule,
     AnnotationPageModule,
     SnapshotModule,
+    SettingsModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [

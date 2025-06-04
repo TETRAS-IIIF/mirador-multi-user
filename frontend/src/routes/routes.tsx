@@ -1,16 +1,16 @@
-import { Landing } from "../features/miscellaneous/Landing.tsx";
-import { useRoutes } from "react-router-dom";
-import { protectedRoutes } from "./protectedRoutes.tsx";
-import { publicRoutes } from "./publicRoutes.tsx";
-import storage from "../utils/storage.ts";
-import { Grid } from "@mui/material";
+import { Landing } from '../features/miscellaneous/Landing.tsx';
+import { useRoutes } from 'react-router-dom';
+import { protectedRoutes } from './protectedRoutes.tsx';
+import { publicRoutes } from './publicRoutes.tsx';
+import storage from '../utils/storage.ts';
+import { Grid } from '@mui/material';
 
 export function AppRoutes() {
   const token = storage.getToken();
 
   const commonRoutes = [
     {
-      path: "/*",
+      path: '/*',
       element: <Landing />,
     },
   ];

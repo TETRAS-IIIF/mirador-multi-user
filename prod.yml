@@ -1,8 +1,10 @@
 version: "3.8"
 services:
-    frontend:
-      environment:
-        - ENV=PROD
-    backend:
-      volumes:
-        - ${HTTP_FOLDER}:/app/upload
+  frontend:
+    environment:
+      - ENV=PROD
+  backend:
+    volumes:
+      - ${HTTP_FOLDER}:/app/upload
+      - ${LOG_FOLDER}:/app/logs
+      - ./migrations:/app/migrations

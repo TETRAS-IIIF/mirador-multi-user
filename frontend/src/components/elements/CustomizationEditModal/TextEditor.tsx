@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import "react-quill/dist/quill.bubble.css";
-import { styled } from "@mui/material/styles";
-import { useTranslation } from "react-i18next";
+import { useEffect, useState } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import 'react-quill/dist/quill.bubble.css';
+import { styled } from '@mui/material/styles';
+import { useTranslation } from 'react-i18next';
 
 interface TextEditorProps {
   textHtml: string | undefined;
@@ -17,10 +17,11 @@ const StyledReactQuill = styled(ReactQuill)(() => ({
   },
 }));
 
-export const TextEditor: React.FC<TextEditorProps> = ({
-  textHtml,
-  updateText,
-}) => {
+export const TextEditor = (
+  {
+    textHtml,
+    updateText,
+  }: TextEditorProps) => {
   const [editorHtml, setEditorHtml] = useState<string | undefined>(textHtml);
   const { t } = useTranslation();
 
@@ -36,40 +37,39 @@ export const TextEditor: React.FC<TextEditorProps> = ({
   const modules = {
     toolbar: [
       [{ header: [1, 2, false] }],
-      ["bold", "italic", "underline", "strike", "blockquote"],
+      ['bold', 'italic', 'underline', 'strike', 'blockquote'],
       [
-        { list: "ordered" },
-        { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
+        { list: 'ordered' },
+        { list: 'bullet' },
+        { indent: '-1' },
+        { indent: '+1' },
       ],
       [{ color: [] }, { background: [] }],
-      ["link", "image"],
-      ["clean"],
+      ['link', 'image'],
+      ['clean'],
     ],
   };
 
   const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "blockquote",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-    "image",
-    "color",
-    "background",
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'bullet',
+    'indent',
+    'link',
+    'image',
+    'color',
+    'background',
   ];
-
   return (
     <StyledReactQuill
       value={editorHtml}
       onChange={handleChange}
-      placeholder={t("yourTextHere")}
+      placeholder={t('yourTextHere')}
       modules={modules}
       formats={formats}
     />

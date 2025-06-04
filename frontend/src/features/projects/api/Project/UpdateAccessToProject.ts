@@ -23,8 +23,7 @@ export const updateAccessToProject = async (
         }),
       },
     );
-    const toReturn = await response.json();
-    return toReturn;
+    return await response.json();
   } catch (error) {
     throw error;
   }

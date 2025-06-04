@@ -12,5 +12,6 @@ import { LinkMetadataFormatGroupModule } from '../../LinkModules/link-metadata-f
   ],
   controllers: [MetadataController],
   providers: [MetadataService],
+  exports: [MetadataService],
 })
 export class MetadataModule {}

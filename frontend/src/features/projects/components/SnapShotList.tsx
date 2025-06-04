@@ -1,8 +1,8 @@
-import { RowData, RowProps, Snapshot } from "../types/types.ts";
-import CollapsibleTable from "../../../components/elements/CollapsibleTable.tsx";
-import { SnapshotExpendableContent } from "./SnapshotExpendableContent.tsx";
-import { useTranslation } from "react-i18next";
-import dayjs from "dayjs";
+import { RowData, RowProps, Snapshot } from '../types/types.ts';
+import { SnapshotExpendableContent } from './SnapshotExpendableContent.tsx';
+import { useTranslation } from 'react-i18next';
+import dayjs from 'dayjs';
+import CollapsibleTable from '../../../components/elements/CollapsibleTable.tsx';
 
 interface ISnapShopListProps {
   snapShots: Snapshot[];
@@ -17,16 +17,16 @@ interface ISnapShopListProps {
 }
 
 export const SnapShotList = ({
-  snapShots,
-  itemId,
-  updateSnapshot,
-  handleDeleteSnapshot,
-  handleCreateSnapshot,
-}: ISnapShopListProps) => {
+                               snapShots,
+                               itemId,
+                               updateSnapshot,
+                               handleDeleteSnapshot,
+                               handleCreateSnapshot,
+                             }: ISnapShopListProps) => {
   const { t, i18n } = useTranslation();
   const createRowData = (
     value: string,
-    align: "left" | "right" | "center" = "left",
+    align: 'left' | 'right' | 'center' = 'left',
   ): RowData => ({
     value,
     align,
@@ -37,7 +37,7 @@ export const SnapShotList = ({
     data: [
       createRowData(snap.title),
       createRowData(
-        dayjs(snap.updated_at).locale(i18n.language).format("LLLL").toString(),
+        dayjs(snap.updated_at).locale(i18n.language).format('LLLL').toString(),
       ),
       createRowData(snap.creator),
     ],
@@ -48,7 +48,7 @@ export const SnapShotList = ({
   const createColumn = (
     label: string,
     sortKey: string,
-    align: "left" | "right" | "center" = "left",
+    align: 'left' | 'right' | 'center' = 'left',
   ) => ({
     label,
     sortKey,
@@ -56,9 +56,9 @@ export const SnapShotList = ({
   });
 
   const columns = [
-    createColumn(t("title"), t("title")),
-    createColumn(t("updated_at"), t("updated_at")),
-    createColumn(t("created_by"), t("created_by")),
+    createColumn(t('title'), t('title')),
+    createColumn(t('updated_at'), t('updated_at')),
+    createColumn(t('created_by'), t('created_by')),
   ];
 
   return (

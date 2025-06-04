@@ -58,10 +58,10 @@ export class LinkManifestGroupController {
     isArray: true,
   })
   @UseGuards(AuthGuard)
-  @Get('/group/:userGroupId')
-  async getManifestByUserGroupId(@Param('userGroupId') userGroupId: number) {
-    return this.linkManifestGroupService.findAllManifestByUserGroupId(
-      userGroupId,
+  @Get('/manifests')
+  async getManifestByUserId(@Req() request) {
+    return this.linkManifestGroupService.findAllManifestByUserId(
+      request.user.sub,
     );
   }
 
@@ -104,7 +104,9 @@ export class LinkManifestGroupController {
       origin: manifestOrigin.UPLOAD,
       path: `${file.filename}`,
       hash: `${(req as any).generatedHash}`,
-      description: 'your manifest description',
+      description: createGroupManifestDto.description
+        ? createGroupManifestDto.description
+        : 'your manifest description',
       title: file.originalname,
       idCreator: createGroupManifestDto.idCreator,
     };
@@ -255,11 +257,14 @@ export class LinkManifestGroupController {
       request.user.sub,
       manifestId,
       async () => {
-        return this.linkManifestGroupService.updateAccessToManifest({
-          manifestId,
-          userGroupId,
-          rights,
-        });
+        return this.linkManifestGroupService.updateAccessToManifest(
+          {
+            manifestId,
+            userGroupId,
+            rights,
+          },
+          request.user.sub,
+        );
       },
     );
   }
