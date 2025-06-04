@@ -9,7 +9,7 @@ export const createMediaLink = async (mediaLinkDto: LinkMediaDto) => {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json', // Set Content-Type header
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(mediaLinkDto),
     },
