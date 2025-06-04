@@ -121,6 +121,9 @@ export class AuthService {
         throw error;
       }
       this.logger.error(error.message, error.stack);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new InternalServerErrorException(
         `an error occurred`,
         error.message,

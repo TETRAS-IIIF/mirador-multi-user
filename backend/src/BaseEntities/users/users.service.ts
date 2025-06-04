@@ -44,7 +44,7 @@ export class UsersService {
           userToUpdate.password,
         );
         if (!isMatch && confirmPassword === newPassword) {
-          throw new UnauthorizedException("passwords don't match");
+          throw new UnauthorizedException("Passwords don't match");
         }
         const salt = await bcrypt.genSalt();
         const hashedUpdatedPassword = await bcrypt.hash(newPassword, salt);

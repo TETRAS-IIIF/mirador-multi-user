@@ -1,10 +1,10 @@
 {
-  "name": "untitled1",
+  "name": "mmu-backend",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "MMU main backend application",
+  "author": "Tetras Libre",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "GPL-3.0",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -42,6 +42,7 @@
     "class-validator": "^0.14.1",
     "crypto": "^1.0.1",
     "express-basic-auth": "^1.2.1",
+    "mjml-core": "^4.15.3",
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.9.7",
     "nodemailer": "^6.9.15",
