@@ -29,9 +29,11 @@ export const ResetPassword = () => {
     } else {
       setError(t('errorToken'));
     }
-  }, [t]);
+  }, []);
 
   const handlePasswordReset = async () => {
+    setError('');
+    setSuccess('');
     setError('');
     setSuccess('');
 
@@ -44,20 +46,19 @@ export const ResetPassword = () => {
       setError(t('passwordMismatch'));
       return;
     }
-
     if (!token) {
       setError(t('invalidToken'));
       return;
     }
-
-    const response = await resetPassword(token, password);
-    if (response) {
-      setSuccess(t('passwordResetSuccess'));
-    } else {
-      setError(t('passwordResetError'));
+    if (token) {
+      const response = await resetPassword(token, password);
+      if (response) {
+        setSuccess(t("passwordResetSuccess"));
+      } else {
+        setSuccess(t("passwordResetError"));
+      }
     }
   };
-
   return (
     <Layout
       title={t('reset-password-title')}
@@ -75,7 +76,9 @@ export const ResetPassword = () => {
             {t('reset-password')}
           </Typography>
           <TextField
-            inputProps={{ maxLength: 255 }}
+            inputProps={{
+              maxLength: 255,
+            }}
             label={t('new-password')}
             type="password"
             fullWidth
