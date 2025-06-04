@@ -1,4 +1,13 @@
-import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from '@mui/material';
+import {
+  AppBar,
+  Button,
+  Drawer,
+  Grid,
+  Paper,
+  TextField,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, FormEvent, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,13 +20,12 @@ interface IDrawerCreateMediaProps {
   isPending: boolean;
 }
 
-export const DrawerLinkMedia = (
-  {
-    modalCreateMediaIsOpen,
-    toggleModalMediaCreation,
-    CreateMediaWithLink,
-    isPending,
-  }: IDrawerCreateMediaProps) => {
+export const DrawerLinkMedia = ({
+  modalCreateMediaIsOpen,
+  toggleModalMediaCreation,
+  CreateMediaWithLink,
+  isPending,
+}: IDrawerCreateMediaProps) => {
   const [mediaLink, setMediaLink] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -98,6 +106,7 @@ export const DrawerLinkMedia = (
                     inputRef={inputRef}
                     onChange={handleNameChange}
                     sx={{ width: '100%' }}
+                    placeholder={t('validURLToMedia')}
                   ></TextField>
                 </Grid>
                 <Grid item>

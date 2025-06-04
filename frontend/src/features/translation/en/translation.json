@@ -285,5 +285,7 @@
   "templateChoice": "Choose a template",
   "newTemplateTitle": "New template",
   "newTemplateContent": "Add your content",
-  "Youtube_not_allowed_error": "YouTube links are not supported."
+  "Youtube_not_allowed_error": "YouTube links are not supported.",
+  "validURLToManifest": "Valid URL to a manifest",
+  "validURLToMedia": "Valid URL to a media"
 }

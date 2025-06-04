@@ -286,5 +286,7 @@
   "templateChoice": "Choisissez un modèle",
   "newTemplateTitle": "Nouveau modèle",
   "newTemplateContent": "Ajouter votre contenu",
-  "Youtube_not_allowed_error": "Les liens YouTube ne sont pas pris en charge."
+  "Youtube_not_allowed_error": "Les liens YouTube ne sont pas pris en charge.",
+  "validURLToManifest": "URL valide vers un manifeste",
+  "validURLToMedia": "URL valide vers un média"
 }

@@ -103,6 +103,7 @@ export const DrawerLinkManifest = ({
                 inputRef={inputRef}
                 onChange={handleNameChange}
                 sx={{ width: '100%' }}
+                placeholder={t('validURLToManifest')}
               ></TextField>
             </Grid>
             <Grid item>
