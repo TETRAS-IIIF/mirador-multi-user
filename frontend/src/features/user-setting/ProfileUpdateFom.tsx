@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, IconButton, InputAdornment, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../../utils/auth.tsx';
 import { useUpdateUser } from '../../utils/customHooks/useUpdateProfile.ts';
+import { PASSWORD_MINIMUM_LENGTH } from '../../utils/utils.ts';
 
 export const ProfileUpdateForm = () => {
   const user = useUser();
@@ -62,8 +70,29 @@ export const ProfileUpdateForm = () => {
       valid = false;
     }
 
-    if (formValues.newPassword && formValues.newPassword.length < 6) {
-      newErrors.newPassword = t('characterLimitForPassword');
+    if (
+      formValues.oldPassword.length > 0 &&
+      formValues.newPassword.length === 0
+    ) {
+      newErrors.newPassword = t('passwordIsEmpty');
+      valid = false;
+    }
+
+    if (
+      formValues.oldPassword.length < 1 &&
+      formValues.newPassword.length > 0
+    ) {
+      newErrors.oldPassword = t('passwordIsEmpty');
+      valid = false;
+    }
+
+    if (
+      formValues.newPassword &&
+      formValues.newPassword.length < PASSWORD_MINIMUM_LENGTH
+    ) {
+      newErrors.newPassword = t('characterLimitForPassword', {
+        PASSWORD_MINIMUM_LENGTH: PASSWORD_MINIMUM_LENGTH,
+      });
       valid = false;
     }
 
@@ -75,7 +104,6 @@ export const ProfileUpdateForm = () => {
     setErrors(newErrors);
     return valid;
   };
-
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -164,8 +192,7 @@ export const ProfileUpdateForm = () => {
               </IconButton>
             </InputAdornment>
           ),
-        }
-        }
+        }}
         inputProps={{ maxLength: 255 }}
       />
 
