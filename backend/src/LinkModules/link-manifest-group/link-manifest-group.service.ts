@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   HttpException,
   HttpStatus,
@@ -43,6 +44,33 @@ export class LinkManifestGroupService {
 
   async createManifest(createManifestDto) {
     try {
+      const { url } = createManifestDto;
+
+      if (url) {
+        let manifestData: any;
+        try {
+          const response = await fetch(url, { method: 'GET' });
+          if (!response.ok) {
+            throw new BadRequestException(`Received status ${response.status}`);
+          }
+          manifestData = await response.json();
+          if (
+            !manifestData ||
+            !manifestData['@context'] ||
+            !(manifestData['@id'] || manifestData['id']) ||
+            manifestData.type !== 'Manifest'
+          ) {
+            throw new BadRequestException(
+              'URL does not point to a valid IIIF manifest.',
+            );
+          }
+        } catch (error) {
+          throw new BadRequestException(
+            `Invalid IIIF manifest URL: ${error.message}`,
+          );
+        }
+      }
+
       const userGroup = await this.groupService.findUserPersonalGroup(
         createManifestDto.idCreator,
       );
@@ -63,6 +91,9 @@ export class LinkManifestGroupService {
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       throw new InternalServerErrorException(
         `an error occurred while creating linkGroupManifest, ${error.message}`,
       );

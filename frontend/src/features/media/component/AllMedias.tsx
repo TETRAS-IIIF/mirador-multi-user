@@ -308,17 +308,17 @@ export const AllMedias = ({
 
   const actions = [
     {
-      icon: (<AddLinkIcon />) as ReactNode,
-      name: t('actionsDial.link'),
-      onClick: () => {
-        setModalLinkMediaIsOpen(!modalLinkMediaIsOpen);
-      },
-    },
-    {
       icon: (<UploadFileIcon />) as ReactNode,
       name: t('actionsDial.upload'),
       onClick: () => {
         handleButtonClick();
+      },
+    },
+    {
+      icon: (<AddLinkIcon />) as ReactNode,
+      name: t('actionsDial.link'),
+      onClick: () => {
+        setModalLinkMediaIsOpen(!modalLinkMediaIsOpen);
       },
     },
   ];
@@ -335,8 +335,8 @@ export const AllMedias = ({
           fetchMediaForUser();
           HandleOpenModal(data.id);
         },
-        onError: () => {
-          toast.error(`${t('media_creation_failed')}`);
+        onError: (error) => {
+          toast.error(`${t('media_creation_failed')} : ${t(error.message)}`);
         },
       },
     );

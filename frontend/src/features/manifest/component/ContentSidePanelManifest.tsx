@@ -18,11 +18,11 @@ import { User } from '../../auth/types/types.ts';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import { PaginationControls } from '../../../components/elements/Pagination.tsx';
 import { DrawerLinkManifest } from './DrawerLinkManifest.tsx';
-import { linkManifest } from '../api/linkManifest.ts';
 import { useTranslation } from 'react-i18next';
 import { useFetchThumbnails } from '../customHooks/useFetchManifestThumbnails.ts';
 import { isValidUrl } from '../../../utils/utils.ts';
 import placeholder from '../../../assets/Placeholder.svg';
+import { useLinkManifest } from '../hooks/useLinkManifest.ts';
 
 const CustomButton = styled(Button)({
   position: 'absolute',
@@ -58,7 +58,7 @@ export const ContentSidePanelManifest = ({
 }: PopUpManifestProps) => {
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-
+  const { mutateAsync, isPending } = useLinkManifest();
   const itemsPerPage = 6;
   const [manifestFilter, setManifestFilter] = useState<string | null>(null);
 
@@ -109,26 +109,49 @@ export const ContentSidePanelManifest = ({
 
   const handleLinkManifest = useCallback(
     async (path: string) => {
-      const response = await fetch(path, {
-        method: 'GET',
-      });
-      if (response) {
+      try {
+        const response = await fetch(path);
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+
         const manifest = await response.json();
-        await linkManifest({
+
+        if (
+          !manifest ||
+          !manifest['@context'] ||
+          !(manifest['@id'] || manifest['id']) ||
+          manifest.type !== 'Manifest'
+        ) {
+          throw new Error('Invalid IIIF manifest structure');
+        }
+
+        await mutateAsync({
           url: path,
           rights: ManifestGroupRights.ADMIN,
           idCreator: user.id,
           user_group: userPersonalGroup!,
           path: path,
-          title: manifest.label.en ? manifest.label.en[0] : t('newManifest'),
+          title: manifest.label?.en?.[0] ?? t('newManifest'),
         });
+
         fetchManifestForUser();
         setModalLinkManifestIsOpen(!modalLinkManifestIsOpen);
-        return toast.success(t('manifestLinked'));
+        toast.success(t('manifestCreated'));
+        return;
+      } catch (error) {
+        toast.error(t('manifestLinkingFailed'));
+        return;
       }
-      return toast.error(t('manifestLinkingFailed'));
     },
-    [fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup],
+    [
+      fetchManifestForUser,
+      modalLinkManifestIsOpen,
+      user.id,
+      userPersonalGroup,
+      mutateAsync,
+      t,
+    ],
   );
 
   useEffect(() => {
@@ -229,6 +252,7 @@ export const ContentSidePanelManifest = ({
             setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)
           }
           linkingManifest={handleLinkManifest}
+          isPending={isPending}
         />
       </Grid>
     </>
