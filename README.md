@@ -63,11 +63,32 @@ In an other terminal, run following commands to generate the database
 - `docker-compose exec backend npm run typeorm:generate-migration --name=db-init`
 - `docker-compose exec backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
 
+# Documentation
+
 ## Wiki
 
 https://github.com/TETRAS-IIIF/mirador-multi-user/wiki
 
-## Maintainers
+## Changelog
+
+Check the [CHANGELOG.md](CHANGELOG.md) file for the latest changes.
+
+Changelog can be updated automatically by running the command `./cli.sh changelog`.
+The command generates a new changelog entry based on the latest git commits. It's possible to rewrite message or
+grouping commit on same line (keep parenthesis around commit revision ID).
+
+# CLI Tool helper (experimental)
+
+You can use the CLI tool to help you with some tasks. The CLI tool is located in the `cli.sh` file.
+To see the available commands, run:
+
+```bash
+./cli.sh help
+```
+
+The CLI Tools are always experimental and has not been tested extensively. Use at your own risk.
+
+# Maintainers
 
 - Tetras Libre SARL (https://tetras-libre.fr)
 - mirador-multi-user@tetras-libre.fr

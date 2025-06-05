@@ -175,4 +175,9 @@ case $action in
     "up")
             $cmdup $@
             ;;
+    *)
+        echo "Unknown command: $action"
+        usage
+        exit 1
+        ;;
 esac
