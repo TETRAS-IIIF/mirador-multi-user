@@ -3,6 +3,15 @@
 Mirador Multi user is a project that aims to create a multi-user environment for the Mirador 4 viewer.
 Forked from original work of https://github.com/ARVEST-APP/mirador-multi-user
 
+Main additions at (2025-06-05) :
+
+| Features                                | Use cases                                                                                         |
+|-----------------------------------------|---------------------------------------------------------------------------------------------------|
+| All files type management               | Manage your media collection with any files. Before, it was only supporting image and video file. |
+| Advanced project snapshot management    | Create, edit and share snapshots of your Mirador projects                                         |
+| Configure tags and templates by project | Configure text templates and available tags in your IIIF annotations                              |
+| Advanced admin page                     | Manage seamlessly MMU instance from admin page                                                    |
+
 # Demo
 
 [https://mirador-multi-user.tetras-libre.fr/](https://mirador-multi-user.tetras-libre.fr/).
@@ -77,6 +86,8 @@ Changelog can be updated automatically by running the command `./cli.sh changelo
 The command generates a new changelog entry based on the latest git commits. It's possible to rewrite message or
 grouping commit on same line (keep parenthesis around commit revision ID).
 
+## Contributing
+
 # CLI Tool helper (experimental)
 
 You can use the CLI tool to help you with some tasks. The CLI tool is located in the `cli.sh` file.
@@ -90,5 +101,5 @@ The CLI Tools are always experimental and has not been tested extensively. Use a
 
 # Maintainers
 
-- Tetras Libre SARL (https://tetras-libre.fr)
+- Tetras Libre SARL (https://tetras-libre.fr), french company specialized in free software and open source.
 - mirador-multi-user@tetras-libre.fr
