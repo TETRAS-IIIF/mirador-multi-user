@@ -5,13 +5,14 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
-import { AuthGuard } from './auth.guard';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiBearerAuth()
 @Controller('auth')
@@ -30,7 +31,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'get your profile' })
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('profile')
   getProfile(@Request() req) {
     return this.authService.findProfile(req.user.sub);
@@ -50,5 +51,18 @@ export class AuthController {
     @Body() { token, password }: { token: string; password: string },
   ): Promise<void> {
     return this.authService.resetPassword(token, password);
+  }
+
+  @Get('oidc')
+  @UseGuards(AuthGuard('oidc'))
+  oidcLogin() {
+    // This triggers the redirect to the OpenID provider
+  }
+
+  @Get('oidc/callback')
+  @UseGuards(AuthGuard('oidc'))
+  async oidcCallback(@Req() req) {
+    const { token } = await this.authService.handleOidcLogin(req.user);
+    return { token };
   }
 }

@@ -12,7 +12,8 @@ import * as bcrypt from 'bcrypt';
 import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationService } from '../impersonation/impersonation.service';
 import { CustomLogger } from '../utils/Logger/CustomLogger.service';
-import { PASSWORD_MINIMUM_LENGTH } from './utils';
+import { OpenIDUser, PASSWORD_MINIMUM_LENGTH } from './utils';
+import { Language } from '../utils/email/utils';
 
 @Injectable()
 export class AuthService {
@@ -209,5 +210,37 @@ export class AuthService {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error.message);
     }
+  }
+
+  async handleOidcLogin(oidcUser: OpenIDUser): Promise<{ token: string }> {
+    const claims = oidcUser.claims;
+
+    const email = claims.email;
+    const sub = claims.sub;
+    const name = claims.name || claims.preferred_username || email;
+    const locale = claims.locale || 'en';
+
+    if (!email || !sub) {
+      throw new Error('OIDC login failed: missing essential user claims');
+    }
+
+    let user = await this.usersService.findOneByMail(email);
+
+    if (!user) {
+      user = await this.usersService.create({
+        mail: email,
+        name,
+        password: '',
+        preferredLanguage: locale === 'fr' ? Language.FRENCH : Language.ENGLISH,
+        Projects: null,
+      });
+    }
+
+    const token = this.jwtService.sign({
+      sub: user.id,
+      email: user.mail,
+    });
+
+    return { token };
   }
 }
