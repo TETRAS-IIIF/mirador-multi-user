@@ -1,8 +1,8 @@
 import { useLogout, useUser } from '../../utils/auth.tsx';
 import { Grid } from '@mui/material';
 import { SideDrawer } from '../../components/elements/SideDrawer.tsx';
-import { Loading } from '../../components/elements/Loading.tsx';
 import { useState } from 'react';
+import { Loading } from '../../components/elements/Loading.tsx';
 import { NotConfirmedAccount } from '../auth/components/NotConfirmedAccount.tsx';
 
 export const MainContent = () => {

@@ -1,5 +1,5 @@
 // auth.module.ts
-import { Module, OnModuleInit } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -8,9 +8,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationModule } from '../impersonation/impersonation.module';
-import * as passport from 'passport';
-import { createOidcStrategy } from './oidc.strategy';
 import { LinkUserGroupModule } from '../LinkModules/link-user-group/link-user-group.module';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
@@ -18,7 +17,7 @@ import { LinkUserGroupModule } from '../LinkModules/link-user-group/link-user-gr
       envFilePath: './src/config/.env.old.dev',
       isGlobal: true,
     }),
-    PassportModule.register({ session: true }),
+    PassportModule,
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
@@ -29,12 +28,7 @@ import { LinkUserGroupModule } from '../LinkModules/link-user-group/link-user-gr
     LinkUserGroupModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, EmailServerService],
+  providers: [AuthService, EmailServerService, JwtStrategy],
   exports: [AuthService],
 })
-export class AuthModule implements OnModuleInit {
-  async onModuleInit() {
-    const strategy = await createOidcStrategy();
-    passport.use('oidc', strategy);
-  }
-}
+export class AuthModule {}

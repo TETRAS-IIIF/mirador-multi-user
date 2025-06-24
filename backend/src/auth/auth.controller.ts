@@ -5,16 +5,13 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req,
   Request,
-  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { Response } from 'express';
 
 @ApiBearerAuth()
 @Controller('auth')
@@ -55,19 +52,12 @@ export class AuthController {
     return this.authService.resetPassword(token, password);
   }
 
-  @Get('oidc')
-  @UseGuards(AuthGuard('oidc'))
-  oidcLogin() {
-    // This triggers the redirect to the OpenID provider
-  }
-
-  @Get('oidc/callback')
-  @UseGuards(AuthGuard('oidc'))
-  async oidcCallback(@Req() req, @Res() res: Response) {
-    const { token } = await this.authService.handleOidcLogin(req.user);
-    //TODO : pass frontend url using .env variable
-    return res.redirect(
-      `http://localhost:4000/auth/openId-callback/oidc-success?token=${token}`,
+  @Post('openid-exchange')
+  async exchangeCode(@Body() body: { code: string; redirectUri: string }) {
+    const token = await this.authService.exchangeOidcCode(
+      body.code,
+      body.redirectUri,
     );
+    return { access_token: token };
   }
 }

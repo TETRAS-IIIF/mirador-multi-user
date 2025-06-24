@@ -1,48 +1,38 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Alert, Box, CircularProgress, Paper, Typography } from '@mui/material';
-import storage from '../../../utils/storage.ts';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { LoadingSpinner } from '../../../components/elements/loadingSpinner.tsx';
+import { useOpenIdLogin } from '../hooks/useOpenIdLogin.ts';
 
 export const OpenIdConnect = () => {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [status, setStatus] = useState<'loading' | 'error'>('loading');
+  const { mutateAsync } = useOpenIdLogin();
+  const hasRun = useRef(false);
 
   useEffect(() => {
-    const token = searchParams.get('token');
-    if (token) {
-      storage.clearToken();
-      storage.setToken(token);
+    const tryToIdentify = async () => {
+      if (hasRun.current) return;
+      hasRun.current = true;
 
-      navigate('/');
-    } else {
-      setStatus('error');
-    }
-  }, [searchParams, navigate]);
+      const params = new URLSearchParams(window.location.search);
+      const code = params.get('code');
+      const redirectUri = `${window.location.origin}/auth/openId-callback`;
 
-  return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      height="100vh"
-    >
-      <Paper elevation={3} sx={{ p: 4, textAlign: 'center', minWidth: 300 }}>
-        {status === 'loading' && (
-          <>
-            <CircularProgress />
-            <Typography variant="h6" mt={2}>
-              Processing authentication...
-            </Typography>
-          </>
-        )}
+      if (!code) {
+        navigate('/login');
+        return;
+      }
 
-        {status === 'error' && (
-          <Alert severity="error">
-            Authentication failed or token missing.
-          </Alert>
-        )}
-      </Paper>
-    </Box>
-  );
+      try {
+        await mutateAsync({ code, redirectUri });
+        navigate('/app/my-projects');
+      } catch (err) {
+        console.error('❌ OIDC login failed:', err);
+        navigate('/login');
+      }
+    };
+
+    tryToIdentify();
+  }, []);
+
+  return <LoadingSpinner />;
 };

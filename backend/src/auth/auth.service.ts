@@ -12,9 +12,10 @@ import * as bcrypt from 'bcrypt';
 import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationService } from '../impersonation/impersonation.service';
 import { CustomLogger } from '../utils/Logger/CustomLogger.service';
-import { OpenIDUser, PASSWORD_MINIMUM_LENGTH } from './utils';
+import { PASSWORD_MINIMUM_LENGTH } from './utils';
 import { Language } from '../utils/email/utils';
 import { LinkUserGroupService } from '../LinkModules/link-user-group/link-user-group.service';
+import { Issuer } from 'openid-client';
 
 @Injectable()
 export class AuthService {
@@ -60,7 +61,6 @@ export class AuthService {
 
       const user = await this.usersService.findOneByMail(mail);
 
-      // No user found with this email
       if (!user) {
         throw new UnauthorizedException();
       }
@@ -214,37 +214,38 @@ export class AuthService {
     }
   }
 
-  async handleOidcLogin(oidcUser: OpenIDUser): Promise<{ token: string }> {
-    const claims = oidcUser.claims;
+  async exchangeOidcCode(code: string, redirectUri: string): Promise<string> {
+    const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
+    const client = new issuer.Client({
+      client_id: process.env.OIDC_CLIENT_ID,
+      client_secret: process.env.OIDC_CLIENT_SECRET,
+      redirect_uris: [redirectUri],
+      response_types: ['code'],
+    });
 
-    const email = claims.email;
-    const sub = claims.sub;
-    const name = claims.name || claims.preferred_username || email;
-    const locale = claims.locale || Language.ENGLISH;
+    const tokenSet = await client.callback(redirectUri, { code });
+    const userinfo = await client.userinfo(tokenSet.access_token);
 
-    if (!email || !sub) {
-      throw new Error('OIDC login failed: missing essential user claims');
-    }
-
-    let user = await this.usersService.findOneByMail(email);
-
+    let user = await this.usersService.findOneByMail(userinfo.email);
     if (!user) {
-      user = await this.usersService.create({
-        mail: email,
-        name,
+      user = await this.linkUserGroupService.createUser({
+        mail: userinfo.email,
+        name: userinfo.name || userinfo.preferred_username,
         password: null,
         preferredLanguage:
-          locale === Language.FRENCH ? Language.FRENCH : Language.ENGLISH,
+          userinfo.locale === Language.FRENCH
+            ? Language.FRENCH
+            : Language.ENGLISH,
         Projects: null,
       });
     }
-    const confirmationLink = await this.maybeSendConfirmationLink(user);
-    const token = this.jwtService.sign({
+
+    await this.maybeSendConfirmationLink(user);
+
+    return this.jwtService.sign({
       sub: user.id,
       email: user.mail,
     });
-
-    return { token };
   }
 
   private async maybeSendConfirmationLink(
