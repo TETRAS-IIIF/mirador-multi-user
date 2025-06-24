@@ -7,12 +7,14 @@ import {
   Post,
   Req,
   Request,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
 
 @ApiBearerAuth()
 @Controller('auth')
@@ -61,8 +63,8 @@ export class AuthController {
 
   @Get('oidc/callback')
   @UseGuards(AuthGuard('oidc'))
-  async oidcCallback(@Req() req) {
+  async oidcCallback(@Req() req, @Res() res: Response) {
     const { token } = await this.authService.handleOidcLogin(req.user);
-    return { token };
+    return res.redirect(`http://localhost:5173/oidc-success?token=${token}`);
   }
 }

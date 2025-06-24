@@ -169,7 +169,7 @@ If you're seeing this, then your mail service is working properly ✅
     });
   }
 
-  async sendConfirmationEmail(email: ConfirmationEmailDto): Promise<void> {
+  async sendConfirmationEmail(email: ConfirmationEmailDto): Promise<string> {
     try {
       if (!Boolean(process.env.SMTP_DOMAIN)) {
         return;
@@ -190,12 +190,14 @@ If you're seeing this, then your mail service is working properly ✅
         email.language,
       );
       const plainText = `Welcome to ${process.env.INSTANCE_NAME}. To confirm the email address, click here: ${url}`;
-      return await this.sendMail({
+      await this.sendMail({
         to: email.to,
         subject: email.subject,
         text: plainText,
         body: renderedTemplate,
       });
+
+      return url;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException('an error occurred', error);

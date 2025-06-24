@@ -10,6 +10,7 @@ import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationModule } from '../impersonation/impersonation.module';
 import * as passport from 'passport';
 import { createOidcStrategy } from './oidc.strategy';
+import { LinkUserGroupModule } from '../LinkModules/link-user-group/link-user-group.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { createOidcStrategy } from './oidc.strategy';
     }),
     UsersModule,
     ImpersonationModule,
+    LinkUserGroupModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, EmailServerService],

@@ -164,7 +164,7 @@ export class LinkUserGroupService {
       if (user.isEmailConfirmed && user.termsValidatedAt) {
         throw new BadRequestException('Email and terms already confirmed');
       }
-      await this.emailService.sendConfirmationEmail({
+      return await this.emailService.sendConfirmationEmail({
         to: user.mail,
         subject: 'Account creation',
         userName: user.name,

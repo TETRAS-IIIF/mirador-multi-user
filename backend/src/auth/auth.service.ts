@@ -14,6 +14,7 @@ import { ImpersonationService } from '../impersonation/impersonation.service';
 import { CustomLogger } from '../utils/Logger/CustomLogger.service';
 import { OpenIDUser, PASSWORD_MINIMUM_LENGTH } from './utils';
 import { Language } from '../utils/email/utils';
+import { LinkUserGroupService } from '../LinkModules/link-user-group/link-user-group.service';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly emailService: EmailServerService,
     private readonly impersonationService: ImpersonationService,
+    private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
 
   async signIn(
@@ -218,7 +220,7 @@ export class AuthService {
     const email = claims.email;
     const sub = claims.sub;
     const name = claims.name || claims.preferred_username || email;
-    const locale = claims.locale || 'en';
+    const locale = claims.locale || Language.ENGLISH;
 
     if (!email || !sub) {
       throw new Error('OIDC login failed: missing essential user claims');
@@ -230,17 +232,30 @@ export class AuthService {
       user = await this.usersService.create({
         mail: email,
         name,
-        password: '',
-        preferredLanguage: locale === 'fr' ? Language.FRENCH : Language.ENGLISH,
+        password: null,
+        preferredLanguage:
+          locale === Language.FRENCH ? Language.FRENCH : Language.ENGLISH,
         Projects: null,
       });
     }
-
+    const confirmationLink = await this.maybeSendConfirmationLink(user);
     const token = this.jwtService.sign({
       sub: user.id,
       email: user.mail,
     });
 
     return { token };
+  }
+
+  private async maybeSendConfirmationLink(
+    user: any,
+  ): Promise<string | undefined> {
+    if (!user.termsValidatedAt) {
+      return await this.linkUserGroupService.sendConfirmationLink(
+        user.mail,
+        user.preferredLanguage,
+      );
+    }
+    return undefined;
   }
 }
