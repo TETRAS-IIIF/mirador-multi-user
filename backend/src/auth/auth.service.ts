@@ -15,7 +15,7 @@ import { CustomLogger } from '../utils/Logger/CustomLogger.service';
 import { PASSWORD_MINIMUM_LENGTH } from './utils';
 import { Language } from '../utils/email/utils';
 import { LinkUserGroupService } from '../LinkModules/link-user-group/link-user-group.service';
-import { Issuer } from 'openid-client';
+import { Issuer, TokenSet } from 'openid-client';
 
 @Injectable()
 export class AuthService {
@@ -223,7 +223,12 @@ export class AuthService {
       response_types: ['code'],
     });
 
-    const tokenSet = await client.callback(redirectUri, { code });
+    const params = {
+      code,
+      iss: process.env.OIDC_ISSUER,
+    };
+
+    const tokenSet: TokenSet = await client.callback(redirectUri, params);
     const userinfo = await client.userinfo(tokenSet.access_token);
 
     let user = await this.usersService.findOneByMail(userinfo.email);

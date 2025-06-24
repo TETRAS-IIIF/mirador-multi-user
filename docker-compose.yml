@@ -29,6 +29,8 @@ services:
       INSTANCE_SHORT_NAME: ${INSTANCE_SHORT_NAME}
       INSTANCE_NAME: ${INSTANCE_NAME}
       MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE}
+      VITE_OIDC_ISSUER: ${OIDC_ISSUER}
+      VITE_OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
     depends_on:
       - backend
     restart: always

@@ -13,23 +13,10 @@ import { EmailServerService } from './utils/email/email.service';
 import { InternalServerErrorFilter } from './utils/ErrorFilters/InternalServerErrorExceptionFilter';
 import { UsersService } from './BaseEntities/users/users.service';
 import { json } from 'express';
-import * as session from 'express-session';
-import * as passport from 'passport';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.use(
-    session({
-      secret: process.env.SESSION_SECRET,
-      resave: false,
-      saveUninitialized: false,
-    }),
-  );
-  app.use(passport.initialize());
-  app.use(passport.session());
 
-  passport.serializeUser((user, done) => done(null, user));
-  passport.deserializeUser((obj, done) => done(null, obj));
   app.use(json({ limit: `${parseInt(Process.env.MAX_API_PAYLOAD_SIZE)}mb` }));
   app.useGlobalPipes(new ValidationPipe());
 
