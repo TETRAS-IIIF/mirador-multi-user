@@ -65,6 +65,9 @@ export class AuthController {
   @UseGuards(AuthGuard('oidc'))
   async oidcCallback(@Req() req, @Res() res: Response) {
     const { token } = await this.authService.handleOidcLogin(req.user);
-    return res.redirect(`http://localhost:5173/oidc-success?token=${token}`);
+    //TODO : pass frontend url using .env variable
+    return res.redirect(
+      `http://localhost:4000/auth/openId-callback/oidc-success?token=${token}`,
+    );
   }
 }
