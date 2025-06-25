@@ -204,6 +204,7 @@ export class AuthService {
         name: user.name,
         _isAdmin: user._isAdmin,
         preferredLanguage: user.preferredLanguage,
+        termsValidatedAt: user.termsValidatedAt,
       };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
@@ -236,12 +237,13 @@ export class AuthService {
       user = await this.linkUserGroupService.createUser({
         mail: userinfo.email,
         name: userinfo.name || userinfo.preferred_username,
-        password: null,
+        password: '',
         preferredLanguage:
           userinfo.locale === Language.FRENCH
             ? Language.FRENCH
             : Language.ENGLISH,
         Projects: null,
+        isEmailConfirmed: true,
       });
     }
 
@@ -250,6 +252,8 @@ export class AuthService {
     return this.jwtService.sign({
       sub: user.id,
       email: user.mail,
+      isEmailConfirmed: user.isEmailConfirmed,
+      termsValidatedAt: user.termsValidatedAt,
     });
   }
 

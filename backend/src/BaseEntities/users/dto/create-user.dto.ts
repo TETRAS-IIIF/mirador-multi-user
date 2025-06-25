@@ -18,4 +18,6 @@ export class CreateUserDto {
   Projects: CreateProjectDto[];
 
   preferredLanguage: Language;
+
+  isEmailConfirmed?: boolean;
 }

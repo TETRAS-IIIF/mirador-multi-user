@@ -4,6 +4,8 @@ import { SideDrawer } from '../../components/elements/SideDrawer.tsx';
 import { useState } from 'react';
 import { Loading } from '../../components/elements/Loading.tsx';
 import { NotConfirmedAccount } from '../auth/components/NotConfirmedAccount.tsx';
+import { ErrorCode } from '../../utils/error.code.ts';
+import { ValidateTerms } from '../auth/components/validateTerms.tsx';
 
 export const MainContent = () => {
   const user = useUser();
@@ -18,12 +20,15 @@ export const MainContent = () => {
 
   if (user.isError) {
     const error = user.error as { code?: string };
-    if (error.code === 'EMAIL_NOT_CONFIRMED') {
+    if (error.code === ErrorCode.EMAIL_NOT_CONFIRMED) {
       return <NotConfirmedAccount />;
     }
   }
   if (!user || !user.data) {
     return <Loading />;
+  }
+  if (!user.data.termsValidatedAt) {
+    return <ValidateTerms />;
   }
 
   if (!user.data.id) {
