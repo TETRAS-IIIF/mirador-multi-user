@@ -9,6 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { Reflector } from '@nestjs/core';
 import { ActionType } from '../enum/actions';
+import { ErrorCode } from '../utils/error.code';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -34,7 +35,10 @@ export class AuthGuard implements CanActivate {
       });
 
       if (!payload.isEmailConfirmed || !payload.termsValidatedAt) {
-        throw new ForbiddenException('Email or terms not confirmed');
+        throw new ForbiddenException({
+          message: 'Email address is not confirmed.',
+          code: ErrorCode.EMAIL_NOT_CONFIRMED,
+        });
       }
 
       request['user'] = payload;

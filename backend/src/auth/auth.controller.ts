@@ -11,7 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
+import { AuthGuard } from './auth.guard';
 
 @ApiBearerAuth()
 @Controller('auth')
@@ -30,7 +30,7 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'get your profile' })
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
     return this.authService.findProfile(req.user.sub);

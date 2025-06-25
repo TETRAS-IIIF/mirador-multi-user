@@ -12,6 +12,16 @@ export const MainContent = () => {
     number | undefined
   >(undefined);
   const [viewer, setViewer] = useState<any>(undefined);
+  console.log('user :', user);
+
+  console.log('Error:', user.error);
+
+  if (user.isError) {
+    const error = user.error as { code?: string };
+    if (error.code === 'EMAIL_NOT_CONFIRMED') {
+      return <NotConfirmedAccount />;
+    }
+  }
   if (!user || !user.data) {
     return <Loading />;
   }
