@@ -103,9 +103,9 @@ _Steps to verify deployment success:_
 
 ### Create Manifest
 
-- Add media video and images
-- set thumbnail
-- change name
+- [ ] Add media video and images
+- [ ] set thumbnail
+- [ ] change name
 
 ### Advances edit mode 
 
