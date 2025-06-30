@@ -34,6 +34,7 @@ services:
       MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE}
       VITE_OIDC_ISSUER: ${OIDC_ISSUER}
       VITE_OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      VITE_OIDC_REDIRECT_URI: ${OIDC_REDIRECT_URI}
     depends_on:
       - backend
     restart: always
