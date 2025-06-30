@@ -9,10 +9,8 @@ export const LoginPage = () => {
 
   const allowClassic =
     getSettingValue(SettingKeys.CLASSIC_AUTHENTICATION, settings) === 'true';
-  console.log('allowClassic:', allowClassic);
   const allowOpenId =
     getSettingValue(SettingKeys.OPENID_CONNECTION, settings) === 'true';
-  console.log('allowOpenId:', allowOpenId);
 
   return (
     <Grid container direction="column" spacing={4}>

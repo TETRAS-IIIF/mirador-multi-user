@@ -8,6 +8,8 @@ export const OpenIdLogin = () => {
   function redirectToOpenIdLogin() {
     const redirectUri = `${window.location.origin}/auth/openId-callback`;
 
+    console.log('OPEN_ID_URL : ', OPEN_ID_URL);
+    console.log('OIDC_CLIENT_ID : ', OIDC_CLIENT_ID);
     window.location.href =
       `${OPEN_ID_URL}/protocol/openid-connect/auth` +
       `?client_id=${OIDC_CLIENT_ID}` +
