@@ -12,7 +12,7 @@ export const Login = () => {
 
   const showInscription =
     getSettingValue(SettingKeys.ALLOW_NEW_USER, settings) === 'true';
-
+  console.log('showInscription : ', showInscription);
   return (
     <Layout
       title={t('loginTitle')}
