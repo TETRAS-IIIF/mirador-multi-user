@@ -6,16 +6,23 @@ export const OpenIdLogin = () => {
   const { t } = useTranslation();
 
   function redirectToOpenIdLogin() {
-    const redirectUri = `${window.location.origin}/auth/openId-callback`;
-
+    // const redirectUri = `${window.location.origin}/auth/openId-callback`;
+    console.log(
+      'import.meta.env.VITE_OIDC_ISSUER',
+      import.meta.env.VITE_OIDC_ISSUER,
+    );
+    console.log(
+      'import.meta.env.VITE_OIDC_CLIENT_ID',
+      import.meta.env.VITE_OIDC_CLIENT_ID,
+    );
     console.log('OPEN_ID_URL : ', OPEN_ID_URL);
     console.log('OIDC_CLIENT_ID : ', OIDC_CLIENT_ID);
-    window.location.href =
-      `${OPEN_ID_URL}/protocol/openid-connect/auth` +
-      `?client_id=${OIDC_CLIENT_ID}` +
-      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-      `&response_type=code` +
-      `&scope=openid%20email%20profile`;
+    // window.location.href =
+    //   `${OPEN_ID_URL}/protocol/openid-connect/auth` +
+    //   `?client_id=${OIDC_CLIENT_ID}` +
+    //   `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+    //   `&response_type=code` +
+    //   `&scope=openid%20email%20profile`;
   }
 
   return (
