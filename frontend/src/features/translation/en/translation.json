@@ -266,6 +266,7 @@
   "validate_user": "Validate terms of use and mail",
   "value": "Value",
   "setting_updated": "Setting updated successfully",
+  "subscription_dashboard": "Subscription dashboard",
   "tokenCopiedToast": "Token copied to clipboard",
   "tooltipButtonCopy": "Copy manifest's link",
   "tooltipButtonEdit": "Edit manifest",
