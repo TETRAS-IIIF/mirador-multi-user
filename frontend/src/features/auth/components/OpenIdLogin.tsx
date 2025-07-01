@@ -9,8 +9,6 @@ import {
 export const OpenIdLogin = () => {
   const { t } = useTranslation();
 
-  console.log('OIDC_REDIRECT_URI :', OIDC_REDIRECT_URI);
-
   function redirectToOpenIdLogin() {
     window.location.href =
       `${OPEN_ID_URL}/protocol/openid-connect/auth` +
