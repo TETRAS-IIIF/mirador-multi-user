@@ -1,0 +1,45 @@
+services:
+  external-app-backend:
+    env_file:
+      - env.external-app
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_PRODUCT_PRICE_ID: ${STRIPE_PRODUCT_PRICE_ID}
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${OIDC_CLIENT_SECRET}
+      OIDC_REDIRECT_URI: ${OIDC_REDIRECT_URI}
+      OIDC_ISSUER: ${OIDC_ISSUER}
+      PASSPORT_SESSION_SECRET: ${PASSPORT_SESSION_SECRET}
+    restart: ${RESTART}
+    networks:
+      - stripe_validation_network
+
+  external-app-frontend:
+    env_file:
+      - env.external-app
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_OIDC_REDIRECT_URI: ${OIDC_REDIRECT_URI}
+        VITE_BACKEND_URL: ${BACKEND_HTTP_PROTOCOL}://${BACKEND_HOST}
+        VITE_OIDC_ISSUER: ${OIDC_ISSUER}
+        VITE_OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+        VITE_MMU_OIDC_CONNECT_URL: ${MMU_OIDC_CONNECT_URL}
+    environment:
+      VITE_MMU_URL: ${MMU_URL}
+      VITE_OIDC_REDIRECT_URI: ${OIDC_REDIRECT_URI}
+      VITE_MMU_OIDC_CONNECT_URL: ${MMU_OIDC_CONNECT_URL}
+      VITE_OIDC_ISSUER: ${OIDC_ISSUER}
+      VITE_OIDC_CLIENT_ID: ${OIDC_CLIENT_ID}
+      VITE_BACKEND_URL: ${BACKEND_HTTP_PROTOCOL}://${BACKEND_HOST}
+    restart: ${RESTART}
+    networks:
+      - stripe_validation_network
+
+networks:
+  stripe_validation_network:
+    driver: bridge
