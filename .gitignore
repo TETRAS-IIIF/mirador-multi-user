@@ -11,4 +11,4 @@ frontend/customAssets/
 frontend/customAssets/*
 /frontend/customAssets/*
 /dumps/*
-./exernal-app/
+./stripe-validation-app/
