@@ -12,6 +12,8 @@ services:
       OIDC_ISSUER: #url for oidc issuer
       PASSPORT_SESSION_SECRET: #random session secret at least 14 characters
     restart: always
+    ports:
+      - "7001:3000"
     networks:
       - stripe_validation_network
 
@@ -33,6 +35,8 @@ services:
       VITE_OIDC_CLIENT_ID: #client id from open id
       VITE_BACKEND_URL: #https://mmu-backend.your-domain.com
     restart: always
+    ports:
+      - "7000:4000"
     networks:
       - stripe_validation_network
 
