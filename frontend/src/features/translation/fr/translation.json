@@ -186,6 +186,7 @@
   "openInNewTab": "Ouvrir dans un nouvel onglet",
   "openGroupTooltip": "Ouvrir le groupe",
   "openid_connection": "Connexion avec le fournisseur OpenID",
+  "openid_connection_tooltip": "Mettez en place un provider openId pour activé cette feature",
   "openProject": "Ouvrir le projet",
   "openProjectTooltip": "Ouvrir le projet",
   "other": "Autres",
