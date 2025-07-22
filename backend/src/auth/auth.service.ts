@@ -217,34 +217,21 @@ export class AuthService {
 
   async exchangeOidcCode(code: string, redirectUri: string): Promise<string> {
     const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
-    console.log('issuer');
-    console.log(issuer);
     const client = new issuer.Client({
       client_id: process.env.OIDC_CLIENT_ID,
       client_secret: process.env.OIDC_CLIENT_SECRET,
       redirect_uris: [redirectUri],
       response_types: ['code'],
     });
-    console.log('client');
-    console.log(client);
 
     const params = {
       code,
       iss: process.env.OIDC_ISSUER,
     };
 
-    console.log('params');
-    console.log(params);
-
     const tokenSet: TokenSet = await client.callback(redirectUri, params);
-    console.log('tokenSet');
-    console.log(tokenSet);
     const userinfo = await client.userinfo(tokenSet.access_token);
-    console.log('userinfo');
-    console.log(userinfo);
     let user = await this.usersService.findOneByMail(userinfo.email);
-    console.log('user');
-    console.log(user);
     if (!user) {
       user = await this.linkUserGroupService.createUser({
         mail: userinfo.email,

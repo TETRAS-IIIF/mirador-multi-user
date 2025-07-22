@@ -33,11 +33,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @Patch('validTerms')
   async validTerms(@Req() request) {
-    console.log('request.user.sub');
-    console.log(request.user.sub);
     const user = await this.usersService.findOne(request.user.sub);
-    console.log('user');
-    console.log(user);
     return this.usersService.validTermsForUser(user.mail);
   }
 
