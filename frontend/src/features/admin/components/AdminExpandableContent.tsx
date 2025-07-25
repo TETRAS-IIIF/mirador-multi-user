@@ -4,7 +4,6 @@ import { initiateImpersonation } from '../api/initiateImpersonation.ts';
 import { validateUser } from '../api/validateUser.ts';
 import React from 'react';
 
-
 interface RowData {
   value: React.ReactNode;
   align?: 'right' | 'left' | 'center';
@@ -15,8 +14,6 @@ interface RowProps {
   data: RowData[];
 }
 
-
-//TODO: this component should update platform users information and better check if terms and email are validated.
 export function AdminExpandableContent({ id, data }: RowProps) {
   const { t } = useTranslation();
 

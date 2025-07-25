@@ -15,7 +15,7 @@ export const ValidateTerms = () => {
       toast.success(t('termsValidated'));
       const validateTermsForUser = await validTerms();
       if (validateTermsForUser === 200) {
-        navigate('/app/my-projects');
+        navigate('/');
       }
     } else {
       toast.error(t('mustAcceptTerms'));
