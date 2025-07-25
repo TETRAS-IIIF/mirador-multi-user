@@ -2,20 +2,19 @@ import { Button, Checkbox, FormControlLabel, Grid, Link } from '@mui/material';
 import { Layout } from './layout.tsx';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { validTerms } from '../api/validTerms.ts';
 
 export const ValidateTerms = () => {
   const [checked, setChecked] = useState(false);
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const handleValidate = async () => {
     if (checked) {
       toast.success(t('termsValidated'));
       const validateTermsForUser = await validTerms();
       if (validateTermsForUser === 200) {
-        navigate('/');
+        window.location.reload();
       }
     } else {
       toast.error(t('mustAcceptTerms'));
