@@ -5,7 +5,18 @@ export async function createOidcStrategy() {
   const clientId = process.env.OIDC_CLIENT_ID!;
   const clientSecret = process.env.OIDC_CLIENT_SECRET!;
   const redirectUri = process.env.OIDC_REDIRECT_URI!;
+  const missingVars = [];
 
+  if (!issuerUrl) missingVars.push('issuerUrl');
+  if (!clientId) missingVars.push('clientId');
+  if (!clientSecret) missingVars.push('clientSecret');
+  if (!redirectUri) missingVars.push('redirectUri');
+
+  if (missingVars.length > 0) {
+    throw new Error(
+      `Missing required OIDC environment variable(s): ${missingVars.join(', ')}`,
+    );
+  }
   let oidcIssuer: Issuer<BaseClient>;
   try {
     oidcIssuer = await Issuer.discover(issuerUrl);
