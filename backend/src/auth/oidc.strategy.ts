@@ -1,4 +1,4 @@
-import { Issuer, Strategy as OIDCStrategy } from 'openid-client';
+import { BaseClient, Issuer, Strategy as OIDCStrategy } from 'openid-client';
 
 export async function createOidcStrategy() {
   const issuerUrl = process.env.OIDC_ISSUER!;
@@ -6,7 +6,13 @@ export async function createOidcStrategy() {
   const clientSecret = process.env.OIDC_CLIENT_SECRET!;
   const redirectUri = process.env.OIDC_REDIRECT_URI!;
 
-  const oidcIssuer = await Issuer.discover(issuerUrl);
+  let oidcIssuer: Issuer<BaseClient>;
+  try {
+    oidcIssuer = await Issuer.discover(issuerUrl);
+  } catch (err) {
+    console.error('Failed to discover OIDC issuer:', err);
+    throw err;
+  }
   const client = new oidcIssuer.Client({
     client_id: clientId,
     client_secret: clientSecret,
@@ -24,7 +30,6 @@ export async function createOidcStrategy() {
         refresh_token: tokenSet.refresh_token,
         claims: tokenSet.claims(),
       };
-      console.log('user OIDC Strategy :', user);
       done(null, user);
     },
   );
