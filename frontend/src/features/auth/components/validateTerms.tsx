@@ -14,6 +14,7 @@ export const ValidateTerms = () => {
       toast.success(t('termsValidated'));
       const validateTermsForUser = await validTerms();
       if (validateTermsForUser === 200) {
+        console.log('validateTermsForUser :', validateTermsForUser);
         window.location.reload();
       }
     } else {
