@@ -1,5 +1,31 @@
 # Mirador multi user
 
+# Table of Contents
+
+- [Mirador Multi User](#mirador-multi-user)
+    - [Demo](#demo)
+    - [Features](#features)
+    - [Installation](#installation)
+        - [Installation DEV (Docker)](#installation-dev-docker)
+        - [Installation PROD (Docker)](#installation-prod-docker)
+            - [Required Environment Variables](#-required-environment-variables)
+            - [Core Application Settings](#️-core-application-settings)
+            - [Backend Configuration](#-backend-configuration)
+            - [SMTP Configuration](#-smtp-configuration)
+            - [Authentication Modes](#-authentication-modes)
+            - [Database Configuration](#️-database-configuration)
+            - [Caddy Server (Static File Hosting)](#-caddy-server-static-file-hosting)
+            - [Swagger (API Docs)](#-swagger-api-docs)
+            - [Logs](#-logs)
+            - [External Dashboard](#-external-dashboard)
+            - [Check if all your service are up](#-Check-if-you're-installation-is-ready-to-use-:)
+    - [Documentation](#documentation)
+        - [Wiki](#wiki)
+        - [Changelog](#changelog)
+    - [Contributing](#contributing)
+        - [CLI Tool helper (experimental)](#cli-tool-helper-experimental)
+    - [Maintainers](#maintainers)
+
 Mirador Multi user is a project that aims to create a multi-user environment for the Mirador 4 viewer.
 Forked from original work of https://github.com/ARVEST-APP/mirador-multi-user
 
@@ -168,12 +194,12 @@ If using OpenID Connect, the following must also be set:
 
 ### 📊 Swagger (API Docs)
 
-| Key                     | Description                     | Default                  |
-|-------------------------|---------------------------------|--------------------------|
-| `SWAGGER_RELATIVE_PATH` | Path where Swagger UI is served | `api`                    |
-| `SWAGGER_TITLE`         | Title of the API docs           | `Mirador MultiUsers API` |
-| `SWAGGER_DESCRIPTION`   | Description of the API docs     | `API Documentation...`   |
-| `SWAGGER_VERSION`       | API version                     | `0.1`                    |
+| Key                     | Description                       | Default                  |
+|-------------------------|-----------------------------------|--------------------------|
+| `SWAGGER_RELATIVE_PATH` | Path where Swagger UI is served   | `api`                    |
+| `SWAGGER_TITLE`         | Title of the API docs             | `Mirador MultiUsers API` |
+| `SWAGGER_DESCRIPTION`   | Description of the API docs       | `API Documentation...`   |
+| `SWAGGER_VERSION`       | API version    external-dashboard | `0.1`                    |
 
 ---
 
@@ -189,6 +215,48 @@ In an other terminal, run following commands to generate the database
 
 6. `docker-compose exec backend npm run typeorm:generate-migration --name=db-init`
 7. `docker-compose exec backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
+
+### Check if you're installation is ready to use :
+
+See wiki page there : https://github.com/TETRAS-IIIF/mirador-multi-user/wiki/Admin-manual#post-deployment-checks
+
+# Logs
+
+Mirador Multi User provides logging for both the backend and Caddy server.
+
+## Backend Logs
+
+Backend logs are printed to the container output and can be configured via environment variables:
+
+| Key         | Description                                                | Values     |
+|-------------|------------------------------------------------------------|------------|
+| `LOG_LEVEL` | Log verbosity (0=ERROR, 1=WARN, 2=DEBUG, 3=LOG, 4=VERBOSE) | `0` to `4` |
+
+To view logs:
+
+```bash
+docker-compose logs -f backend
+```
+
+For production environments, logs can also be redirected to a file or managed by external logging solutions (e.g.,
+journald, ELK stack).
+
+## Caddy Logs
+
+Caddy logs are stored in the directory specified by the LOG_FOLDER environment variable:
+
+| Key          | Description                     | Values |
+|--------------|---------------------------------|--------|
+| `LOG_FOLDER` | Path to Caddy access/error logs | ./logs |
+
+To access logs:
+
+```bash
+tail -f ./logs/access.log
+tail -f ./logs/error.log
+```
+
+You can customize Caddy logging further by editing the Caddyfile in the root project.
 
 # Documentation
 
