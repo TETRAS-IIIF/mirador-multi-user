@@ -164,8 +164,12 @@ export async function getVideoDuration(videoUrl: string): Promise<number> {
   try {
     const response = await fetch(videoUrl);
     const html = await response.text();
+    console.log('----------------html----------------');
+    console.log(html);
 
     const match = html.match(/itemprop="duration" content="([^"]+)"/)?.[1];
+    console.log('----------------match----------------');
+    console.log(match);
     if (match) {
       return iso8601DurationToSeconds(match);
     }
