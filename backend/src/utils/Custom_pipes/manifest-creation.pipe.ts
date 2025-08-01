@@ -119,8 +119,13 @@ export class MediaInterceptor implements NestInterceptor {
           }
           case isYouTubeVideo(url): {
             videoId = getYouTubeVideoID(url);
+            console.log('---------------videoId---------------');
+
+            console.log(videoId);
             if (videoId) {
               youtubeJson = await getYoutubeJson(url);
+              console.log('---------------youtubeJson---------------');
+              console.log(youtubeJson);
               const videoDuration = await getVideoDuration(url);
               const timeStamp = Date.now();
               const timeStamp2 = Date.now();
