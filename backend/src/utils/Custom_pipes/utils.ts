@@ -1,3 +1,5 @@
+import { InternalServerErrorException } from '@nestjs/common';
+
 export function isYouTubeVideo(url: string): boolean {
   const youtubeRegex =
     /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|embed\/|v\/|.+\?v=)?([^&\n?#]+)/;
@@ -82,6 +84,55 @@ export async function getPeerTubeVideoDetails(
   const data = await response.json();
   return data;
 }
+
+type YoutubeMetadata = {
+  title: string;
+  durationSeconds: number;
+  thumbnails: Record<string, { url: string; width: number; height: number }>;
+};
+
+// ISO 8601 PT#H#M#S -> seconds
+export const iso8601ToSeconds = (iso: string): number => {
+  const re = /P(?:(\d+)D)?T?(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+  const [, d, h, m, s] = iso.match(re) || [];
+  const dd = d ? parseInt(d, 10) : 0;
+  const hh = h ? parseInt(h, 10) : 0;
+  const mm = m ? parseInt(m, 10) : 0;
+  const ss = s ? parseInt(s, 10) : 0;
+  return dd * 86400 + hh * 3600 + mm * 60 + ss;
+};
+
+export const fetchYouTubeMeta = async (
+  videoId: string,
+): Promise<YoutubeMetadata | null> => {
+  const apiKey = process.env.YOUTUBE_API_KEY as string;
+  if (!apiKey) {
+    throw new InternalServerErrorException('Youtube API key is empty');
+  }
+  const response = await fetch(
+    `https://www.googleapis.com/youtube/v3/videos?id=${encodeURIComponent(
+      videoId,
+    )}&part=snippet,contentDetails&key=${apiKey}`,
+  );
+  if (!response.ok) return null;
+  const youtubevideoData = await response.json();
+  if (!youtubevideoData.items?.length) return null;
+
+  const item = youtubevideoData.items[0];
+  return {
+    title: item.snippet.title,
+    durationSeconds: iso8601ToSeconds(item.contentDetails.duration),
+    thumbnails: item.snippet.thumbnails,
+  };
+};
+
+// The official API doesn't give actual video width/height.
+// We’ll assume 16:9
+export const computeCanvasSize = (targetHeight = 1500) => {
+  const height = targetHeight;
+  const width = Math.round((targetHeight * 16) / 9);
+  return { width, height };
+};
 
 export function getYouTubeVideoID(url: string): string | null {
   const youtubeRegex =

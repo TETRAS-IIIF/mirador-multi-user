@@ -9,10 +9,10 @@ import {
 import { Observable } from 'rxjs';
 import * as sharp from 'sharp';
 import {
+  computeCanvasSize,
+  fetchYouTubeMeta,
   getPeerTubeVideoDetails,
   getPeerTubeVideoID,
-  getVideoDuration,
-  getYoutubeJson,
   getYouTubeVideoID,
   isImage,
   isPeerTubeVideo,
@@ -74,7 +74,6 @@ export class MediaInterceptor implements NestInterceptor {
           '$1://caddy/',
         );
         let videoId: string | null = null;
-        let youtubeJson = null;
         let peertubeVideoJson = null;
         switch (true) {
           case await isVideo(url): {
@@ -118,55 +117,52 @@ export class MediaInterceptor implements NestInterceptor {
             break;
           }
           case isYouTubeVideo(url): {
-            videoId = getYouTubeVideoID(url);
-            if (videoId) {
-              youtubeJson = await getYoutubeJson(url);
-              const videoDuration = await getVideoDuration(url);
-              const timeStamp = Date.now();
-              const timeStamp2 = Date.now();
-              const timeStamp3 = Date.now();
-              let height: number;
-              let width: number;
-              if (youtubeJson.width >= youtubeJson.height) {
-                height = 1500;
-                width = (1500 * youtubeJson.width) / youtubeJson.height;
-              } else {
-                height = 1500;
-                width = (1500 * youtubeJson.height) / youtubeJson.width;
-              }
-              const duration = videoDuration;
+            const videoId = getYouTubeVideoID(url);
+            if (!videoId) break;
 
-              manifestToCreate.items.push({
-                id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
-                type: 'Canvas',
-                height,
-                width,
-                duration,
-                label: { en: ['Youtube Item'] },
-                items: [
-                  {
-                    id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
-                    type: 'AnnotationPage',
-                    items: [
-                      {
-                        id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/annotation/${Date.now()}`,
-                        type: 'Annotation',
-                        motivation: 'painting',
-                        target: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
-                        body: {
-                          id: media.value,
-                          type: 'Video',
-                          format: `Video/MPG`,
-                          height,
-                          width,
-                          duration,
-                        },
+            const youtubeMedia = await fetchYouTubeMeta(videoId);
+
+            if (!youtubeMedia) break;
+
+            const duration = youtubeMedia.durationSeconds;
+
+            const { width, height } = computeCanvasSize(1500);
+
+            const timeStamp = Date.now();
+            const timeStamp2 = Date.now();
+            const timeStamp3 = Date.now();
+
+            manifestToCreate.items.push({
+              id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
+              type: 'Canvas',
+              height,
+              width,
+              duration,
+              label: { en: [youtubeMedia.title] },
+              items: [
+                {
+                  id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
+                  type: 'AnnotationPage',
+                  items: [
+                    {
+                      id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/annotation/${Date.now()}`,
+                      type: 'Annotation',
+                      motivation: 'painting',
+                      target: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
+                      body: {
+                        id: media.value,
+                        type: 'Video',
+                        format: 'video/mp4',
+                        height,
+                        width,
+                        duration,
                       },
-                    ],
-                  },
-                ],
-              });
-            }
+                    },
+                  ],
+                },
+              ],
+            });
+
             break;
           }
           case await isPeerTubeVideo(url): {
