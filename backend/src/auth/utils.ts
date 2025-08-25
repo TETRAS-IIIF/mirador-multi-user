@@ -1,1 +1,1 @@
-export const PASSWORD_MINIMUM_LENGTH = 16;
+export const PASSWORD_MINIMUM_LENGTH = 8;
