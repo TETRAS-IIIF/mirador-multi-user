@@ -1,5 +1,3 @@
-export const PASSWORD_MINIMUM_LENGTH = 16;
-
 export type OpenIDUser = {
   claims: {
     sub: string;
@@ -18,3 +16,5 @@ export type OpenIDUser = {
   access_token?: string;
   refresh_token?: string;
 };
+// Note : you need to update also constant in frontend/src/utils/utils.ts
+export const PASSWORD_MINIMUM_LENGTH = 8;

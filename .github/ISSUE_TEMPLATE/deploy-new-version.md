@@ -7,13 +7,13 @@ assignees: ''
 
 ---
 
-## 🚀 Deploy MMU on Server
+## Deploy MMU on Server
 
 Use this template to track and document the deployment
 
 ---
 
-### 🔁 Current Commit ID
+### Current Commit ID
 
 _The commit ID of the previous version_
 
@@ -23,7 +23,7 @@ _The commit ID of the previous version_
 
 ---
 
-### ✅ Commit ID Deployed
+### Commit ID Deployed
 
 _The commit ID of the deployed version_
 
@@ -33,7 +33,7 @@ _The commit ID of the deployed version_
 
 ---
 
-### 🖥️ Instance
+### Instance
 
 _Instance and server name (e.g., Houston / Larus)_
 
@@ -43,7 +43,7 @@ _Instance and server name (e.g., Houston / Larus)_
 
 ---
 
-### 📦 Deployment Steps
+### Deployment Steps
 
 ```
 1. SSH into the server  
@@ -57,7 +57,7 @@ _Instance and server name (e.g., Houston / Larus)_
 
 ---
 
-### ✅ Post-deployment Checks
+### Post-deployment Checks
 
 _Steps to verify deployment success:_
 
@@ -96,7 +96,6 @@ _Steps to verify deployment success:_
 - [ ] Change right of the user
 - [ ] Remove user from manifest
 - [ ] Set Metadata
-- [ ] Duplicate manifest
 - [ ] Delete manifest
 - [ ] Filter manifest
 - [ ] Upload manifest
@@ -104,9 +103,9 @@ _Steps to verify deployment success:_
 
 ### Create Manifest
 
-- Add media video and images
-- set thumbnail
-- change name
+- [ ] Add media video and images
+- [ ] set thumbnail
+- [ ] change name
 
 ### Advances edit mode 
 
@@ -120,7 +119,6 @@ _Steps to verify deployment success:_
 - [ ] Change right of the user
 - [ ] Remove user from media
 - [ ] Set Metadata
-- [ ] Duplicate media
 - [ ] Delete media
 - [ ] Filter media
 
