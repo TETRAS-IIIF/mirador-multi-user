@@ -53,7 +53,7 @@ export enum SettingKeys {
   OPENID_CONNECTION = 'OPENID_CONNECTION',
 }
 
-export const OPEN_ID_URL = import.meta.env.VITE_OIDC_ISSUER;
+export const OPEN_ID_CONNECT_URL = import.meta.env.VITE_OIDC_ISSUER;
 export const OIDC_CLIENT_ID = import.meta.env.VITE_OIDC_CLIENT_ID;
 export const OIDC_REDIRECT_URI = import.meta.env.VITE_OIDC_REDIRECT_URI;
 

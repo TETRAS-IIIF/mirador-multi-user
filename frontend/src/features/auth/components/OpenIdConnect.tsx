@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { LoadingSpinner } from '../../../components/elements/loadingSpinner.tsx';
-import { useOpenIdLogin } from '../hooks/useOpenIdLogin.ts';
+import { useOpenIdConnectLogin } from '../hooks/useOpenIdConnectLogin.ts';
 
 export const OpenIdConnect = () => {
   const navigate = useNavigate();
-  const { mutateAsync } = useOpenIdLogin();
+  const { mutateAsync } = useOpenIdConnectLogin();
   const hasRun = useRef(false);
 
   useEffect(() => {

@@ -9,7 +9,7 @@ import {
   getSettingValue,
   OIDC_CLIENT_ID,
   OIDC_REDIRECT_URI,
-  OPEN_ID_URL,
+  OPEN_ID_CONNECT_URL,
   SettingKeys,
 } from '../../utils/utils.ts';
 
@@ -19,7 +19,7 @@ export const Landing = () => {
 
   const allowClassic =
     getSettingValue(SettingKeys.CLASSIC_AUTHENTICATION, settings) === 'true';
-  const allowOpenId =
+  const allowOpenIdConnect =
     getSettingValue(SettingKeys.OPENID_CONNECTION, settings) === 'true';
 
   const { t } = useTranslation();
@@ -27,9 +27,9 @@ export const Landing = () => {
     navigate('/auth/signin');
   };
   const HandleLogin = () => {
-    if (!allowClassic && allowOpenId) {
+    if (!allowClassic && allowOpenIdConnect) {
       window.location.href =
-        `${OPEN_ID_URL}/protocol/openid-connect/auth` +
+        `${OPEN_ID_CONNECT_URL}/protocol/openid-connect/auth` +
         `?client_id=${OIDC_CLIENT_ID}` +
         `&redirect_uri=${encodeURIComponent(OIDC_REDIRECT_URI)}` +
         `&response_type=code` +
