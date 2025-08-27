@@ -1,6 +1,7 @@
 import storage from '../../../utils/storage.ts';
+import { useMutation } from '@tanstack/react-query';
 
-export const validTerms = async () => {
+const validTerms = async () => {
   try {
     const token = storage.getToken();
 
@@ -16,9 +17,16 @@ export const validTerms = async () => {
     return response.status;
   } catch (error) {
     console.error('Network error:', error);
-    return {
-      message: 'email not confirmed',
-      status: 500,
-    };
+    return 500;
   }
+};
+
+export const useValidTerms = (opts?: {
+  onSuccess?: () => void;
+  onError?: (e: unknown) => void;
+}) => {
+  return useMutation({
+    mutationFn: validTerms,
+    ...opts,
+  });
 };
