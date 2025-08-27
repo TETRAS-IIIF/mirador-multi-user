@@ -1,6 +1,10 @@
 import { Button, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { OIDC_CLIENT_ID, OIDC_REDIRECT_URI, OPEN_ID_CONNECT_URL, } from '../../../utils/utils.ts';
+import {
+  OIDC_CLIENT_ID,
+  OIDC_REDIRECT_URI,
+  OPEN_ID_CONNECT_URL,
+} from '../../../utils/utils.ts';
 
 export const OpenIdLogin = () => {
   const { t } = useTranslation();
@@ -22,7 +26,7 @@ export const OpenIdLogin = () => {
         color="primary"
         onClick={redirectToOpenIdLogin}
       >
-        {t('login-with-openid')}
+        {t('openid_connection')}
       </Button>
     </Grid>
   );
