@@ -1,26 +1,32 @@
-import { Button, Checkbox, FormControlLabel, Grid, Link } from '@mui/material';
+import { Checkbox, FormControlLabel, Grid, Link } from '@mui/material';
 import { Layout } from './layout.tsx';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { validTerms } from '../api/validTerms.ts';
+import { useValidTerms } from '../api/validTerms.ts';
+import { LoadingButton } from '@mui/lab';
 
 export const ValidateTerms = () => {
   const [checked, setChecked] = useState(false);
   const { t } = useTranslation();
+
+  const { mutateAsync: acceptTerms, isPending } = useValidTerms();
+
   const handleValidate = async () => {
-    if (checked) {
-      toast.success(t('termsValidated'));
-      const validateTermsForUser = await validTerms();
-      if (validateTermsForUser === 200) {
-        window.location.reload();
-      }
-    } else {
+    if (!checked) {
       toast.error(t('mustAcceptTerms'));
+      return;
+    }
+    try {
+      await acceptTerms();
+      toast.success(t('termsValidated'));
+      window.location.reload();
+    } catch (err) {
+      console.error(err);
+      toast.error(t('termsValidationFailed'));
     }
   };
-
   return (
     <Layout title={t('validate-terms-title')}>
       <Grid
@@ -50,14 +56,15 @@ export const ValidateTerms = () => {
           />
         </Grid>
         <Grid item>
-          <Button
+          <LoadingButton
             variant="contained"
             color="primary"
             onClick={handleValidate}
             disabled={!checked}
+            loading={isPending}
           >
             {t('validateTerms')}
-          </Button>
+          </LoadingButton>
         </Grid>
       </Grid>
     </Layout>

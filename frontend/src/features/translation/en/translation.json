@@ -249,6 +249,7 @@
   "swagger_url": "Swagger URL",
   "tags": "Tags",
   "templates": "templates",
+  "termsValidationFailed": "Failed to validate terms. Please try again.",
   "thumbnailMissing": "Thumbnail is missing",
   "thumbnailUrl": "Thumbnail Url",
   "terms": "terms of use",

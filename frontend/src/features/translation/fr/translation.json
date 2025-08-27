@@ -249,6 +249,7 @@
   "swagger_url": "URL Swagger",
   "tags": "Tags",
   "template": "Modèle",
+  "termsValidationFailed": "Échec de la validation des conditions. Veuillez réessayer.",
   "thumbnailMissing": "Aperçu manquant",
   "thumbnailUrl": "URL de l'aperçu",
   "terms": "conditions d'utilisation",
