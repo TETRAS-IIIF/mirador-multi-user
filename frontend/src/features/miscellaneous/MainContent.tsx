@@ -14,9 +14,6 @@ export const MainContent = () => {
     number | undefined
   >(undefined);
   const [viewer, setViewer] = useState<any>(undefined);
-  console.log('user :', user);
-
-  console.log('Error:', user.error);
 
   if (user.isError) {
     const error = user.error as { code?: string };
