@@ -216,55 +216,66 @@ export class AuthService {
   }
 
   async exchangeOidcCode(code: string, redirectUri: string): Promise<string> {
-    const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
-    const client = new issuer.Client({
-      client_id: process.env.OIDC_CLIENT_ID,
-      client_secret: process.env.OIDC_CLIENT_SECRET,
-      redirect_uris: [redirectUri],
-      response_types: ['code'],
-    });
+    try {
+      const issuer = await Issuer.discover(process.env.OIDC_ISSUER);
+      const client = new issuer.Client({
+        client_id: process.env.OIDC_CLIENT_ID,
+        client_secret: process.env.OIDC_CLIENT_SECRET,
+        redirect_uris: [redirectUri],
+        response_types: ['code'],
+      });
 
-    const params = {
-      code,
-      iss: process.env.OIDC_ISSUER,
-    };
+      const params = {
+        code,
+        iss: process.env.OIDC_ISSUER,
+      };
 
-    const tokenSet: TokenSet = await client.callback(redirectUri, params);
-    const userinfo = await client.userinfo(tokenSet.access_token);
-    let user = await this.usersService.findOneByMail(userinfo.email);
-    if (!user) {
-      user = await this.linkUserGroupService.createUser({
-        mail: userinfo.email,
-        name: userinfo.name || userinfo.preferred_username,
-        password: '',
-        preferredLanguage:
-          userinfo.locale === Language.FRENCH
-            ? Language.FRENCH
-            : Language.ENGLISH,
-        Projects: null,
-        isEmailConfirmed: true,
+      const tokenSet: TokenSet = await client.callback(redirectUri, params);
+      const userinfo = await client.userinfo(tokenSet.access_token);
+      let user = await this.usersService.findOneByMail(userinfo.email);
+      if (!user) {
+        user = await this.linkUserGroupService.createUser({
+          mail: userinfo.email,
+          name: userinfo.name || userinfo.preferred_username,
+          password: '',
+          preferredLanguage:
+            userinfo.locale === Language.FRENCH
+              ? Language.FRENCH
+              : Language.ENGLISH,
+          Projects: null,
+          isEmailConfirmed: true,
+        });
+      }
+
+      await this.maybeSendConfirmationLink(user);
+
+      return this.jwtService.sign({
+        sub: user.id,
+        email: user.mail,
+        isEmailConfirmed: user.isEmailConfirmed,
+        termsValidatedAt: user.termsValidatedAt,
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      await this.emailService.sendInternalServerErrorNotification({
+        body: undefined,
+        method: '',
+        stack: '',
+        timestamp: new Date().toISOString(),
+        url: '',
+        user: { email: '', id: 0, name: '' },
+        message:
+          'an error occured while creating or login user with openIdConnect protocol',
       });
     }
-
-    await this.maybeSendConfirmationLink(user);
-
-    return this.jwtService.sign({
-      sub: user.id,
-      email: user.mail,
-      isEmailConfirmed: user.isEmailConfirmed,
-      termsValidatedAt: user.termsValidatedAt,
-    });
   }
 
-  private async maybeSendConfirmationLink(
-    user: any,
-  ): Promise<string | undefined> {
+  private async maybeSendConfirmationLink(user: any) {
     if (!user.termsValidatedAt) {
-      return await this.linkUserGroupService.sendConfirmationLink(
+      await this.linkUserGroupService.sendConfirmationLink(
         user.mail,
         user.preferredLanguage,
       );
     }
-    return undefined;
   }
 }
