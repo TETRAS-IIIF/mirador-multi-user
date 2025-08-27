@@ -92,6 +92,7 @@
   "errorFetchProject": "Failed to fetch projects:",
   "error_image_type": "Only image files are allowed",
   "error_send_mail": "Failed to send test mail.",
+  "error_openIdConnect_failure": "OpenID Connect authentication failed",
   "failedToValidateUser": "Failed to validate user",
   "errorMail": "Please enter your email address.",
   "errorMetadataAlreadyExist": "Metadata with this title already exists",

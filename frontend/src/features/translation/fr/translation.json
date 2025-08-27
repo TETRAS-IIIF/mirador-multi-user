@@ -92,6 +92,7 @@
   "error_validate": "Une erreur est survenue l'or de la validation du compte utilisateur",
   "error_send_mail": "Échec de l'envoi de l'e-mail de test.",
   "error_download_logs": "Erreur lors du téléchargement des logs",
+  "error_openIdConnect_failure": "Échec de l’authentification OpenID Connect",
   "errorFetchProject": "Échec de la récupération des projets :",
   "errorMail": "Veuillez entrer votre adresse e-mail.",
   "errorMetadataAlreadyExist": "Une métadonnée avec ce titre existe déjà",
