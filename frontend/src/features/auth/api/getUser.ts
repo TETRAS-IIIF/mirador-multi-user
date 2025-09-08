@@ -1,5 +1,6 @@
-import storage from "../../../utils/storage.ts";
-import { User } from "../types/types.ts";
+import storage from '../../../utils/storage.ts';
+import { User } from '../types/types.ts';
+import { ErrorCode } from '../../../utils/error.code.ts';
 
 export const getUser = async (): Promise<User> => {
   const token = storage.getToken();
@@ -7,30 +8,35 @@ export const getUser = async (): Promise<User> => {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/auth/profile`,
       {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
         },
       },
     );
-    const user = await response.json();
+    const data = await response.json();
+
     if (!response.ok) {
-      if (response.status === 403) {
-        console.warn(
-          "Access forbidden: Email not confirmed or insufficient permissions.",
-        );
-        throw new Error("Access forbidden");
+      const error = new Error(data.message || 'Failed to fetch user') as any;
+
+      if (data?.code) {
+        error.code = data.code;
+      } else {
+        error.code = response.status;
       }
-      throw new Error("Failed to fetch user");
+
+      throw error;
     }
 
-    return user;
+    return data;
   } catch (error: any) {
-    if (error.message === "Access forbidden") {
+    if (error.code === ErrorCode.EMAIL_NOT_CONFIRMED) {
       return Promise.reject(error);
     }
-    storage.clearToken();
-    window.location.reload();
+    if (error.code !== ErrorCode.EMAIL_NOT_CONFIRMED) {
+      storage.clearToken();
+      window.location.reload();
+    }
     throw error;
   }
 };

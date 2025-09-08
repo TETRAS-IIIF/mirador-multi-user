@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
-import { AuthGuard } from './auth.guard';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { AuthGuard } from './auth.guard';
 
 @ApiBearerAuth()
 @Controller('auth')
@@ -50,5 +50,14 @@ export class AuthController {
     @Body() { token, password }: { token: string; password: string },
   ): Promise<void> {
     return this.authService.resetPassword(token, password);
+  }
+
+  @Post('openid-exchange')
+  async exchangeCode(@Body() body: { code: string; redirectUri: string }) {
+    const token = await this.authService.exchangeOidcCode(
+      body.code,
+      body.redirectUri,
+    );
+    return { access_token: token };
   }
 }

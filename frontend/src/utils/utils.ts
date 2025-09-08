@@ -49,7 +49,13 @@ export enum SettingKeys {
   INSTANCE_NAME = 'INSTANCE_NAME',
   UPLOAD_FOLDER_SIZE = 'UPLOAD_FOLDER_SIZE',
   DB_SIZE = 'DB_SIZE',
+  CLASSIC_AUTHENTICATION = 'CLASSIC_AUTHENTICATION',
+  OPENID_CONNECTION = 'OPENID_CONNECTION',
 }
+
+export const OPEN_ID_CONNECT_URL = import.meta.env.VITE_OIDC_ISSUER;
+export const OIDC_CLIENT_ID = import.meta.env.VITE_OIDC_CLIENT_ID;
+export const OIDC_REDIRECT_URI = import.meta.env.VITE_OIDC_REDIRECT_URI;
 
 export function isValidUrl(string: string) {
   const pattern =

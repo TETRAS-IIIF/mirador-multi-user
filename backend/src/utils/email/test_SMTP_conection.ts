@@ -15,9 +15,7 @@ async function testSmtpConnection() {
   });
 
   try {
-    console.log('Attempting SMTP connection...');
     await transporter.verify();
-    console.log('SMTP connection successful!');
   } catch (error) {
     console.error('Failed to connect to SMTP server:', error);
   }

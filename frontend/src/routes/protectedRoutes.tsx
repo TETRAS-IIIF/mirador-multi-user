@@ -4,6 +4,7 @@ import { MiradorPublicExposed } from '../features/mirador/MIradorPublicExposed.t
 import { Impersonate } from '../features/admin/components/Impersonate.tsx';
 import { MiradorManifestExposed } from '../features/mirador/MiradorManifestExposed';
 import { MailConfirmation } from '../features/auth/components/MailConfirmation.tsx';
+import { Terms } from '../features/miscellaneous/Terms.tsx';
 
 export const protectedRoutes = [
   {
@@ -26,5 +27,9 @@ export const protectedRoutes = [
   {
     path: '/token/*',
     element: <MailConfirmation />,
+  },
+  {
+    path: '/terms/*',
+    element: <Terms />,
   },
 ];

@@ -1,9 +1,11 @@
 import { useLogout, useUser } from '../../utils/auth.tsx';
 import { Grid } from '@mui/material';
 import { SideDrawer } from '../../components/elements/SideDrawer.tsx';
-import { Loading } from '../../components/elements/Loading.tsx';
 import { useState } from 'react';
+import { Loading } from '../../components/elements/Loading.tsx';
 import { NotConfirmedAccount } from '../auth/components/NotConfirmedAccount.tsx';
+import { ErrorCode } from '../../utils/error.code.ts';
+import { ValidateTerms } from '../auth/components/validateTerms.tsx';
 
 export const MainContent = () => {
   const user = useUser();
@@ -12,8 +14,18 @@ export const MainContent = () => {
     number | undefined
   >(undefined);
   const [viewer, setViewer] = useState<any>(undefined);
+
+  if (user.isError) {
+    const error = user.error as { code?: string };
+    if (error.code === ErrorCode.EMAIL_NOT_CONFIRMED) {
+      return <NotConfirmedAccount />;
+    }
+  }
   if (!user || !user.data) {
     return <Loading />;
+  }
+  if (!user.data.termsValidatedAt) {
+    return <ValidateTerms />;
   }
 
   if (!user.data.id) {

@@ -1,16 +1,16 @@
-import { Button, Grid, TextField, Typography } from "@mui/material";
-import storage from "../../utils/storage.ts";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { ModalButton } from "../../components/elements/ModalButton.tsx";
-import toast from "react-hot-toast";
-import { User } from "../auth/types/types.ts";
-import { ProfileUpdateForm } from "./ProfileUpdateFom.tsx";
-import { deleteAccount } from "../auth/api/deleteAccount.ts";
-import { useState } from "react";
-import { ModalConfirmDelete } from "../projects/components/ModalConfirmDelete.tsx";
-import { MMUModal } from "../../components/elements/modal.tsx";
-import { useTranslation } from "react-i18next";
-import LanguageSelector from "../translation/LanguageSelector.tsx";
+import { Button, Grid, TextField, Typography } from '@mui/material';
+import storage from '../../utils/storage.ts';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { ModalButton } from '../../components/elements/ModalButton.tsx';
+import toast from 'react-hot-toast';
+import { User } from '../auth/types/types.ts';
+import { ProfileUpdateForm } from './ProfileUpdateFom.tsx';
+import { deleteAccount } from '../auth/api/deleteAccount.ts';
+import { useState } from 'react';
+import { ModalConfirmDelete } from '../projects/components/ModalConfirmDelete.tsx';
+import { MMUModal } from '../../components/elements/modal.tsx';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '../translation/LanguageSelector.tsx';
 
 interface IUserSettingsProps {
   user: User;
@@ -24,7 +24,7 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
 
   const HandleCopyToClipBoard = async () => {
     await navigator.clipboard.writeText(token);
-    toast.success(t("tokenCopiedToast"));
+    toast.success(t('tokenCopiedToast'));
   };
 
   const handleDeleteAccount = async () => {
@@ -38,6 +38,10 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
     setOpenDeleteModal(!openDeleteModal);
   };
 
+  const redirectToSubscriptionDashboard = () => {
+    window.open(import.meta.env.VITE_EXTERNAL_DASHBOARD_URL, '_blank');
+  };
+
   return (
     <Grid container spacing={2} sx={{ padding: 2 }}>
       <Grid
@@ -46,14 +50,14 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
         flexDirection="row"
         alignItems="center"
         spacing={2}
-        sx={{ width: "100%" }}
+        sx={{ width: '100%' }}
       >
         <Grid item xs={10}>
           <TextField
-            label={t("labelApiToken")}
+            label={t('labelApiToken')}
             disabled
             fullWidth
-            helperText={t("helperTextApiToken")}
+            helperText={t('helperTextApiToken')}
             defaultValue={token}
             inputProps={{
               maxLength: 255,
@@ -62,16 +66,21 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
         </Grid>
         <Grid item xs={2}>
           <ModalButton
-            tooltipButton={t("tooltipButtonToken")}
+            tooltipButton={t('tooltipButtonToken')}
             onClickFunction={HandleCopyToClipBoard}
             disabled={false}
             icon={<ContentCopyIcon />}
           />
         </Grid>
       </Grid>
+      <Grid container item>
+        <Button variant={'contained'} onClick={redirectToSubscriptionDashboard}>
+          {t('subscription_dashboard')}
+        </Button>
+      </Grid>
       <Grid container item flexDirection="column" spacing={1}>
         <Grid item>
-          <Typography variant="h5">{t("changeLanguage")}</Typography>
+          <Typography variant="h5">{t('changeLanguage')}</Typography>
         </Grid>
         <Grid item>
           <LanguageSelector userId={user.id} />
@@ -79,15 +88,15 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
       </Grid>
 
       <Grid container item xs={12}>
-        <ProfileUpdateForm  />
+        <ProfileUpdateForm />
       </Grid>
-      <Grid item spacing={2} sx={{ width: "100%" }}>
+      <Grid item spacing={2} sx={{ width: '100%' }}>
         <Button
           variant="contained"
           color="error"
           onClick={handleConfirmDeleteItemModal}
         >
-          {t("DeleteAccount")}
+          {t('DeleteAccount')}
         </Button>
       </Grid>
       <MMUModal
@@ -98,10 +107,10 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
         <ModalConfirmDelete
           deleteItem={handleDeleteAccount}
           itemId={user.id}
-          content={t("deleteConfirmation", {
-            itemName: t("yourAccount"),
+          content={t('deleteConfirmation', {
+            itemName: t('yourAccount'),
           })}
-          buttonLabel={t("deleteDefinitely")}
+          buttonLabel={t('deleteDefinitely')}
         />
       </MMUModal>
     </Grid>

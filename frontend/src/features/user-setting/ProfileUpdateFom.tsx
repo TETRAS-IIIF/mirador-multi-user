@@ -64,7 +64,7 @@ export const ProfileUpdateForm = () => {
 
     if (
       formValues.mail.trim() &&
-      !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formValues.mail)
+      !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(formValues.mail)
     ) {
       newErrors.mail = t('mailIsNotValid');
       valid = false;

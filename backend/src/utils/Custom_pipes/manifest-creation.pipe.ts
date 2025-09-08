@@ -119,8 +119,13 @@ export class MediaInterceptor implements NestInterceptor {
           }
           case isYouTubeVideo(url): {
             videoId = getYouTubeVideoID(url);
+            console.log('---------------videoId---------------');
+
+            console.log(videoId);
             if (videoId) {
               youtubeJson = await getYoutubeJson(url);
+              console.log('---------------youtubeJson---------------');
+              console.log(youtubeJson);
               const videoDuration = await getVideoDuration(url);
               const timeStamp = Date.now();
               const timeStamp2 = Date.now();
@@ -135,7 +140,8 @@ export class MediaInterceptor implements NestInterceptor {
                 width = (1500 * youtubeJson.height) / youtubeJson.width;
               }
               const duration = videoDuration;
-
+              console.log('duration');
+              console.log(duration);
               manifestToCreate.items.push({
                 id: `${process.env.CADDY_URL}/${hash}/${label}.json/${timeStamp}/canvas/${timeStamp2}`,
                 type: 'Canvas',

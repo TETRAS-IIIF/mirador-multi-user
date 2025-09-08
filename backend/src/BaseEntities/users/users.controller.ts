@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  ForbiddenException,
   Patch,
   Req,
   UseGuards,
@@ -12,6 +11,7 @@ import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { AuthGuard } from '../../auth/auth.guard';
 import { UpdateUserDto } from './dto/update-user.dto';
+
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
@@ -29,6 +29,14 @@ export class UsersController {
   updateUser(@Body() updateUserDto: UpdateUserDto, @Req() request) {
     return this.usersService.updateUser(request.user.sub, updateUserDto);
   }
+
+  @UseGuards(AuthGuard)
+  @Patch('validTerms')
+  async validTerms(@Req() request) {
+    const user = await this.usersService.findOne(request.user.sub);
+    return this.usersService.validTermsForUser(user.mail);
+  }
+
   // this actions should only be possible if you are the super Admin of the platform, for now I disable this routes
   //
   // @UseGuards(AuthGuard)
