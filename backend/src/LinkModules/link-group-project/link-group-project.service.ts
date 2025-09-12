@@ -545,7 +545,7 @@ export class LinkGroupProjectService {
       const prevRight = ITEM_RIGHTS_PRIORITY[prev.rights] || 0;
       const currentRight = ITEM_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
-    });
+    }, linkEntities[0]);
   }
 
   async checkPolicies(
