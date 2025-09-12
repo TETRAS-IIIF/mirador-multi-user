@@ -92,7 +92,7 @@ export class MediaLinkInterceptor implements NestInterceptor {
       throw new BadRequestException(`Error processing image: ${error.message}`);
     }
   }
-
+  D;
   private async fetchBuffer(url: string): Promise<Buffer> {
     const res = await fetch(url);
     if (!res.ok) throw new Error('Failed to fetch media');

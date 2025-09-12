@@ -3,7 +3,7 @@ import { DataSource } from 'typeorm';
 
 @Injectable()
 export class DatabaseService {
-  constructor(private dataSource: DataSource) {}
+  constructor(private readonly dataSource: DataSource) {}
 
   async getLastMigrationDate(): Promise<Date | null> {
     const result = await this.dataSource.query(

@@ -721,10 +721,7 @@ export class LinkGroupProjectService {
       const isLockRelevant =
         now - 2 * 60 * 1000 < new Date(project.lockedAt).getTime();
       if (isLockRelevant) {
-        if (userId == project.lockedByUserId) {
-        } else {
-          return project.lockedByUserId;
-        }
+        return project.lockedByUserId;
       }
       return false;
     } catch (error) {
