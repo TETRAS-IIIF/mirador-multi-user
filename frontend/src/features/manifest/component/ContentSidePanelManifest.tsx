@@ -118,10 +118,9 @@ export const ContentSidePanelManifest = ({
         const manifest = await response.json();
 
         if (
-          !manifest ||
-          !manifest['@context'] ||
-          !(manifest['@id'] || manifest['id']) ||
-          manifest.type !== 'Manifest'
+          !manifest?.['@context'] ||
+          !(manifest?.['@id'] || manifest?.id) ||
+          manifest?.type !== 'Manifest'
         ) {
           throw new Error('Invalid IIIF manifest structure');
         }

@@ -208,14 +208,12 @@ export const AllManifests = ({
         const manifest = await response.json();
 
         if (
-          !manifest ||
-          !manifest['@context'] ||
-          !(manifest['@id'] || manifest['id']) ||
-          manifest.type !== 'Manifest'
+          !manifest?.['@context'] ||
+          !(manifest?.['@id'] || manifest?.id) ||
+          manifest?.type !== 'Manifest'
         ) {
           throw new Error('Invalid IIIF manifest structure');
         }
-
         const resource = new ManifestResource(manifest, {
           defaultLabel: 'mmu-default-label',
           locale: 'mmu-default-label',
