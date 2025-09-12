@@ -84,17 +84,15 @@ export const ItemList = <
           <Typography variant="h5">{t('Permissions')}</Typography>
         </Grid>
         <Grid item>
-          <MMUToolTip
-            children={
-              <div>
-                {t('MMUTooltipAdmin')}
-                <br />
-                {t('MMUTooltipEditor')}
-                <br />
-                {t('MMUTooltipReader')}
-              </div>
-            }
-          />
+          <MMUToolTip>
+            <div>
+              {t('MMUTooltipAdmin')}
+              <br />
+              {t('MMUTooltipEditor')}
+              <br />
+              {t('MMUTooltipReader')}
+            </div>
+          </MMUToolTip>
         </Grid>
       </Grid>
       <Grid item sx={{ marginLeft: '10px' }}>
