@@ -118,8 +118,7 @@ export function Content({
           />
         )}
       {Boolean(
-        user &&
-          user.id &&
+        user?.id &&
           !selectedProjectId &&
           selectedContent === MENU_ELEMENT.MEDIA,
       ) && (
@@ -131,7 +130,7 @@ export function Content({
           userPersonalGroup={userPersonalGroup}
         />
       )}
-      {Boolean(user && user.id && selectedContent === MENU_ELEMENT.GROUPS) && (
+      {Boolean(user?.id && selectedContent === MENU_ELEMENT.GROUPS) && (
         <AllGroups
           fetchGroups={fetchGroups}
           groups={groups}
@@ -143,9 +142,7 @@ export function Content({
           fetchMediaForUser={fetchMediaForUser}
         />
       )}
-      {Boolean(
-        user && user.id && selectedContent === MENU_ELEMENT.MANIFEST,
-      ) && (
+      {Boolean(user?.id && selectedContent === MENU_ELEMENT.MANIFEST) && (
         <AllManifests
           fetchManifestForUser={fetchManifestForUser}
           fetchMediaForUser={fetchMediaForUser}
@@ -155,7 +152,7 @@ export function Content({
           userPersonalGroup={userPersonalGroup}
         />
       )}
-      {Boolean(user && user.id && selectedContent === MENU_ELEMENT.SETTING) && (
+      {Boolean(user?.id && selectedContent === MENU_ELEMENT.SETTING) && (
         <UserSettings user={user} />
       )}
       {showSignOutModal && (
