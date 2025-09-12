@@ -462,6 +462,13 @@ export const MMUModalEdit = <
     }
   };
 
+  const deleteContent =
+    objectTypes === ObjectTypes.MANIFEST
+      ? t('deleteConfirmationManifest')
+      : objectTypes === ObjectTypes.MEDIA
+        ? t('deleteConfirmationMedia')
+        : t('deleteConfirmation', { itemName: itemLabel });
+
   return (
     <Grid
       container
@@ -876,15 +883,7 @@ export const MMUModalEdit = <
           <ModalConfirmDelete
             deleteItem={deleteItem}
             itemId={item.id}
-            content={
-              objectTypes === ObjectTypes.MANIFEST
-                ? t('deleteConfirmationManifest')
-                : objectTypes === ObjectTypes.MEDIA
-                  ? t('deleteConfirmationMedia')
-                  : t('deleteConfirmation', {
-                      itemName: itemLabel,
-                    })
-            }
+            content={deleteContent}
             buttonLabel={t('deleteDefinitely')}
           />
         </MMUModal>

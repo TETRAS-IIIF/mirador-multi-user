@@ -45,7 +45,6 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import { isValidUrl } from '../../utils/utils.ts';
 import placeholder from '../../assets/Placeholder.svg';
 
-
 interface IMMUCardProps<T, X> {
   id: number;
   rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
@@ -303,7 +302,7 @@ const MMUCard = <
         <Grid item alignSelf="center">
           <CardActions sx={{ padding: 1 }}>
             <Grid container flexDirection="row" wrap="nowrap" spacing={1}>
-              {id && (
+              {Boolean(id) && (
                 <Grid item alignContent={'center'}>
                   {rights === ItemsRights.READER ? (
                     <ModalButton

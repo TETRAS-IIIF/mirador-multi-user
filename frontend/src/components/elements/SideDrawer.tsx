@@ -84,13 +84,10 @@ export const SideDrawer = ({
           saveProject();
         }, 50000);
       }
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
-
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
@@ -134,11 +131,10 @@ export const SideDrawer = ({
       return userProjects.find((project: Project) => project.id === id);
     }) as Project[];
 
-    const sortedProjects = uniqueProjects.sort((a, b) => {
-      return (
-        b.created_at!.toDate().getTime() - a.created_at!.toDate().getTime()
-      );
-    });
+    const compareByCreatedAtDesc = (a: Project, b: Project) =>
+      b.created_at!.toDate().getTime() - a.created_at!.toDate().getTime();
+
+    const sortedProjects = uniqueProjects.sort(compareByCreatedAtDesc);
 
     setUserProjects(sortedProjects);
   };

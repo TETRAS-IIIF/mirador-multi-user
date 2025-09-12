@@ -160,10 +160,9 @@ export function Content({
           openModal={showSignOutModal}
           setOpenModal={setShowSignOutModal}
           width={400}
-          children={
-            <ConfirmDisconnect handleDisconnect={handleDisconnectUser} />
-          }
-        />
+        >
+          <ConfirmDisconnect handleDisconnect={handleDisconnectUser} />
+        </MMUModal>
       )}
     </Box>
   );

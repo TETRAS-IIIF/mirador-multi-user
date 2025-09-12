@@ -108,66 +108,61 @@ export const ItemList = <
         />
       </Grid>
       <Grid item container flexDirection="column" spacing={1}>
-        {items &&
-          items.map((listItem) =>
-            listItem ? (
+        {items?.map((listItem) =>
+          listItem ? (
+            <Grid
+              key={listItem.id}
+              item
+              container
+              spacing={1}
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="spaceBetween"
+            >
               <Grid
-                key={listItem.id}
                 item
                 container
-                spacing={1}
-                flexDirection="row"
+                xs={8}
                 alignItems="center"
-                justifyContent="spaceBetween"
+                spacing={2}
+                justifyContent="space-between"
               >
-                <Grid
-                  item
-                  container
-                  xs={8}
-                  alignItems="center"
-                  spacing={2}
-                  justifyContent="space-between"
-                >
-                  <Grid item>
-                    <Typography>{listItem.title}</Typography>
-                  </Grid>
-                </Grid>
                 <Grid item>
-                  {listItem.type === UserGroupTypes.PERSONAL && <PersonIcon />}
-                  {listItem.type === UserGroupTypes.MULTI_USER && (
-                    <GroupsIcon />
-                  )}
-                  {listItem.type !== UserGroupTypes.PERSONAL &&
-                    listItem.type !== UserGroupTypes.MULTI_USER && (
-                      <PersonIcon />
-                    )}
-                </Grid>
-                {isActionAllowedForListItem(listItem) && (
-                  <>
-                    <Grid item>{children!(listItem)}</Grid>
-                    <Grid item>
-                      <IconButton
-                        onClick={() => removeItem(listItem.id)}
-                        aria-label="delete"
-                        color="error"
-                        disabled={
-                          listItem.personalOwnerGroupId === ownerId &&
-                          listItem.type !== UserGroupTypes.MULTI_USER
-                        }
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Grid>
-                  </>
-                )}
-                <Grid item xs={12} sx={{ mb: '5px' }}>
-                  <Divider />
+                  <Typography>{listItem.title}</Typography>
                 </Grid>
               </Grid>
-            ) : (
-              <LoadingSpinner />
-            ),
-          )}
+              <Grid item>
+                {listItem.type === UserGroupTypes.PERSONAL && <PersonIcon />}
+                {listItem.type === UserGroupTypes.MULTI_USER && <GroupsIcon />}
+                {listItem.type !== UserGroupTypes.PERSONAL &&
+                  listItem.type !== UserGroupTypes.MULTI_USER && <PersonIcon />}
+              </Grid>
+              {isActionAllowedForListItem(listItem) && (
+                <>
+                  <Grid item>{children!(listItem)}</Grid>
+                  <Grid item>
+                    <IconButton
+                      onClick={() => removeItem(listItem.id)}
+                      aria-label="delete"
+                      color="error"
+                      disabled={
+                        listItem.personalOwnerGroupId === ownerId &&
+                        listItem.type !== UserGroupTypes.MULTI_USER
+                      }
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Grid>
+                </>
+              )}
+              <Grid item xs={12} sx={{ mb: '5px' }}>
+                <Divider />
+              </Grid>
+            </Grid>
+          ) : (
+            <LoadingSpinner />
+          ),
+        )}
       </Grid>
     </Grid>
   );
