@@ -1,4 +1,11 @@
-import { Accordion, AccordionDetails, AccordionSummary, Grid, Paper, Typography, } from '@mui/material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Grid,
+  Paper,
+  Typography,
+} from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
 import { lookingForTags } from '../api/lookingForTags.ts';

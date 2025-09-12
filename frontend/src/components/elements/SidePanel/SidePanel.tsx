@@ -12,8 +12,8 @@ import { ContentSidePanelManifest } from '../../../features/manifest/component/C
 
 const ToggleMediaButton = styled(IconButton)<{ open: boolean; shift: boolean }>(
   ({ open, shift }) => {
-    const rightPosition = open ? 360 : shift ? 360 : -50;
-
+    const hasPanel = open || shift;
+    const rightPosition = hasPanel ? 360 : -50;
     return {
       position: 'fixed',
       top: '130px',
