@@ -8,9 +8,9 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-} from "@mui/material";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
-import MetadataField from "./metadataField.tsx";
+} from '@mui/material';
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
+import MetadataField from './metadataField.tsx';
 
 interface MetadataFormProps<T> {
   handleSetMetadataFormData: (data: any) => void;
@@ -57,7 +57,7 @@ export const MetadataForm = <T extends { id: number }>({
 
   const handleInputChange = useCallback(
     (term: string, value: string | null | undefined) => {
-      const newValue = value ?? "";
+      const newValue = value ?? '';
       handleSetMetadataFormData({
         ...selectedMetadataData,
         [term]: newValue,
@@ -75,7 +75,7 @@ export const MetadataForm = <T extends { id: number }>({
   const handleFormatChange = async (event: SelectChangeEvent) => {
     setGeneratingFields(true);
     const selectedFormatTitle = event.target.value;
-    if (selectedFormatTitle === "upload") {
+    if (selectedFormatTitle === 'upload') {
       if (fileInputRef.current) {
         fileInputRef.current.click();
       }
@@ -91,18 +91,18 @@ export const MetadataForm = <T extends { id: number }>({
   };
 
   const shouldDisplayField = (field: any): boolean => {
-    if (field.term.toLowerCase() === "date" && "created_at" in item)
+    if (field.term.toLowerCase() === 'date' && 'created_at' in item)
       return false;
-    if (field.term.toLowerCase() === "creator" && "ownerId" in item)
+    if (field.term.toLowerCase() === 'creator' && 'ownerId' in item)
       return false;
     return !doesItemContainMetadataField(field.term);
   };
 
   const handleExampleMetadata = () => {
-    const fileUrl = "/exampleMetadata.json";
-    const link = document.createElement("a");
+    const fileUrl = '/exampleMetadata.json';
+    const link = document.createElement('a');
     link.href = fileUrl;
-    link.download = "exampleMetadata.json";
+    link.download = 'exampleMetadata.json';
     link.click();
   };
 
@@ -112,7 +112,7 @@ export const MetadataForm = <T extends { id: number }>({
       container
       item
       sx={{
-        overflowY: "auto",
+        overflowY: 'auto',
       }}
     >
       {loading ? (
@@ -122,18 +122,18 @@ export const MetadataForm = <T extends { id: number }>({
       ) : (
         <Box
           sx={{
-            overflowY: "auto",
-            width: "100%",
-            height: "100%",
+            overflowY: 'auto',
+            width: '100%',
+            height: '100%',
           }}
         >
           <Box sx={{ minWidth: 120, paddingTop: 2, paddingBottom: 2 }}>
-            <FormControl sx={{ width: "90%" }}>
+            <FormControl sx={{ width: '90%' }}>
               <InputLabel id="metadata-format-label">Format</InputLabel>
               <Select
                 labelId="metadata-format-label"
                 value={
-                  selectedMetadataFormat ? selectedMetadataFormat.title : ""
+                  selectedMetadataFormat ? selectedMetadataFormat.title : ''
                 }
                 label="Format"
                 onChange={handleFormatChange}
@@ -168,38 +168,29 @@ export const MetadataForm = <T extends { id: number }>({
             <Divider sx={{ paddingBottom: 2 }} />
           </Box>
           {selectedMetadataData && selectedMetadataFormat ? (
-            <form style={{ width: "100%" }}>
-              <>
-                {generatingFields ? (
-                  <Grid container alignItems="center" justifyContent="center">
-                    <CircularProgress />
-                  </Grid>
-                ) : (
-                  <Grid container spacing={2}>
-                    {selectedMetadataFormat &&
-                      selectedMetadataFormat.metadata
-                        .filter(shouldDisplayField)
-                        .map((field) => (
-                          <MetadataField
-                            key={field.term}
-                            field={field}
-                            value={
-                              (selectedMetadataData[
-                                field.term
-                              ] as unknown as string) || ""
-                            }
-                            handleInputChange={handleInputChange}
-                          />
-                        ))}
-                  </Grid>
-                )}
-              </>
-              <Grid
-                container
-                justifyContent="flex-end"
-                spacing={2}
-                style={{ marginTop: "16px" }}
-              ></Grid>
+            <form style={{ width: '100%' }}>
+              {generatingFields ? (
+                <Grid container alignItems="center" justifyContent="center">
+                  <CircularProgress />
+                </Grid>
+              ) : (
+                <Grid container spacing={2}>
+                  {selectedMetadataFormat?.metadata
+                    .filter(shouldDisplayField)
+                    .map((field) => (
+                      <MetadataField
+                        key={field.term}
+                        field={field}
+                        value={
+                          (selectedMetadataData[
+                            field.term
+                          ] as unknown as string) || ''
+                        }
+                        handleInputChange={handleInputChange}
+                      />
+                    ))}
+                </Grid>
+              )}
             </form>
           ) : null}
         </Box>

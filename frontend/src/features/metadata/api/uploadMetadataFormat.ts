@@ -1,4 +1,4 @@
-import storage from "../../../utils/storage.ts";
+import storage from '../../../utils/storage.ts';
 
 export const uploadMetadataFormat = async (
   title: string,
@@ -10,10 +10,10 @@ export const uploadMetadataFormat = async (
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/link-metadata-format-group/`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           title: title,
@@ -22,13 +22,9 @@ export const uploadMetadataFormat = async (
         }),
       },
     );
-    // if (!response.ok) {
-    //   throw new Error(`Error uploading metadata: ${response.statusText}`);
-    // }
-
     const toreturn = await response.json();
     return toreturn;
   } catch (error) {
-    console.error("Error while uploading metadata:", error);
+    console.error('Error while uploading metadata:', error);
   }
 };
