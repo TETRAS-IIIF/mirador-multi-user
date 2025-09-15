@@ -109,6 +109,9 @@ export const ItemList = <
           groupByOption={getGroupByOption}
         />
       </Grid>
+      <Grid item>
+        <MMUToolTip children={<div>{t('MMUTooltipSearchForUser')}</div>} />
+      </Grid>
       <Grid item container flexDirection="column" spacing={1}>
         {items &&
           items.map((listItem) =>
