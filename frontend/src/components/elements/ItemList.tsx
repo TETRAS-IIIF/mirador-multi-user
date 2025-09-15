@@ -110,7 +110,9 @@ export const ItemList = <
         />
       </Grid>
       <Grid item>
-        <MMUToolTip children={<div>{t('MMUTooltipSearchForUser')}</div>} />
+        <MMUToolTip>
+          <div>{t('MMUTooltipSearchForUser')}</div>
+        </MMUToolTip>
       </Grid>
       <Grid item container flexDirection="column" spacing={1}>
         {items &&
