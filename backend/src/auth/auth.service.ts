@@ -270,12 +270,15 @@ export class AuthService {
     }
   }
 
-  private async maybeSendConfirmationLink(user: any) {
+  private async maybeSendConfirmationLink(
+    user: any,
+  ): Promise<string | undefined> {
     if (!user.termsValidatedAt) {
-      await this.linkUserGroupService.sendConfirmationLink(
+      return await this.linkUserGroupService.sendConfirmationLink(
         user.mail,
         user.preferredLanguage,
       );
     }
+    return undefined;
   }
 }

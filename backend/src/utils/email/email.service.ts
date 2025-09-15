@@ -196,6 +196,8 @@ If you're seeing this, then your mail service is working properly ✅
         text: plainText,
         body: renderedTemplate,
       });
+
+      return url;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException('an error occurred', error);
