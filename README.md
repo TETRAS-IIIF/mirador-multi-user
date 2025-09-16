@@ -21,6 +21,7 @@
             - [Check if all your service are up](#-Check-if-you're-installation-is-ready-to-use-:)
     - [Documentation](#documentation)
         - [Wiki](#wiki)
+        - [Roadmap](#Roadmap)
         - [Changelog](#changelog)
     - [Contributing](#contributing)
         - [CLI Tool helper (experimental)](#cli-tool-helper-experimental)
@@ -263,6 +264,10 @@ You can customize Caddy logging further by editing the Caddyfile in the root pro
 ## Wiki
 
 https://github.com/TETRAS-IIIF/mirador-multi-user/wiki
+
+## Roadmap 
+
+https://github.com/TETRAS-IIIF/mirador-multi-user/wiki/Roadmap
 
 ## Changelog
 
