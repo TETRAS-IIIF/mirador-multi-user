@@ -5,6 +5,7 @@
   "MMUTooltipAdmin": "Admin: Can Access / Modify / Delete ",
   "MMUTooltipEditor": "Editor: Can Access / Modify ",
   "MMUTooltipReader": "Reader: Can Access",
+  "MMUTooltipSearchForUser": "Start typing to search for a user to share content with.",
   "OpenInMirador": "Open manifest",
   "Permissions": "Permissions",
   "UpdateProfile": "Update Profile",
