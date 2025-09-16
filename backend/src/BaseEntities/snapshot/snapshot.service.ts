@@ -11,7 +11,7 @@ export class SnapshotService {
 
   constructor(
     @InjectRepository(Snapshot)
-    private snapshotRepository: Repository<Snapshot>,
+    private readonly snapshotRepository: Repository<Snapshot>,
   ) {}
 
   async createSnapshot(snapshot: CreateSnapshotDto): Promise<Snapshot> {

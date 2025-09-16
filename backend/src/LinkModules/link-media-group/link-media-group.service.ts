@@ -58,7 +58,7 @@ export class LinkMediaGroupService {
 
   async createMedia(mediaDto: CreateMediaDto) {
     try {
-      const { idCreator, path, user_group } = mediaDto;
+      const { user_group } = mediaDto;
       const media = await this.mediaService.create(mediaDto);
       await this.addMediaToGroup({
         userGroupId: user_group.id,
@@ -186,71 +186,37 @@ export class LinkMediaGroupService {
       if (!mediaToRemove) {
         throw new HttpException('Media not found', HttpStatus.NOT_FOUND);
       }
+
+      const uploadRoot = join(__dirname, '..', '..', '..', '..', 'upload');
+      const byHash = (hash: string, ...rest: string[]) =>
+        join(uploadRoot, hash, ...rest);
+      const safeUnlink = (p: string) => fs.existsSync(p) && fs.unlinkSync(p);
+      const removeDirIfEmpty = (dir: string) => {
+        if (fs.existsSync(dir) && fs.readdirSync(dir).length === 0)
+          fs.rmdirSync(dir);
+      };
+
+      const removeThumbnailAndMaybeDir = (hash: string) => {
+        const thumb = byHash(hash, 'thumbnail.webp');
+        safeUnlink(thumb);
+        removeDirIfEmpty(byHash(hash));
+      };
+
       if (mediaToRemove.origin === mediaOrigin.UPLOAD) {
-        const filePath = join(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          '..',
-          'upload',
-          mediaToRemove.hash,
-          mediaToRemove.path,
-        );
-        const thumbnailPath = join(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          '..',
-          'upload',
-          mediaToRemove.hash,
-          'thumbnail.webp',
-        );
-        if (fs.existsSync(filePath) && fs.existsSync(thumbnailPath)) {
-          fs.unlinkSync(filePath);
-          fs.unlinkSync(thumbnailPath);
-          const dirPath = join(
-            __dirname,
-            '..',
-            '..',
-            '..',
-            '..',
-            'upload',
-            mediaToRemove.hash,
-          );
-          if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
-            fs.rmdirSync(dirPath);
-          }
-        }
+        const { hash, path } = mediaToRemove;
+        const filePath = byHash(hash, path);
+        const thumbPath = byHash(hash, 'thumbnail.webp');
+
+        safeUnlink(filePath);
+        safeUnlink(thumbPath);
+        removeDirIfEmpty(byHash(hash));
+      } else if (
+        mediaToRemove.origin === mediaOrigin.LINK &&
+        mediaToRemove.hash
+      ) {
+        removeThumbnailAndMaybeDir(mediaToRemove.hash);
       }
-      if (mediaToRemove.origin === mediaOrigin.LINK && mediaToRemove.hash) {
-        const thumbnailPath = join(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          '..',
-          'upload',
-          mediaToRemove.hash,
-          'thumbnail.webp',
-        );
-        if (fs.existsSync(thumbnailPath)) {
-          fs.unlinkSync(thumbnailPath);
-          const dirPath = join(
-            __dirname,
-            '..',
-            '..',
-            '..',
-            '..',
-            'upload',
-            mediaToRemove.hash,
-          );
-          if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
-            fs.rmdirSync(dirPath);
-          }
-        }
-      }
+
       await this.mediaService.remove(mediaId);
       return {
         status: HttpStatus.OK,
@@ -452,7 +418,7 @@ export class LinkMediaGroupService {
       const prevRight = ITEM_RIGHTS_PRIORITY[prev.rights] || 0;
       const currentRight = ITEM_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
-    });
+    }, linkEntities[0]);
   }
 
   async checkPolicies(

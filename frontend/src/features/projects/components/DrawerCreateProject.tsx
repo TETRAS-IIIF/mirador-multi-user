@@ -7,16 +7,16 @@ import {
   TextField,
   Toolbar,
   Typography,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
-import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { LoadingButton } from "@mui/lab";
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
+import { ChangeEvent, FormEvent, useCallback, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { LoadingButton } from '@mui/lab';
 
 interface IDrawerCreateProjectProps {
   modalCreateProjectIsOpen: boolean;
   toggleModalProjectCreation: () => void;
-  InitializeProject: (projectName: string) => void;
+  InitializeProject: (projectName: string) => Promise<void>;
 }
 
 export const DrawerCreateProject = ({
@@ -24,7 +24,7 @@ export const DrawerCreateProject = ({
   toggleModalProjectCreation,
   InitializeProject,
 }: IDrawerCreateProjectProps) => {
-  const [projectName, setProjectName] = useState("");
+  const [projectName, setProjectName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -44,7 +44,7 @@ export const DrawerCreateProject = ({
       await InitializeProject(projectName);
     } finally {
       setIsLoading(false);
-      setProjectName("");
+      setProjectName('');
     }
   };
 
@@ -67,13 +67,13 @@ export const DrawerCreateProject = ({
         >
           <Paper
             sx={{
-              left: "0",
+              left: '0',
               marginTop: 6,
               paddingBottom: 2,
               paddingLeft: { sm: 3, xs: 2 },
               paddingRight: { sm: 3, xs: 2 },
               paddingTop: 2,
-              right: "0",
+              right: '0',
             }}
           >
             <AppBar position="absolute" color="primary" enableColorOnDark>
@@ -81,20 +81,20 @@ export const DrawerCreateProject = ({
                 <Button color="inherit" onClick={toggleModalProjectCreation}>
                   <ExpandMoreIcon />
                 </Button>
-                <Typography>{t("createProjectTitle")}</Typography>
+                <Typography>{t('createProjectTitle')}</Typography>
               </Toolbar>
             </AppBar>
             <form onSubmit={handleSubmit}>
               <Grid container alignItems="center" spacing={2}>
                 <Grid item>
-                  <label>{t("labelProjectTitle")}</label>
+                  <label>{t('labelProjectTitle')}</label>
                 </Grid>
-                <Grid item sx={{ width: "70%" }}>
+                <Grid item sx={{ width: '70%' }}>
                   <TextField
                     inputRef={inputRef}
                     onChange={handleNameChange}
-                    sx={{ width: "100%" }}
-                    placeholder={t("placeholderProject")}
+                    sx={{ width: '100%' }}
+                    placeholder={t('placeholderProject')}
                     value={projectName}
                     inputProps={{ maxLength: 100 }}
                   />
@@ -106,7 +106,7 @@ export const DrawerCreateProject = ({
                     type="submit"
                     loading={isLoading}
                   >
-                    {t("add")}
+                    {t('add')}
                   </LoadingButton>
                 </Grid>
               </Grid>

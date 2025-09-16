@@ -21,7 +21,7 @@ export const MainContent = () => {
       return <NotConfirmedAccount />;
     }
   }
-  if (!user || !user.data) {
+  if (!user?.data) {
     return <Loading />;
   }
   if (!user.data.termsValidatedAt) {

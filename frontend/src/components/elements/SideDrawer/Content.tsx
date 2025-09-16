@@ -46,33 +46,33 @@ interface ContentProps {
 }
 
 export function Content({
-                          HandleSetIsRunning,
-                          HandleSetUserProjects,
-                          fetchGroups,
-                          fetchProjects,
-                          fetchManifestForUser,
-                          fetchMediaForUser,
-                          groups,
-                          handleDisconnectUser,
-                          handleSetMiradorState,
-                          manifests,
-                          medias,
-                          miradorState,
-                          miradorViewerRef,
-                          projectSelected,
-                          saveMiradorState,
-                          selectedContent,
-                          selectedProjectId,
-                          setMedias,
-                          setSelectedProjectId,
-                          setShowSignOutModal,
-                          setViewer,
-                          showSignOutModal,
-                          user,
-                          userPersonalGroup,
-                          userProjects,
-                          viewer,
-                        }: ContentProps) {
+  HandleSetIsRunning,
+  HandleSetUserProjects,
+  fetchGroups,
+  fetchProjects,
+  fetchManifestForUser,
+  fetchMediaForUser,
+  groups,
+  handleDisconnectUser,
+  handleSetMiradorState,
+  manifests,
+  medias,
+  miradorState,
+  miradorViewerRef,
+  projectSelected,
+  saveMiradorState,
+  selectedContent,
+  selectedProjectId,
+  setMedias,
+  setSelectedProjectId,
+  setShowSignOutModal,
+  setViewer,
+  showSignOutModal,
+  user,
+  userPersonalGroup,
+  userProjects,
+  viewer,
+}: ContentProps) {
   return (
     <Box
       component="main"
@@ -96,10 +96,9 @@ export function Content({
           medias={medias}
         />
       )}
-      {user &&
-        user.id &&
-        user._isAdmin &&
-        selectedContent === MENU_ELEMENT.ADMIN && <AdminPanel />}
+      {Boolean(
+        user?.id && user._isAdmin && selectedContent === MENU_ELEMENT.ADMIN,
+      ) && <AdminPanel />}
       {user &&
         user.id &&
         selectedContent === MENU_ELEMENT.PROJECTS &&
@@ -118,19 +117,20 @@ export function Content({
             fetchMediaForUser={fetchMediaForUser}
           />
         )}
-      {user &&
-        user.id &&
-        !selectedProjectId &&
-        selectedContent === MENU_ELEMENT.MEDIA && (
-          <AllMedias
-            fetchMediaForUser={fetchMediaForUser}
-            medias={medias}
-            setMedias={setMedias}
-            user={user}
-            userPersonalGroup={userPersonalGroup}
-          />
-        )}
-      {user && user.id && selectedContent === MENU_ELEMENT.GROUPS && (
+      {Boolean(
+        user?.id &&
+          !selectedProjectId &&
+          selectedContent === MENU_ELEMENT.MEDIA,
+      ) && (
+        <AllMedias
+          fetchMediaForUser={fetchMediaForUser}
+          medias={medias}
+          setMedias={setMedias}
+          user={user}
+          userPersonalGroup={userPersonalGroup}
+        />
+      )}
+      {Boolean(user?.id && selectedContent === MENU_ELEMENT.GROUPS) && (
         <AllGroups
           fetchGroups={fetchGroups}
           groups={groups}
@@ -142,7 +142,7 @@ export function Content({
           fetchMediaForUser={fetchMediaForUser}
         />
       )}
-      {user && user.id && selectedContent === MENU_ELEMENT.MANIFEST && (
+      {Boolean(user?.id && selectedContent === MENU_ELEMENT.MANIFEST) && (
         <AllManifests
           fetchManifestForUser={fetchManifestForUser}
           fetchMediaForUser={fetchMediaForUser}
@@ -152,7 +152,7 @@ export function Content({
           userPersonalGroup={userPersonalGroup}
         />
       )}
-      {user && user.id && selectedContent === MENU_ELEMENT.SETTING && (
+      {Boolean(user?.id && selectedContent === MENU_ELEMENT.SETTING) && (
         <UserSettings user={user} />
       )}
       {showSignOutModal && (
@@ -160,10 +160,9 @@ export function Content({
           openModal={showSignOutModal}
           setOpenModal={setShowSignOutModal}
           width={400}
-          children={
-            <ConfirmDisconnect handleDisconnect={handleDisconnectUser} />
-          }
-        />
+        >
+          <ConfirmDisconnect handleDisconnect={handleDisconnectUser} />
+        </MMUModal>
       )}
     </Box>
   );

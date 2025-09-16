@@ -36,11 +36,10 @@ interface CollapsibleTableProps {
   rows: RowProps[];
 }
 
-export function AdminCollapsibleTable(
-  {
-    columns,
-    rows,
-  }: CollapsibleTableProps) {
+export function AdminCollapsibleTable({
+  columns,
+  rows,
+}: CollapsibleTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
@@ -123,8 +122,11 @@ export function AdminCollapsibleTable(
           <TableHead>
             <TableRow>
               <TableCell />
-              {columns.map((column, index) => (
-                <TableCell key={index} align={column.align || 'left'}>
+              {columns.map((column) => (
+                <TableCell
+                  key={column.sortKey || column.label}
+                  align={column.align || 'left'}
+                >
                   {column.sortKey ? (
                     <TableSortLabel
                       active={sortKey === column.sortKey}
@@ -144,10 +146,7 @@ export function AdminCollapsibleTable(
           </TableHead>
           <TableBody>
             {paginatedRows.map((row) => (
-              <RowAdminPanel
-                key={row.id}
-                row={row}
-              />
+              <RowAdminPanel key={row.id} row={row} />
             ))}
           </TableBody>
         </Table>

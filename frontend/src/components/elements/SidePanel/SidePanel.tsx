@@ -1,52 +1,60 @@
-import { Box, Drawer, IconButton, styled } from "@mui/material";
-import { ReactNode, useEffect, useState } from "react";
-import { CloseButton } from "../SideBar/CloseButton.tsx";
-import { OpenButton } from "../SideBar/OpenButton.tsx";
-import { useTranslation } from "react-i18next";
-import { UserGroup } from "../../../features/user-group/types/types.ts";
-import { User } from "../../../features/auth/types/types.ts";
-import { Media } from "../../../features/media/types/types.ts";
-import { Manifest } from "../../../features/manifest/types/types.ts";
-import { ContentSidePanelMedia } from "../../../features/media/component/ContentSidePanelMedia.tsx";
-import { ContentSidePanelManifest } from "../../../features/manifest/component/ContentSidePanelManifest.tsx";
+import { Box, Drawer, IconButton, styled } from '@mui/material';
+import { ReactNode, useEffect, useState } from 'react';
+import { CloseButton } from '../SideBar/CloseButton.tsx';
+import { OpenButton } from '../SideBar/OpenButton.tsx';
+import { useTranslation } from 'react-i18next';
+import { UserGroup } from '../../../features/user-group/types/types.ts';
+import { User } from '../../../features/auth/types/types.ts';
+import { Media } from '../../../features/media/types/types.ts';
+import { Manifest } from '../../../features/manifest/types/types.ts';
+import { ContentSidePanelMedia } from '../../../features/media/component/ContentSidePanelMedia.tsx';
+import { ContentSidePanelManifest } from '../../../features/manifest/component/ContentSidePanelManifest.tsx';
 
 const ToggleMediaButton = styled(IconButton)<{ open: boolean; shift: boolean }>(
-  ({ open, shift }) => ({
-    position: "fixed",
-    top: "130px",
-    right: open ? 360 : shift ? 360 : -50,
-    zIndex: 9999,
-    transition: "right 0.3s ease",
-    "&:hover": {
-      backgroundColor: "transparent",
-    },
-  }),
+  ({ open, shift }) => {
+    const hasPanel = open || shift;
+    const rightPosition = hasPanel ? 360 : -50;
+    return {
+      position: 'fixed',
+      top: '130px',
+      right: rightPosition,
+      zIndex: 9999,
+      transition: 'right 0.3s ease',
+      '&:hover': {
+        backgroundColor: 'transparent',
+      },
+    };
+  },
 );
 
 const ToggleButton = styled(IconButton)<{ open: boolean }>(({ open }) => ({
-  position: "fixed",
-  top: "40px",
+  position: 'fixed',
+  top: '40px',
   right: open ? 400 : 0,
   zIndex: 9999,
-  transition: "right 0.3s ease",
-  "&:hover": {
-    backgroundColor: "transparent",
+  transition: 'right 0.3s ease',
+  '&:hover': {
+    backgroundColor: 'transparent',
   },
 }));
 
 const ToggleManifestButton = styled(IconButton)<{
   open: boolean;
   shift: boolean;
-}>(({ open, shift }) => ({
-  position: "fixed",
-  top: "250px",
-  right: open ? 335 : shift ? 335 : -70,
-  zIndex: 9999,
-  transition: "right 0.3s ease",
-  "&:hover": {
-    backgroundColor: "transparent",
-  },
-}));
+}>(({ open, shift }) => {
+  const rightPosition = open || shift ? 335 : -70;
+
+  return {
+    position: 'fixed',
+    top: '250px',
+    right: rightPosition,
+    zIndex: 9999,
+    transition: 'right 0.3s ease',
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+  };
+});
 
 interface SidePanelProps {
   medias: Media[];
@@ -102,9 +110,9 @@ export const SidePanel = ({
             onClick={handleOpenPanel}
           >
             {openMedia || openManifest ? (
-              <CloseButton text={t("")} />
+              <CloseButton text={t('')} />
             ) : (
-              <OpenButton text={t("")} />
+              <OpenButton text={t('')} />
             )}
           </ToggleButton>
 
@@ -116,9 +124,9 @@ export const SidePanel = ({
                 onClick={handleSetOpenMedia}
               >
                 {openMedia ? (
-                  <CloseButton text={t("Media")} isSelected={openMedia} />
+                  <CloseButton text={t('Media')} isSelected={openMedia} />
                 ) : (
-                  <OpenButton text={t("Media")} isSelected={openMedia} />
+                  <OpenButton text={t('Media')} isSelected={openMedia} />
                 )}
               </ToggleMediaButton>
 
@@ -129,11 +137,11 @@ export const SidePanel = ({
               >
                 {openManifest ? (
                   <CloseButton
-                    text={t("Manifests")}
+                    text={t('Manifests')}
                     isSelected={openManifest}
                   />
                 ) : (
-                  <OpenButton text={t("Manifests")} isSelected={openManifest} />
+                  <OpenButton text={t('Manifests')} isSelected={openManifest} />
                 )}
               </ToggleManifestButton>
             </>
@@ -146,10 +154,10 @@ export const SidePanel = ({
           open={openMedia}
           anchor="right"
           variant="persistent"
-          sx={{ position: "relative", zIndex: 9999 }}
+          sx={{ position: 'relative', zIndex: 9999 }}
           ModalProps={{
             BackdropProps: {
-              style: { backgroundColor: "transparent" },
+              style: { backgroundColor: 'transparent' },
             },
           }}
         >
@@ -168,10 +176,10 @@ export const SidePanel = ({
           open={openManifest}
           anchor="right"
           variant="persistent"
-          sx={{ position: "relative", zIndex: 9999 }}
+          sx={{ position: 'relative', zIndex: 9999 }}
           ModalProps={{
             BackdropProps: {
-              style: { backgroundColor: "transparent" },
+              style: { backgroundColor: 'transparent' },
             },
           }}
         >
@@ -188,8 +196,8 @@ export const SidePanel = ({
         sx={{
           flexGrow: 1,
           padding: 2,
-          transition: "margin 0.3s ease",
-          marginRight: openMedia || openManifest ? "500px" : "0px",
+          transition: 'margin 0.3s ease',
+          marginRight: openMedia || openManifest ? '500px' : '0px',
         }}
       >
         {children}

@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react';
 import {
   Button,
   Collapse,
   IconButton,
   TableCell,
   TableRow,
-} from "@mui/material";
-import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
-import { useTranslation } from "react-i18next";
-import { RowProps } from "../../features/projects/types/types.ts";
+} from '@mui/material';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+import { RowProps } from '../../features/projects/types/types.ts';
 
 interface SingleRowProps {
   row: RowProps;
@@ -37,8 +37,8 @@ export function Row({
             {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>
-        {row.data.map((cell, index) => (
-          <TableCell key={index} align={cell.align || "left"}>
+        {row.data.map((cell) => (
+          <TableCell key={cell.value} align={cell.align || 'left'}>
             {cell.value}
           </TableCell>
         ))}

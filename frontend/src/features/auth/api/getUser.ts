@@ -31,12 +31,19 @@ export const getUser = async (): Promise<User> => {
     return data;
   } catch (error: any) {
     if (error.code === ErrorCode.EMAIL_NOT_CONFIRMED) {
-      return Promise.reject(error);
+      const rejectionError =
+        error instanceof Error
+          ? error
+          : new Error(error.message || 'Unknown error');
+      (rejectionError as any).code = error.code;
+      return Promise.reject(rejectionError);
     }
+
     if (error.code !== ErrorCode.EMAIL_NOT_CONFIRMED) {
       storage.clearToken();
       window.location.reload();
     }
-    throw error;
+
+    throw error instanceof Error ? error : new Error(String(error));
   }
 };

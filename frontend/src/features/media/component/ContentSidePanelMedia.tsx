@@ -166,7 +166,42 @@ export const ContentSidePanelMedia = ({
   const handleButtonClick = () => {
     document.getElementById('file-upload')!.click();
   };
+  let mediaContent;
 
+  if (medias.length === 0) {
+    mediaContent = (
+      <Grid container justifyContent="center">
+        <Typography variant="h6" component="h2">
+          {t('noMediaYet')}
+        </Typography>
+      </Grid>
+    );
+  } else if (currentPageData.length > 0) {
+    mediaContent = (
+      <ImageList
+        sx={{ minWidth: 400, padding: 1, width: 400 }}
+        cols={2}
+        rowHeight={200}
+      >
+        {currentPageData.map((media) => (
+          <MediaImageBox
+            key={media.id}
+            media={media}
+            caddyUrl={caddyUrl}
+            handleCopyToClipBoard={handleCopyToClipBoard}
+          />
+        ))}
+      </ImageList>
+    );
+  } else {
+    mediaContent = (
+      <Grid item container justifyContent="center" alignItems="center">
+        <Typography variant="h6" component="h2">
+          {t('noMatchingMediaFilter')}
+        </Typography>
+      </Grid>
+    );
+  }
   return (
     <>
       <Grid
@@ -214,33 +249,7 @@ export const ContentSidePanelMedia = ({
           </Typography>
         </Grid>
       )}
-      {medias.length === 0 ? (
-        <Grid container justifyContent="center">
-          <Typography variant="h6" component="h2">
-            {t('noMediaYet')}
-          </Typography>
-        </Grid>
-      ) : currentPageData.length > 0 ? (
-        <ImageList
-          sx={{ minWidth: 400, padding: 1, width: 400 }}
-          cols={2}
-          rowHeight={200}
-        >
-          {currentPageData.map((media) => (
-            <MediaImageBox
-              media={media}
-              caddyUrl={caddyUrl}
-              handleCopyToClipBoard={handleCopyToClipBoard}
-            />
-          ))}
-        </ImageList>
-      ) : (
-        <Grid item container justifyContent="center" alignItems="center">
-          <Typography variant="h6" component="h2">
-            {t('noMatchingMediaFilter')}
-          </Typography>
-        </Grid>
-      )}
+      {mediaContent}
       <PaginationControls
         currentPage={currentPage}
         totalPages={totalPages}

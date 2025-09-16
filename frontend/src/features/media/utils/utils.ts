@@ -19,7 +19,7 @@ export function isRawVideo(url: string): boolean {
 export const isPeerTubeVideo = async (url: string): Promise<boolean> => {
   try {
     const response = await fetch(url);
-    if (!response.ok) throw new Error("Failed to fetch the URL");
+    if (!response.ok) throw new Error('Failed to fetch the URL');
 
     const htmlContent = await response.text();
     return htmlContent.includes(
@@ -40,23 +40,22 @@ export const getPeerTubeThumbnailUrl = async (
   const response = await fetch(apiURL);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch PeerTube video details");
+    throw new Error('Failed to fetch PeerTube video details');
   }
 
   const data = await response.json();
   let thumbnailUrl = data.thumbnailPath;
-  if (!thumbnailUrl.startsWith("http")) {
+  if (!thumbnailUrl.startsWith('http')) {
     thumbnailUrl = `${baseDomain}${thumbnailUrl}`;
   }
 
   const thumbnailResponse = await fetch(thumbnailUrl);
   if (!thumbnailResponse.ok) {
-    throw new Error("Failed to fetch PeerTube thumbnail");
+    throw new Error('Failed to fetch PeerTube thumbnail');
   }
-
-  const contentType = thumbnailResponse.headers.get("Content-Type");
-  if (!contentType || !contentType.startsWith("image/")) {
-    throw new Error("Fetched data is not a valid image");
+  const contentType = thumbnailResponse.headers.get('Content-Type');
+  if (!contentType?.startsWith('image/')) {
+    throw new Error('Fetched data is not a valid image');
   }
   return thumbnailUrl;
 };
@@ -70,7 +69,7 @@ export const getYoutubeJson = async (
   videoUrl: string,
 ): Promise<YoutubeVideoJson | undefined> => {
   try {
-    const normalizedUrl = videoUrl.replace(/^https?:\/\//, "");
+    const normalizedUrl = videoUrl.replace(/^https?:\/\//, '');
 
     const videoResponse = await fetch(
       `https://www.youtube.com/oembed?url=https://${normalizedUrl}&format=json`,

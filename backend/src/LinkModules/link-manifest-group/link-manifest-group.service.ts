@@ -55,10 +55,9 @@ export class LinkManifestGroupService {
           }
           manifestData = await response.json();
           if (
-            !manifestData ||
-            !manifestData['@context'] ||
-            !(manifestData['@id'] || manifestData['id']) ||
-            manifestData.type !== 'Manifest'
+            !manifestData?.['@context'] ||
+            !(manifestData?.['@id'] || manifestData?.id) ||
+            manifestData?.type !== 'Manifest'
           ) {
             throw new BadRequestException(
               'URL does not point to a valid IIIF manifest.',
@@ -497,7 +496,7 @@ export class LinkManifestGroupService {
       const prevRight = ITEM_RIGHTS_PRIORITY[prev.rights] || 0;
       const currentRight = ITEM_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
-    });
+    }, linkEntities[0]);
   }
 
   async checkPolicies(

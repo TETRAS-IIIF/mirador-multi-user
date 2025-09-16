@@ -1,10 +1,10 @@
-import { FieldForm } from "../../../components/elements/FieldForm";
-import { Button, Grid, Paper } from "@mui/material";
-import { ChangeEvent, useState } from "react";
-import { MediaTypes } from "../../media/types/types";
-import { MediaImageThumbnail } from "./MediaImageThumbnail";
-import { MediaVideoThumbnail } from "./MediaVideoThumbnail";
-import { IIIFCanvases, MediaField } from "./ManifestCreationForm";
+import { FieldForm } from '../../../components/elements/FieldForm';
+import { Button, Grid, Paper } from '@mui/material';
+import { ChangeEvent, useState } from 'react';
+import { MediaTypes } from '../../media/types/types';
+import { MediaImageThumbnail } from './MediaImageThumbnail';
+import { MediaVideoThumbnail } from './MediaVideoThumbnail';
+import { IIIFCanvases, MediaField } from './ManifestCreationForm';
 
 interface ManifestCreationFormCanvasProps {
   canvas: IIIFCanvases;
@@ -14,7 +14,10 @@ interface ManifestCreationFormCanvasProps {
     (key: string, options?: Record<string, number>): string;
   };
 
-  handleMediaURLChange: (canvasIndex: number, mediaURL: string) => void;
+  handleMediaURLChange: (
+    canvasIndex: number,
+    mediaURL: string,
+  ) => Promise<void>;
   handleRemoveCanvas: (canvasIndex: number) => void;
   setMedia: (media: MediaField, canvasIndex: number) => void;
 }
@@ -42,14 +45,14 @@ export const ManifestCreationFormCanvas = ({
 
   return (
     <Grid item key={canvasIndex}>
-      <Paper elevation={3} sx={{ padding: 2, width: "100%" }}>
+      <Paper elevation={3} sx={{ padding: 2, width: '100%' }}>
         <Grid container direction="column" spacing={2}>
           <Grid item container spacing={2} alignItems="center">
             <Grid item xs>
               <FieldForm
                 name={media.title}
-                placeholder={t("mediaLink")}
-                label={t("mediaLink")}
+                placeholder={t('mediaLink')}
+                label={t('mediaLink')}
                 value={media.value}
                 onChange={onMediaURLChange}
               />
@@ -77,7 +80,7 @@ export const ManifestCreationFormCanvas = ({
               color="error"
               onClick={() => handleRemoveCanvas(canvasIndex)}
             >
-              {t("canvasRemoving", { index: canvasIndex + 1 })}
+              {t('canvasRemoving', { index: canvasIndex + 1 })}
             </Button>
           </Grid>
         </Grid>

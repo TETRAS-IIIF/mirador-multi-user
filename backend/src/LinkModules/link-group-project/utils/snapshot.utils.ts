@@ -19,42 +19,55 @@ interface ManifestEntry {
   };
 }
 
+type ManifestsMap = Record<string, ManifestEntry>;
+
+function getAnnotationIdFromItem(item: any): string | null {
+  const target = item?.target;
+  if (!target) return null;
+
+  if (typeof target === 'object' && target.source) return String(target.source);
+  if (typeof target === 'string') return target.split('#xywh')[0];
+
+  return null;
+}
+
+function addAnnotationToMatchingCanvas(
+  manifests: ManifestsMap,
+  annotationId: string,
+  page: AnnotationPage,
+): void {
+  for (const manifest of Object.values(manifests)) {
+    const items = manifest?.json?.items;
+    if (!Array.isArray(items)) continue;
+
+    const match = items.find((it: any) => it?.id === annotationId);
+    if (!match) continue;
+
+    if (!Array.isArray(match.annotations)) match.annotations = [];
+    match.annotations.push({ id: page.annotationPageId, ...page.content });
+  }
+}
+
 export const constructSnapshotWorkspace = (
   annotationPages: AnnotationPage[],
-  miradorWorkspace: Record<string, ManifestEntry>,
+  miradorWorkspace: Record<string, ManifestEntry> & {
+    manifests?: ManifestsMap;
+  },
 ): Record<string, ManifestEntry> => {
-  annotationPages.forEach((page) => {
-    if (page.content?.items && Array.isArray(page.content.items)) {
-      page.content.items.forEach((item) => {
-        if (item.target) {
-          const annotationId = item.target.source
-            ? item.target.source
-            : item.target.split('#xywh')[0];
+  const manifests: ManifestsMap =
+    (miradorWorkspace as any).manifests ?? (miradorWorkspace as ManifestsMap);
 
-          Object.entries(miradorWorkspace.manifests).forEach(
-            ([_, manifest]) => {
-              if (manifest?.json?.items && Array.isArray(manifest.json.items)) {
-                const matchingItem = manifest.json.items.find(
-                  (manifestItem) => manifestItem.id === annotationId,
-                );
+  for (const page of annotationPages) {
+    const pageItems = page?.content?.items;
+    if (!Array.isArray(pageItems)) continue;
 
-                if (matchingItem) {
-                  if (!matchingItem.annotations) {
-                    matchingItem.annotations = [];
-                  }
+    for (const item of pageItems) {
+      const annotationId = getAnnotationIdFromItem(item);
+      if (!annotationId) continue;
 
-                  matchingItem.annotations.push({
-                    id: page.annotationPageId,
-                    ...page.content,
-                  });
-                }
-              }
-            },
-          );
-        }
-      });
+      addAnnotationToMatchingCanvas(manifests, annotationId, page);
     }
-  });
+  }
 
   return miradorWorkspace;
 };

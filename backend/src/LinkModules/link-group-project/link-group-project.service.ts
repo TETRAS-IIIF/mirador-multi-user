@@ -545,7 +545,7 @@ export class LinkGroupProjectService {
       const prevRight = ITEM_RIGHTS_PRIORITY[prev.rights] || 0;
       const currentRight = ITEM_RIGHTS_PRIORITY[current.rights] || 0;
       return currentRight > prevRight ? current : prev;
-    });
+    }, linkEntities[0]);
   }
 
   async checkPolicies(
@@ -721,10 +721,7 @@ export class LinkGroupProjectService {
       const isLockRelevant =
         now - 2 * 60 * 1000 < new Date(project.lockedAt).getTime();
       if (isLockRelevant) {
-        if (userId == project.lockedByUserId) {
-        } else {
-          return project.lockedByUserId;
-        }
+        return project.lockedByUserId;
       }
       return false;
     } catch (error) {
