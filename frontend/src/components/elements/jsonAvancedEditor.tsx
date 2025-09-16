@@ -1,15 +1,7 @@
 import * as React from 'react';
 import { JsonEditor } from 'json-edit-react';
 import useUndo from 'use-undo';
-import {
-  AppBar,
-  Box,
-  Button,
-  Dialog,
-  IconButton,
-  Toolbar,
-  Typography,
-} from '@mui/material';
+import { AppBar, Box, Button, Dialog, IconButton, Toolbar, Typography, } from '@mui/material';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import UndoIcon from '@mui/icons-material/Undo';
@@ -18,15 +10,12 @@ import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'; // collapse all
 import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'; // expand all
 import SortIcon from '@mui/icons-material/Sort';
 
-// ---------- JSON typing + helpers -----------------------------------
-
 type JSONPrimitive = string | number | boolean | null;
 export type JSONValue =
   | JSONPrimitive
   | { [k: string]: JSONValue }
   | JSONValue[];
 
-/** Deeply sort object keys; leaves arrays as-is. */
 function sortKeysDeep<T>(value: T): T {
   if (Array.isArray(value)) {
     return value.map((v) => sortKeysDeep(v)) as unknown as T;
@@ -44,20 +33,11 @@ function sortKeysDeep<T>(value: T): T {
   return value;
 }
 
-// ---------- Component ------------------------------------------------
-
 type Props = {
   initialData: object;
-  /** Collapse all on first render (default: true). */
   startCollapsed?: boolean;
-  /** Choose fullscreen strategy (default: "dialog"). */
   fullscreenMode?: 'dialog' | 'browser';
-  /** Optional title for the toolbar. */
   title?: string;
-  /**
-   * Matches your handler signature:
-   * const handleUpdateAdvancedEditMetadata = async ({ newData }: { newData: any }) => { ... }
-   */
   onUpdate?: (data: { newData: any }) => Promise<void> | void;
 };
 
@@ -68,15 +48,12 @@ export default function JsonEditorWithControls({
   title = 'JSON editor',
   onUpdate,
 }: Props) {
-  // undo/redo state; start with sorted data
   const [{ present: data }, { set: setData, undo, redo, canUndo, canRedo }] =
     useUndo<JSONValue>(sortKeysDeep(initialData as JSONValue));
 
-  // collapse/expand all
   const [allCollapsed, setAllCollapsed] =
     React.useState<boolean>(startCollapsed);
 
-  // Infer exact externalTriggers type from the component props; includeChildren must be present
   type JsonEditorProps = React.ComponentProps<typeof JsonEditor>;
   const externalTriggers = React.useMemo<JsonEditorProps['externalTriggers']>(
     () => ({
@@ -85,7 +62,6 @@ export default function JsonEditorWithControls({
     [allCollapsed],
   );
 
-  // fullscreen
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement | null>(null);
 
@@ -100,7 +76,6 @@ export default function JsonEditorWithControls({
     else await document.exitFullscreen();
   };
 
-  // keyboard shortcuts: undo/redo
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
@@ -126,14 +101,12 @@ export default function JsonEditorWithControls({
   const sortCurrent = async () => {
     const sorted = sortKeysDeep(data) as JSONValue;
     setData(sorted);
-    // notify parent with the shape it expects
     await onUpdate?.({ newData: sorted });
   };
   const expandAll = () => setAllCollapsed(false);
   const collapseAll = () => setAllCollapsed(true);
   const exitDialog = () => setDialogOpen(false);
 
-  // Accept unknown from JsonEditor and notify parent
   const handleSetData = React.useCallback(
     async (next: unknown) => {
       const nextJson = next as JSONValue;
@@ -221,7 +194,6 @@ export default function JsonEditorWithControls({
         </Toolbar>
       </AppBar>
 
-      {/* Inline editor when not in dialog fullscreen */}
       {fullscreenMode === 'dialog' ? (
         <>
           {!dialogOpen && editor}
