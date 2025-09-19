@@ -1,7 +1,15 @@
 import * as React from 'react';
 import { JsonEditor } from 'json-edit-react';
 import useUndo from 'use-undo';
-import { AppBar, Box, Button, Dialog, IconButton, Toolbar, Typography, } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  Button,
+  Dialog,
+  IconButton,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import UndoIcon from '@mui/icons-material/Undo';
