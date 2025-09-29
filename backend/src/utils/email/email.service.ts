@@ -127,12 +127,15 @@ If you're seeing this, then your mail service is working properly ✅
       return;
     }
 
+    const FILTERED = 'FILTERED_DATA';
+
     // Hide sensitive fields
     if (details.body?.password) {
-      details.body.password = 'FILTERED_DATA';
+      details.body.password = FILTERED;
     }
+
     if (details.body?.confirmPassword) {
-      details.body.confirmPassword = 'FILTERED_DATA';
+      details.body.confirmPassword = FILTERED;
     }
 
     console.log('Send mail internal server error');
