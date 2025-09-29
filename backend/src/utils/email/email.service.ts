@@ -136,13 +136,14 @@ If you're seeing this, then your mail service is working properly ✅
 
     const subject = `🚨 Internal Server Error: ${details.url}`;
 
-    // Format JSON fields for readability
     const formattedBody = JSON.stringify(details.body, null, 2)
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;');
 
     const formattedStack = details.stack
-      ? `<pre style="background: #fee; padding: 10px; border-radius: 5px; white-space: pre-wrap; color: darkred;">${details.stack.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>`
+      ? `<pre style="background: #fee; padding: 10px; border-radius: 5px; white-space: pre-wrap; color: darkred;">${details.stack
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')}</pre>`
       : '<p>No stack trace available</p>';
 
     const mailBody = `
