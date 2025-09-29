@@ -131,6 +131,9 @@ If you're seeing this, then your mail service is working properly ✅
     if (details.body?.password) {
       details.body.password = 'HIDDEN_USER_PASSWORD_TRY';
     }
+    if (details.body?.confirmPassword) {
+      details.body.confirmPassword = 'HIDDEN_USER_PASSWORD_TRY';
+    }
 
     console.log('Send mail internal server error');
 
