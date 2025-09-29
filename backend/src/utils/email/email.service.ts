@@ -129,10 +129,10 @@ If you're seeing this, then your mail service is working properly ✅
 
     // Hide sensitive fields
     if (details.body?.password) {
-      details.body.password = 'HIDDEN_USER_PASSWORD_TRY';
+      details.body.password = 'FILTERED_DATA';
     }
     if (details.body?.confirmPassword) {
-      details.body.confirmPassword = 'HIDDEN_USER_PASSWORD_TRY';
+      details.body.confirmPassword = 'FILTERED_DATA';
     }
 
     console.log('Send mail internal server error');
