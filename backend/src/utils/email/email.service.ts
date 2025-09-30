@@ -154,6 +154,7 @@ If you're seeing this, then your mail service is working properly ✅
 
     const mailBody = `
     <h2 style="color: red;">🚨 Internal Server Error</h2>
+    <p><strong>Host:</strong> ${process.env.HOST}</p>
     <p><strong>URL:</strong> ${details.url}</p>
     <p><strong>Method:</strong> ${details.method}</p>
     <p><strong>Message:</strong> ${details.message}</p>
