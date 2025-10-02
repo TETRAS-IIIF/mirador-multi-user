@@ -29,6 +29,7 @@ import { AnnotationPageModule } from './BaseEntities/annotation-page/annotation-
 import { SnapshotModule } from './BaseEntities/snapshot/snapshot.module';
 import { SettingsModule } from './BaseEntities/setting/setting.module';
 import { DatabaseModule } from './BaseEntities/database/database.module';
+import { MetricsModule } from './metrics/metrics.module';
 
 @Module({
   imports: [
@@ -91,6 +92,7 @@ import { DatabaseModule } from './BaseEntities/database/database.module';
     SnapshotModule,
     SettingsModule,
     DatabaseModule,
+    MetricsModule,
   ],
   controllers: [AppController],
   providers: [

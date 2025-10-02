@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { Brackets, DeleteResult, Repository } from 'typeorm';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
+import { MetricsService } from '../../metrics/metrics.service';
 
 @Injectable()
 export class ProjectService {
@@ -18,10 +19,17 @@ export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    private readonly metrics: MetricsService,
   ) {}
 
   async create(dto: CreateProjectDto): Promise<Project> {
     try {
+      this.metrics.projectsCreatedTotal.inc();
+
+      this.metrics.routeUsageTotal.inc({
+        route: '/projects',
+        action: 'create',
+      });
       return this.projectRepository.save({
         ...dto,
         description: dto.description

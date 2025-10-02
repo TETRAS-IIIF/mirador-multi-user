@@ -16,6 +16,7 @@ import { PASSWORD_MINIMUM_LENGTH } from './utils';
 import { Language } from '../utils/email/utils';
 import { LinkUserGroupService } from '../LinkModules/link-user-group/link-user-group.service';
 import { Issuer, TokenSet } from 'openid-client';
+import { MetricsService } from '../metrics/metrics.service';
 
 @Injectable()
 export class AuthService {
@@ -27,6 +28,7 @@ export class AuthService {
     private readonly emailService: EmailServerService,
     private readonly impersonationService: ImpersonationService,
     private readonly linkUserGroupService: LinkUserGroupService,
+    private readonly metrics: MetricsService,
   ) {}
 
   async signIn(
@@ -79,7 +81,11 @@ export class AuthService {
         isEmailConfirmed: user.isEmailConfirmed,
         termsValidatedAt: user.termsValidatedAt,
       };
-
+      this.metrics.usersLoginsTotal.inc({ method: 'password' });
+      this.metrics.routeUsageTotal.inc({
+        route: '/auth/login',
+        action: 'login',
+      });
       return {
         access_token: await this.jwtService.signAsync(payload),
       };

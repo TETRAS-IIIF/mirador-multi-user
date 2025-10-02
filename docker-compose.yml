@@ -109,6 +109,20 @@ services:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
     networks:
       - app-network
+  prometheus:
+    image: prom/prometheus:v2.55.0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/data:/prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --web.enable-lifecycle
+    networks:
+      - app-network
 
 networks:
   app-network:

@@ -13,10 +13,13 @@ import { EmailServerService } from './utils/email/email.service';
 import { InternalServerErrorFilter } from './utils/ErrorFilters/InternalServerErrorExceptionFilter';
 import { UsersService } from './BaseEntities/users/users.service';
 import { json } from 'express';
+import { MetricsService } from './metrics/metrics.service';
+import { HttpMetricsInterceptor } from './metrics/http-metrics.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  const metrics = app.get(MetricsService);
+  app.useGlobalInterceptors(new HttpMetricsInterceptor(metrics));
   app.use(json({ limit: `${parseInt(Process.env.MAX_API_PAYLOAD_SIZE)}mb` }));
   app.useGlobalPipes(new ValidationPipe());
 

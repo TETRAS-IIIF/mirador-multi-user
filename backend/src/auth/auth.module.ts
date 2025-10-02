@@ -10,6 +10,7 @@ import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationModule } from '../impersonation/impersonation.module';
 import { LinkUserGroupModule } from '../LinkModules/link-user-group/link-user-group.module';
 import { JwtStrategy } from './jwt.strategy';
+import { MetricsModule } from '../metrics/metrics.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { JwtStrategy } from './jwt.strategy';
     UsersModule,
     ImpersonationModule,
     LinkUserGroupModule,
+    MetricsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, EmailServerService, JwtStrategy],

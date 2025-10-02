@@ -16,3 +16,6 @@ services:
   caddy:
     ports:
       - "${CADDY_PORT}:80"
+  prometheus:
+    ports:
+      - "${PROMETHEUS_PORT}:9090"
