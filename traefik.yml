@@ -39,6 +39,17 @@ services:
       - "traefik.http.routers.${CADDY_NAME}.tls.certresolver=myresolver"
       - "traefik.http.routers.${CADDY_NAME}.entrypoints=web,websecure"
       - "traefik.http.routers.${CADDY_NAME}.middlewares=hardening@docker"
+  prometheus:
+    networks:
+      - default
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.${CADDY_NAME}.rule=Host(`${PROMETHEUS_HOST}`)"
+      - "traefik.http.routers.${CADDY_NAME}.tls.certresolver=myresolver"
+      - "traefik.http.routers.${CADDY_NAME}.entrypoints=web,websecure"
+      - "traefik.http.routers.${CADDY_NAME}.middlewares=hardening@docker"
 
 networks:
   traefik:

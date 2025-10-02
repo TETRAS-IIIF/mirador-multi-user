@@ -22,7 +22,6 @@ export class MetricsService implements OnModuleInit {
   public readonly routeUsageTotal: Counter<'route' | 'action'>;
 
   constructor() {
-    // HTTP metrics
     this.httpRequestDuration = new Histogram({
       name: 'http_request_duration_seconds',
       help: 'Request duration in seconds',
@@ -38,11 +37,9 @@ export class MetricsService implements OnModuleInit {
       registers: [this.registry],
     });
 
-    // Business metrics
     this.projectsCreatedTotal = new Counter({
       name: 'projects_created_total',
       help: 'Number of projects created',
-      // no labels (per your latest DTO)
       registers: [this.registry],
     });
 

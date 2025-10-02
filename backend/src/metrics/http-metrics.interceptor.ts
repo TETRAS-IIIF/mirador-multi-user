@@ -27,6 +27,12 @@ export class HttpMetricsInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const req = context.switchToHttp().getRequest<Request>();
     const res = context.switchToHttp().getResponse<Response>();
+
+    const rawPath = req.path || '/';
+    if (rawPath === '/metrics') {
+      return next.handle();
+    }
+
     const method = req.method;
     const route = routeTemplate(context);
     const end = this.metrics.httpRequestDuration.startTimer({ method, route });
