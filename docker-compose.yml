@@ -111,11 +111,12 @@ services:
       - app-network
   prometheus:
     image: prom/prometheus:v2.55.0
+    user: "65534:65534"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./monitoring/data:/prometheus
+      - prometheus_data:/prometheus:rw
     command:
       - --config.file=/etc/prometheus/prometheus.yml
       - --storage.tsdb.path=/prometheus
@@ -123,6 +124,10 @@ services:
       - --web.enable-lifecycle
     networks:
       - app-network
+
+volumes:
+  prometheus_data: { }
+
 
 networks:
   app-network:
