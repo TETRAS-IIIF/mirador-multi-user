@@ -46,10 +46,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
-      - "traefik.http.routers.${CADDY_NAME}.rule=Host(`${PROMETHEUS_HOST}`)"
-      - "traefik.http.routers.${CADDY_NAME}.tls.certresolver=myresolver"
-      - "traefik.http.routers.${CADDY_NAME}.entrypoints=web,websecure"
-      - "traefik.http.routers.${CADDY_NAME}.middlewares=hardening@docker"
+      - "traefik.http.routers.${PROMETHEUS_NAME}.rule=Host(`${PROMETHEUS_HOST}`)"
+      - "traefik.http.routers.${PROMETHEUS_NAME}.tls.certresolver=myresolver"
+      - "traefik.http.routers.${PROMETHEUS_NAME}.entrypoints=web,websecure"
+      - "traefik.http.routers.${PROMETHEUS_NAME}.middlewares=hardening@docker"
 
 networks:
   traefik:
