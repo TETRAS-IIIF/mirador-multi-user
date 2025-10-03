@@ -51,10 +51,7 @@ services:
       - "traefik.http.routers.${PROMETHEUS_NAME}.entrypoints=web,websecure"
       - "traefik.http.middlewares.prom-basic.basicauth.users=grafana:${GRAFANA_HASH}"
       - "traefik.http.middlewares.prom-basic.basicauth.removeheader=true"
-      # IP whitelist
       - "traefik.http.middlewares.prom-ips.ipwhitelist.sourcerange=${IPWHITELIST}"
-
-      # Chaînage des middlewares (IP + BasicAuth)
       - "traefik.http.middlewares.prom-chain.chain.middlewares=prom-ips,prom-basic"
       - "traefik.http.routers.${PROMETHEUS_NAME}.middlewares=prom-chain"
 networks:
