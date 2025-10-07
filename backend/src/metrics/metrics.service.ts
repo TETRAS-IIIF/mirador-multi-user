@@ -20,6 +20,7 @@ export class MetricsService implements OnModuleInit {
   public readonly usersLoginsTotal: Counter<'method'>;
   public readonly usersActiveGauge: Gauge<'env'>;
   public readonly routeUsageTotal: Counter<'route' | 'action'>;
+  public readonly projectLockState: Gauge<'project_id'>;
 
   constructor() {
     this.httpRequestDuration = new Histogram({
@@ -61,6 +62,13 @@ export class MetricsService implements OnModuleInit {
       name: 'route_usage_total',
       help: 'Counts important business actions per route',
       labelNames: ['route', 'action'],
+      registers: [this.registry],
+    });
+
+    this.projectLockState = new Gauge({
+      name: 'project_lock_state',
+      help: 'Lock state per project (1=locked, 0=unlocked)',
+      labelNames: ['project_id'],
       registers: [this.registry],
     });
   }

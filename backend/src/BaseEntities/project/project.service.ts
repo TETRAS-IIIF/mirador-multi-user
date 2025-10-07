@@ -135,6 +135,8 @@ export class ProjectService {
       const updateData = lock
         ? { lockedAt: new Date(), lockedByUserId: userId }
         : { lockedAt: null, lockedByUserId: null };
+      this.metrics.projectLockState.labels(String(projectId)).set(lock ? 1 : 0);
+
       return await this.projectRepository.update(projectId, updateData);
     } catch (error) {
       this.logger.error(
