@@ -6,7 +6,9 @@ import {
   Box,
   Button,
   Dialog,
+  GlobalStyles,
   IconButton,
+  TextField,
   Toolbar,
   Typography,
 } from '@mui/material';
@@ -14,9 +16,10 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
-import UnfoldLessIcon from '@mui/icons-material/UnfoldLess'; // collapse all
-import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore'; // expand all
+import UnfoldLessIcon from '@mui/icons-material/UnfoldLess';
+import UnfoldMoreIcon from '@mui/icons-material/UnfoldMore';
 import SortIcon from '@mui/icons-material/Sort';
+import SearchIcon from '@mui/icons-material/Search';
 
 type JSONPrimitive = string | number | boolean | null;
 export type JSONValue =
@@ -25,9 +28,8 @@ export type JSONValue =
   | JSONValue[];
 
 function sortKeysDeep<T>(value: T): T {
-  if (Array.isArray(value)) {
+  if (Array.isArray(value))
     return value.map((v) => sortKeysDeep(v)) as unknown as T;
-  }
   if (value && typeof value === 'object') {
     const obj = value as Record<string, unknown>;
     const sorted = Object.keys(obj)
@@ -61,6 +63,7 @@ export default function JsonEditorWithControls({
 
   const [allCollapsed, setAllCollapsed] =
     React.useState<boolean>(startCollapsed);
+  const [searchTerm, setSearchTerm] = React.useState('');
 
   type JsonEditorProps = React.ComponentProps<typeof JsonEditor>;
   const externalTriggers = React.useMemo<JsonEditorProps['externalTriggers']>(
@@ -124,12 +127,77 @@ export default function JsonEditorWithControls({
     [setData, onUpdate],
   );
 
+  const filterJson = (input: JSONValue): JSONValue => {
+    if (!searchTerm.trim()) return input;
+    const term = searchTerm.toLowerCase();
+
+    if (Array.isArray(input)) {
+      const filtered = input
+        .map((v) => filterJson(v))
+        .filter((v) => v !== null && v !== undefined);
+      return filtered as JSONValue;
+    }
+
+    if (input && typeof input === 'object') {
+      const entries = Object.entries(input).filter(([k, v]) => {
+        if (k.toLowerCase().includes(term)) return true;
+        if (typeof v === 'string' && v.toLowerCase().includes(term))
+          return true;
+        const nested = filterJson(v as JSONValue);
+        return (
+          nested && typeof nested === 'object' && Object.keys(nested).length > 0
+        );
+      });
+      const obj = Object.fromEntries(
+        entries.map(([k, v]) => [k, filterJson(v as JSONValue)]),
+      );
+      return obj as JSONValue;
+    }
+
+    if (
+      typeof input === 'string' ||
+      typeof input === 'number' ||
+      typeof input === 'boolean'
+    ) {
+      return String(input).toLowerCase().includes(term)
+        ? input
+        : ({} as JSONValue);
+    }
+
+    return {} as JSONValue;
+  };
+
+  const visibleData = React.useMemo<JSONValue>(
+    () => filterJson(data),
+    [data, searchTerm],
+  );
+
   const editor = (
-    <Box sx={{ height: '100%', overflow: 'auto', p: 1 }}>
+    <Box
+      sx={{
+        position: 'relative',
+        flex: 1,
+        minHeight: 0,
+        width: '100%',
+        overflow: 'auto',
+        p: 1,
+        display: 'flex',
+        '& .jer-container': {
+          maxWidth: 'none !important',
+          width: '100% !important',
+        },
+        '& .json-edit-react': {
+          width: '100%',
+          height: '100%',
+        },
+      }}
+    >
       <JsonEditor
-        data={data}
+        data={visibleData}
         setData={handleSetData}
         externalTriggers={externalTriggers}
+        maxWidth="none"
+        minWidth={0}
       />
     </Box>
   );
@@ -144,33 +212,49 @@ export default function JsonEditorWithControls({
         display: 'flex',
         flexDirection: 'column',
         minHeight: 320,
+        height: '100%',
+        width: '100%',
+        '&:fullscreen': { width: '100vw', height: '100vh' },
       }}
     >
+      <GlobalStyles
+        styles={{
+          '.jer-container': {
+            maxWidth: 'none !important',
+            width: '100% !important',
+            height: '100% !important',
+          },
+          '.json-edit-react': { width: '100%', height: '100%' },
+        }}
+      />
+
       <AppBar position="static" color="default" elevation={0}>
-        <Toolbar variant="dense" sx={{ gap: 1 }}>
-          <Typography variant="subtitle2" sx={{ flex: 1 }}>
+        <Toolbar variant="dense" sx={{ gap: 1, flexWrap: 'wrap' }}>
+          <Typography variant="subtitle2" sx={{ flex: 1, minWidth: 120 }}>
             {title}
           </Typography>
+
+          <TextField
+            size="small"
+            placeholder="Search..."
+            InputProps={{
+              startAdornment: <SearchIcon fontSize="small" sx={{ mr: 0.5 }} />,
+            }}
+            sx={{ width: 200 }}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
 
           <Button startIcon={<SortIcon />} onClick={sortCurrent}>
             Sort keys
           </Button>
 
-          <IconButton
-            onClick={collapseAll}
-            title="Collapse all"
-            aria-label="Collapse all"
-          >
+          <IconButton onClick={collapseAll} title="Collapse all">
             <UnfoldLessIcon />
           </IconButton>
-          <IconButton
-            onClick={expandAll}
-            title="Expand all"
-            aria-label="Expand all"
-          >
+          <IconButton onClick={expandAll} title="Expand all">
             <UnfoldMoreIcon />
           </IconButton>
-
           <IconButton
             onClick={() => canUndo && undo()}
             disabled={!canUndo}
@@ -185,7 +269,6 @@ export default function JsonEditorWithControls({
           >
             <RedoIcon />
           </IconButton>
-
           <IconButton onClick={toggleFullscreen} title="Fullscreen">
             {fullscreenMode === 'dialog' ? (
               dialogOpen ? (
@@ -205,7 +288,18 @@ export default function JsonEditorWithControls({
       {fullscreenMode === 'dialog' ? (
         <>
           {!dialogOpen && editor}
-          <Dialog fullScreen open={dialogOpen} onClose={exitDialog}>
+          <Dialog
+            fullScreen
+            open={dialogOpen}
+            onClose={exitDialog}
+            PaperProps={{
+              sx: {
+                display: 'flex',
+                flexDirection: 'column',
+                height: '100vh',
+              },
+            }}
+          >
             <AppBar sx={{ position: 'sticky' }}>
               <Toolbar>
                 <Typography sx={{ flex: 1 }} variant="h6">
@@ -216,7 +310,7 @@ export default function JsonEditorWithControls({
                 </IconButton>
               </Toolbar>
             </AppBar>
-            {editor}
+            <Box sx={{ flex: 1, minHeight: 0, display: 'flex' }}>{editor}</Box>
           </Dialog>
         </>
       ) : (
