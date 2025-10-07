@@ -1,7 +1,17 @@
 import * as React from 'react';
 import { JsonEditor } from 'json-edit-react';
 import useUndo from 'use-undo';
-import { AppBar, Box, Button, Dialog, GlobalStyles, IconButton, TextField, Toolbar, Typography, } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  Button,
+  Dialog,
+  GlobalStyles,
+  IconButton,
+  TextField,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
@@ -48,7 +58,7 @@ export default function JsonEditorWithControls({
   fullscreenMode = 'dialog',
   title = 'JSON editor',
   onUpdate,
-}: Props) {
+}: Readonly<Props>) {
   const { t } = useTranslation();
 
   const [{ present: data }, { set: setData, undo, redo, canUndo, canRedo }] =
@@ -74,10 +84,15 @@ export default function JsonEditorWithControls({
       setDialogOpen((v) => !v);
       return;
     }
+
     const el = containerRef.current;
     if (!el) return;
-    if (!document.fullscreenElement) await el.requestFullscreen();
-    else await document.exitFullscreen();
+
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    } else {
+      await el.requestFullscreen();
+    }
   };
 
   React.useEffect(() => {
@@ -88,18 +103,18 @@ export default function JsonEditorWithControls({
 
       if (key === 'z') {
         e.preventDefault();
-        if (e.shiftKey) {
-          if (canRedo) redo();
-        } else {
-          if (canUndo) undo();
+        if (e.shiftKey && canRedo) {
+          redo();
+        } else if (!e.shiftKey && canUndo) {
+          undo();
         }
-      } else if (key === 'y') {
+      } else if (key === 'y' && canRedo) {
         e.preventDefault();
-        if (canRedo) redo();
+        redo();
       }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    globalThis.addEventListener('keydown', onKey);
+    return () => globalThis.removeEventListener('keydown', onKey);
   }, [undo, redo, canUndo, canRedo]);
 
   const sortCurrent = async () => {
@@ -136,17 +151,17 @@ export default function JsonEditorWithControls({
         if (k.toLowerCase().includes(term)) return true;
         if (typeof v === 'string' && v.toLowerCase().includes(term))
           return true;
-        const nested = filterJson(v as JSONValue);
+
+        const nested = filterJson(v);
         return (
-          nested &&
-          typeof nested === 'object' &&
-          Object.keys(nested as object).length > 0
+          nested && typeof nested === 'object' && Object.keys(nested).length > 0
         );
       });
+
       const obj = Object.fromEntries(
-        entries.map(([k, v]) => [k, filterJson(v as JSONValue)]),
+        entries.map(([k, v]) => [k, filterJson(v)]),
       );
-      return obj as JSONValue;
+      return obj;
     }
 
     if (
@@ -166,6 +181,17 @@ export default function JsonEditorWithControls({
     () => filterJson(data),
     [data, searchTerm],
   );
+
+  const fullscreenIcon = (() => {
+    if (fullscreenMode === 'dialog') {
+      return dialogOpen ? <FullscreenExitIcon /> : <FullscreenIcon />;
+    }
+    return document.fullscreenElement ? (
+      <FullscreenExitIcon />
+    ) : (
+      <FullscreenIcon />
+    );
+  })();
 
   const editor = (
     <Box
@@ -272,21 +298,12 @@ export default function JsonEditorWithControls({
           >
             <RedoIcon />
           </IconButton>
+
           <IconButton
             onClick={toggleFullscreen}
             title={t('jsonEditor.fullscreen', { defaultValue: 'Fullscreen' })}
           >
-            {fullscreenMode === 'dialog' ? (
-              dialogOpen ? (
-                <FullscreenExitIcon />
-              ) : (
-                <FullscreenIcon />
-              )
-            ) : document.fullscreenElement ? (
-              <FullscreenExitIcon />
-            ) : (
-              <FullscreenIcon />
-            )}
+            {fullscreenIcon}
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -310,6 +327,7 @@ export default function JsonEditorWithControls({
               <Toolbar>
                 <Typography sx={{ flex: 1 }} variant="h6">
                   {t('jsonEditor.fullscreenTitle', {
+                    title,
                     defaultValue: `${title} (Fullscreen)`,
                   })}
                 </Typography>
