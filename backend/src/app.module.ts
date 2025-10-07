@@ -30,6 +30,8 @@ import { SnapshotModule } from './BaseEntities/snapshot/snapshot.module';
 import { SettingsModule } from './BaseEntities/setting/setting.module';
 import { DatabaseModule } from './BaseEntities/database/database.module';
 import { MetricsModule } from './metrics/metrics.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { HttpMetricsInterceptor } from './metrics/http-metrics.interceptor';
 
 @Module({
   imports: [
@@ -101,6 +103,7 @@ import { MetricsModule } from './metrics/metrics.module';
       provide: Logger,
       useClass: CustomLogger,
     },
+    { provide: APP_INTERCEPTOR, useClass: HttpMetricsInterceptor },
   ],
 })
 export class AppModule {}

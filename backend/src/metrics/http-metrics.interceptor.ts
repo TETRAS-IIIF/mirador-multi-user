@@ -4,7 +4,7 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common';
-import { Observable, tap } from 'rxjs';
+import { Observable } from 'rxjs';
 import { MetricsService } from './metrics.service';
 import { Request, Response } from 'express';
 
@@ -25,31 +25,23 @@ export class HttpMetricsInterceptor implements NestInterceptor {
   constructor(private readonly metrics: MetricsService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const req = context.switchToHttp().getRequest<Request>();
-    const res = context.switchToHttp().getResponse<Response>();
+    const http = context.switchToHttp();
+    const req = http.getRequest<Request>();
+    const res = http.getResponse<Response>();
 
-    const rawPath = req.path || '/';
-    if (rawPath === '/metrics') {
-      return next.handle();
-    }
+    const path = req.path || '/';
+    if (path === '/metrics') return next.handle();
 
-    const method = req.method;
+    const method = req.method || 'UNKNOWN';
     const route = routeTemplate(context);
-    const end = this.metrics.httpRequestDuration.startTimer({ method, route });
 
-    return next.handle().pipe(
-      tap({
-        next: () => {
-          const code = res.statusCode?.toString() || '200';
-          end({ code });
-          this.metrics.httpRequestsTotal.inc({ method, route, code });
-        },
-        error: () => {
-          const code = res.statusCode?.toString() || '500';
-          end({ code });
-          this.metrics.httpRequestsTotal.inc({ method, route, code });
-        },
-      }),
-    );
+    const end = this.metrics.httpRequestDuration.startTimer({ method, route });
+    res.on('finish', () => {
+      const code = String(res.statusCode ?? 0);
+      end({ code });
+      this.metrics.httpRequestsTotal.inc({ method, route, code });
+    });
+
+    return next.handle();
   }
 }
