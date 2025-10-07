@@ -111,7 +111,7 @@ type MetadataFormatField = {
   comment?: string;
 };
 type MetadataFields = {
-  [key: string]: string; // Abstracts all possible key-value pairs where keys are strings and values are strings
+  [key: string]: string;
 };
 
 type MetadataArray = MetadataFormat[];

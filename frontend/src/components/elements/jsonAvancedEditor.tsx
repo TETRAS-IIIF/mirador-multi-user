@@ -1,17 +1,8 @@
 import * as React from 'react';
 import { JsonEditor } from 'json-edit-react';
 import useUndo from 'use-undo';
-import {
-  AppBar,
-  Box,
-  Button,
-  Dialog,
-  GlobalStyles,
-  IconButton,
-  TextField,
-  Toolbar,
-  Typography,
-} from '@mui/material';
+import { AppBar, Box, Button, Dialog, GlobalStyles, IconButton, TextField, Toolbar, Typography, } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import UndoIcon from '@mui/icons-material/Undo';
@@ -58,6 +49,8 @@ export default function JsonEditorWithControls({
   title = 'JSON editor',
   onUpdate,
 }: Props) {
+  const { t } = useTranslation();
+
   const [{ present: data }, { set: setData, undo, redo, canUndo, canRedo }] =
     useUndo<JSONValue>(sortKeysDeep(initialData as JSONValue));
 
@@ -145,7 +138,9 @@ export default function JsonEditorWithControls({
           return true;
         const nested = filterJson(v as JSONValue);
         return (
-          nested && typeof nested === 'object' && Object.keys(nested).length > 0
+          nested &&
+          typeof nested === 'object' &&
+          Object.keys(nested as object).length > 0
         );
       });
       const obj = Object.fromEntries(
@@ -231,12 +226,12 @@ export default function JsonEditorWithControls({
       <AppBar position="static" color="default" elevation={0}>
         <Toolbar variant="dense" sx={{ gap: 1, flexWrap: 'wrap' }}>
           <Typography variant="subtitle2" sx={{ flex: 1, minWidth: 120 }}>
-            {title}
+            {t('jsonEditor.title', { defaultValue: title })}
           </Typography>
 
           <TextField
             size="small"
-            placeholder="Search..."
+            placeholder={t('jsonEditor.search', { defaultValue: 'Search...' })}
             InputProps={{
               startAdornment: <SearchIcon fontSize="small" sx={{ mr: 0.5 }} />,
             }}
@@ -246,30 +241,41 @@ export default function JsonEditorWithControls({
           />
 
           <Button startIcon={<SortIcon />} onClick={sortCurrent}>
-            Sort keys
+            {t('jsonEditor.sortKeys', { defaultValue: 'Sort keys' })}
           </Button>
 
-          <IconButton onClick={collapseAll} title="Collapse all">
+          <IconButton
+            onClick={collapseAll}
+            title={t('jsonEditor.collapseAll', {
+              defaultValue: 'Collapse all',
+            })}
+          >
             <UnfoldLessIcon />
           </IconButton>
-          <IconButton onClick={expandAll} title="Expand all">
+          <IconButton
+            onClick={expandAll}
+            title={t('jsonEditor.expandAll', { defaultValue: 'Expand all' })}
+          >
             <UnfoldMoreIcon />
           </IconButton>
           <IconButton
             onClick={() => canUndo && undo()}
             disabled={!canUndo}
-            title="Undo"
+            title={t('jsonEditor.undo', { defaultValue: 'Undo' })}
           >
             <UndoIcon />
           </IconButton>
           <IconButton
             onClick={() => canRedo && redo()}
             disabled={!canRedo}
-            title="Redo"
+            title={t('jsonEditor.redo', { defaultValue: 'Redo' })}
           >
             <RedoIcon />
           </IconButton>
-          <IconButton onClick={toggleFullscreen} title="Fullscreen">
+          <IconButton
+            onClick={toggleFullscreen}
+            title={t('jsonEditor.fullscreen', { defaultValue: 'Fullscreen' })}
+          >
             {fullscreenMode === 'dialog' ? (
               dialogOpen ? (
                 <FullscreenExitIcon />
@@ -303,7 +309,9 @@ export default function JsonEditorWithControls({
             <AppBar sx={{ position: 'sticky' }}>
               <Toolbar>
                 <Typography sx={{ flex: 1 }} variant="h6">
-                  {title} (Fullscreen)
+                  {t('jsonEditor.fullscreenTitle', {
+                    defaultValue: `${title} (Fullscreen)`,
+                  })}
                 </Typography>
                 <IconButton edge="end" color="inherit" onClick={exitDialog}>
                   <FullscreenExitIcon />

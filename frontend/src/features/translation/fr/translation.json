@@ -119,6 +119,17 @@
   "impersonate": "USURPER",
   "instance_name": "Nom de l'instance",
   "invalidToken": "Jeton de réinitialisation invalide ou manquant",
+  "jsonEditor": {
+    "title": "Éditeur JSON",
+    "search": "Rechercher...",
+    "sortKeys": "Trier les clés",
+    "collapseAll": "Tout réduire",
+    "expandAll": "Tout développer",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "fullscreen": "Plein écran",
+    "fullscreenTitle": "{{title}} (Plein écran)"
+  },
   "key": "Clé",
   "iframe_copied": "Code de l'Iframe copié dans le presse papier",
   "labelApiToken": "Jeton API",

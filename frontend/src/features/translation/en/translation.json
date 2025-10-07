@@ -119,6 +119,17 @@
   "invalidToken": "Invalid or missing reset token",
   "instance_name": "Instance Name",
   "iframe_copied": "Iframe copied to clipboard",
+  "jsonEditor": {
+    "title": "JSON editor",
+    "search": "Search...",
+    "sortKeys": "Sort keys",
+    "collapseAll": "Collapse all",
+    "expandAll": "Expand all",
+    "undo": "Undo",
+    "redo": "Redo",
+    "fullscreen": "Fullscreen",
+    "fullscreenTitle": "{{title}} (Fullscreen)"
+  },
   "key": "Key",
   "labelApiToken": "API Token",
   "labelProjectTitle": "Project's title:",
