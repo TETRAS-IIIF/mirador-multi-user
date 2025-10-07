@@ -6,6 +6,8 @@ import {
   Histogram,
   Registry,
 } from 'prom-client';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 
 @Injectable()
 export class MetricsService implements OnModuleInit {
@@ -21,8 +23,12 @@ export class MetricsService implements OnModuleInit {
   public readonly usersActiveGauge: Gauge<'env'>;
   public readonly routeUsageTotal: Counter<'route' | 'action'>;
   public readonly projectLockState: Gauge<'project_id'>;
+  public readonly uploadFolderSizeBytes: Gauge<'path'>;
 
   constructor() {
+    const execFileAsync = promisify(execFile);
+    const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER ?? '/data/uploads';
+
     this.httpRequestDuration = new Histogram({
       name: 'http_request_duration_seconds',
       help: 'Request duration in seconds',
@@ -70,6 +76,23 @@ export class MetricsService implements OnModuleInit {
       help: 'Lock state per project (1=locked, 0=unlocked)',
       labelNames: ['project_id'],
       registers: [this.registry],
+    });
+
+    this.uploadFolderSizeBytes = new Gauge({
+      name: 'upload_folder_size_bytes',
+      help: 'Size of the upload folder in bytes',
+      labelNames: ['path'],
+      registers: [this.registry],
+      collect: async () => {
+        try {
+          const { stdout } = await execFileAsync('du', ['-sb', UPLOAD_FOLDER], {
+            timeout: 10_000,
+          });
+          const bytes = parseInt(stdout.split(/\s+/)[0], 10);
+          if (Number.isFinite(bytes))
+            this.uploadFolderSizeBytes.labels(UPLOAD_FOLDER).set(bytes);
+        } catch {}
+      },
     });
   }
 
