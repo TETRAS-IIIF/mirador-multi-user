@@ -43,6 +43,7 @@
     "react-router-dom": "^6.23.0",
     "styled-components": "^6.1.18",
     "typescript": "^5.8.3",
+    "use-undo": "^1.1.1",
     "usehooks-ts": "^3.1.1",
     "uuidv4": "^6.2.13",
     "vite-tsconfig-paths": "^4.3.2",

@@ -47,7 +47,6 @@ import { gettingMetadataForObject } from '../../features/metadata/api/gettingMet
 import { labelMetadata } from '../../features/metadata/types/types.ts';
 import { uploadMetadataFormat } from '../../features/metadata/api/uploadMetadataFormat.ts';
 import toast from 'react-hot-toast';
-import { JsonEditor } from 'json-edit-react';
 import { fetchManifest } from '../../features/manifest/api/fetchManifest.ts';
 import { updateManifestJson } from '../../features/manifest/api/updateManifestJson.ts';
 import { Selector } from '../Selector.tsx';
@@ -62,6 +61,7 @@ import { TagMaker } from './TagsFactory/TagMaker.tsx';
 
 import { SnapshotFactory } from './SnapshotFactory.tsx';
 import { isValidUrl } from '../../utils/utils.ts';
+import JsonEditorWithControls from './jsonAvancedEditor.tsx';
 
 interface ModalItemProps<T> {
   HandleOpenModalEdit: () => void;
@@ -111,7 +111,7 @@ type MetadataFormatField = {
   comment?: string;
 };
 type MetadataFields = {
-  [key: string]: string; // Abstracts all possible key-value pairs where keys are strings and values are strings
+  [key: string]: string;
 };
 
 type MetadataArray = MetadataFormat[];
@@ -549,7 +549,11 @@ export const MMUModalEdit = <
           >
             <Grid
               item
-              sx={{ minHeight: '50px', width: '100%', marginTop: '10px' }}
+              sx={{
+                minHeight: '50px',
+                width: '100%',
+                marginTop: '10px',
+              }}
               container
               flexDirection="row"
               justifyContent="space-between"
@@ -733,8 +737,8 @@ export const MMUModalEdit = <
                   overflowY: 'auto',
                 }}
               >
-                <JsonEditor
-                  data={jsonElementToEditInAdvancedEditor}
+                <JsonEditorWithControls
+                  initialData={jsonElementToEditInAdvancedEditor}
                   onUpdate={handleUpdateAdvancedEditMetadata}
                 />
               </Grid>
