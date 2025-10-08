@@ -1,12 +1,16 @@
 import * as process from 'node:process';
 
 export const requiredSettings = {
-  ALLOW_NEW_USER: process.env.ALLOW_CREATE_USER,
+  ALLOW_NEW_USER: process.env.ALLOW_CREATE_USER
+    ? process.env.ALLOW_CREATE_USER
+    : true,
   ALLOW_YOUTUBE_MEDIA: process.env.ALLOW_YOUTUBE_MEDIA,
   ALLOW_PEERTUBE_MEDIA: process.env.ALLOW_PEERTUBE_MEDIA,
   MAX_UPLOAD_SIZE: process.env.MAX_UPLOAD_SIZE,
   OPENID_CONNECTION: process.env.OPENID_CONNECTION,
-  CLASSIC_AUTHENTICATION: process.env.CLASSIC_AUTHENTICATION,
+  CLASSIC_AUTHENTICATION: process.env.CLASSIC_AUTHENTICATION
+    ? process.env.CLASSIC_AUTHENTICATION
+    : true,
 };
 
 export const unMutableSettings = new Map<string, string | undefined>([
