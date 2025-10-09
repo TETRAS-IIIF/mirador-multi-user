@@ -24,15 +24,12 @@ export const ResetPassword = () => {
 
   useEffect(() => {
     try {
-      if (
-        typeof globalThis.location === 'undefined' ||
-        !globalThis.location.href
-      ) {
+      if (!globalThis?.location?.href) {
         setError(t('errorToken'));
         return;
       }
       const url = new URL(globalThis.location.href);
-      const match = url.pathname.match(/\/reset-password\/([^/]+)/);
+      const match = /\/reset-password\/([^/]+)/.exec(url.pathname);
       if (match) setToken(match[1]);
       else setError(t('errorToken'));
     } catch {
