@@ -1,13 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  Alert,
-  Box,
-  Button,
-  Container,
-  Grid,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Button, Container, Grid, TextField, Typography, } from '@mui/material';
 import { Layout } from './layout.tsx';
 import { resetPassword } from '../api/resetPassword.ts';
 import { NavLink } from 'react-router-dom';
@@ -29,11 +21,9 @@ export const ResetPassword = () => {
     } else {
       setError(t('errorToken'));
     }
-  }, []);
+  }, [t]);
 
   const handlePasswordReset = async () => {
-    setError('');
-    setSuccess('');
     setError('');
     setSuccess('');
 
@@ -46,19 +36,23 @@ export const ResetPassword = () => {
       setError(t('passwordMismatch'));
       return;
     }
+
     if (!token) {
       setError(t('invalidToken'));
       return;
     }
-    if (token) {
-      const response = await resetPassword(token, password);
-      if (response) {
-        setSuccess(t("passwordResetSuccess"));
-      } else {
-        setSuccess(t("passwordResetError"));
-      }
+
+    const response = await resetPassword(token, password);
+
+    if (response) {
+      setSuccess(t('passwordResetSuccess'));
+    } else {
+      setError(t('passwordResetError'));
     }
   };
+
+  const isCompleted = Boolean(success);
+
   return (
     <Layout
       title={t('reset-password-title')}
@@ -75,10 +69,9 @@ export const ResetPassword = () => {
           <Typography variant="h5" align="center" gutterBottom>
             {t('reset-password')}
           </Typography>
+
           <TextField
-            inputProps={{
-              maxLength: 255,
-            }}
+            inputProps={{ maxLength: 255 }}
             label={t('new-password')}
             type="password"
             fullWidth
@@ -86,37 +79,55 @@ export const ResetPassword = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={isCompleted}
           />
+
           <TextField
             inputProps={{ maxLength: 255 }}
             label={t('confirm-new-password')}
             type="password"
             fullWidth
-            margin="normal"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            disabled={isCompleted}
           />
+
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
               {error}
             </Alert>
           )}
+
           {success && (
             <Alert severity="success" sx={{ mt: 2 }}>
               {success}
             </Alert>
           )}
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={!password || !confirmPassword}
-            sx={{ mt: 3 }}
-            onClick={handlePasswordReset}
-          >
-            {t('reset-password')}
-          </Button>
+
+          {!isCompleted ? (
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={!password || !confirmPassword}
+              sx={{ mt: 3 }}
+              onClick={handlePasswordReset}
+            >
+              {t('reset-password')}
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              component={NavLink}
+              to="/auth/login"
+              sx={{ mt: 3 }}
+            >
+              {t('login')}
+            </Button>
+          )}
         </Box>
       </Container>
     </Layout>
