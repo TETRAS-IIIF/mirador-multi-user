@@ -1,9 +1,18 @@
 import { useEffect, useState } from 'react';
-import { Alert, Box, Button, Container, Grid, TextField, Typography, } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  Grid,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { Layout } from './layout.tsx';
 import { resetPassword } from '../api/resetPassword.ts';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { PASSWORD_MINIMUM_LENGTH } from '../../../utils/utils.ts';
 
 export const ResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -14,11 +23,12 @@ export const ResetPassword = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const url = window.location.href;
-    const match = url.match(/\/reset-password\/(.+)/);
-    if (match) {
-      setToken(match[1]);
-    } else {
+    try {
+      const url = new URL(window.location.href);
+      const match = url.pathname.match(/\/reset-password\/([^/]+)/);
+      if (match) setToken(match[1]);
+      else setError(t('errorToken'));
+    } catch {
       setError(t('errorToken'));
     }
   }, [t]);
@@ -27,31 +37,27 @@ export const ResetPassword = () => {
     setError('');
     setSuccess('');
 
-    if (password.length < 8) {
+    if (password.length < PASSWORD_MINIMUM_LENGTH) {
       setError(t('passwordTooShort'));
       return;
     }
-
     if (password !== confirmPassword) {
       setError(t('passwordMismatch'));
       return;
     }
-
     if (!token) {
       setError(t('invalidToken'));
       return;
     }
 
-    const response = await resetPassword(token, password);
-
-    if (response) {
-      setSuccess(t('passwordResetSuccess'));
-    } else {
-      setError(t('passwordResetError'));
-    }
+    const ok = await resetPassword(token, password);
+    if (ok) setSuccess(t('passwordResetSuccess'));
+    else setError(t('passwordResetError'));
   };
 
   const isCompleted = Boolean(success);
+  const canSubmit =
+    password.length >= PASSWORD_MINIMUM_LENGTH && confirmPassword.length > 0;
 
   return (
     <Layout
@@ -74,6 +80,7 @@ export const ResetPassword = () => {
             inputProps={{ maxLength: 255 }}
             label={t('new-password')}
             type="password"
+            autoComplete="new-password"
             fullWidth
             margin="normal"
             value={password}
@@ -86,6 +93,7 @@ export const ResetPassword = () => {
             inputProps={{ maxLength: 255 }}
             label={t('confirm-new-password')}
             type="password"
+            autoComplete="new-password"
             fullWidth
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -98,25 +106,13 @@ export const ResetPassword = () => {
               {error}
             </Alert>
           )}
-
           {success && (
             <Alert severity="success" sx={{ mt: 2 }}>
               {success}
             </Alert>
           )}
 
-          {!isCompleted ? (
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth
-              disabled={!password || !confirmPassword}
-              sx={{ mt: 3 }}
-              onClick={handlePasswordReset}
-            >
-              {t('reset-password')}
-            </Button>
-          ) : (
+          {isCompleted ? (
             <Button
               variant="contained"
               color="primary"
@@ -126,6 +122,17 @@ export const ResetPassword = () => {
               sx={{ mt: 3 }}
             >
               {t('login')}
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={!canSubmit}
+              sx={{ mt: 3 }}
+              onClick={handlePasswordReset}
+            >
+              {t('reset-password')}
             </Button>
           )}
         </Box>
