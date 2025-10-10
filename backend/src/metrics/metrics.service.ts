@@ -24,10 +24,18 @@ export class MetricsService implements OnModuleInit {
   public readonly routeUsageTotal: Counter<'route' | 'action'>;
   public readonly projectLockState: Gauge<'project_id'>;
   public readonly uploadFolderSizeBytes: Gauge<'path'>;
-
+  public readonly lockDuration: Histogram<'project_id' | 'user_id'>;
   constructor() {
     const execFileAsync = promisify(execFile);
     const UPLOAD_FOLDER = process.env.UPLOAD_FOLDER ?? '/data/uploads';
+
+    this.lockDuration = new Histogram({
+      name: 'project_lock_duration_seconds',
+      help: 'Duration of a lock session in seconds (observed at unlock)',
+      labelNames: ['project_id', 'user_id'],
+      registers: [this.registry],
+      buckets: [1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 1200, 1800, 3600],
+    });
 
     this.httpRequestDuration = new Histogram({
       name: 'http_request_duration_seconds',

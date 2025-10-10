@@ -132,12 +132,30 @@ export class ProjectService {
 
   async lockProject(projectId: number, lock: boolean, userId: number) {
     try {
-      const updateData = lock
-        ? { lockedAt: new Date(), lockedByUserId: userId }
-        : { lockedAt: null, lockedByUserId: null };
-      this.metrics.projectLockState.labels(String(projectId)).set(lock ? 1 : 0);
+      if (lock) {
+        const lockedProject = await this.projectRepository.update(projectId, {
+          lockedAt: new Date(),
+          lockedByUserId: userId,
+        });
+        this.metrics.projectLockState.labels(String(projectId)).set(1);
+        return lockedProject;
+      }
 
-      return await this.projectRepository.update(projectId, updateData);
+      const project = await this.findOne(projectId);
+      const startedAt = project?.lockedAt;
+      if (startedAt) {
+        const durSec = (Date.now() - new Date(startedAt).getTime()) / 1000;
+        this.metrics.lockDuration
+          .labels(String(projectId), String(userId))
+          .observe(durSec);
+      }
+
+      const unlockedProject = await this.projectRepository.update(projectId, {
+        lockedAt: null,
+        lockedByUserId: null,
+      });
+      this.metrics.projectLockState.labels(String(projectId)).set(0);
+      return unlockedProject;
     } catch (error) {
       this.logger.error(
         `Failed to update lock status for project ${projectId}`,
