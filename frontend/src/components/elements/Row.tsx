@@ -32,21 +32,23 @@ export function Row({
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUp/> : <KeyboardArrowDown/>}
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>
         {row.data.map((cell) => (
-          <TableCell key={cell.value} alignItems={cell.align || 'left'}>
+          <TableCell key={cell.value} align={cell.align || 'left'}>
             {cell.value}
           </TableCell>
         ))}
         {labelButton && (
-          <TableCell alignItems="center">
+          <TableCell align="center">
             <Button
               variant="contained"
               color="primary"
-              onClick={() => onActionClick?.(row)}>
+              onClick={() => onActionClick?.(row)}
+            >
               {t(labelButton)}
             </Button>
           </TableCell>
@@ -59,7 +61,8 @@ export function Row({
             sx={{
               paddingTop: 0,
               paddingBottom: 0,
-            }}>
+            }}
+          >
             <Collapse sx={{ padding: 0, margin: 0 }} in={open}>
               {renderExpandableContent(row)}
             </Collapse>

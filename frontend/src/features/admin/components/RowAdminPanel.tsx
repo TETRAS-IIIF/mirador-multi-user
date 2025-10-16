@@ -17,10 +17,7 @@ interface SingleRowProps {
   row: RowProps;
 }
 
-export function RowAdminPanel(
-  {
-    row,
-  }: SingleRowProps) {
+export function RowAdminPanel({ row }: SingleRowProps) {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -30,12 +27,13 @@ export function RowAdminPanel(
           <IconButton
             aria-label="expand row"
             size="small"
-            onClick={() => setOpen(!open)}>
-            {open ? <KeyboardArrowUp/> : <KeyboardArrowDown/>}
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>
         {row.data.map((cell, index) => (
-          <TableCell key={index} alignItems={cell.align || 'left'}>
+          <TableCell key={index} align={cell.align || 'left'}>
             {cell.value}
           </TableCell>
         ))}
@@ -43,7 +41,7 @@ export function RowAdminPanel(
       <TableRow>
         <TableCell colSpan={row.data.length + 2}>
           <Collapse in={open} timeout="auto" unmountOnExit>
-            <AdminExpandableContent id={row.id} data={row.data}/>
+            <AdminExpandableContent id={row.id} data={row.data} />
           </Collapse>
         </TableCell>
       </TableRow>
