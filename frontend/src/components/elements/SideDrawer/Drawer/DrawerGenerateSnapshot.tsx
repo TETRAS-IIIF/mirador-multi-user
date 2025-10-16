@@ -22,12 +22,11 @@ export function DrawerGenerateSnapshot({
       <Tooltip title={projectSelected!.title} placement="left">
         <ListItem sx={{ padding: 0 }}>
           <ItemButton
-            icon={<UpdateIcon />}
+            icon={<UpdateIcon/>}
             text={t("generate_snapshot")}
             open={open}
             selected={false}
-            action={() => handleGenerateSnapshot(projectSelected.id)}
-          />
+            action={() => handleGenerateSnapshot(projectSelected.id)}/>
         </ListItem>
       </Tooltip>
     </>

@@ -14,15 +14,15 @@ function App() {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <Favicon url={faviconImage} />
+      <Favicon url={faviconImage}/>
       <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
         <AppProvider>
           <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <AppRoutes />
+            <CssBaseline/>
+            <AppRoutes/>
           </ThemeProvider>
         </AppProvider>
-        <Toaster />
+        <Toaster/>
       </div>
     </I18nextProvider>
   );

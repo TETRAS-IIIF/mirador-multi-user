@@ -19,10 +19,9 @@ export const Consent = () => {
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         marginTop: 0,
-      }}
-    >
-      <Grid item width={"100%"} height={"100%"}>
-        <Consent />
+      }}>
+      <Grid width={"100%"} height={"100%"}>
+        <Consent/>
       </Grid>
     </Grid>
   );

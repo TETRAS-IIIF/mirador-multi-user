@@ -47,7 +47,7 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
 
   return (
     <Grid container wrap="nowrap" spacing={2} flexDirection="column">
-      <Grid item>
+      <Grid>
         <Typography variant="h6">
           {t('create_user_form')}
         </Typography>
@@ -58,55 +58,49 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
           direction="column"
           justifyContent="center"
           spacing={2}
-          maxWidth={'1000px'}
-        >
-          <Grid item>
+          maxWidth={'1000px'}>
+          <Grid>
             <FormField
               type="mail"
               placeholder={t('mail')}
               name="mail"
               required={true}
               register={register}
-              error={errors.mail}
-            />
+              error={errors.mail}/>
           </Grid>
-          <Grid item>
+          <Grid>
             <FormField
               type="text"
               placeholder={t('name')}
               name="name"
               required={true}
               register={register}
-              error={errors.name}
-            />
+              error={errors.name}/>
           </Grid>
-          <Grid item>
+          <Grid>
             <FormField
               type="password"
               placeholder={t('password')}
               name="password"
               register={register}
               required={true}
-              error={errors.password}
-            />
+              error={errors.password}/>
           </Grid>
-          <Grid item>
+          <Grid>
             <FormField
               type="password"
               placeholder={t('confirm-password')}
               name="confirmPassword"
               register={register}
               required={true}
-              error={errors.confirmPassword}
-            />
+              error={errors.confirmPassword}/>
           </Grid>
-          <Grid item container>
+          <Grid container>
             <Button
               type="submit"
               variant="contained"
               color="primary"
-              onClick={handleSubmit(onSubmit)}
-            >
+              onClick={handleSubmit(onSubmit)}>
               {t('submit')}
             </Button>
           </Grid>

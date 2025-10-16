@@ -19,19 +19,17 @@ export const OpenButton = ({ text, isSelected }: CloseButtonProps) => {
         transformOrigin: "0 0",
         transform: "rotate(-90deg)",
         boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.8)",
-      }}
-    >
+      }}>
       <Typography
         variant="body2"
         color="textSecondary"
-        align="center"
+        alignItems="center"
         sx={{
           textColor: isSelected ? "white" : "inherit",
-        }}
-      >
+        }}>
         {text}
       </Typography>
-      <ExpandLessIcon />
+      <ExpandLessIcon/>
     </Grid>
   );
 };

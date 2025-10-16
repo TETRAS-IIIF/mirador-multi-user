@@ -22,8 +22,7 @@ export const SortItemSelector = <T extends Record<string, unknown>>({
         labelId="sort-selector-label"
         value={sortField}
         label={t("sort_by")}
-        onChange={(e) => setSortField(e.target.value as keyof T)}
-      >
+        onChange={(e) => setSortField(e.target.value as keyof T)}>
         {fields.map((field) => (
           <MenuItem key={field as string} value={field as string}>
             {t(field as string)}

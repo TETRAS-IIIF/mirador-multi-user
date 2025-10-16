@@ -108,10 +108,9 @@ export const ManifestCreationFormCanvases = ({
           t={t}
           setMedia={setMedia}
           handleMediaURLChange={handleMediaURLChange}
-          handleRemoveCanvas={handleRemoveCanvas}
-        />
+          handleRemoveCanvas={handleRemoveCanvas}/>
       ))}
-      <Grid item>
+      <Grid>
         <Button variant="contained" color="primary" onClick={handleNewCanvas}>
           {t("addNewCanvas")}
         </Button>

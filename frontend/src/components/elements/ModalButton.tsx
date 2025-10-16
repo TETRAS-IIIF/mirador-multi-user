@@ -24,8 +24,7 @@ export const ModalButton = ({
           disabled={disabled}
           onClick={onClickFunction}
           variant="contained"
-          color={color ? color : "primary"}
-        >
+          color={color ? color : "primary"}>
           {icon}
         </Button>
       </Tooltip>

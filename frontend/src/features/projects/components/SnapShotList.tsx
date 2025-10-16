@@ -72,10 +72,8 @@ export const SnapShotList = ({
           <SnapshotExpendableContent
             data={row}
             updateSnapshot={updateSnapshot}
-            handleDeleteSnapshot={handleDeleteSnapshot}
-          />
-        )}
-      />
+            handleDeleteSnapshot={handleDeleteSnapshot}/>
+        )}/>
     </>
   );
 };

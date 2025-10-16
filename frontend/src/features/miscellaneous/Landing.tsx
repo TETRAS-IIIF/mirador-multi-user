@@ -55,13 +55,12 @@ export const Landing = () => {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         marginTop: 0,
-      }}
-    >
+      }}>
       {isLoading ? (
-        <LoadingSpinner />
+        <LoadingSpinner/>
       ) : (
         <>
-          <Grid item>
+          <Grid>
             <Typography variant="h2" component="h1">
               {t('welcome', {
                 instanceName: import.meta.env.VITE_INSTANCE_NAME,
@@ -70,20 +69,19 @@ export const Landing = () => {
           </Grid>
 
           <Grid
-            item
+           
             container
             justifyContent="center"
             spacing={5}
-            alignItems="center"
-          >
+            alignItems="center">
             {showInscription && (
-              <Grid item>
+              <Grid>
                 <Button variant="contained" onClick={HandleSignIn}>
                   {t('create-account')}
                 </Button>
               </Grid>
             )}
-            <Grid item>
+            <Grid>
               <Button variant="contained" onClick={HandleLogin}>
                 {t('login')}
               </Button>
@@ -91,7 +89,7 @@ export const Landing = () => {
           </Grid>
         </>
       )}
-      <Grid item width={'100%'}>
+      <Grid width={'100%'}>
         <LandingFooter></LandingFooter>
       </Grid>
     </Grid>

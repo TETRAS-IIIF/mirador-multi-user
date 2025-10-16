@@ -154,7 +154,7 @@ export default function JsonEditorWithControls({
 
         const nested = filterJson(v);
         return (
-          nested && typeof nested === 'object' && Object.keys(nested).length > 0
+          nested && typeof nested === 'object' && Object.keys(nested).length> 0
         );
       });
 
@@ -184,12 +184,12 @@ export default function JsonEditorWithControls({
 
   const fullscreenIcon = (() => {
     if (fullscreenMode === 'dialog') {
-      return dialogOpen ? <FullscreenExitIcon /> : <FullscreenIcon />;
+      return dialogOpen ? <FullscreenExitIcon/> : <FullscreenIcon/>;
     }
     return document.fullscreenElement ? (
-      <FullscreenExitIcon />
+      <FullscreenExitIcon/>
     ) : (
-      <FullscreenIcon />
+      <FullscreenIcon/>
     );
   })();
 
@@ -211,15 +211,13 @@ export default function JsonEditorWithControls({
           width: '100%',
           height: '100%',
         },
-      }}
-    >
+      }}>
       <JsonEditor
         data={visibleData}
         setData={handleSetData}
         externalTriggers={externalTriggers}
         maxWidth="none"
-        minWidth={0}
-      />
+        minWidth={0}/>
     </Box>
   );
 
@@ -236,8 +234,7 @@ export default function JsonEditorWithControls({
         height: '100%',
         width: '100%',
         '&:fullscreen': { width: '100vw', height: '100vh' },
-      }}
-    >
+      }}>
       <GlobalStyles
         styles={{
           '.jer-container': {
@@ -246,8 +243,7 @@ export default function JsonEditorWithControls({
             height: '100% !important',
           },
           '.json-edit-react': { width: '100%', height: '100%' },
-        }}
-      />
+        }}/>
 
       <AppBar position="static" color="default" elevation={0}>
         <Toolbar variant="dense" sx={{ gap: 1, flexWrap: 'wrap' }}>
@@ -259,14 +255,13 @@ export default function JsonEditorWithControls({
             size="small"
             placeholder={t('jsonEditor.search', { defaultValue: 'Search...' })}
             InputProps={{
-              startAdornment: <SearchIcon fontSize="small" sx={{ mr: 0.5 }} />,
+              startAdornment: <SearchIcon fontSize="small" sx={{ mr: 0.5 }}/>,
             }}
             sx={{ width: 200 }}
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+            onChange={(e) => setSearchTerm(e.target.value)}/>
 
-          <Button startIcon={<SortIcon />} onClick={sortCurrent}>
+          <Button startIcon={<SortIcon/>} onClick={sortCurrent}>
             {t('jsonEditor.sortKeys', { defaultValue: 'Sort keys' })}
           </Button>
 
@@ -274,35 +269,30 @@ export default function JsonEditorWithControls({
             onClick={collapseAll}
             title={t('jsonEditor.collapseAll', {
               defaultValue: 'Collapse all',
-            })}
-          >
-            <UnfoldLessIcon />
+            })}>
+            <UnfoldLessIcon/>
           </IconButton>
           <IconButton
             onClick={expandAll}
-            title={t('jsonEditor.expandAll', { defaultValue: 'Expand all' })}
-          >
-            <UnfoldMoreIcon />
+            title={t('jsonEditor.expandAll', { defaultValue: 'Expand all' })}>
+            <UnfoldMoreIcon/>
           </IconButton>
           <IconButton
             onClick={() => canUndo && undo()}
             disabled={!canUndo}
-            title={t('jsonEditor.undo', { defaultValue: 'Undo' })}
-          >
-            <UndoIcon />
+            title={t('jsonEditor.undo', { defaultValue: 'Undo' })}>
+            <UndoIcon/>
           </IconButton>
           <IconButton
             onClick={() => canRedo && redo()}
             disabled={!canRedo}
-            title={t('jsonEditor.redo', { defaultValue: 'Redo' })}
-          >
-            <RedoIcon />
+            title={t('jsonEditor.redo', { defaultValue: 'Redo' })}>
+            <RedoIcon/>
           </IconButton>
 
           <IconButton
             onClick={toggleFullscreen}
-            title={t('jsonEditor.fullscreen', { defaultValue: 'Fullscreen' })}
-          >
+            title={t('jsonEditor.fullscreen', { defaultValue: 'Fullscreen' })}>
             {fullscreenIcon}
           </IconButton>
         </Toolbar>
@@ -321,8 +311,7 @@ export default function JsonEditorWithControls({
                 flexDirection: 'column',
                 height: '100vh',
               },
-            }}
-          >
+            }}>
             <AppBar sx={{ position: 'sticky' }}>
               <Toolbar>
                 <Typography sx={{ flex: 1 }} variant="h6">
@@ -332,7 +321,7 @@ export default function JsonEditorWithControls({
                   })}
                 </Typography>
                 <IconButton edge="end" color="inherit" onClick={exitDialog}>
-                  <FullscreenExitIcon />
+                  <FullscreenExitIcon/>
                 </IconButton>
               </Toolbar>
             </AppBar>

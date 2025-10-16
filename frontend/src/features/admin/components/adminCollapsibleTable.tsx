@@ -104,7 +104,7 @@ export function AdminCollapsibleTable({
   return (
     <>
       <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
-        <Grid item xs={12}>
+        <Grid xs={12}>
           <TextField
             fullWidth
             inputProps={{
@@ -113,28 +113,25 @@ export function AdminCollapsibleTable({
             label={t('filter')}
             variant="outlined"
             value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-          />
+            onChange={(e) => setFilter(e.target.value)}/>
         </Grid>
       </Grid>
       <TableContainer component={Paper}>
         <Table aria-label="collapsible table">
           <TableHead>
             <TableRow>
-              <TableCell />
+              <TableCell/>
               {columns.map((column) => (
                 <TableCell
                   key={column.sortKey || column.label}
-                  align={column.align || 'left'}
-                >
+                  alignItems={column.align || 'left'}>
                   {column.sortKey ? (
                     <TableSortLabel
                       active={sortKey === column.sortKey}
                       direction={
                         sortKey === column.sortKey ? sortDirection : 'asc'
                       }
-                      onClick={() => handleSort(column.sortKey)}
-                    >
+                      onClick={() => handleSort(column.sortKey)}>
                       {column.label}
                     </TableSortLabel>
                   ) : (
@@ -146,17 +143,16 @@ export function AdminCollapsibleTable({
           </TableHead>
           <TableBody>
             {paginatedRows.map((row) => (
-              <RowAdminPanel key={row.id} row={row} />
+              <RowAdminPanel key={row.id} row={row}/>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
-      {sortedRows.length > rowsPerPage && (
+      {sortedRows.length> rowsPerPage && (
         <PaginationControls
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+          onPageChange={handlePageChange}/>
       )}
     </>
   );

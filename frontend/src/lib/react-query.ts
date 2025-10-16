@@ -20,11 +20,9 @@ export type ExtractFnReturnType<FnType extends (...args: any) => any> =
 
 export type QueryConfig<QueryFnType extends (...args: any) => any> = Omit<
   UseQueryOptions<ExtractFnReturnType<QueryFnType>>,
-  "queryKey" | "queryFn"
->;
+  "queryKey" | "queryFn">;
 
 export type MutationConfig<MutationFnType extends (...args: any) => any> =
   UseMutationOptions<
     ExtractFnReturnType<MutationFnType>,
-    Parameters<MutationFnType>[0]
-  >;
+    Parameters<MutationFnType>[0]>;

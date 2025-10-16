@@ -39,8 +39,7 @@ export function MediaVideoThumbnail({
               width: 100,
               height: 100,
             },
-          }}
-        />
+          }}/>
       )}
       {!media.thumbnailUrl && (
         <video
@@ -48,8 +47,7 @@ export function MediaVideoThumbnail({
           ref={videoEl}
           src={media.value}
           controls
-          onLoadedMetadata={handleLoadedMetadata}
-        />
+          onLoadedMetadata={handleLoadedMetadata}/>
       )}
     </Grid>
   );

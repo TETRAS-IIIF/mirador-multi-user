@@ -27,10 +27,9 @@ export function DrawerElementContentMenu({
           <ItemButton
             selected={MENU_ELEMENT.PROJECTS === selectedContent}
             open={open}
-            icon={<WorkIcon />}
+            icon={<WorkIcon/>}
             text={t("project")}
-            action={() => handleChangeContent(MENU_ELEMENT.PROJECTS)}
-          />
+            action={() => handleChangeContent(MENU_ELEMENT.PROJECTS)}/>
         </ListItem>
       </Tooltip>
       <Tooltip title={t("myManifests")} placement="right">
@@ -38,10 +37,9 @@ export function DrawerElementContentMenu({
           <ItemButton
             open={open}
             selected={MENU_ELEMENT.MANIFEST === selectedContent}
-            icon={<ArticleIcon />}
+            icon={<ArticleIcon/>}
             text={t("manifests")}
-            action={() => handleChangeContent(MENU_ELEMENT.MANIFEST)}
-          />
+            action={() => handleChangeContent(MENU_ELEMENT.MANIFEST)}/>
         </ListItem>
       </Tooltip>
       <Tooltip title={t("mediaTitle")} placement="right">
@@ -49,10 +47,9 @@ export function DrawerElementContentMenu({
           <ItemButton
             open={open}
             selected={MENU_ELEMENT.MEDIA === selectedContent}
-            icon={<PermMediaIcon />}
+            icon={<PermMediaIcon/>}
             text={t("media")}
-            action={() => handleChangeContent(MENU_ELEMENT.MEDIA)}
-          />
+            action={() => handleChangeContent(MENU_ELEMENT.MEDIA)}/>
         </ListItem>
       </Tooltip>
       <Tooltip title={t("groupTitle")} placement="right">
@@ -60,10 +57,9 @@ export function DrawerElementContentMenu({
           <ItemButton
             open={open}
             selected={MENU_ELEMENT.GROUPS === selectedContent}
-            icon={<GroupsIcon />}
+            icon={<GroupsIcon/>}
             text={t("group")}
-            action={() => handleChangeContent(MENU_ELEMENT.GROUPS)}
-          />
+            action={() => handleChangeContent(MENU_ELEMENT.GROUPS)}/>
         </ListItem>
       </Tooltip>
     </List>

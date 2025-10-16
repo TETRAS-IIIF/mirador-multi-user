@@ -12,7 +12,7 @@ export const ProjectEditorButton = ({
     <>
       <Tooltip title={"Project configuration"}>
         <Button disabled={false} onClick={HandleOpenModal} variant="contained">
-          <ModeEditIcon />
+          <ModeEditIcon/>
         </Button>
       </Tooltip>
     </>

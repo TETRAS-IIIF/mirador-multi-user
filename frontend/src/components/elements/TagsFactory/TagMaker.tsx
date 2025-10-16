@@ -38,8 +38,7 @@ export const TagMaker = ({ project, handleUpdateTags }: TagMakerProps) => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
       <Box
-        sx={{ display: 'flex', gap: 1, justifyContent: 'center', marginTop: 2 }}
-      >
+        sx={{ display: 'flex', gap: 1, justifyContent: 'center', marginTop: 2 }}>
         <TextField
           label={t('addTag')}
           variant="outlined"
@@ -47,13 +46,11 @@ export const TagMaker = ({ project, handleUpdateTags }: TagMakerProps) => {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setInputValue(e.target.value)
           }
-          onKeyDown={handleKeyDown}
-        />
+          onKeyDown={handleKeyDown}/>
         <Button
           variant="contained"
           onClick={handleAddTag}
-          disabled={!inputValue.trim()}
-        >
+          disabled={!inputValue.trim()}>
           {t('addTag')}
         </Button>
       </Box>
@@ -71,8 +68,7 @@ export const TagMaker = ({ project, handleUpdateTags }: TagMakerProps) => {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-            }}
-          />
+            }}/>
         ))}
       </Box>
     </Box>

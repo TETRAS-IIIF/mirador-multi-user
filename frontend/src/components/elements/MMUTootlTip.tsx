@@ -11,7 +11,7 @@ export const MMUToolTip = ({ children }: MMUToolTipProps) => {
     <>
       <Tooltip title={children} placement="top">
         <IconButton>
-          <InfoIcon fontSize="small" />
+          <InfoIcon fontSize="small"/>
         </IconButton>
       </Tooltip>
     </>

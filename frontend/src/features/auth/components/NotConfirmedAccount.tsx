@@ -35,8 +35,7 @@ export const NotConfirmedAccount = () => {
         direction="column"
         justifyContent="center"
         alignItems="center"
-        spacing={2}
-      >
+        spacing={2}>
         <>
           {successSentConfirmationLink ? (
             <SuccessCard>
@@ -45,15 +44,14 @@ export const NotConfirmedAccount = () => {
               </Typography>
             </SuccessCard>
           ) : (
-            <Grid item>
+            <Grid>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleResendConfirmation}
-                disabled={isLoading}
-              >
+                disabled={isLoading}>
                 {isLoading ? (
-                  <CircularProgress size={24} />
+                  <CircularProgress size={24}/>
                 ) : (
                   t('resendConfirmationLink')
                 )}

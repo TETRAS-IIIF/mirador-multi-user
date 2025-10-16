@@ -262,7 +262,7 @@ export const AllMedias = ({
   const handleLookingForUserGroups = async (
     partialString: string,
   ): Promise<UserGroup[]> => {
-    if (partialString.length > 0) {
+    if (partialString.length> 0) {
       const linkUserGroups: LinkUserGroup[] =
         await lookingForUserGroups(partialString);
       const uniqueUserGroups: UserGroup[] = linkUserGroups
@@ -308,14 +308,14 @@ export const AllMedias = ({
 
   const actions = [
     {
-      icon: (<UploadFileIcon />) as ReactNode,
+      icon: (<UploadFileIcon/>) as ReactNode,
       name: t('actionsDial.upload'),
       onClick: () => {
         handleButtonClick();
       },
     },
     {
-      icon: (<AddLinkIcon />) as ReactNode,
+      icon: (<AddLinkIcon/>) as ReactNode,
       name: t('actionsDial.link'),
       onClick: () => {
         setModalLinkMediaIsOpen(!modalLinkMediaIsOpen);
@@ -365,7 +365,7 @@ export const AllMedias = ({
 
   return (
     <Box sx={{ padding: 2 }}>
-      <Grid item container flexDirection="column" spacing={1}>
+      <Grid container flexDirection="column" spacing={1}>
         <Grid
           container
           alignItems="center"
@@ -376,54 +376,49 @@ export const AllMedias = ({
             zIndex: 1000,
             backgroundColor: '#dcdcdc',
             paddingBottom: '10px',
-          }}
-        >
-          <Grid item>
+          }}>
+          <Grid>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs
                 value={mediaTabShown}
                 onChange={handleChangeTab}
-                aria-label="basic tabs"
-              >
-                <Tab label={t('All')} {...a11yProps(0)} />
-                <Tab label={t('Videos')} {...a11yProps(1)} />
-                <Tab label={t('Images')} {...a11yProps(2)} />
-                <Tab label={t('other')} {...a11yProps(3)} />
+                aria-label="basic tabs">
+                <Tab label={t('All')} {...a11yProps(0)}/>
+                <Tab label={t('Videos')} {...a11yProps(1)}/>
+                <Tab label={t('Images')} {...a11yProps(2)}/>
+                <Tab label={t('other')} {...a11yProps(3)}/>
               </Tabs>
             </Box>
           </Grid>
-          <Grid item>
+          <Grid>
             <VisuallyHiddenInput
               id="file-upload"
               type="file"
-              onChange={handleCreateMedia}
-            />
+              onChange={handleCreateMedia}/>
           </Grid>
           <Grid
-            item
+           
             container
             spacing={2}
             sx={{ width: 'auto', paddingTop: 1, paddingBottom: 1 }}
             alignItems="center"
-            justifyContent="flex-end"
-          >
-            <Grid item>
-              <SearchBar setFilter={setMediaFilter} label={t('filterMedia')} />
+            justifyContent="flex-end">
+            <Grid>
+              <SearchBar setFilter={setMediaFilter} label={t('filterMedia')}/>
             </Grid>
-            <Grid item>
+            <Grid>
               <SortItemSelector<Media>
                 sortField={sortField}
                 setSortField={setSortField}
-                fields={[TITLE, UPDATED_AT]}
-              />
+                fields={[TITLE, UPDATED_AT]}/>
             </Grid>
-            <Grid item>
+            <Grid>
               <Tooltip title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}>
                 <IconButton onClick={toggleSortOrder}>
                   {sortOrder === 'asc' ? (
-                    <ArrowDropUpIcon />
+                    <ArrowDropUpIcon/>
                   ) : (
-                    <ArrowDropDownIcon />
+                    <ArrowDropDownIcon/>
                   )}
                 </IconButton>
               </Tooltip>
@@ -438,17 +433,16 @@ export const AllMedias = ({
           </Grid>
         )}
         <Grid
-          item
+         
           container
           spacing={1}
           flexDirection="column"
-          sx={{ marginBottom: '70px' }}
-        >
+          sx={{ marginBottom: '70px' }}>
           <Grid container spacing={2} direction="column">
-            {medias.length > 0 &&
-              (currentPageData.length > 0 ? (
+            {medias.length> 0 &&
+              (currentPageData.length> 0 ? (
                 currentPageData.map((media: Media) => (
-                  <Grid item key={media.id}>
+                  <Grid key={media.id}>
                     <MediaCard
                       media={{
                         ...media,
@@ -474,17 +468,15 @@ export const AllMedias = ({
                       listOfGroup={listOfGroup}
                       setGroupList={setGroupList}
                       setUserToAdd={setUserToAdd}
-                      handleRemoveMediaFromList={handleRemoveMediaFromList}
-                    />
+                      handleRemoveMediaFromList={handleRemoveMediaFromList}/>
                   </Grid>
                 ))
               ) : (
                 <Grid
-                  item
+                 
                   container
                   justifyContent="center"
-                  alignItems="center"
-                >
+                  alignItems="center">
                   <Typography variant="h6" component="h2">
                     {t('noMatchingMediaFilter')}
                   </Typography>
@@ -494,8 +486,7 @@ export const AllMedias = ({
           <PaginationControls
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+            onPageChange={setCurrentPage}/>
         </Grid>
         <Grid>
           <DrawerLinkMedia
@@ -504,18 +495,16 @@ export const AllMedias = ({
               setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)
             }
             CreateMediaWithLink={createMediaWithLink}
-            modalCreateMediaIsOpen={modalLinkMediaIsOpen}
-          />
+            modalCreateMediaIsOpen={modalLinkMediaIsOpen}/>
         </Grid>
         <Grid
-          item
-          sx={{ position: 'fixed', right: '10px', bottom: '3px', zIndex: 999 }}
-        >
-          <SpeedDialTooltipOpen actions={actions} />
+         
+          sx={{ position: 'fixed', right: '10px', bottom: '3px', zIndex: 999 }}>
+          <SpeedDialTooltipOpen actions={actions}/>
         </Grid>
       </Grid>
-      <Grid item width={'100%'} height={'100%'}>
-        <MediaFooter />
+      <Grid width={'100%'} height={'100%'}>
+        <MediaFooter/>
       </Grid>
     </Box>
   );

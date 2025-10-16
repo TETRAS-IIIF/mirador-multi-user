@@ -170,19 +170,19 @@ export const AllManifests = ({
 
   const actions = [
     {
-      icon: (<CreateIcon />) as ReactNode,
+      icon: (<CreateIcon/>) as ReactNode,
       name: t('actionsDial.create'),
       onClick: HandleCreateManifestIsOpen,
     },
     {
-      icon: (<UploadFileIcon />) as ReactNode,
+      icon: (<UploadFileIcon/>) as ReactNode,
       name: t('actionsDial.upload'),
       onClick: () => {
         document.getElementById('hiddenFileInput')?.click();
       },
     },
     {
-      icon: (<AddLinkIcon />) as ReactNode,
+      icon: (<AddLinkIcon/>) as ReactNode,
       name: t('actionsDial.link'),
       onClick: () => setModalLinkManifestIsOpen(!modalLinkManifestIsOpen),
     },
@@ -269,7 +269,7 @@ export const AllManifests = ({
   const handleLookingForUserGroups = async (
     partialString: string,
   ): Promise<UserGroup[]> => {
-    if (partialString.length > 0) {
+    if (partialString.length> 0) {
       const linkUserGroups: LinkUserGroup[] =
         await lookingForUserGroups(partialString);
       const uniqueUserGroups: UserGroup[] = linkUserGroups
@@ -387,17 +387,15 @@ export const AllManifests = ({
         user={user}
         fetchMediaForUser={fetchMediaForUser}
         fetchManifestForUser={fetchManifestForUser}
-        display={!!openModalManifestId}
-      >
+        display={!!openModalManifestId}>
         <Grid
-          item
+         
           container
           flexDirection="column"
           spacing={1}
-          sx={{ paddingTop: 0 }}
-        >
+          sx={{ paddingTop: 0 }}>
           <Grid
-            item
+           
             container
             direction="row-reverse"
             alignItems="center"
@@ -408,64 +406,57 @@ export const AllManifests = ({
               backgroundColor: '#dcdcdc',
               paddingBottom: '10px',
               paddingTop: 0,
-            }}
-          >
+            }}>
             {!createManifestIsOpen && (
               <Grid
-                item
+               
                 container
                 justifyContent="flex-end"
                 spacing={2}
-                alignItems="center"
-              >
-                <Grid item>
+                alignItems="center">
+                <Grid>
                   <SearchBar
                     label={t('filterManifest')}
-                    setFilter={setManifestFilter}
-                  />
+                    setFilter={setManifestFilter}/>
                 </Grid>
-                <Grid item>
+                <Grid>
                   <SortItemSelector<Manifest>
                     sortField={sortField}
                     setSortField={setSortField}
-                    fields={[TITLE, UPDATED_AT]}
-                  />
+                    fields={[TITLE, UPDATED_AT]}/>
                 </Grid>
-                <Grid item>
+                <Grid>
                   <Tooltip
-                    title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}
-                  >
+                    title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}>
                     <IconButton onClick={toggleSortOrder}>
                       {sortOrder === 'asc' ? (
-                        <ArrowDropUpIcon />
+                        <ArrowDropUpIcon/>
                       ) : (
-                        <ArrowDropDownIcon />
+                        <ArrowDropDownIcon/>
                       )}
                     </IconButton>
                   </Tooltip>
                 </Grid>
               </Grid>
             )}
-            <Grid item container spacing={2}>
+            <Grid container spacing={2}>
               {!createManifestIsOpen && (
                 <Grid
-                  item
+                 
                   sx={{
                     position: 'fixed',
                     right: '10px',
                     bottom: '3px',
                     zIndex: 999,
-                  }}
-                >
-                  <SpeedDialTooltipOpen actions={actions} />
+                  }}>
+                  <SpeedDialTooltipOpen actions={actions}/>
                 </Grid>
               )}
-              <Grid item>
+              <Grid>
                 <VisuallyHiddenInput
                   id="hiddenFileInput"
                   type="file"
-                  onChange={handleCreateManifest}
-                />
+                  onChange={handleCreateManifest}/>
               </Grid>
             </Grid>
           </Grid>
@@ -477,30 +468,28 @@ export const AllManifests = ({
             </Grid>
           )}
           {!createManifestIsOpen &&
-            manifests.length > 0 &&
-            (currentPageData.length > 0 ? (
+            manifests.length> 0 &&
+            (currentPageData.length> 0 ? (
               <Grid
-                item
+               
                 container
                 spacing={1}
                 flexDirection="column"
-                sx={{ marginBottom: '70px' }}
-              >
+                sx={{ marginBottom: '70px' }}>
                 {currentPageData.map((manifest: Manifest) => (
-                  <Grid item key={manifest.id}>
+                  <Grid key={manifest.id}>
                     <MMUCard
                       ownerId={manifest.idCreator}
                       objectTypes={ObjectTypes.MANIFEST}
                       AddAccessListItemFunction={handleGrantAccess}
                       DefaultButton={
                         <Grid
-                          item
+                         
                           container
                           spacing={1}
                           flexDirection={'row'}
-                          wrap="nowrap"
-                        >
-                          <Grid item>
+                          wrap="nowrap">
+                          <Grid>
                             <ModalButton
                               tooltipButton={t('tooltipButtonCopy')}
                               onClickFunction={
@@ -512,10 +501,9 @@ export const AllManifests = ({
                                   : () => HandleCopyToClipBoard(manifest.path)
                               }
                               disabled={false}
-                              icon={<ContentCopyIcon />}
-                            />
+                              icon={<ContentCopyIcon/>}/>
                           </Grid>
-                          <Grid item>
+                          <Grid>
                             <ModalButton
                               tooltipButton={t('OpenInMirador')}
                               onClickFunction={
@@ -532,8 +520,7 @@ export const AllManifests = ({
                                       )
                               }
                               disabled={false}
-                              icon={<OpenInNewIcon />}
-                            />
+                              icon={<OpenInNewIcon/>}/>
                           </Grid>
                         </Grid>
                       }
@@ -541,9 +528,8 @@ export const AllManifests = ({
                         <ModalButton
                           tooltipButton={t('tooltipButtonEdit')}
                           onClickFunction={() => HandleOpenModal(manifest.id)}
-                          icon={<ModeEditIcon />}
-                          disabled={false}
-                        />
+                          icon={<ModeEditIcon/>}
+                          disabled={false}/>
                       }
                       HandleOpenModal={() => HandleOpenModal(manifest.id)}
                       deleteItem={handleDeleteManifest}
@@ -570,13 +556,12 @@ export const AllManifests = ({
                       setItemList={setGroupList}
                       setItemToAdd={setUserToAdd}
                       updateItem={handleUpdateManifest}
-                      removeAccessListItemFunction={handleRemoveAccess}
-                    />
+                      removeAccessListItemFunction={handleRemoveAccess}/>
                   </Grid>
                 ))}
               </Grid>
             ) : (
-              <Grid item container justifyContent="center" alignItems="center">
+              <Grid container justifyContent="center" alignItems="center">
                 <Typography variant="h6" component="h2">
                   {t('noMatchingManifestFilter')}
                 </Typography>
@@ -584,12 +569,11 @@ export const AllManifests = ({
             ))}
           {createManifestIsOpen && (
             <Grid
-              item
+             
               container
               spacing={2}
               flexDirection="column"
-              sx={{ marginBottom: '70px', width: '100%' }}
-            >
+              sx={{ marginBottom: '70px', width: '100%' }}>
               <SidePanel
                 medias={medias}
                 manifests={manifests}
@@ -597,12 +581,10 @@ export const AllManifests = ({
                 user={user}
                 fetchMediaForUser={fetchMediaForUser}
                 fetchManifestForUser={fetchManifestForUser}
-                display={true}
-              >
+                display={true}>
                 <ManifestCreationForm
                   handleSubmit={handleSubmitManifestCreationForm}
-                  t={t}
-                />
+                  t={t}/>
               </SidePanel>
             </Grid>
           )}
@@ -613,15 +595,13 @@ export const AllManifests = ({
               toggleModalManifestCreation={() =>
                 setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)
               }
-              isPending={isPending}
-            />
+              isPending={isPending}/>
           </Grid>
           {!createManifestIsOpen && (
             <PaginationControls
               currentPage={currentPage}
               totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
+              onPageChange={setCurrentPage}/>
           )}
         </Grid>
       </SidePanel>

@@ -176,26 +176,24 @@ export const ContentSidePanelMedia = ({
         </Typography>
       </Grid>
     );
-  } else if (currentPageData.length > 0) {
+  } else if (currentPageData.length> 0) {
     mediaContent = (
       <ImageList
         sx={{ minWidth: 400, padding: 1, width: 400 }}
         cols={2}
-        rowHeight={200}
-      >
+        rowHeight={200}>
         {currentPageData.map((media) => (
           <MediaImageBox
             key={media.id}
             media={media}
             caddyUrl={caddyUrl}
-            handleCopyToClipBoard={handleCopyToClipBoard}
-          />
+            handleCopyToClipBoard={handleCopyToClipBoard}/>
         ))}
       </ImageList>
     );
   } else {
     mediaContent = (
-      <Grid item container justifyContent="center" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center">
         <Typography variant="h6" component="h2">
           {t('noMatchingMediaFilter')}
         </Typography>
@@ -209,27 +207,25 @@ export const ContentSidePanelMedia = ({
         spacing={2}
         sx={{ padding: '20px' }}
         alignItems="center"
-        flexDirection="row"
-      >
-        <Grid item>
-          <SearchBar label={t('search')} setFilter={setMediaFilter} />
+        flexDirection="row">
+        <Grid>
+          <SearchBar label={t('search')} setFilter={setMediaFilter}/>
         </Grid>
-        <Grid item>
+        <Grid>
           <Grid container direction="column" spacing={1}>
-            <Grid item>
+            <Grid>
               <Tooltip title="Upload Media">
                 <Button onClick={handleButtonClick} variant="contained">
-                  <UploadFileIcon />
+                  <UploadFileIcon/>
                 </Button>
               </Tooltip>
             </Grid>
-            <Grid item>
+            <Grid>
               <Tooltip title="Link Media">
                 <Button
                   variant="contained"
-                  onClick={() => setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)}
-                >
-                  <AddLinkIcon />
+                  onClick={() => setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)}>
+                  <AddLinkIcon/>
                 </Button>
               </Tooltip>
             </Grid>
@@ -237,10 +233,10 @@ export const ContentSidePanelMedia = ({
         </Grid>
       </Grid>
       <Tabs value={mediaTabShown} onChange={handleChangeTab} aria-label="tabs">
-        <Tab label={t('All')} {...a11yProps(0)} />
-        <Tab label={t('Videos')} {...a11yProps(1)} />
-        <Tab label={t('Images')} {...a11yProps(2)} />
-        <Tab label={t('other')} {...a11yProps(3)} />
+        <Tab label={t('All')} {...a11yProps(0)}/>
+        <Tab label={t('Videos')} {...a11yProps(1)}/>
+        <Tab label={t('Images')} {...a11yProps(2)}/>
+        <Tab label={t('other')} {...a11yProps(3)}/>
       </Tabs>
       {!medias.length && (
         <Grid container justifyContent={'center'}>
@@ -253,14 +249,12 @@ export const ContentSidePanelMedia = ({
       <PaginationControls
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
-      <Grid item>
+        onPageChange={setCurrentPage}/>
+      <Grid>
         <VisuallyHiddenInput
           id="file-upload"
           type="file"
-          onChange={handleCreateMedia}
-        />
+          onChange={handleCreateMedia}/>
       </Grid>
       <Grid>
         <DrawerLinkMedia
@@ -269,8 +263,7 @@ export const ContentSidePanelMedia = ({
             setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)
           }
           CreateMediaWithLink={createMediaWithLink}
-          modalCreateMediaIsOpen={modalLinkMediaIsOpen}
-        />
+          modalCreateMediaIsOpen={modalLinkMediaIsOpen}/>
       </Grid>
     </>
   );

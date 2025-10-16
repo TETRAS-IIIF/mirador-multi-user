@@ -24,9 +24,8 @@ export function DrawerHeader({
   return (
     <StyledDrawerHeader>
       <IconButton
-        onClick={isSideDrawerExpanded ? handleDrawerClose : handleDrawerOpen}
-      >
-        {!isSideDrawerExpanded ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+        onClick={isSideDrawerExpanded ? handleDrawerClose : handleDrawerOpen}>
+        {!isSideDrawerExpanded ? <ChevronRightIcon/> : <ChevronLeftIcon/>}
       </IconButton>
     </StyledDrawerHeader>
   );

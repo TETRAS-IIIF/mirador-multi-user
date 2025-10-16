@@ -88,7 +88,7 @@ export default class MMUAdapter {
       this.annotationPageId,
       this.projectId,
     );
-    if (annotationPage.length > 0) {
+    if (annotationPage.length> 0) {
       return annotationPage[0].content;
     } else {
       return [];

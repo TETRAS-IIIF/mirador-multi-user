@@ -10,34 +10,34 @@ import { Disconnect } from "../features/miscellaneous/Disconnect.tsx";
 export const publicRoutes = [
   {
     path: "/auth/*",
-    element: <AuthRoutes />,
+    element: <AuthRoutes/>,
   },
   {
     path: "/mirador/*",
-    element: <MiradorPublicExposed />,
+    element: <MiradorPublicExposed/>,
   },
   {
     path: "/token/*",
-    element: <MailConfirmation />,
+    element: <MailConfirmation/>,
   },
   {
     path: "/reset-password/*",
-    element: <ResetPassword />,
+    element: <ResetPassword/>,
   },
   {
     path: "/forgot-password/*",
-    element: <ForgotPassword />,
+    element: <ForgotPassword/>,
   },
   {
     path: "/terms/*",
-    element: <Terms />,
+    element: <Terms/>,
   },
   {
     path: "/consent/*",
-    element: <Consent />,
+    element: <Consent/>,
   },
   {
     path: "/disconnect/*",
-    element: <Disconnect />,
+    element: <Disconnect/>,
   },
 ];

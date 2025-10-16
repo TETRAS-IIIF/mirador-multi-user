@@ -59,7 +59,7 @@ export const MiradorManifestExposed = () => {
   }, []);
 
   return (
-    <Grid item>
+    <Grid>
       <div ref={viewerRef} id="mirador"></div>
     </Grid>
   );

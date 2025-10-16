@@ -28,23 +28,20 @@ export const ItemButton = ({
       sx={{
         display: "block",
         backgroundColor: selected ? "#dcdcdc" : "inherit",
-      }}
-    >
+      }}>
       <ListItemButton
         sx={{
           minHeight: 48,
           justifyContent: open ? "initial" : "center",
           px: 2.5,
         }}
-        onClick={action}
-      >
+        onClick={action}>
         <ListItemIcon
           sx={{
             minWidth: 0,
             mr: open ? 3 : "auto",
             justifyContent: "center",
-          }}
-        >
+          }}>
           {icon}
         </ListItemIcon>
         <ListItemText
@@ -54,8 +51,7 @@ export const ItemButton = ({
             textOverflow: "ellipsis",
             overflow: "hidden",
             whiteSpace: "nowrap",
-          }}
-        />
+          }}/>
       </ListItemButton>
     </ListItem>
   );

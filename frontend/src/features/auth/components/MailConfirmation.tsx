@@ -61,16 +61,15 @@ export const MailConfirmation = () => {
           </SuccessCard>
         ) : (
           <Grid
-            item
+           
             container
             flexDirection="column"
             justifyContent="center"
-            alignItems="center"
-          >
-            <Grid item>
+            alignItems="center">
+            <Grid>
               <FormControlLabel
                 required
-                control={<Checkbox onChange={handleCheckBox} />}
+                control={<Checkbox onChange={handleCheckBox}/>}
                 label={
                   <>
                     {t('accept_terms')}
@@ -78,16 +77,14 @@ export const MailConfirmation = () => {
                       {t('terms')}
                     </Link>
                   </>
-                }
-              />
+                }/>
             </Grid>
-            <Grid item>
+            <Grid>
               <Button
                 variant="contained"
                 color="primary"
                 onClick={handleConfirmMail}
-                disabled={!checked}
-              >
+                disabled={!checked}>
                 {t('confirm-mail')}
               </Button>
             </Grid>

@@ -19,7 +19,7 @@ export const FieldForm = ({
   name,
 }: IFieldFormProps) => {
   return (
-    <Grid item>
+    <Grid>
       <TextField
         label={label}
         inputProps={{
@@ -31,8 +31,7 @@ export const FieldForm = ({
         value={value}
         onChange={onChange}
         placeholder={placeholder}
-        name={name}
-      />
+        name={name}/>
     </Grid>
   );
 };

@@ -10,7 +10,7 @@ export const ListRow = ({ content, index, action }: ListRowProps) => {
   return (
     <ListItem key={index} component="div" disablePadding>
       <ListItemButton onClick={() => action(content)}>
-        <ListItemText primary={content} />
+        <ListItemText primary={content}/>
       </ListItemButton>
     </ListItem>
   );

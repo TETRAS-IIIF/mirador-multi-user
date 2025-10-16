@@ -52,10 +52,9 @@ export const AdminSettings = () => {
         settings && (
           <>
             <MutableSettingsEditor
-              settings={settings.mutableSettings}
-            />
-            <AdminActions />
-            <UnMutableSettingsViewer settings={settings.unMutableSettings} />
+              settings={settings.mutableSettings}/>
+            <AdminActions/>
+            <UnMutableSettingsViewer settings={settings.unMutableSettings}/>
           </>
         )
       }

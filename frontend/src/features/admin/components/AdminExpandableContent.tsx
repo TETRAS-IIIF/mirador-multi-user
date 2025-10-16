@@ -27,18 +27,17 @@ export function AdminExpandableContent({ id, data }: RowProps) {
 
   return (
     <Grid container spacing={2} flexDirection="row" sx={{ padding: 1 }}>
-      <Grid item>
+      <Grid>
         <Button variant="contained" color="primary" onClick={impersonateUser}>
           {t('impersonate')}
         </Button>
       </Grid>
-      <Grid item>
+      <Grid>
         <Button
           variant="contained"
           color="primary"
           onClick={handleValidateUser}
-          disabled={data[5].value !== 'No' || data[4].value !== 'No'}
-        >
+          disabled={data[5].value !== 'No' || data[4].value !== 'No'}>
           {t('validate_user')}
         </Button>
       </Grid>

@@ -15,20 +15,20 @@ export const LoginPage = () => {
   return (
     <Grid container direction="column" spacing={4}>
       {allowClassic && (
-        <Grid item>
-          <LoginForm />
+        <Grid>
+          <LoginForm/>
         </Grid>
       )}
 
       {allowClassic && allowOpenId && (
-        <Grid item>
+        <Grid>
           <Divider></Divider>
         </Grid>
       )}
 
       {allowOpenId && (
         <>
-          <OpenIdLogin />
+          <OpenIdLogin/>
         </>
       )}
     </Grid>

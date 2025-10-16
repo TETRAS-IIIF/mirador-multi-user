@@ -65,38 +65,34 @@ export const ManifestCreationForm = ({
 
   return (
     <Grid container direction="column" spacing={4}>
-      <Grid item container>
+      <Grid container>
         <Paper elevation={3} style={{ padding: "20px", width: "100%" }}>
-          <Grid item>
+          <Grid>
             <FieldForm
               name="manifest-title"
               placeholder={t("manifestTitle")}
               label={t("manifestTitle")}
               value={manifestTitle}
-              onChange={handleManifestTitleChange}
-            />
+              onChange={handleManifestTitleChange}/>
           </Grid>
         </Paper>
       </Grid>
       <ManifestCreationFormThumbnail
         manifestThumbnail={manifestThumbnail}
         setManifestThumbnail={setManifestThumbnail}
-        t={t}
-      />
+        t={t}/>
       <ManifestCreationFormCanvases
         canvases={manifestCanvases}
         t={t}
-        setCanvases={setManifestCanvases}
-      />
-      <Grid item>
+        setCanvases={setManifestCanvases}/>
+      <Grid>
         <Button
           variant="contained"
           color="primary"
           onClick={() =>
             handleSubmit(manifestThumbnail, manifestTitle, manifestCanvases)
           }
-          disabled={manifestCanvases.length < 1}
-        >
+          disabled={manifestCanvases.length < 1}>
           {t("actionsDial.create")}
         </Button>
       </Grid>

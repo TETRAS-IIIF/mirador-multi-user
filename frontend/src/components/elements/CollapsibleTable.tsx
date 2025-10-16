@@ -109,22 +109,20 @@ export default function CollapsibleTable({
   return (
     <>
       <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
-  <Grid item xs={8}>
+  <Grid xs={8}>
     <TextField
       fullWidth
   inputProps={{ maxLength: 255 }}
   label={t('filter_snapshots')}
   variant="outlined"
   value={filter}
-  onChange={(e) => setFilter(e.target.value)}
-  />
+  onChange={(e) => setFilter(e.target.value)}/>
   </Grid>
   {handleCreateSnapshot && (
-    <Grid item xs={4}>
+    <Grid xs={4}>
   <Button
     variant="contained"
-    onClick={() => handleCreateSnapshot!(itemId!)}
-  >
+    onClick={() => handleCreateSnapshot!(itemId!)}>
     {t('create_snapshot')}
     </Button>
     </Grid>
@@ -135,17 +133,16 @@ export default function CollapsibleTable({
   <Table aria-label="collapsible table" size="small">
     <TableHead>
       <TableRow>
-        <TableCell />
+        <TableCell/>
     {columns.map((column, index) => (
-        <TableCell key={index} align={column.align || 'left'}>
+        <TableCell key={index} alignItems={column.align || 'left'}>
       {column.sortKey ? (
           <TableSortLabel
             active={sortKey === column.sortKey}
       direction={
         sortKey === column.sortKey ? sortDirection : 'asc'
     }
-  onClick={() => handleSort(column.sortKey)}
->
+  onClick={() => handleSort(column.sortKey)}>
   {column.label}
   </TableSortLabel>
 ) : (
@@ -154,7 +151,7 @@ export default function CollapsibleTable({
   </TableCell>
 ))}
   {onActionClick && (
-    <TableCell align="center">{t('actions')}</TableCell>
+    <TableCell alignItems="center">{t('actions')}</TableCell>
   )}
   </TableRow>
   </TableHead>
@@ -169,19 +166,17 @@ export default function CollapsibleTable({
       ? () => renderExpandableContent(row)
       : undefined
   }
-  onActionClick={onActionClick}
-  />
+  onActionClick={onActionClick}/>
 ))}
   </TableBody>
   </Table>
   </TableContainer>
 
-  {sortedRows.length > rowsPerPage && (
+  {sortedRows.length> rowsPerPage && (
     <PaginationControls
       currentPage={currentPage}
     totalPages={totalPages}
-    onPageChange={handlePageChange}
-    />
+    onPageChange={handlePageChange}/>
   )}
   </>
 );

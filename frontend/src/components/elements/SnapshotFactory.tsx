@@ -19,8 +19,7 @@ export const SnapshotFactory = <
     snapshots?: Snapshot[];
     ownerId?: number;
     personalOwnerGroupId?: number;
-  },
->({
+  },>({
     objectTypes,
     item,
     fetchItems,
@@ -62,39 +61,35 @@ export const SnapshotFactory = <
           alignItems="center"
           container
           flexDirection="column"
-          item
+         
           spacing={1}
-          sx={{ width: '100%', padding: 0, margin: 0 }}
-        >
+          sx={{ width: '100%', padding: 0, margin: 0 }}>
           <Grid
-            item
+           
             container
             sx={{
               width: '100%',
               padding: 0,
               margin: 0,
             }}
-            spacing={1}
-          >
-            <Grid item>
+            spacing={1}>
+            <Grid>
               <Typography variant="h5">{t('snapshot')}</Typography>
             </Grid>
           </Grid>
           <Grid
-            item
+           
             sx={{
               width: '100%',
               margin: 0,
               padding: 0,
-            }}
-          >
+            }}>
             <ShareLink
               handleCreateSnapshot={handleCreateSnapshot}
               handleDeleteSnapshot={handleDeleteSnapshot!}
               itemId={item.id}
               snapShots={item.snapshots ? item.snapshots : []}
-              updateSnapshot={UpdateSnapshot!}
-            />
+              updateSnapshot={UpdateSnapshot!}/>
           </Grid>
         </Grid>
       )}

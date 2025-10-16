@@ -74,8 +74,7 @@ export const DrawerCreateGroup = ({
         onClose={handleToggleModalGroupCreation}
         ModalProps={{
           onAnimationEnd: handleDrawerTransition,
-        }}
-      >
+        }}>
         <Paper
           sx={{
             left: "0",
@@ -84,22 +83,21 @@ export const DrawerCreateGroup = ({
             paddingLeft: { sm: 3, xs: 2 },
             paddingTop: 2,
             right: "0",
-          }}
-        >
+          }}>
           <AppBar position="absolute" color="primary" enableColorOnDark>
             <Toolbar variant="dense">
               <Button color="inherit" onClick={toggleModalGroupCreation}>
-                <ExpandMoreIcon />
+                <ExpandMoreIcon/>
               </Button>
               <Typography>{t("createGroup")}</Typography>
             </Toolbar>
           </AppBar>
           <Grid>
-            <Grid item container alignItems="center" spacing={2}>
-              <Grid item>
+            <Grid container alignItems="center" spacing={2}>
+              <Grid>
                 <Typography>{t("groupTitleLabel")}</Typography>
               </Grid>
-              <Grid item sx={{ width: "70%" }}>
+              <Grid sx={{ width: "70%" }}>
                 <TextField
                   inputProps={{
                     maxLength: 255,
@@ -107,16 +105,14 @@ export const DrawerCreateGroup = ({
                   inputRef={inputRef}
                   onChange={handleNameChange}
                   onKeyDown={handleKeyDown}
-                  sx={{ width: "100%" }}
-                />
+                  sx={{ width: "100%" }}/>
               </Grid>
-              <Grid item>
+              <Grid>
                 <Button
                   size="large"
                   variant="contained"
                   onClick={handleUserCreation}
-                  disabled={userGroupName.length < 1}
-                >
+                  disabled={userGroupName.length < 1}>
                   {t("createGroupMAJ")}
                 </Button>
               </Grid>

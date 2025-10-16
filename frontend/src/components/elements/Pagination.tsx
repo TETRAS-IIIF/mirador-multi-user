@@ -22,8 +22,7 @@ export const PaginationControls = ({
         count={totalPages}
         page={currentPage}
         onChange={handleChange}
-        color="primary"
-      />
+        color="primary"/>
     </Box>
   );
 };

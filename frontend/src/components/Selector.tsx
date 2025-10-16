@@ -31,8 +31,7 @@ export const Selector = ({
       <Select
         value={localValue}
         onChange={handleLocalChange}
-        renderValue={() => t(localValue)}
-      >
+        renderValue={() => t(localValue)}>
         {Object.values(rights).map((item) => (
           <MenuItem key={item} value={item}>
             {t(item)}

@@ -6,7 +6,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   return (
-    <Suspense fallback={<LoadingSpinner />}>
+    <Suspense fallback={<LoadingSpinner/>}>
       <QueryClientProvider client={queryClient}>
         <Router>{children}</Router>
       </QueryClientProvider>

@@ -21,10 +21,9 @@ export function DrawerElementAdmin({
         <ItemButton
           open={open}
           selected={false}
-          icon={<AdminPanelSettingsIcon />}
+          icon={<AdminPanelSettingsIcon/>}
           text={text}
-          action={action}
-        />
+          action={action}/>
       </ListItem>
     </Tooltip>
   );

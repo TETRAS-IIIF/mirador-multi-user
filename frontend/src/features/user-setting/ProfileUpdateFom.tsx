@@ -71,7 +71,7 @@ export const ProfileUpdateForm = () => {
     }
 
     if (
-      formValues.oldPassword.length > 0 &&
+      formValues.oldPassword.length> 0 &&
       formValues.newPassword.length === 0
     ) {
       newErrors.newPassword = t('passwordIsEmpty');
@@ -80,7 +80,7 @@ export const ProfileUpdateForm = () => {
 
     if (
       formValues.oldPassword.length < 1 &&
-      formValues.newPassword.length > 0
+      formValues.newPassword.length> 0
     ) {
       newErrors.oldPassword = t('passwordIsEmpty');
       valid = false;
@@ -136,8 +136,7 @@ export const ProfileUpdateForm = () => {
         flexDirection: 'column',
         width: '40%',
         maxWidth: '400px',
-      }}
-    >
+      }}>
       <Typography variant="h5" sx={{ mb: 3 }}>
         {t('UpdateProfile')}
       </Typography>
@@ -153,8 +152,7 @@ export const ProfileUpdateForm = () => {
         error={!!errors.name}
         helperText={errors.name}
         fullWidth
-        sx={{ mb: 2 }}
-      />
+        sx={{ mb: 2 }}/>
 
       <TextField
         inputProps={{
@@ -168,8 +166,7 @@ export const ProfileUpdateForm = () => {
         error={!!errors.mail}
         helperText={errors.mail}
         fullWidth
-        sx={{ mb: 2 }}
-      />
+        sx={{ mb: 2 }}/>
 
       <TextField
         label={t('oldPassword')}
@@ -186,15 +183,13 @@ export const ProfileUpdateForm = () => {
             <InputAdornment position="end">
               <IconButton
                 onClick={() => togglePasswordVisibility('oldPassword')}
-                edge="end"
-              >
-                {showPassword.oldPassword ? <VisibilityOff /> : <Visibility />}
+                edge="end">
+                {showPassword.oldPassword ? <VisibilityOff/> : <Visibility/>}
               </IconButton>
             </InputAdornment>
           ),
         }}
-        inputProps={{ maxLength: 255 }}
-      />
+        inputProps={{ maxLength: 255 }}/>
 
       <TextField
         label={t('newPassword')}
@@ -211,15 +206,13 @@ export const ProfileUpdateForm = () => {
             <InputAdornment position="end">
               <IconButton
                 onClick={() => togglePasswordVisibility('newPassword')}
-                edge="end"
-              >
-                {showPassword.newPassword ? <VisibilityOff /> : <Visibility />}
+                edge="end">
+                {showPassword.newPassword ? <VisibilityOff/> : <Visibility/>}
               </IconButton>
             </InputAdornment>
           ),
         }}
-        inputProps={{ maxLength: 255 }}
-      />
+        inputProps={{ maxLength: 255 }}/>
 
       <TextField
         label={t('confirmPassword')}
@@ -236,27 +229,24 @@ export const ProfileUpdateForm = () => {
             <InputAdornment position="end">
               <IconButton
                 onClick={() => togglePasswordVisibility('confirmPassword')}
-                edge="end"
-              >
+                edge="end">
                 {showPassword.confirmPassword ? (
-                  <VisibilityOff />
+                  <VisibilityOff/>
                 ) : (
-                  <Visibility />
+                  <Visibility/>
                 )}
               </IconButton>
             </InputAdornment>
           ),
         }}
-        inputProps={{ maxLength: 255 }}
-      />
+        inputProps={{ maxLength: 255 }}/>
 
       <Button
         type="submit"
         variant="contained"
         color="primary"
         fullWidth
-        sx={{ mt: 2 }}
-      >
+        sx={{ mt: 2 }}>
         {t('saveChanges')}
       </Button>
     </Box>

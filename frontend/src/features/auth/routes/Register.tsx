@@ -16,9 +16,8 @@ export const Register = () => {
             <Typography variant="button">{t("login")}</Typography>
           </NavLink>
         </Grid>
-      }
-    >
-      <RegisterForm />
+      }>
+      <RegisterForm/>
     </Layout>
   );
 };

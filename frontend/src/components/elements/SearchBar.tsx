@@ -95,7 +95,7 @@ export const SearchBar = ({
     <Grid container flexDirection="column">
       <Grid container spacing={2} alignItems="center">
         {fetchFunction ? (
-          <Grid item>
+          <Grid>
             <Autocomplete
               disablePortal
               onInputChange={handleInputChange}
@@ -104,14 +104,13 @@ export const SearchBar = ({
               id="combo-box-demo"
               options={suggestions}
               clearOnBlur={false}
-              renderInput={(params) => <TextField {...params} label={label} />}
+              renderInput={(params) => <TextField {...params} label={label}/>}
               getOptionLabel={getOptionLabel}
               groupBy={groupByOption}
-              noOptionsText={t("noOptions")}
-            />
+              noOptionsText={t("noOptions")}/>
           </Grid>
         ) : (
-          <Grid item>
+          <Grid>
             <TextField
               inputProps={{
                 maxLength: 255,
@@ -121,12 +120,11 @@ export const SearchBar = ({
               variant="outlined"
               value={searchValue}
               onChange={handleTextFieldChange}
-              sx={{ width: "250px" }}
-            />
+              sx={{ width: "250px" }}/>
           </Grid>
         )}
         {actionButtonLabel && (
-          <Grid item>
+          <Grid>
             <Button variant="contained" onClick={handleAdd}>
               {actionButtonLabel}
             </Button>

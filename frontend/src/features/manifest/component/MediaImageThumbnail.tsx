@@ -15,7 +15,7 @@ export function MediaImageThumbnail({ media, t }: MediaImageThumbnailProps) {
   return (
     <Grid>
       {!isMediaValidURL && (
-        <Grid item>
+        <Grid>
           <Typography variant="subtitle1" color="red">
             {t("urlIsNotValid")}
           </Typography>
@@ -36,8 +36,7 @@ export function MediaImageThumbnail({ media, t }: MediaImageThumbnailProps) {
               width: 100,
               height: 100,
             },
-          }}
-        />
+          }}/>
       )}
     </Grid>
   );

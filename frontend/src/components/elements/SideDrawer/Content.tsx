@@ -76,8 +76,7 @@ export function Content({
   return (
     <Box
       component="main"
-      sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: '100vh' }}
-    >
+      sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: '100vh' }}>
       {selectedProjectId && projectSelected && (
         <ProjectWorkspace
           HandleSetIsRunning={HandleSetIsRunning}
@@ -93,12 +92,11 @@ export function Content({
           userPersonalGroup={userPersonalGroup}
           viewer={viewer}
           fetchMediaForUser={fetchMediaForUser}
-          medias={medias}
-        />
+          medias={medias}/>
       )}
       {Boolean(
         user?.id && user._isAdmin && selectedContent === MENU_ELEMENT.ADMIN,
-      ) && <AdminPanel />}
+      ) && <AdminPanel/>}
       {user &&
         user.id &&
         selectedContent === MENU_ELEMENT.PROJECTS &&
@@ -114,8 +112,7 @@ export function Content({
             fetchProjects={fetchProjects}
             fetchManifestForUser={fetchManifestForUser}
             manifests={manifests}
-            fetchMediaForUser={fetchMediaForUser}
-          />
+            fetchMediaForUser={fetchMediaForUser}/>
         )}
       {Boolean(
         user?.id &&
@@ -127,8 +124,7 @@ export function Content({
           medias={medias}
           setMedias={setMedias}
           user={user}
-          userPersonalGroup={userPersonalGroup}
-        />
+          userPersonalGroup={userPersonalGroup}/>
       )}
       {Boolean(user?.id && selectedContent === MENU_ELEMENT.GROUPS) && (
         <AllGroups
@@ -139,8 +135,7 @@ export function Content({
           fetchManifestForUser={fetchManifestForUser}
           user={user}
           userPersonalGroup={userPersonalGroup}
-          fetchMediaForUser={fetchMediaForUser}
-        />
+          fetchMediaForUser={fetchMediaForUser}/>
       )}
       {Boolean(user?.id && selectedContent === MENU_ELEMENT.MANIFEST) && (
         <AllManifests
@@ -149,19 +144,17 @@ export function Content({
           manifests={manifests}
           medias={medias}
           user={user}
-          userPersonalGroup={userPersonalGroup}
-        />
+          userPersonalGroup={userPersonalGroup}/>
       )}
       {Boolean(user?.id && selectedContent === MENU_ELEMENT.SETTING) && (
-        <UserSettings user={user} />
+        <UserSettings user={user}/>
       )}
       {showSignOutModal && (
         <MMUModal
           openModal={showSignOutModal}
           setOpenModal={setShowSignOutModal}
-          width={400}
-        >
-          <ConfirmDisconnect handleDisconnect={handleDisconnectUser} />
+          width={400}>
+          <ConfirmDisconnect handleDisconnect={handleDisconnectUser}/>
         </MMUModal>
       )}
     </Box>

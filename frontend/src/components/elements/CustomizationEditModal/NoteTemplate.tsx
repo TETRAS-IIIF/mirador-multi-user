@@ -86,26 +86,23 @@ export const NoteTemplate = ({
       container
       spacing={2}
       flexDirection="column"
-      sx={{ display: "flex", marginTop: 1 }}
-    >
+      sx={{ display: "flex", marginTop: 1 }}>
       <Grid
-        item
+       
         container
         spacing={1}
         alignItems="center"
-        flexDirection="column"
-      >
+        flexDirection="column">
         <Grid
-          item
+         
           container
           flexDirection="row"
           alignItems="center"
-          spacing={1}
-        >
-          <Grid item sx={{ marginBottom: 2 }}>
+          spacing={1}>
+          <Grid sx={{ marginBottom: 2 }}>
             <Typography>{t("noteTemplateInfo")}</Typography>
           </Grid>
-          <Grid item>
+          <Grid>
             <FormControl sx={{ width: "400px" }}>
               <InputLabel id="template-select-label">
                 {t("templateChoice")}
@@ -115,8 +112,7 @@ export const NoteTemplate = ({
                 labelId="template-select-label"
                 value={selectedTemplate ? selectedTemplate.id : ""}
                 label={t("templateChoice")}
-                onChange={handleSelectTemplate}
-              >
+                onChange={handleSelectTemplate}>
                 {templates.map((temp) => (
                   <MenuItem key={temp.id} value={temp.id}>
                     {temp.title}
@@ -128,12 +124,11 @@ export const NoteTemplate = ({
               </Select>
             </FormControl>
           </Grid>
-          <Grid item>
+          <Grid>
             <Button
               color="primary"
               variant="contained"
-              onClick={handleCreateNewTemplate}
-            >
+              onClick={handleCreateNewTemplate}>
               {t("createNewTemplate")}
             </Button>
           </Grid>
@@ -141,52 +136,46 @@ export const NoteTemplate = ({
 
         {selectedTemplate && (
           <Grid
-            item
+           
             container
             flexDirection="column"
             spacing={1}
-            sx={{ flex: 1, display: "flex", height: "100%" }}
-          >
-            <Grid item>
+            sx={{ flex: 1, display: "flex", height: "100%" }}>
+            <Grid>
               <TextField
                 fullWidth
                 label={t("title")}
                 value={selectedTemplate?.title || ""}
-                onChange={handleTitleChange}
-              />
+                onChange={handleTitleChange}/>
             </Grid>
-            <Grid item>
+            <Grid>
               <TextEditor
                 textHtml={selectedTemplate?.content || ""}
-                updateText={handleTemplateContent}
-              />
+                updateText={handleTemplateContent}/>
             </Grid>
             <Grid
-              item
+             
               container
               sx={{
                 mt: "auto",
                 display: "flex",
                 justifyContent: "space-between",
                 backGround: "white",
-              }}
-            >
-              <Grid item>
+              }}>
+              <Grid>
                 <Button
                   color="error"
                   variant="contained"
                   onClick={handleDeleteTemplate}
-                  disabled={!selectedTemplate}
-                >
+                  disabled={!selectedTemplate}>
                   {t("deleteTemplate")}
                 </Button>
               </Grid>
-              <Grid item>
+              <Grid>
                 <Button
                   color="primary"
                   variant="contained"
-                  onClick={saveCurrentTemplate}
-                >
+                  onClick={saveCurrentTemplate}>
                   {t("updateTemplate")}
                 </Button>
               </Grid>

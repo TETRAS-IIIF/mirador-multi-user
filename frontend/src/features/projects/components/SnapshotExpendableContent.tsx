@@ -48,26 +48,24 @@ export const SnapshotExpendableContent = ({
   };
 
   return (
-    <Grid item container spacing={2} sx={{ padding: 2 }}>
+    <Grid container spacing={2} sx={{ padding: 2 }}>
       <Grid
-        item
+       
         container
         justifyContent="space-between"
         alignItems="center"
         flexDirection="row"
-        spacing={2}
-      >
-        <Grid item xs>
+        spacing={2}>
+        <Grid xs>
           <TextField
             type="text"
             label={t("title")}
             onChange={(e) => handleUpdateTitle(e.target.value)}
             variant="outlined"
             fullWidth
-            defaultValue={localTitleState}
-          />
+            defaultValue={localTitleState}/>
         </Grid>
-        <Grid item xs>
+        <Grid xs>
           <TextField
             label={t("projectSnapshotUrl")}
             value={snapshotUrl}
@@ -75,39 +73,35 @@ export const SnapshotExpendableContent = ({
             fullWidth
             helperText={
               data.generatedAt ? `Snapshot taken at ${data.generatedAt}` : null
-            }
-          />
+            }/>
         </Grid>
       </Grid>
-      <Grid item container spacing={1} alignItems="center">
-        <Grid item>
+      <Grid container spacing={1} alignItems="center">
+        <Grid>
           <Button
             color="primary"
             variant="contained"
-            onClick={() => handleUpdateSnapshot()}
-          >
+            onClick={() => handleUpdateSnapshot()}>
             {t("update_snapshot")}
           </Button>
         </Grid>
-        <Grid item>
+        <Grid>
           <Button
             color="error"
             variant="contained"
-            onClick={() => deleteSnapshot()}
-          >
+            onClick={() => deleteSnapshot()}>
             {t("delete")}
           </Button>
         </Grid>
-        <Grid item>
+        <Grid>
           <ModalButton
             tooltipButton={t("tooltipCopyLink")}
             onClickFunction={handleCopyToClipboard}
             disabled={false}
-            icon={<ContentCopyIcon />}
-          />
+            icon={<ContentCopyIcon/>}/>
         </Grid>
-        <Grid item>
-          <IFrameGenerator snapshotUrl={snapshotUrl} />
+        <Grid>
+          <IFrameGenerator snapshotUrl={snapshotUrl}/>
         </Grid>
       </Grid>
     </Grid>

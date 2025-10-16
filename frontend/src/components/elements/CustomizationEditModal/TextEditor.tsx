@@ -71,7 +71,6 @@ export const TextEditor = (
       onChange={handleChange}
       placeholder={t('yourTextHere')}
       modules={modules}
-      formats={formats}
-    />
+      formats={formats}/>
   );
 };

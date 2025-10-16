@@ -20,7 +20,7 @@ export const UnMutableSettingsViewer = ({ settings }: IUnMutableSettingsProps) =
   const { t } = useTranslation();
 
   return (
-    <Grid item container>
+    <Grid container>
       <TableContainer component={Paper} sx={{ mt: 4 }}>
         <Typography variant="h6" sx={{ p: 2 }}>
           System Settings

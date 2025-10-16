@@ -68,16 +68,14 @@ export const MediaImageBox = ({
             width: '100%',
             height: '100%',
           },
-        }}
-      />
+        }}/>
       <ImageListItemBar
         title={media.title}
         sx={{
           position: 'absolute',
           bottom: 0,
           color: 'white',
-        }}
-      />
+        }}/>
       <Box
         sx={{
           position: 'absolute',
@@ -89,12 +87,11 @@ export const MediaImageBox = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-        }}
-      >
+        }}>
         {media.mediaTypes === MediaTypes.VIDEO ? (
-          <OndemandVideoIcon />
+          <OndemandVideoIcon/>
         ) : (
-          <ImageIcon />
+          <ImageIcon/>
         )}
       </Box>
       <CustomButton
@@ -106,8 +103,7 @@ export const MediaImageBox = ({
               ? `${caddyUrl}/${media.hash}/${media.path}`
               : `${media.url}`,
           )
-        }
-      >
+        }>
         Copy path to clipboard
       </CustomButton>
     </CustomImageItem>

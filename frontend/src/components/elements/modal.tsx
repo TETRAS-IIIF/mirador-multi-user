@@ -41,17 +41,15 @@ export const MMUModal = ({
           sx: { zIndex: 800 },
         },
       }}
-      sx={{ zIndex: 1300, overflow: "scroll" }}
-    >
+      sx={{ zIndex: 1300, overflow: "scroll" }}>
       <Box sx={{ ...style, width: width }}>
         <DialogTitle id="id" sx={{ padding: 0 }}>
           <Box display="flex" alignItems="center" justifyContent="flex-end">
             <Box>
               <IconButton
                 onClick={() => setOpenModal(false)}
-                sx={{ padding: 0 }}
-              >
-                <CloseIcon />
+                sx={{ padding: 0 }}>
+                <CloseIcon/>
               </IconButton>
             </Box>
           </Box>

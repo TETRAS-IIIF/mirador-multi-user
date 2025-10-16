@@ -21,26 +21,23 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
       min-height="100vh"
       sx={{
         height: "100vh",
-      }}
-    >
+      }}>
       <Grid
-        item
+       
         container
         direction="row"
         justifyContent="space-around"
-        alignItems="center"
-      >
-        <Grid item>
+        alignItems="center">
+        <Grid>
           <NavLink
             to="/"
             onClick={() => {
               storage.clearToken();
-            }}
-          >
-            <ArrowBackIcon />
+            }}>
+            <ArrowBackIcon/>
           </NavLink>
         </Grid>
-        <Grid item>
+        <Grid>
           <Typography variant="h2" component="h1">
             {title}
           </Typography>
@@ -48,17 +45,16 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
         {rightButton ? rightButton : <Grid></Grid>}
       </Grid>
       <Grid
-        item
+       
         container
         direction="column"
         justifyContent="center"
         alignItems="center"
-        minHeight="80vh"
-      >
+        minHeight="80vh">
         {children}
       </Grid>
-      <Grid item container sx={{ width: "100%" }}>
-        <TermsFooter />
+      <Grid container sx={{ width: "100%" }}>
+        <TermsFooter/>
       </Grid>
     </Grid>
   );

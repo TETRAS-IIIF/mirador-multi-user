@@ -31,18 +31,16 @@ export const IFrameGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
       <Box>
         <Button
           variant="contained"
-          startIcon={<CodeIcon />}
-          onClick={handleIframeModal}
-        >
+          startIcon={<CodeIcon/>}
+          onClick={handleIframeModal}>
           {t("generate_iframe")}
         </Button>
         <MMUModal
           openModal={openIframeModal}
           setOpenModal={handleIframeModal}
-          width={500}
-        >
+          width={500}>
           <Grid container spacing={2} flexDirection={"column"}>
-            <Grid item>
+            <Grid>
               <TextField
                 inputProps={{
                   maxLength: 255,
@@ -51,15 +49,13 @@ export const IFrameGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
                 multiline
                 fullWidth
                 value={iframeCode}
-                InputProps={{ readOnly: true }}
-              />
+                InputProps={{ readOnly: true }}/>
             </Grid>
-            <Grid item>
+            <Grid>
               <Button
                 variant="contained"
-                startIcon={<ContentCopyIcon />}
-                onClick={handleCopyToClipboard}
-              >
+                startIcon={<ContentCopyIcon/>}
+                onClick={handleCopyToClipboard}>
                 {t("Copy_iframe_code")}
               </Button>
             </Grid>

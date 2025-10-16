@@ -10,7 +10,7 @@ export const ProjectReaderButton = ({
 }: IProjectReaderButtonProps) => {
   return (
     <Button disabled={true} onClick={HandleOpenModal} variant="contained">
-      <ModeEditIcon />
+      <ModeEditIcon/>
     </Button>
   );
 };

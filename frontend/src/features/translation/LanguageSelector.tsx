@@ -31,8 +31,7 @@ const LanguageSelector = ({ userId }: LanguageSelectorProps) => {
       value={language}
       onChange={handleChange}
       displayEmpty
-      inputProps={{ "aria-label": "Select language" }}
-    >
+      inputProps={{ "aria-label": "Select language" }}>
       {availableLanguages.map((lang) => (
         <MenuItem key={lang.code} value={lang.code}>
           {lang.label}

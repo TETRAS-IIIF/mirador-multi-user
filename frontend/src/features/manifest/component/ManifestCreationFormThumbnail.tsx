@@ -29,19 +29,18 @@ export const ManifestCreationFormThumbnail = ({
   };
 
   return (
-    <Grid item container>
+    <Grid container>
       <Paper elevation={3} style={{ padding: "20px", width: "100%" }}>
-        <Grid item container spacing={4} alignItems="center">
-          <Grid item xs={8}>
+        <Grid container spacing={4} alignItems="center">
+          <Grid xs={8}>
             <FieldForm
               name="manifest-thumbnail"
               placeholder={t("manifestThumbnailUrl")}
               label={t("manifestThumbnail")}
               value={manifestThumbnail}
-              onChange={handleManifestThumbnailChange}
-            />
+              onChange={handleManifestThumbnailChange}/>
           </Grid>
-          <Grid item>
+          <Grid>
             {manifestThumbnail && (
               <Box
                 component="img"
@@ -57,21 +56,20 @@ export const ManifestCreationFormThumbnail = ({
                     width: 100,
                     height: 100,
                   },
-                }}
-              />
+                }}/>
             )}
           </Grid>
-          <Grid item>
+          <Grid>
             <MMUToolTip>
               <div>
                 {t("mediaShouldBeNoMoreThan", { size: 1 })}
-                <br />
+                <br/>
                 {t("mediaOriginInfo")}
               </div>
             </MMUToolTip>
           </Grid>
           {isManifestThumbnailBadURL && (
-            <Grid item>
+            <Grid>
               <Typography variant="subtitle1" color="red">
                 {t("urlIsNotValid")}
               </Typography>

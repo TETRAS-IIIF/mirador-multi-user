@@ -46,13 +46,12 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
     <Grid container spacing={2} sx={{ padding: 2 }}>
       <Grid
         container
-        item
+       
         flexDirection="row"
         alignItems="center"
         spacing={2}
-        sx={{ width: '100%' }}
-      >
-        <Grid item xs={10}>
+        sx={{ width: '100%' }}>
+        <Grid xs={10}>
           <TextField
             label={t('labelApiToken')}
             disabled
@@ -61,57 +60,52 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
             defaultValue={token}
             inputProps={{
               maxLength: 255,
-            }}
-          />
+            }}/>
         </Grid>
-        <Grid item xs={2}>
+        <Grid xs={2}>
           <ModalButton
             tooltipButton={t('tooltipButtonToken')}
             onClickFunction={HandleCopyToClipBoard}
             disabled={false}
-            icon={<ContentCopyIcon />}
-          />
+            icon={<ContentCopyIcon/>}/>
         </Grid>
       </Grid>
-      <Grid container item>
+      <Grid container>
         <Button variant={'contained'} onClick={redirectToSubscriptionDashboard}>
           {t('subscription_dashboard')}
         </Button>
       </Grid>
-      <Grid container item flexDirection="column" spacing={1}>
-        <Grid item>
+      <Grid container flexDirection="column" spacing={1}>
+        <Grid>
           <Typography variant="h5">{t('changeLanguage')}</Typography>
         </Grid>
-        <Grid item>
-          <LanguageSelector userId={user.id} />
+        <Grid>
+          <LanguageSelector userId={user.id}/>
         </Grid>
       </Grid>
 
-      <Grid container item xs={12}>
-        <ProfileUpdateForm />
+      <Grid container xs={12}>
+        <ProfileUpdateForm/>
       </Grid>
-      <Grid item spacing={2} sx={{ width: '100%' }}>
+      <Grid spacing={2} sx={{ width: '100%' }}>
         <Button
           variant="contained"
           color="error"
-          onClick={handleConfirmDeleteItemModal}
-        >
+          onClick={handleConfirmDeleteItemModal}>
           {t('DeleteAccount')}
         </Button>
       </Grid>
       <MMUModal
         width={400}
         openModal={openDeleteModal}
-        setOpenModal={handleConfirmDeleteItemModal}
-      >
+        setOpenModal={handleConfirmDeleteItemModal}>
         <ModalConfirmDelete
           deleteItem={handleDeleteAccount}
           itemId={user.id}
           content={t('deleteConfirmation', {
             itemName: t('yourAccount'),
           })}
-          buttonLabel={t('deleteDefinitely')}
-        />
+          buttonLabel={t('deleteDefinitely')}/>
       </MMUModal>
     </Grid>
   );

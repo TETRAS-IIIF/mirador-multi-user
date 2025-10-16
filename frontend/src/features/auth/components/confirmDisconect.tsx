@@ -10,14 +10,14 @@ export const ConfirmDisconnect = ({ handleDisconnect }: IConfirmDisconnect) => {
   const { t } = useTranslation();
 
   return (
-    <Grid item container>
-      <Grid item container spacing={1} justifyContent="center">
-        <Grid item>
+    <Grid container>
+      <Grid container spacing={1} justifyContent="center">
+        <Grid>
           <Typography>{t("messageDisconnect")}</Typography>
         </Grid>
-        <Grid item>
+        <Grid>
           <Button color="error" variant="contained" onClick={handleDisconnect}>
-            <LogoutIcon sx={{ marginRight: 1 }} />
+            <LogoutIcon sx={{ marginRight: 1 }}/>
             {t("disconnect")}
           </Button>
         </Grid>

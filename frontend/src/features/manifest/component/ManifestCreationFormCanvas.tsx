@@ -44,42 +44,39 @@ export const ManifestCreationFormCanvas = ({
   const media = canvas.media[0];
 
   return (
-    <Grid item key={canvasIndex}>
+    <Grid key={canvasIndex}>
       <Paper elevation={3} sx={{ padding: 2, width: '100%' }}>
         <Grid container direction="column" spacing={2}>
-          <Grid item container spacing={2} alignItems="center">
-            <Grid item xs>
+          <Grid container spacing={2} alignItems="center">
+            <Grid xs>
               <FieldForm
                 name={media.title}
                 placeholder={t('mediaLink')}
                 label={t('mediaLink')}
                 value={media.value}
-                onChange={onMediaURLChange}
-              />
+                onChange={onMediaURLChange}/>
             </Grid>
             {isMediaLoading && <h2>Loading ...</h2>}
             {media.value && !isMediaLoading && (
-              <Grid item>
+              <Grid>
                 {media.type === MediaTypes.VIDEO && (
                   <MediaVideoThumbnail
                     media={media}
                     setMedia={(media: MediaField) =>
                       setMedia(media, canvasIndex)
-                    }
-                  />
+                    }/>
                 )}
                 {media.type === MediaTypes.IMAGE && (
-                  <MediaImageThumbnail media={media} t={t} />
+                  <MediaImageThumbnail media={media} t={t}/>
                 )}
               </Grid>
             )}
           </Grid>
-          <Grid item>
+          <Grid>
             <Button
               variant="contained"
               color="error"
-              onClick={() => handleRemoveCanvas(canvasIndex)}
-            >
+              onClick={() => handleRemoveCanvas(canvasIndex)}>
               {t('canvasRemoving', { index: canvasIndex + 1 })}
             </Button>
           </Grid>

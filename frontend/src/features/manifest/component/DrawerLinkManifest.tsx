@@ -69,8 +69,7 @@ export const DrawerLinkManifest = ({
       onClose={handleToggleModalGroupCreation}
       ModalProps={{
         onAnimationEnd: handleDrawerTransition,
-      }}
-    >
+      }}>
       <Paper
         sx={{
           left: '0',
@@ -80,22 +79,21 @@ export const DrawerLinkManifest = ({
           paddingRight: { sm: 3, xs: 2 },
           paddingTop: 2,
           right: '0',
-        }}
-      >
+        }}>
         <AppBar position="absolute" color="primary" enableColorOnDark>
           <Toolbar variant="dense">
             <Button color="inherit" onClick={toggleModalManifestCreation}>
-              <ExpandMoreIcon />
+              <ExpandMoreIcon/>
             </Button>
             <Typography>{t('linkManifest')}</Typography>
           </Toolbar>
         </AppBar>
         <form onSubmit={handleLinkingManifest}>
           <Grid container alignItems="center" spacing={2}>
-            <Grid item>
+            <Grid>
               <label>{t('manifestLink')} :</label>
             </Grid>
-            <Grid item sx={{ width: '70%' }}>
+            <Grid sx={{ width: '70%' }}>
               <TextField
                 inputProps={{
                   maxLength: 255,
@@ -103,17 +101,15 @@ export const DrawerLinkManifest = ({
                 inputRef={inputRef}
                 onChange={handleNameChange}
                 sx={{ width: '100%' }}
-                placeholder={t('validURLToManifest')}
-              ></TextField>
+                placeholder={t('validURLToManifest')}></TextField>
             </Grid>
-            <Grid item>
+            <Grid>
               <LoadingButton
                 size="large"
                 variant="contained"
                 onClick={handleLinkingManifest}
                 loading={isPending}
-                disabled={!manifestLink}
-              >
+                disabled={!manifestLink}>
                 {t('linkManifest')}
               </LoadingButton>
             </Grid>

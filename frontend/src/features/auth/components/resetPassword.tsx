@@ -61,7 +61,7 @@ export const ResetPassword = () => {
 
   const isCompleted = Boolean(success);
   const canSubmit =
-    password.length >= PASSWORD_MINIMUM_LENGTH && confirmPassword.length > 0;
+    password.length>= PASSWORD_MINIMUM_LENGTH && confirmPassword.length> 0;
 
   return (
     <Layout
@@ -72,11 +72,10 @@ export const ResetPassword = () => {
             <Typography variant="button">{t('login')}</Typography>
           </NavLink>
         </Grid>
-      }
-    >
+      }>
       <Container maxWidth="sm">
         <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3 }}>
-          <Typography variant="h5" align="center" gutterBottom>
+          <Typography variant="h5" alignItems="center" gutterBottom>
             {t('reset-password')}
           </Typography>
 
@@ -90,8 +89,7 @@ export const ResetPassword = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            disabled={isCompleted}
-          />
+            disabled={isCompleted}/>
 
           <TextField
             inputProps={{ maxLength: 255 }}
@@ -102,8 +100,7 @@ export const ResetPassword = () => {
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            disabled={isCompleted}
-          />
+            disabled={isCompleted}/>
 
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
@@ -123,8 +120,7 @@ export const ResetPassword = () => {
               fullWidth
               component={NavLink}
               to="/auth/login"
-              sx={{ mt: 3 }}
-            >
+              sx={{ mt: 3 }}>
               {t('login')}
             </Button>
           ) : (
@@ -134,8 +130,7 @@ export const ResetPassword = () => {
               fullWidth
               disabled={!canSubmit}
               sx={{ mt: 3 }}
-              onClick={handlePasswordReset}
-            >
+              onClick={handlePasswordReset}>
               {t('reset-password')}
             </Button>
           )}

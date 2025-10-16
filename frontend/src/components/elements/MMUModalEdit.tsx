@@ -131,8 +131,7 @@ export const MMUModalEdit = <
     tags?: string[];
     title?: string;
     userWorkspace?: Record<string, string>;
-  },
->({
+  },>({
   HandleOpenModalEdit,
   deleteItem,
   description,
@@ -178,8 +177,7 @@ export const MMUModalEdit = <
   const [metadataFormats, setMetadataFormats] = useState<MetadataFormat[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<
-    MetadataFormat | undefined
-  >();
+    MetadataFormat | undefined>();
   const [
     jsonElementToEditInAdvancedEditor,
     setJsonElementToEditInAdvancedEditor,
@@ -212,8 +210,7 @@ export const MMUModalEdit = <
         if (newData) {
           const metadata = newData.metadata as unknown as Record<
             string,
-            string
-          >;
+            string>;
 
           const transformedMetadata: MetadataFields = Object.keys(
             metadata,
@@ -379,7 +376,7 @@ export const MMUModalEdit = <
   };
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
+    if (event.target.files && event.target.files.length> 0) {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = async (e) => {
@@ -474,21 +471,18 @@ export const MMUModalEdit = <
       container
       sx={{
         height: '70vh',
-      }}
-    >
+      }}>
       <Tabs
         value={tabValue}
         onChange={handleChangeTab}
         aria-label="basic tabs"
-        sx={{ height: '50px' }}
-      >
-        <Tab label={t('general')} {...a11yProps(0)} />
+        sx={{ height: '50px' }}>
+        <Tab label={t('general')} {...a11yProps(0)}/>
         <Tab
           label={objectTypes != ObjectTypes.GROUP ? t('share') : t('members')}
-          {...a11yProps(2)}
-        />
+          {...a11yProps(2)}/>
         {objectTypes !== ObjectTypes.GROUP && (
-          <Tab label={t('metadata')} {...a11yProps(1)} />
+          <Tab label={t('metadata')} {...a11yProps(1)}/>
         )}
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
@@ -500,14 +494,12 @@ export const MMUModalEdit = <
                   ? t('advanced_edit_disabled')
                   : ''
               }
-              disableHoverListener={!!jsonElementToEditInAdvancedEditor}
-            >
+              disableHoverListener={!!jsonElementToEditInAdvancedEditor}>
               <span>
                 <Tab
                   label={t('advancedEdit')}
                   {...a11yProps(3)}
-                  disabled={!jsonElementToEditInAdvancedEditor}
-                />
+                  disabled={!jsonElementToEditInAdvancedEditor}/>
               </span>
             </Tooltip>
           )}
@@ -518,37 +510,34 @@ export const MMUModalEdit = <
             <Tab
               label={t('advancedEdit')}
               {...a11yProps(3)}
-              disabled={!jsonElementToEditInAdvancedEditor}
-            />
+              disabled={!jsonElementToEditInAdvancedEditor}/>
           )}
         {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t('template')} {...a11yProps(4)} />
+          <Tab label={t('template')} {...a11yProps(4)}/>
         )}
         {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t('tags')} {...a11yProps(5)} />
+          <Tab label={t('tags')} {...a11yProps(5)}/>
         )}
         {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t('snapshots')} {...a11yProps(6)} />
+          <Tab label={t('snapshots')} {...a11yProps(6)}/>
         )}
       </Tabs>
       <Grid
-        item
+       
         container
         flexDirection="column"
         justifyContent="space-between"
-        sx={{ height: '90%' }}
-      >
+        sx={{ height: '90%' }}>
         <CustomTabPanel value={tabValue} index={0}>
           <Grid
             container
-            item
+           
             sx={{
               overflowY: 'auto',
               height: '100%',
-            }}
-          >
+            }}>
             <Grid
-              item
+             
               sx={{
                 minHeight: '50px',
                 width: '100%',
@@ -557,8 +546,7 @@ export const MMUModalEdit = <
               container
               flexDirection="row"
               justifyContent="space-between"
-              alignItems="center"
-            >
+              alignItems="center">
               <TextField
                 inputProps={{
                   maxLength: 255,
@@ -568,17 +556,15 @@ export const MMUModalEdit = <
                 onChange={handleChangeTitle}
                 variant="outlined"
                 defaultValue={itemLabel}
-                fullWidth
-              />
+                fullWidth/>
             </Grid>
             <Grid
-              item
+             
               sx={{ minHeight: '50px', width: '100%' }}
               container
               flexDirection="row"
               justifyContent="space-between"
-              alignItems="center"
-            >
+              alignItems="center">
               <TextField
                 inputProps={{
                   maxLength: 255,
@@ -589,16 +575,14 @@ export const MMUModalEdit = <
                 variant="outlined"
                 defaultValue={description}
                 multiline
-                fullWidth
-              />
+                fullWidth/>
             </Grid>
             <Grid
-              item
+             
               sx={{ minHeight: '50px', width: '100%' }}
               container
               justifyContent="flex-end"
-              alignItems="center"
-            >
+              alignItems="center">
               <TextField
                 inputProps={{
                   maxLength: 255,
@@ -614,32 +598,28 @@ export const MMUModalEdit = <
                 }
                 multiline
                 fullWidth
-                disabled
-              />
+                disabled/>
             </Grid>
             <Grid
-              item
+             
               sx={{ minHeight: '50px', width: '100%' }}
               container
               justifyContent="flex-start"
-              alignItems="center"
-            >
+              alignItems="center">
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   disabled
                   label={t('createdAt')}
                   onChange={(newValue) => setNewItemDate(newValue)}
-                  value={newItemDate}
-                />
+                  value={newItemDate}/>
               </LocalizationProvider>
             </Grid>
             <Grid
-              item
+             
               sx={{ minHeight: '50px', width: '100%' }}
               container
               justifyContent="flex-end"
-              alignItems="center"
-            >
+              alignItems="center">
               <TextField
                 type="text"
                 label={t('thumbnailUrl')}
@@ -654,8 +634,7 @@ export const MMUModalEdit = <
                     : undefined
                 }
                 multiline
-                fullWidth
-              />
+                fullWidth/>
             </Grid>
           </Grid>
         </CustomTabPanel>
@@ -666,13 +645,12 @@ export const MMUModalEdit = <
             <CustomTabPanel value={tabValue} index={1}>
               <Grid
                 container
-                item
+               
                 sx={{
                   minHeight: '55px',
                   height: '100%',
                   overflowY: 'auto',
-                }}
-              >
+                }}>
                 <ItemList
                   getGroupByOption={getGroupByOption}
                   handleAddAccessListItem={handleAddAccessListItem}
@@ -685,8 +663,7 @@ export const MMUModalEdit = <
                   removeItem={handleDeleteAccessListItem}
                   searchBarLabel={searchBarLabel}
                   setItemToAdd={setItemToAdd}
-                  setSearchInput={setSearchInput}
-                >
+                  setSearchInput={setSearchInput}>
                   {(accessListItem) => (
                     <Selector
                       rights={
@@ -695,8 +672,7 @@ export const MMUModalEdit = <
                           : Object.values(ItemsRights)
                       }
                       value={accessListItem.rights!}
-                      onChange={handleSelectorChange(accessListItem)}
-                    />
+                      onChange={handleSelectorChange(accessListItem)}/>
                   )}
                 </ItemList>
               </Grid>
@@ -706,12 +682,11 @@ export const MMUModalEdit = <
           <CustomTabPanel value={tabValue} index={2}>
             <Grid
               container
-              item
+             
               sx={{
                 overflowY: 'auto',
                 height: '100%',
-              }}
-            >
+              }}>
               <MetadataForm
                 selectedMetadataData={selectedMetadataData}
                 item={item}
@@ -720,8 +695,7 @@ export const MMUModalEdit = <
                 loading={loading}
                 selectedMetadataFormat={selectedMetadataFormat}
                 setSelectedMetadataFormat={handleSetSelectedMetadataFormat}
-                handleFileChange={handleFileChange}
-              />
+                handleFileChange={handleFileChange}/>
             </Grid>
           </CustomTabPanel>
         )}
@@ -730,105 +704,95 @@ export const MMUModalEdit = <
             <CustomTabPanel value={tabValue} index={3}>
               <Grid
                 container
-                item
+               
                 sx={{
                   minHeight: '55px',
                   height: '100%',
                   overflowY: 'auto',
-                }}
-              >
+                }}>
                 <JsonEditorWithControls
                   initialData={jsonElementToEditInAdvancedEditor}
-                  onUpdate={handleUpdateAdvancedEditMetadata}
-                />
+                  onUpdate={handleUpdateAdvancedEditMetadata}/>
               </Grid>
             </CustomTabPanel>
           )}
         <CustomTabPanel value={tabValue} index={4}>
           <Grid
             container
-            item
+           
             spacing={1}
             flexDirection="column"
             sx={{
               minHeight: '55px',
               height: '100%',
               overflowY: 'auto',
-            }}
-          >
-            <Grid item sx={{ height: '100%' }}>
+            }}>
+            <Grid sx={{ height: '100%' }}>
               <NoteTemplate
                 templates={templates}
-                setTemplates={handleUpdateTemplates}
-              />
+                setTemplates={handleUpdateTemplates}/>
             </Grid>
           </Grid>
         </CustomTabPanel>
         <CustomTabPanel value={tabValue} index={5}>
           <Grid
             container
-            item
+           
             spacing={1}
             flexDirection="column"
             sx={{
               minHeight: '55px',
               height: '100%',
               overflowY: 'auto',
-            }}
-          >
-            <Grid item sx={{ height: '100%' }}>
+            }}>
+            <Grid sx={{ height: '100%' }}>
               <TagMaker
                 project={item as unknown as Project}
-                handleUpdateTags={handleUpdateTags}
-              />
+                handleUpdateTags={handleUpdateTags}/>
             </Grid>
           </Grid>
         </CustomTabPanel>
         <CustomTabPanel index={6} value={tabValue}>
           <Grid
             container
-            item
+           
             spacing={1}
             flexDirection="column"
             sx={{
               minHeight: '55px',
               height: '100%',
               overflowY: 'auto',
-            }}
-          >
-            <Grid item sx={{ height: '100%' }}>
+            }}>
+            <Grid sx={{ height: '100%' }}>
               <SnapshotFactory
                 fetchItems={fetchItems!}
                 objectTypes={objectTypes!}
-                item={item}
-              />
+                item={item}/>
             </Grid>
           </Grid>
         </CustomTabPanel>
         {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && (
           <Grid
-            item
+           
             container
             justifyContent="space-between"
             alignItems="center"
             flexDirection="row"
-            sx={{ height: '20px', padding: 0, margin: 0 }}
-          >
-            <Grid item container flexDirection="row" spacing={1} xs={4}>
-              <Grid item>
+            sx={{ height: '20px', padding: 0, margin: 0 }}>
+            <Grid container flexDirection="row" spacing={1} xs={4}>
+              <Grid>
                 {rights === ItemsRights.ADMIN && tabValue === 0 && (
                   <Tooltip title={t('deleteItem')}>
                     <Button
                       color="error"
                       onClick={handleConfirmDeleteItemModal}
-                      variant="contained"
-                    >
+                      variant="contained">
                       {t('delete')}
                     </Button>
                   </Tooltip>
                 )}
               </Grid>
-              <Grid item>
+              <Grid>
                 {(rights === ItemsRights.ADMIN ||
                   rights === ItemsRights.EDITOR) &&
                   tabValue === 0 &&
@@ -837,8 +801,7 @@ export const MMUModalEdit = <
                       <Button
                         color="primary"
                         onClick={handleDuplicateModal}
-                        variant="contained"
-                      >
+                        variant="contained">
                         {t('duplicateMAJ')}
                       </Button>
                     </Tooltip>
@@ -846,31 +809,28 @@ export const MMUModalEdit = <
               </Grid>
             </Grid>
             <Grid
-              item
+             
               container
               flexDirection="row"
               alignItems="center"
               justifyContent="flex-end"
               spacing={1}
-              xs={6}
-            >
-              <Grid item>
+              xs={6}>
+              <Grid>
                 <Button
                   variant="contained"
                   type="button"
-                  onClick={HandleOpenModalEdit}
-                >
-                  <CancelIcon />
+                  onClick={HandleOpenModalEdit}>
+                  <CancelIcon/>
                   {t('cancel')}
                 </Button>
               </Grid>
-              <Grid item>
+              <Grid>
                 <Button
                   variant="contained"
                   type="submit"
-                  onClick={handleSubmit}
-                >
-                  <SaveIcon />
+                  onClick={handleSubmit}>
+                  <SaveIcon/>
                   {t('saveMAJ')}
                 </Button>
               </Grid>
@@ -882,22 +842,19 @@ export const MMUModalEdit = <
         <MMUModal
           width={400}
           openModal={openDeleteModal}
-          setOpenModal={handleConfirmDeleteItemModal}
-        >
+          setOpenModal={handleConfirmDeleteItemModal}>
           <ModalConfirmDelete
             deleteItem={deleteItem}
             itemId={item.id}
             content={deleteContent}
-            buttonLabel={t('deleteDefinitely')}
-          />
+            buttonLabel={t('deleteDefinitely')}/>
         </MMUModal>
       )}
       {openDuplicateModal && (
         <MMUModal
           width={400}
           openModal={openDuplicateModal}
-          setOpenModal={handleConfirmDuplicateItem}
-        >
+          setOpenModal={handleConfirmDuplicateItem}>
           <Grid>
             <Typography>
               {' '}

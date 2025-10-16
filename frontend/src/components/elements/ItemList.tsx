@@ -33,8 +33,7 @@ export const ItemList = <
     id: number;
     ownerId?: number;
     personalOwnerGroupId?: number;
-  },
->({
+  },>({
   children,
   getGroupByOption,
   handleAddAccessListItem,
@@ -72,30 +71,29 @@ export const ItemList = <
   return (
     <Grid
       container
-      item
+     
       sx={{
         minHeight: '55px',
         overflowY: 'auto',
       }}
-      spacing={2}
-    >
-      <Grid container item alignItems="center" spacing={2}>
-        <Grid item>
+      spacing={2}>
+      <Grid container alignItems="center" spacing={2}>
+        <Grid>
           <Typography variant="h5">{t('Permissions')}</Typography>
         </Grid>
-        <Grid item>
+        <Grid>
           <MMUToolTip>
             <div>
               {t('MMUTooltipAdmin')}
-              <br />
+              <br/>
               {t('MMUTooltipEditor')}
-              <br />
+              <br/>
               {t('MMUTooltipReader')}
             </div>
           </MMUToolTip>
         </Grid>
       </Grid>
-      <Grid item sx={{ marginLeft: '10px' }}>
+      <Grid sx={{ marginLeft: '10px' }}>
         <SearchBar
           label={searchBarLabel}
           handleAdd={handleAddAccessListItem}
@@ -104,48 +102,45 @@ export const ItemList = <
           fetchFunction={handleSearchModalEditItem}
           setSearchInput={setSearchInput}
           actionButtonLabel={t('add')}
-          groupByOption={getGroupByOption}
-        />
+          groupByOption={getGroupByOption}/>
       </Grid>
-      <Grid item>
+      <Grid>
         <MMUToolTip>
           <div>{t('MMUTooltipSearchForUser')}</div>
         </MMUToolTip>
       </Grid>
-      <Grid item container flexDirection="column" spacing={1}>
+      <Grid container flexDirection="column" spacing={1}>
         {items?.map((listItem) =>
           listItem ? (
             <Grid
               key={listItem.id}
-              item
+             
               container
               spacing={1}
               flexDirection="row"
               alignItems="center"
-              justifyContent="spaceBetween"
-            >
+              justifyContent="spaceBetween">
               <Grid
-                item
+               
                 container
                 xs={8}
                 alignItems="center"
                 spacing={2}
-                justifyContent="space-between"
-              >
-                <Grid item>
+                justifyContent="space-between">
+                <Grid>
                   <Typography>{listItem.title}</Typography>
                 </Grid>
               </Grid>
-              <Grid item>
-                {listItem.type === UserGroupTypes.PERSONAL && <PersonIcon />}
-                {listItem.type === UserGroupTypes.MULTI_USER && <GroupsIcon />}
+              <Grid>
+                {listItem.type === UserGroupTypes.PERSONAL && <PersonIcon/>}
+                {listItem.type === UserGroupTypes.MULTI_USER && <GroupsIcon/>}
                 {listItem.type !== UserGroupTypes.PERSONAL &&
-                  listItem.type !== UserGroupTypes.MULTI_USER && <PersonIcon />}
+                  listItem.type !== UserGroupTypes.MULTI_USER && <PersonIcon/>}
               </Grid>
               {isActionAllowedForListItem(listItem) && (
                 <>
-                  <Grid item>{children!(listItem)}</Grid>
-                  <Grid item>
+                  <Grid>{children!(listItem)}</Grid>
+                  <Grid>
                     <IconButton
                       onClick={() => removeItem(listItem.id)}
                       aria-label="delete"
@@ -153,19 +148,18 @@ export const ItemList = <
                       disabled={
                         listItem.personalOwnerGroupId === ownerId &&
                         listItem.type !== UserGroupTypes.MULTI_USER
-                      }
-                    >
-                      <DeleteIcon />
+                      }>
+                      <DeleteIcon/>
                     </IconButton>
                   </Grid>
                 </>
               )}
-              <Grid item xs={12} sx={{ mb: '5px' }}>
-                <Divider />
+              <Grid xs={12} sx={{ mb: '5px' }}>
+                <Divider/>
               </Grid>
             </Grid>
           ) : (
-            <LoadingSpinner />
+            <LoadingSpinner/>
           ),
         )}
       </Grid>

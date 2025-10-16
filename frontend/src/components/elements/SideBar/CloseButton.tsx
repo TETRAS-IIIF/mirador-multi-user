@@ -23,17 +23,15 @@ export const CloseButton = ({ text, isSelected }: CloseButtonProps) => {
         transformOrigin: "0 0",
         transform: "rotate(-90deg)",
         boxShadow: theme.shadows[4],
-      }}
-    >
+      }}>
       <Typography
         variant="body2"
         color={
           isSelected ? theme.palette.selectedText : theme.palette.primary.main
-        }
-      >
+        }>
         {text}
       </Typography>
-      <ExpandMoreIcon />
+      <ExpandMoreIcon/>
     </Grid>
   );
 };

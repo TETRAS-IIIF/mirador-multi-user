@@ -267,7 +267,7 @@ export const AllProjects = ({
   }, [groupList]);
 
   const handleLookingForUserGroups = async (partialString: string) => {
-    if (partialString.length > 0) {
+    if (partialString.length> 0) {
       const linkUserGroups: LinkUserGroup[] =
         await lookingForUserGroups(partialString);
       const uniqueUserGroups: UserGroup[] = linkUserGroups
@@ -321,11 +321,10 @@ export const AllProjects = ({
         user={user}
         fetchMediaForUser={fetchMediaForUser}
         fetchManifestForUser={fetchManifestForUser}
-        display={!!openModalProjectId}
-      >
+        display={!!openModalProjectId}>
         <Grid container justifyContent="center" flexDirection="column">
           <Grid
-            item
+           
             container
             direction="row-reverse"
             alignItems="center"
@@ -335,38 +334,33 @@ export const AllProjects = ({
               zIndex: 1000,
               backgroundColor: '#dcdcdc',
               paddingBottom: '18px',
-            }}
-          >
+            }}>
             {!selectedProjectId && (
               <Grid
-                item
+               
                 container
                 justifyContent="flex-end"
                 spacing={2}
-                alignItems="center"
-              >
-                <Grid item>
+                alignItems="center">
+                <Grid>
                   <SearchBar
                     label={t('filterProjects')}
-                    setFilter={setProjectFilter}
-                  />
+                    setFilter={setProjectFilter}/>
                 </Grid>
-                <Grid item>
+                <Grid>
                   <SortItemSelector<Project>
                     sortField={sortField}
                     setSortField={setSortField}
-                    fields={[TITLE, UPDATED_AT]}
-                  />
+                    fields={[TITLE, UPDATED_AT]}/>
                 </Grid>
-                <Grid item>
+                <Grid>
                   <Tooltip
-                    title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}
-                  >
+                    title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}>
                     <IconButton onClick={toggleSortOrder}>
                       {sortOrder === 'asc' ? (
-                        <ArrowDropUpIcon />
+                        <ArrowDropUpIcon/>
                       ) : (
-                        <ArrowDropDownIcon />
+                        <ArrowDropDownIcon/>
                       )}
                     </IconButton>
                   </Tooltip>
@@ -374,7 +368,7 @@ export const AllProjects = ({
               </Grid>
             )}
           </Grid>
-          <Grid item container spacing={1}>
+          <Grid container spacing={1}>
             {!userProjects.length && (
               <Grid container justifyContent={'center'}>
                 <Typography variant="h6" component="h2">
@@ -384,16 +378,15 @@ export const AllProjects = ({
             )}
             {!selectedProjectId && userProjects && (
               <Grid
-                item
+               
                 container
                 spacing={1}
                 flexDirection="column"
-                sx={{ marginBottom: '70px' }}
-              >
-                {userProjects.length > 0 &&
-                  (currentPageData.length > 0 ? (
+                sx={{ marginBottom: '70px' }}>
+                {userProjects.length> 0 &&
+                  (currentPageData.length> 0 ? (
                     currentPageData.map((projectUser) => (
-                      <Grid item key={projectUser.id}>
+                      <Grid key={projectUser.id}>
                         <MMUCard
                           fetchItems={fetchProjects}
                           ownerId={projectUser.ownerId}
@@ -420,8 +413,7 @@ export const AllProjects = ({
                                 )
                               }
                               disabled={false}
-                              icon={<OpenInNewIcon />}
-                            />
+                              icon={<OpenInNewIcon/>}/>
                           }
                           EditorButton={
                             <ModalButton
@@ -429,9 +421,8 @@ export const AllProjects = ({
                               onClickFunction={() =>
                                 HandleOpenModal(projectUser.id)
                               }
-                              icon={<SettingsIcon />}
-                              disabled={false}
-                            />
+                              icon={<SettingsIcon/>}
+                              disabled={false}/>
                           }
                           id={projectUser.id}
                           rights={projectUser.rights!}
@@ -450,41 +441,36 @@ export const AllProjects = ({
                           setItemList={setGroupList}
                           metadata={projectUser.metadata}
                           getGroupByOption={getGroupByOption}
-                          handleRemoveFromList={handleRemoveProjectFromList}
-                        />
+                          handleRemoveFromList={handleRemoveProjectFromList}/>
                       </Grid>
                     ))
                   ) : (
                     <Grid
-                      item
+                     
                       container
                       justifyContent="center"
-                      alignItems="center"
-                    >
+                      alignItems="center">
                       <Typography variant="h6" component="h2">
                         {t('noProjectMatchFilter')}
                       </Typography>
                     </Grid>
                   ))}
-                <Grid item>
+                <Grid>
                   <FloatingActionButton
                     onClick={toggleModalProjectCreation}
                     content={t('newProject')}
-                    Icon={<AddIcon />}
-                  />
+                    Icon={<AddIcon/>}/>
                   <div>
                     <DrawerCreateProject
                       InitializeProject={InitializeProject}
                       toggleModalProjectCreation={toggleModalProjectCreation}
-                      modalCreateProjectIsOpen={modalCreateProjectIsOpen}
-                    />
+                      modalCreateProjectIsOpen={modalCreateProjectIsOpen}/>
                   </div>
                 </Grid>
                 <PaginationControls
                   currentPage={currentPage}
                   totalPages={totalPages}
-                  onPageChange={setCurrentPage}
-                />
+                  onPageChange={setCurrentPage}/>
               </Grid>
             )}
           </Grid>

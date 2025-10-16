@@ -167,8 +167,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
       <div
         ref={viewerRef}
         id="mirador"
-        style={{ height: "100%", padding: 0, margin: 0, overflow: "hidden" }}
-      ></div>
+        style={{ height: "100%", padding: 0, margin: 0, overflow: "hidden" }}></div>
     );
   },
 );

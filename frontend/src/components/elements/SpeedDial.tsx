@@ -25,7 +25,7 @@ export default function SpeedDialTooltipOpen({
 
   return (
     <Box sx={{ height: 330, transform: "translateZ(0px)", flexGrow: 1 }}>
-      <Backdrop open={open} />
+      <Backdrop open={open}/>
       <SpeedDial
         ariaLabel="SpeedDial tooltip"
         sx={{
@@ -33,19 +33,17 @@ export default function SpeedDialTooltipOpen({
           bottom: 16,
           right: 16,
         }}
-        icon={<SpeedDialIcon />}
+        icon={<SpeedDialIcon/>}
         onClick={handleToggle}
         open={open}
-        direction={"left"}
-      >
+        direction={"left"}>
         {actions.map((action) => (
           <SpeedDialAction
             key={action.name}
             icon={action.icon}
             tooltipTitle={action.name}
             onClick={action.onClick}
-            tooltipPlacement={"top"}
-          />
+            tooltipPlacement={"top"}/>
         ))}
       </SpeedDial>
     </Box>

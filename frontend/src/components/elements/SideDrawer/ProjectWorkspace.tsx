@@ -52,8 +52,7 @@ export function ProjectWorkspace({
       user={user}
       fetchMediaForUser={fetchMediaForUser}
       fetchManifestForUser={fetchManifestForUser}
-      display={true}
-    >
+      display={true}>
       <Grid sx={{ paddingRight: 5 }}>
         <MiradorViewer
           language={
@@ -70,8 +69,7 @@ export function ProjectWorkspace({
           ref={myRef}
           HandleSetIsRunning={HandleSetIsRunning}
           useEditionPlugins={isEditor}
-          user={user}
-        />
+          user={user}/>
       </Grid>
     </SidePanel>
   );

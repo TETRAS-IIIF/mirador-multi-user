@@ -97,29 +97,25 @@ export function MMUDrawer({
       <DrawerHeader
         isSideDrawerExpanded={isSideDrawerExpanded}
         handleDrawerClose={handleDrawerClose}
-        handleDrawerOpen={handleDrawerOpen}
-      />
-      <Divider />
+        handleDrawerOpen={handleDrawerOpen}/>
+      <Divider/>
       <DrawerElementContentMenu
         open={isSideDrawerExpanded}
         selectedContent={selectedContent}
-        handleChangeContent={handleChangeContent}
-      />
-      <Divider sx={{ mb: 0 }} />
+        handleChangeContent={handleChangeContent}/>
+      <Divider sx={{ mb: 0 }}/>
       {projectSelected && (
         <>
           <DrawerElementSaveProject
             open={isSideDrawerExpanded}
             projectSelected={projectSelected}
-            saveProject={saveProject}
-          />
-          <Divider />
+            saveProject={saveProject}/>
+          <Divider/>
           <DrawerGenerateSnapshot
             open={isSideDrawerExpanded}
             projectSelected={projectSelected}
-            handleGenerateSnapshot={handleGenerateSnapshot}
-          />
-          <Divider />
+            handleGenerateSnapshot={handleGenerateSnapshot}/>
+          <Divider/>
         </>
       )}
       <List>
@@ -128,18 +124,16 @@ export function MMUDrawer({
             title={t("titleAdmin")}
             open={isSideDrawerExpanded}
             text={t("admin")}
-            action={() => handleChangeContent(MENU_ELEMENT.ADMIN)}
-          />
+            action={() => handleChangeContent(MENU_ELEMENT.ADMIN)}/>
         )}
         <Tooltip title={t("titleSettings")} placement="right">
           <ListItem sx={{ padding: 0 }}>
             <ItemButton
               open={isSideDrawerExpanded}
               selected={false}
-              icon={<SettingsIcon />}
+              icon={<SettingsIcon/>}
               text={t("settings")}
-              action={() => handleChangeContent(MENU_ELEMENT.SETTING)}
-            />
+              action={() => handleChangeContent(MENU_ELEMENT.SETTING)}/>
           </ListItem>
         </Tooltip>
         <Tooltip title={t("titleDisconnect")} placement="right">
@@ -147,10 +141,9 @@ export function MMUDrawer({
             <ItemButton
               open={isSideDrawerExpanded}
               selected={false}
-              icon={<LogoutIcon />}
+              icon={<LogoutIcon/>}
               text={t("disconnect")}
-              action={() => setShowSignOutModal(true)}
-            />
+              action={() => setShowSignOutModal(true)}/>
           </ListItem>
         </Tooltip>
       </List>

@@ -291,7 +291,7 @@ export const SideDrawer = ({
             const currRightsIndex = curr.rights
               ? rightsOrder.indexOf(curr.rights)
               : -1;
-            return currRightsIndex > prevRightsIndex ? curr : prev;
+            return currRightsIndex> prevRightsIndex ? curr : prev;
           },
         );
 
@@ -345,8 +345,7 @@ export const SideDrawer = ({
         saveProject={saveProject}
         setShowSignOutModal={setShowSignOutModal}
         user={user}
-        handleGenerateSnapshot={handleGenerateSnapshot}
-      />
+        handleGenerateSnapshot={handleGenerateSnapshot}/>
       <Content
         setMedias={setMedias}
         HandleSetIsRunning={HandleSetIsRunning}
@@ -373,8 +372,7 @@ export const SideDrawer = ({
         userPersonalGroup={userPersonalGroup!}
         userProjects={userProjects}
         viewer={viewer}
-        fetchProjects={fetchProjects}
-      />
+        fetchProjects={fetchProjects}/>
     </>
   );
 };

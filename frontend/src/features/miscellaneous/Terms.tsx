@@ -20,16 +20,14 @@ export const Terms = () => {
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         marginTop: 0,
-      }}
-    >
+      }}>
       <Grid
-        item
+       
         container
         sx={{ backgroundColor: "rgba(255, 255, 255, 0.4)" }}
         justifyContent="center"
-        alignItems="center"
-      >
-        <Grid item>
+        alignItems="center">
+        <Grid>
           <CustomTerms></CustomTerms>
         </Grid>
       </Grid>

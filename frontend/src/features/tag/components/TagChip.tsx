@@ -22,12 +22,11 @@ export const TagChip = ({
   color,
 }: TagChipProps) => {
   return handleRemoveTag ? (
-    <Chip label={tag.title} onDelete={() => handleRemoveTag(tag.title)} />
+    <Chip label={tag.title} onDelete={() => handleRemoveTag(tag.title)}/>
   ) : (
     <Chip
       label={tag.title}
       onClick={onClick}
-      color={color ? color : "default"}
-    />
+      color={color ? color : "default"}/>
   );
 };

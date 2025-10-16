@@ -60,15 +60,15 @@ export const MutableSettingsEditor = ({ settings }: IMutableSettingsEditorProps)
 
   return (
     <Grid container sx={{ p: 3 }}>
-      <Grid item>
+      <Grid>
         <Typography variant="h6" gutterBottom>
           Mutable Settings
         </Typography>
       </Grid>
-      <Grid container flexDirection="column" item spacing={2}>
+      <Grid container flexDirection="column" spacing={2}>
         {editableSettings.map(setting => (
-          <Grid item key={setting.id}>
-            <RenderInput setting={setting} handleChange={handleChange} />
+          <Grid key={setting.id}>
+            <RenderInput setting={setting} handleChange={handleChange}/>
           </Grid>
         ))}
       </Grid>

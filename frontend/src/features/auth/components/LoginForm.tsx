@@ -35,44 +35,40 @@ export const LoginForm = () => {
   return (
     <form>
       <Grid container flexDirection="column" spacing={2}>
-        <Grid item>
+        <Grid>
           <FormField
             type="mail"
             placeholder={t('mail')}
             name="mail"
             required={true}
             register={register}
-            error={errors.mail}
-          />
+            error={errors.mail}/>
         </Grid>
-        <Grid item container alignItems="center" spacing={2}>
-          <Grid item>
+        <Grid container alignItems="center" spacing={2}>
+          <Grid>
             <FormField
               type="password"
               placeholder={t('password')}
               name="password"
               register={register}
               required={true}
-              error={errors.password}
-            />
+              error={errors.password}/>
           </Grid>
-          <Grid item>
+          <Grid>
             <Button
               variant="text"
               color="primary"
-              onClick={() => (window.location.href = '/forgot-password')}
-            >
+              onClick={() => (window.location.href = '/forgot-password')}>
               {t('forgot-password')}
             </Button>
           </Grid>
         </Grid>
-        <Grid item container>
+        <Grid container>
           <Button
             type="submit"
             variant="contained"
             color="primary"
-            onClick={handleSubmit(onSubmit)}
-          >
+            onClick={handleSubmit(onSubmit)}>
             {t('submit')}
           </Button>
         </Grid>

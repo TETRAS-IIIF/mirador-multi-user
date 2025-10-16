@@ -22,24 +22,22 @@ export function DrawerElementSaveProject({
       <Tooltip title={projectSelected!.title} placement="left">
         <ListItem sx={{ padding: 0, margin: 0 }}>
           <ItemButton
-            icon={<WorkIcon />}
+            icon={<WorkIcon/>}
             text={projectSelected!.title}
             open={open}
             selected={false}
-            action={() => console.log("")}
-          />
+            action={() => console.log("")}/>
         </ListItem>
       </Tooltip>
-      <Divider />
+      <Divider/>
       <Tooltip title={t("save")} placement="left">
         <ListItem sx={{ padding: 0 }}>
           <ItemButton
             open={open}
             selected={false}
-            icon={<SaveIcon />}
+            icon={<SaveIcon/>}
             text={t("saveProject")}
-            action={saveProject}
-          />
+            action={saveProject}/>
         </ListItem>
       </Tooltip>
     </List>

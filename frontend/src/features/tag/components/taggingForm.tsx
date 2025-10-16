@@ -66,21 +66,18 @@ export const TaggingForm = ({ object, objectTypes }: ITaggingFormProps) => {
     <Accordion
       component={Paper}
       elevation={1}
-      sx={{ minHeight: '55px', width: '100%' }}
-    >
+      sx={{ minHeight: '55px', width: '100%' }}>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
+        expandIcon={<ExpandMoreIcon/>}
         aria-controls="metadata-content"
-        id="metadata-header"
-      >
+        id="metadata-header">
         <Typography variant="h6">Tagging</Typography>
       </AccordionSummary>
       <AccordionDetails style={{ maxHeight: '400px', overflowY: 'auto' }}>
         <form
           style={{ width: '100%', marginBottom: '10px' }}
-          onSubmit={() => console.log('taggingFormSubmit')}
-        >
-          <Grid item>
+          onSubmit={() => console.log('taggingFormSubmit')}>
+          <Grid>
             <SearchBar
               setUserInput={setUserInput}
               label={'Tagging'}
@@ -88,14 +85,13 @@ export const TaggingForm = ({ object, objectTypes }: ITaggingFormProps) => {
               getOptionLabel={getOptionLabelForTags}
               fetchFunction={HandleLookingForTags}
               actionButtonLabel={'ADD'}
-              setSearchedData={handleSetSelectedTag}
-            />
+              setSearchedData={handleSetSelectedTag}/>
           </Grid>
         </form>
         <Grid container spacing={2}>
           {tags.map((tagging) => (
-            <Grid key={tagging.tagId} item>
-              <TagChip tag={tagging.tag} handleRemoveTag={handleRemoveTag} />
+            <Grid key={tagging.tagId}>
+              <TagChip tag={tagging.tag} handleRemoveTag={handleRemoveTag}/>
             </Grid>
           ))}
         </Grid>

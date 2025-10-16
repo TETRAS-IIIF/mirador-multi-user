@@ -60,7 +60,7 @@ export const MiradorPublicExposed = () => {
   }, []);
 
   return (
-    <Grid item>
+    <Grid>
       <div ref={viewerRef} id="mirador"></div>
     </Grid>
   );

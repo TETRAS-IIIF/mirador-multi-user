@@ -159,34 +159,31 @@ export const ContentSidePanelManifest = ({
   return (
     <>
       <Grid
-        item
+       
         container
         spacing={1}
         sx={{ padding: '20px' }}
-        alignItems="center"
-      >
-        <Grid item>
-          <SearchBar label={t('search')} setFilter={setManifestFilter} />
+        alignItems="center">
+        <Grid>
+          <SearchBar label={t('search')} setFilter={setManifestFilter}/>
         </Grid>
-        <Grid item>
+        <Grid>
           <Tooltip title={t('linkManifest')}>
             <Button
               variant="contained"
               onClick={() =>
                 setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)
-              }
-            >
-              <AddLinkIcon />
+              }>
+              <AddLinkIcon/>
             </Button>
           </Tooltip>
         </Grid>
       </Grid>
-      {currentPageData.length > 0 ? (
+      {currentPageData.length> 0 ? (
         <ImageList
           sx={{ minWidth: 400, padding: 1, width: 400 }}
           cols={2}
-          rowHeight={200}
-        >
+          rowHeight={200}>
           {currentPageData.map((manifest, index) => (
             <>
               <StyledImageListItem key={manifest.id}>
@@ -207,21 +204,18 @@ export const ContentSidePanelManifest = ({
                       width: '100%',
                       height: '100%',
                     },
-                  }}
-                />
+                  }}/>
                 <ImageListItemBar
                   title={manifest.title}
                   sx={{
                     position: 'absolute',
                     bottom: 0,
                     color: 'white',
-                  }}
-                />
+                  }}/>
                 <CustomButton
                   className="overlayButton"
                   disableRipple
-                  onClick={() => handleCopyToClipBoard(manifest!)}
-                >
+                  onClick={() => handleCopyToClipBoard(manifest!)}>
                   {t('copyPathToClipboard')}
                 </CustomButton>
               </StyledImageListItem>
@@ -230,20 +224,18 @@ export const ContentSidePanelManifest = ({
         </ImageList>
       ) : (
         <Grid
-          item
+         
           container
           sx={{ minWidth: 400, padding: 1, width: 400, minHeight: 400 }}
           alignItems={'center'}
-          justifyContent={'center'}
-        >
+          justifyContent={'center'}>
           <Typography>{t('noMatchingManifestFilter')}</Typography>
         </Grid>
       )}
       <PaginationControls
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+        onPageChange={setCurrentPage}/>
       <Grid>
         <DrawerLinkManifest
           modalCreateManifestIsOpen={modalLinkManifestIsOpen}
@@ -251,8 +243,7 @@ export const ContentSidePanelManifest = ({
             setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)
           }
           linkingManifest={handleLinkManifest}
-          isPending={isPending}
-        />
+          isPending={isPending}/>
       </Grid>
     </>
   );

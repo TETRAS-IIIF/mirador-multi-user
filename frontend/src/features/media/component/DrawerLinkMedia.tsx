@@ -71,8 +71,7 @@ export const DrawerLinkMedia = ({
           onClose={handleToggleModalGroupCreation}
           ModalProps={{
             onAnimationEnd: handleDrawerTransition,
-          }}
-        >
+          }}>
           <Paper
             sx={{
               left: '0',
@@ -83,22 +82,21 @@ export const DrawerLinkMedia = ({
               paddingTop: 2,
               right: '0',
               zIndex: 9999,
-            }}
-          >
+            }}>
             <AppBar position="absolute" color="primary" enableColorOnDark>
               <Toolbar variant="dense">
                 <Button color="inherit" onClick={toggleModalMediaCreation}>
-                  <ExpandMoreIcon />
+                  <ExpandMoreIcon/>
                 </Button>
                 <Typography>{t('linkMedia')}</Typography>
               </Toolbar>
             </AppBar>
             <form onSubmit={handleLinkingMedia}>
               <Grid container alignItems="center" spacing={2}>
-                <Grid item>
+                <Grid>
                   <label>{t('mediaLink')}:</label>
                 </Grid>
-                <Grid item sx={{ width: '70%' }}>
+                <Grid sx={{ width: '70%' }}>
                   <TextField
                     inputProps={{
                       maxLength: 255,
@@ -106,16 +104,14 @@ export const DrawerLinkMedia = ({
                     inputRef={inputRef}
                     onChange={handleNameChange}
                     sx={{ width: '100%' }}
-                    placeholder={t('validURLToMedia')}
-                  ></TextField>
+                    placeholder={t('validURLToMedia')}></TextField>
                 </Grid>
-                <Grid item>
+                <Grid>
                   <LoadingButton
                     size="large"
                     variant="contained"
                     onClick={handleLinkingMedia}
-                    loading={isPending}
-                  >
+                    loading={isPending}>
                     {t('add')}
                   </LoadingButton>
                 </Grid>

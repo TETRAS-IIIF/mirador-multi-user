@@ -21,28 +21,25 @@ export const Disconnect = () => {
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
         marginTop: 0,
-      }}
-    >
+      }}>
       <Grid
-        item
+       
         container
         sx={{ backgroundColor: "rgba(255, 255, 255, 0.4)" }}
         justifyContent="center"
         alignItems="center"
         flexDirection="column"
-        spacing={1}
-      >
-        <Grid item>
+        spacing={1}>
+        <Grid>
           <Typography variant="h5" component="div">
             {t("disconnect_error")}
           </Typography>
         </Grid>
-        <Grid item>
+        <Grid>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigate("/auth/login")}
-          >
+            onClick={() => navigate("/auth/login")}>
             {t("login")}
           </Button>
         </Grid>

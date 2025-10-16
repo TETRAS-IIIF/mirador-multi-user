@@ -17,9 +17,9 @@ interface MetadataFieldProps {
 const MetadataField = memo(
   ({ field, value, handleInputChange }: MetadataFieldProps) => {
     return (
-      <Grid item xs={12}>
+      <Grid xs={12}>
         <Grid container alignItems="center" spacing={2}>
-          <Grid item xs={11}>
+          <Grid xs={11}>
             <TextField
               id={field.term}
               label={field.label}
@@ -35,10 +35,9 @@ const MetadataField = memo(
                   textOverflow: "ellipsis",
                 },
                 maxLength: 255,
-              }}
-            />
+              }}/>
           </Grid>
-          <Grid item xs={1}>
+          <Grid xs={1}>
             {field.comment && (
               <MMUToolTip>
                 <div>{field.comment}</div>

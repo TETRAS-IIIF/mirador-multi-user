@@ -18,17 +18,16 @@ export const ModalConfirmDelete = ({
 }: IModalConfirmDeleteProps) => {
   return (
     <Grid container wrap="nowrap" spacing={2}>
-      <Grid item>
-        <WarningAmberIcon sx={{ color: 'red' }} fontSize="large" />
+      <Grid>
+        <WarningAmberIcon sx={{ color: 'red' }} fontSize="large"/>
       </Grid>
-      <Grid item container spacing={2}>
-        <Grid item>
+      <Grid container spacing={2}>
+        <Grid>
           <Typography
             sx={{ 'word-break': ' break-word' }}
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
+            dangerouslySetInnerHTML={{ __html: content }}/>
         </Grid>
-        <Grid item>
+        <Grid>
           {deleteItem && (
             <Button
               color="error"
@@ -37,8 +36,7 @@ export const ModalConfirmDelete = ({
                 share
                   ? () => deleteItem(itemId, share)
                   : () => deleteItem(itemId)
-              }
-            >
+              }>
               {buttonLabel}
             </Button>
           )}
