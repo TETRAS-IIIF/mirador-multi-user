@@ -154,7 +154,7 @@ export const ItemList = <
                   </Grid>
                 </>
               )}
-              <Grid xs={12} sx={{ mb: '5px' }}>
+              <Grid sx={{ mb: '5px' }} size={12}>
                 <Divider/>
               </Grid>
             </Grid>

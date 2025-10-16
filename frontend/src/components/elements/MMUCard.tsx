@@ -193,7 +193,11 @@ const MMUCard = <
           alignItems="center"
           justifyContent="flex-start"
           spacing={2}>
-          <Grid xs={12} sm={1}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 1
+            }}>
             {isLoading ? (
               <LoadingSpinner/>
             ) : (
@@ -212,7 +216,11 @@ const MMUCard = <
                 }}/>
             )}
           </Grid>
-          <Grid xs={12} sm={1}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 1
+            }}>
             {item.origin === manifestOrigin.LINK && <LinkIcon/>}
             {item.origin === manifestOrigin.UPLOAD && <UploadFileIcon/>}
             {item.origin === manifestOrigin.CREATE && <CreateIcon/>}
@@ -224,23 +232,39 @@ const MMUCard = <
           </Grid>
           {objectTypes === ObjectTypes.MEDIA &&
             item.mediaTypes === MediaTypes.VIDEO && (
-              <Grid xs={12} sm={1}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 1
+                }}>
                 <OndemandVideoIcon/>
               </Grid>
             )}
           {objectTypes === ObjectTypes.MEDIA &&
             item.mediaTypes === MediaTypes.IMAGE && (
-              <Grid xs={12} sm={1}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 1
+                }}>
                 <ImageIcon/>
               </Grid>
             )}
           {objectTypes === ObjectTypes.MEDIA &&
             item.mediaTypes === MediaTypes.OTHER && (
-              <Grid xs={12} sm={1}>
+              <Grid
+                size={{
+                  xs: 12,
+                  sm: 1
+                }}>
                 <DescriptionIcon/>
               </Grid>
             )}
-          <Grid xs={12} sm={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 3
+            }}>
             <Tooltip title={itemLabel} placement="bottom-start">
               <Typography
                 variant="subtitle1"
@@ -254,7 +278,11 @@ const MMUCard = <
               </Typography>
             </Tooltip>
           </Grid>
-          <Grid xs={12} sm={3}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 3
+            }}>
             <Tooltip title={description}>
               <Typography
                 variant="subtitle1"
@@ -268,7 +296,11 @@ const MMUCard = <
               </Typography>
             </Tooltip>
           </Grid>
-          <Grid xs={12} sm={1}>
+          <Grid
+            size={{
+              xs: 12,
+              sm: 1
+            }}>
             {item.updated_at && (
               <Tooltip
                 title={dayjs(item.updated_at)

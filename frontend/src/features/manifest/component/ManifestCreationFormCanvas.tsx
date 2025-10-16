@@ -48,7 +48,7 @@ export const ManifestCreationFormCanvas = ({
       <Paper elevation={3} sx={{ padding: 2, width: '100%' }}>
         <Grid container direction="column" spacing={2}>
           <Grid container spacing={2} alignItems="center">
-            <Grid xs>
+            <Grid size="grow">
               <FieldForm
                 name={media.title}
                 placeholder={t('mediaLink')}

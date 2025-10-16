@@ -16,6 +16,7 @@
     "@fontsource/roboto": "^5.2.5",
     "@hookform/resolvers": "^3.3.4",
     "@mui/icons-material": "^7.0.0",
+    "@mui/lab": "^7.0.1-beta.18",
     "@mui/material": "^7.0.0",
     "@mui/x-date-pickers": "^7.21.0",
     "@tanstack/react-query": "^5.77.2",

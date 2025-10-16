@@ -109,7 +109,7 @@ export default function CollapsibleTable({
   return (
     <>
       <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
-  <Grid xs={8}>
+  <Grid size={8}>
     <TextField
       fullWidth
   inputProps={{ maxLength: 255 }}
@@ -119,7 +119,7 @@ export default function CollapsibleTable({
   onChange={(e) => setFilter(e.target.value)}/>
   </Grid>
   {handleCreateSnapshot && (
-    <Grid xs={4}>
+    <Grid size={4}>
   <Button
     variant="contained"
     onClick={() => handleCreateSnapshot!(itemId!)}>
@@ -128,56 +128,54 @@ export default function CollapsibleTable({
     </Grid>
   )}
   </Grid>
-
-  <TableContainer component={Paper}>
-  <Table aria-label="collapsible table" size="small">
-    <TableHead>
-      <TableRow>
-        <TableCell/>
-    {columns.map((column, index) => (
-        <TableCell key={index} alignItems={column.align || 'left'}>
-      {column.sortKey ? (
-          <TableSortLabel
-            active={sortKey === column.sortKey}
-      direction={
-        sortKey === column.sortKey ? sortDirection : 'asc'
-    }
-  onClick={() => handleSort(column.sortKey)}>
-  {column.label}
-  </TableSortLabel>
-) : (
-    column.label
-  )}
-  </TableCell>
-))}
-  {onActionClick && (
-    <TableCell alignItems="center">{t('actions')}</TableCell>
-  )}
-  </TableRow>
-  </TableHead>
-  <TableBody>
-  {paginatedRows.map((row) => (
-      <Row
-        key={row.id}
-    row={row}
-    labelButton={labelButton}
-    renderExpandableContent={
-      renderExpandableContent
-      ? () => renderExpandableContent(row)
-      : undefined
-  }
-  onActionClick={onActionClick}/>
-))}
-  </TableBody>
-  </Table>
-  </TableContainer>
-
-  {sortedRows.length> rowsPerPage && (
-    <PaginationControls
-      currentPage={currentPage}
-    totalPages={totalPages}
-    onPageChange={handlePageChange}/>
-  )}
-  </>
-);
+      <TableContainer component={Paper}>
+      <Table aria-label="collapsible table" size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell/>
+        {columns.map((column, index) => (
+            <TableCell key={index} alignItems={column.align || 'left'}>
+          {column.sortKey ? (
+              <TableSortLabel
+                active={sortKey === column.sortKey}
+          direction={
+            sortKey === column.sortKey ? sortDirection : 'asc'
+        }
+      onClick={() => handleSort(column.sortKey)}>
+      {column.label}
+      </TableSortLabel>
+    ) : (
+        column.label
+      )}
+      </TableCell>
+    ))}
+      {onActionClick && (
+        <TableCell alignItems="center">{t('actions')}</TableCell>
+      )}
+      </TableRow>
+      </TableHead>
+      <TableBody>
+      {paginatedRows.map((row) => (
+          <Row
+            key={row.id}
+        row={row}
+        labelButton={labelButton}
+        renderExpandableContent={
+          renderExpandableContent
+          ? () => renderExpandableContent(row)
+          : undefined
+      }
+      onActionClick={onActionClick}/>
+    ))}
+      </TableBody>
+      </Table>
+      </TableContainer>
+      {sortedRows.length> rowsPerPage && (
+        <PaginationControls
+          currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}/>
+      )}
+    </>
+  );
 }

@@ -32,7 +32,7 @@ export const ManifestCreationFormThumbnail = ({
     <Grid container>
       <Paper elevation={3} style={{ padding: "20px", width: "100%" }}>
         <Grid container spacing={4} alignItems="center">
-          <Grid xs={8}>
+          <Grid size={8}>
             <FieldForm
               name="manifest-thumbnail"
               placeholder={t("manifestThumbnailUrl")}
