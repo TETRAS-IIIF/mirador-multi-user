@@ -123,7 +123,7 @@ export const ItemList = <
               <Grid
                
                 container
-                xs={8}
+                columns={8}
                 alignItems="center"
                 spacing={2}
                 justifyContent="space-between">

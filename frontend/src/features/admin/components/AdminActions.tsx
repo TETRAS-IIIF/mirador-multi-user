@@ -52,8 +52,7 @@ export const AdminActions = () => {
             size="large"
             variant="contained"
             onClick={handleSendTestMail}
-            loading={isPending}
-          >
+            loading={isPending}>
             {t('send_test_mail')}
           </LoadingButton>
         </Grid>
@@ -62,8 +61,7 @@ export const AdminActions = () => {
             size="large"
             variant="contained"
             onClick={handleDownloadAppLogs}
-            loading={isDownloading}
-          >
+            loading={isDownloading}>
             {t('download_logs')}
           </LoadingButton>
         </Grid>

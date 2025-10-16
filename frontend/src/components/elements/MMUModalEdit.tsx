@@ -779,7 +779,7 @@ export const MMUModalEdit = <
             alignItems="center"
             flexDirection="row"
             sx={{ height: '20px', padding: 0, margin: 0 }}>
-            <Grid container flexDirection="row" spacing={1} xs={4}>
+            <Grid container flexDirection="row" spacing={1} columns={4}>
               <Grid>
                 {rights === ItemsRights.ADMIN && tabValue === 0 && (
                   <Tooltip title={t('deleteItem')}>
@@ -815,7 +815,7 @@ export const MMUModalEdit = <
               alignItems="center"
               justifyContent="flex-end"
               spacing={1}
-              xs={6}>
+              columns={6}>
               <Grid>
                 <Button
                   variant="contained"

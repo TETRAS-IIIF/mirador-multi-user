@@ -84,7 +84,7 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
         </Grid>
       </Grid>
 
-      <Grid container xs={12}>
+      <Grid container columns={12}>
         <ProfileUpdateForm/>
       </Grid>
       <Grid spacing={2} sx={{ width: '100%' }}>
