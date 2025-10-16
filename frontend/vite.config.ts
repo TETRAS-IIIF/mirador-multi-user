@@ -34,17 +34,18 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      // force the package root to its actual ESM entry
       'mirador-annotation-editor': fileURLToPath(
         new URL(
           './node_modules/mirador-annotation-editor/es/index.js',
           import.meta.url,
         ),
       ),
-      // remove your placeholder LocalStorageAdapter alias unless you really need it
-      // if needed, point it to a real file:
-      // "mirador-annotation-editor/annotationAdapter/LocalStorageAdapter":
-      //   fileURLToPath(new URL("./node_modules/mirador-annotation-editor/es/annotationAdapter/LocalStorageAdapter.js", import.meta.url)),
+      'mirador-mltools-plugin-mmu': fileURLToPath(
+        new URL(
+          './node_modules/mirador-mltools-plugin-mmu/dist/mirador-mltools-plugin.es.js',
+          import.meta.url,
+        ),
+      ),
     },
     mainFields: ['module', 'jsnext:main', 'browser', 'main'],
   },

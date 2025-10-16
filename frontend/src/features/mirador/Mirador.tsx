@@ -17,7 +17,7 @@ import IState from './interface/IState.ts';
 import './style/mirador.css';
 import { Project } from '../projects/types/types.ts';
 import MMUAdapter from './adapter/MMUAdapter';
-import ManifestListTools from 'mirador-mltools-plugin-mmu/es/index.js';
+import ManifestListTools from 'mirador-mltools-plugin-mmu';
 import { User } from '../auth/types/types.ts';
 
 interface MiradorViewerHandle {
