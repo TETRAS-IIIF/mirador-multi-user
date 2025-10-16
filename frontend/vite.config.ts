@@ -23,23 +23,23 @@ export default defineConfig({
   build: {
     commonjsOptions: {
       transformMixedEsModules: true,
-      exclude: [/mirador-annotation-editor/], // prevent CJS plugin from touching it
+      exclude: [/mirador-annotation-editor/], // prevent CJS wrapper on ESM file
     },
   },
   optimizeDeps: {
-    exclude: ['mirador-annotation-editor'], // do not prebundle
+    exclude: ['mirador-annotation-editor'], // do not prebundle; load as-is
     esbuildOptions: { loader: { '.js': 'jsx' } },
   },
   resolve: {
     alias: {
-      // use the bundled build to avoid relative re-exports
+      // point to the file that actually exists
       'mirador-annotation-editor': fileURLToPath(
         new URL(
-          './node_modules/mirador-annotation-editor/dist/index.js',
+          './node_modules/mirador-annotation-editor/es/index.js',
           import.meta.url,
         ),
       ),
-      // keep your mltools alias from earlier
+      // keep mltools pointing to its only entry
       'mirador-mltools-plugin-mmu': fileURLToPath(
         new URL(
           './node_modules/mirador-mltools-plugin-mmu/dist/mirador-mltools-plugin.es.js',
