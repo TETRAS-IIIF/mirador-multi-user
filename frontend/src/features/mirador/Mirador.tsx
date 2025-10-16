@@ -5,20 +5,20 @@ import {
   useImperativeHandle,
   useRef,
   useState,
-} from "react";
-import Mirador from "mirador";
-import miradorAnnotationEditor from "mirador-annotation-editor/src/index.js";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
-import IMiradorState from "./interface/IState.ts";
-import IState from "./interface/IState.ts";
-import "./style/mirador.css";
-import { Project } from "../projects/types/types.ts";
-import MMUAdapter from "./adapter/MMUAdapter";
-import ManifestListTools from "mirador-mltools-plugin-mmu/es/index.js";
-import { User } from "../auth/types/types.ts";
+} from 'react';
+import Mirador from 'mirador';
+import miradorAnnotationEditor from 'mirador-annotation-editor';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import IMiradorState from './interface/IState.ts';
+import IState from './interface/IState.ts';
+import './style/mirador.css';
+import { Project } from '../projects/types/types.ts';
+import MMUAdapter from './adapter/MMUAdapter';
+import ManifestListTools from 'mirador-mltools-plugin-mmu/es/index.js';
+import { User } from '../auth/types/types.ts';
 
 interface MiradorViewerHandle {
   setViewer: () => IState;
@@ -85,7 +85,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
             tagsSuggestions: project.tags ?? [],
           },
           annotations: {
-            htmlSanitizationRuleSet: "liberal",
+            htmlSanitizationRuleSet: 'liberal',
           },
           workspace: {
             isWorkspaceAddVisible: true,
@@ -97,14 +97,14 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
             light: {
               typography: {
                 formSectionTitle: {
-                  color: "rgb(25, 103, 210);",
+                  color: 'rgb(25, 103, 210);',
                 },
               },
             },
             dark: {
               typography: {
                 formSectionTitle: {
-                  color: "rgb(25, 103, 210);",
+                  color: 'rgb(25, 103, 210);',
                 },
               },
             },
@@ -167,7 +167,8 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
       <div
         ref={viewerRef}
         id="mirador"
-        style={{ height: "100%", padding: 0, margin: 0, overflow: "hidden" }}></div>
+        style={{ height: '100%', padding: 0, margin: 0, overflow: 'hidden' }}
+      ></div>
     );
   },
 );
