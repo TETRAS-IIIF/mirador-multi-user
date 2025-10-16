@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 import Mirador from 'mirador';
-import miradorAnnotationEditor from 'mirador-annotation-editor';
+import annotationPlugins from 'mirador-annotation-editor';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -116,7 +116,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
         if (!miradorViewer) {
           if (useEditionPlugins) {
             loadingMiradorViewer = Mirador.viewer(config, [
-              ...miradorAnnotationEditor,
+              ...annotationPlugins,
               ...ManifestListTools,
             ]);
           } else {
