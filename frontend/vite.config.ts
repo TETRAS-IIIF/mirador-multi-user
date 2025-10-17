@@ -29,6 +29,7 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['mirador-annotation-editor'], // do not prebundle; load as-is
     esbuildOptions: { loader: { '.js': 'jsx' } },
+    include: ['prop-types'],
   },
   resolve: {
     alias: {
@@ -46,6 +47,7 @@ export default defineConfig({
           import.meta.url,
         ),
       ),
+      'prop-types': 'prop-types/index.js',
     },
     mainFields: ['module', 'jsnext:main', 'browser', 'main'],
   },
