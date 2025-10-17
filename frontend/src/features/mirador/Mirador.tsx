@@ -18,6 +18,7 @@ import { Project } from '../projects/types/types.ts';
 import MMUAdapter from './adapter/MMUAdapter';
 import ManifestListTools from 'mirador-mltools-plugin-mmu';
 import { User } from '../auth/types/types.ts';
+import annotationPlugins from 'mirador-annotation-editor';
 
 interface MiradorViewerHandle {
   setViewer: () => IState;
@@ -113,6 +114,8 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
         let loadingMiradorViewer;
         // First displaying of the viewer
         if (!miradorViewer) {
+          console.debug(annotationPlugins);
+          console.debug(ManifestListTools);
           if (useEditionPlugins) {
             loadingMiradorViewer = Mirador.viewer(config, [
               ...ManifestListTools,
