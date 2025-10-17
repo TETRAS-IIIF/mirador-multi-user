@@ -11,14 +11,10 @@ declare module 'mirador/*' {
 }
 
 declare module 'mirador-annotation-editor' {
-  export const miradorAnnotationPlugin: any;
-  export const externalStorageAnnotationPlugin: any;
-  export const canvasAnnotationsPlugin: any;
-  export const annotationCreationCompanionWindowPlugin: any;
-  export const windowSideBarButtonsPlugin: any;
-  const annotationPlugins: any[]; // default export
-  export default annotationPlugins;
+  const _default: any;
+  export default _default;
 }
+
 declare module 'mirador-annotation-editor/*' {
   const _default: any;
   export default _default;

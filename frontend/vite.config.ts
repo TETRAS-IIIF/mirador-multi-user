@@ -35,7 +35,7 @@ export default defineConfig({
       // point to the file that actually exists
       'mirador-annotation-editor': fileURLToPath(
         new URL(
-          './node_modules/mirador-annotation-editor/es/index.js',
+          './node_modules/mirador-annotation-editor/dist/mirador-annotation-editor.es.js',
           import.meta.url,
         ),
       ),
