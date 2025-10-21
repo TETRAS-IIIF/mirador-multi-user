@@ -39,7 +39,8 @@ export const RenderInput = ({ setting, handleChange }: IRenderInputProps) => {
               <InputAdornment position="end">{t('mb')}</InputAdornment>
             ),
           }}
-          inputProps={{ min: 1 }}/>
+          inputProps={{ min: 1 }}
+        />
       </Tooltip>
     );
   }
@@ -52,9 +53,11 @@ export const RenderInput = ({ setting, handleChange }: IRenderInputProps) => {
               checked={setting.value === 'true'}
               onChange={(e) =>
                 handleChange(setting.id, e.target.checked.toString())
-              }/>
+              }
+            />
           }
-          label={label}/>
+          label={label}
+        />
       </Tooltip>
     );
   }
@@ -64,7 +67,8 @@ export const RenderInput = ({ setting, handleChange }: IRenderInputProps) => {
         fullWidth
         label={label}
         value={setting.value}
-        onChange={(e) => handleChange(setting.id, e.target.value)}/>
+        onChange={(e) => handleChange(setting.id, e.target.value)}
+      />
     </Tooltip>
   );
 };
