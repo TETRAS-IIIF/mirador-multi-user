@@ -10,16 +10,6 @@ declare module 'mirador/*' {
   export default _default;
 }
 
-declare module 'mirador-annotation-editor' {
-  const _default: any;
-  export default _default;
-}
-
-declare module 'mirador-annotation-editor/*' {
-  const _default: any;
-  export default _default;
-}
-
 declare module 'mirador-mltools-plugin-mmu' {
   const _default: any;
   export default _default;

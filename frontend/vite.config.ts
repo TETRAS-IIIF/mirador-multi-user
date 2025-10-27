@@ -1,4 +1,3 @@
-// vite.config.ts
 import { defineConfig, transformWithEsbuild } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -10,7 +9,7 @@ export default defineConfig({
     {
       name: 'treat-js-files-as-jsx',
       async transform(code, id) {
-        if (!id.match(/src\/.*\.js$/)) return null;
+        if (!/\/src\/.*\.js$/.test(id)) return null;
         return transformWithEsbuild(code, id, {
           loader: 'jsx',
           jsx: 'automatic',
@@ -20,27 +19,8 @@ export default defineConfig({
     tsconfigPaths(),
     react(),
   ],
-  build: {
-    commonjsOptions: {
-      transformMixedEsModules: true,
-      exclude: [/mirador-annotation-editor/], // prevent CJS wrapper on ESM file
-    },
-  },
-  optimizeDeps: {
-    exclude: ['mirador-annotation-editor'], // do not prebundle; load as-is
-    esbuildOptions: { loader: { '.js': 'jsx' } },
-    include: ['prop-types'],
-  },
   resolve: {
     alias: {
-      // point to the file that actually exists
-      'mirador-annotation-editor': fileURLToPath(
-        new URL(
-          './node_modules/mirador-annotation-editor/dist/mirador-annotation-editor.es.js',
-          import.meta.url,
-        ),
-      ),
-      // keep mltools pointing to its only entry
       'mirador-mltools-plugin-mmu': fileURLToPath(
         new URL(
           './node_modules/mirador-mltools-plugin-mmu/dist/mirador-mltools-plugin.es.js',
@@ -49,6 +29,24 @@ export default defineConfig({
       ),
       'prop-types': 'prop-types/index.js',
     },
+    dedupe: [
+      'react',
+      'react-dom',
+      '@mui/material',
+      '@emotion/react',
+      '@emotion/styled',
+    ],
     mainFields: ['module', 'jsnext:main', 'browser', 'main'],
+  },
+  optimizeDeps: {
+    include: ['react-is', 'hoist-non-react-statics', 'scheduler', 'prop-types'],
+    esbuildOptions: {},
+    exclude: ['mirador-annotation-editor'],
+  },
+  build: {
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true,
+    },
   },
 });

@@ -1,13 +1,4 @@
-// MiradorViewer.tsx
-import {
-  Dispatch,
-  forwardRef,
-  useEffect,
-  useId,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { Dispatch, forwardRef, useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
 import Mirador from 'mirador';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -20,7 +11,7 @@ import type { Project } from '../projects/types/types';
 import type { User } from '../auth/types/types';
 import MMUAdapter from './adapter/MMUAdapter';
 import ManifestListTools from 'mirador-mltools-plugin-mmu';
-import annotationPlugins from 'mirador-annotation-editor';
+import editorPlugins from 'mirador-annotation-editor';
 
 export type MiradorViewerHandle = {
   setViewer: () => IState;
@@ -109,7 +100,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
       };
 
       const plugins = useEditionPlugins
-        ? [...ManifestListTools, annotationPlugins]
+        ? [...ManifestListTools, editorPlugins]
         : undefined;
       const viewer = plugins
         ? Mirador.viewer(baseConfig, plugins)
