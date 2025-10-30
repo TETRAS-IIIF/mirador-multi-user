@@ -660,10 +660,8 @@ export const MMUModalEdit = <
               <Grid
                 container
                 sx={{
-                  minHeight: '55px',
                   height: '100%',
                   overflowY: 'auto',
-                  border: 'solid blue',
                 }}
               >
                 <ItemList

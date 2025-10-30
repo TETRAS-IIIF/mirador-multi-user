@@ -110,13 +110,13 @@ export const MetadataForm = <T extends { id: number }>({
   return (
     <Grid
       container
-     
       sx={{
         overflowY: 'auto',
-      }}>
+      }}
+    >
       {loading ? (
         <Grid container alignItems="center" justifyContent="center">
-          <CircularProgress/>
+          <CircularProgress />
         </Grid>
       ) : (
         <Box
@@ -124,7 +124,8 @@ export const MetadataForm = <T extends { id: number }>({
             overflowY: 'auto',
             width: '100%',
             height: '100%',
-          }}>
+          }}
+        >
           <Box sx={{ minWidth: 120, paddingTop: 2, paddingBottom: 2 }}>
             <FormControl sx={{ width: '90%' }}>
               <InputLabel id="metadata-format-label">Format</InputLabel>
@@ -134,20 +135,23 @@ export const MetadataForm = <T extends { id: number }>({
                   selectedMetadataFormat ? selectedMetadataFormat.title : ''
                 }
                 label="Format"
-                onChange={handleFormatChange}>
+                onChange={handleFormatChange}
+              >
                 <MenuItem value="upload">
                   ... Upload new metadata template
                 </MenuItem>
                 <MenuItem
                   value="download-example"
-                  onClick={handleExampleMetadata}>
+                  onClick={handleExampleMetadata}
+                >
                   ... Download metadata templates example
                 </MenuItem>
                 {metadataFormats.map((metadataFormat) => (
                   <MenuItem
                     divider={true}
                     key={metadataFormat.id}
-                    value={metadataFormat.title}>
+                    value={metadataFormat.title}
+                  >
                     {metadataFormat.title}
                   </MenuItem>
                 ))}
@@ -157,15 +161,16 @@ export const MetadataForm = <T extends { id: number }>({
                 ref={fileInputRef}
                 hidden
                 onChange={handleFileChange}
-                accept="application/json"/>
+                accept="application/json"
+              />
             </FormControl>
-            <Divider sx={{ paddingBottom: 2 }}/>
+            <Divider sx={{ paddingBottom: 2 }} />
           </Box>
           {selectedMetadataData && selectedMetadataFormat ? (
             <form style={{ width: '100%' }}>
               {generatingFields ? (
                 <Grid container alignItems="center" justifyContent="center">
-                  <CircularProgress/>
+                  <CircularProgress />
                 </Grid>
               ) : (
                 <Grid container spacing={2}>
@@ -180,7 +185,8 @@ export const MetadataForm = <T extends { id: number }>({
                             field.term
                           ] as unknown as string) || ''
                         }
-                        handleInputChange={handleInputChange}/>
+                        handleInputChange={handleInputChange}
+                      />
                     ))}
                 </Grid>
               )}
