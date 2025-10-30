@@ -33,7 +33,8 @@ export const ItemList = <
     id: number;
     ownerId?: number;
     personalOwnerGroupId?: number;
-  },>({
+  },
+>({
   children,
   getGroupByOption,
   handleAddAccessListItem,
@@ -71,12 +72,13 @@ export const ItemList = <
   return (
     <Grid
       container
-     
       sx={{
         minHeight: '55px',
         overflowY: 'auto',
+        border: 'solid red',
       }}
-      spacing={2}>
+      spacing={2}
+    >
       <Grid container alignItems="center" spacing={2}>
         <Grid>
           <Typography variant="h5">{t('Permissions')}</Typography>
@@ -85,9 +87,9 @@ export const ItemList = <
           <MMUToolTip>
             <div>
               {t('MMUTooltipAdmin')}
-              <br/>
+              <br />
               {t('MMUTooltipEditor')}
-              <br/>
+              <br />
               {t('MMUTooltipReader')}
             </div>
           </MMUToolTip>
@@ -102,7 +104,8 @@ export const ItemList = <
           fetchFunction={handleSearchModalEditItem}
           setSearchInput={setSearchInput}
           actionButtonLabel={t('add')}
-          groupByOption={getGroupByOption}/>
+          groupByOption={getGroupByOption}
+        />
       </Grid>
       <Grid>
         <MMUToolTip>
@@ -114,28 +117,28 @@ export const ItemList = <
           listItem ? (
             <Grid
               key={listItem.id}
-             
               container
               spacing={1}
               flexDirection="row"
               alignItems="center"
-              justifyContent="spaceBetween">
+              justifyContent="spaceBetween"
+            >
               <Grid
-               
                 container
                 columns={8}
                 alignItems="center"
                 spacing={2}
-                justifyContent="space-between">
+                justifyContent="space-between"
+              >
                 <Grid>
                   <Typography>{listItem.title}</Typography>
                 </Grid>
               </Grid>
               <Grid>
-                {listItem.type === UserGroupTypes.PERSONAL && <PersonIcon/>}
-                {listItem.type === UserGroupTypes.MULTI_USER && <GroupsIcon/>}
+                {listItem.type === UserGroupTypes.PERSONAL && <PersonIcon />}
+                {listItem.type === UserGroupTypes.MULTI_USER && <GroupsIcon />}
                 {listItem.type !== UserGroupTypes.PERSONAL &&
-                  listItem.type !== UserGroupTypes.MULTI_USER && <PersonIcon/>}
+                  listItem.type !== UserGroupTypes.MULTI_USER && <PersonIcon />}
               </Grid>
               {isActionAllowedForListItem(listItem) && (
                 <>
@@ -148,18 +151,19 @@ export const ItemList = <
                       disabled={
                         listItem.personalOwnerGroupId === ownerId &&
                         listItem.type !== UserGroupTypes.MULTI_USER
-                      }>
-                      <DeleteIcon/>
+                      }
+                    >
+                      <DeleteIcon />
                     </IconButton>
                   </Grid>
                 </>
               )}
               <Grid sx={{ mb: '5px' }} size={12}>
-                <Divider/>
+                <Divider />
               </Grid>
             </Grid>
           ) : (
-            <LoadingSpinner/>
+            <LoadingSpinner />
           ),
         )}
       </Grid>
