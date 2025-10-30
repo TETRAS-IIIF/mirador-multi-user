@@ -1,4 +1,4 @@
-import { Dispatch, forwardRef, useEffect, useId, useImperativeHandle, useRef, useState } from 'react';
+import { Dispatch, forwardRef, useEffect, useId, useImperativeHandle, useRef, useState, } from 'react';
 import Mirador from 'mirador';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -89,14 +89,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
         workspace: { isWorkspaceAddVisible: true, removeResourceButton: true },
         language,
         projectId: project.id,
-        themes: {
-          light: {
-            typography: { formSectionTitle: { color: 'rgb(25, 103, 210);' } },
-          },
-          dark: {
-            typography: { formSectionTitle: { color: 'rgb(25, 103, 210);' } },
-          },
-        },
       };
 
       const plugins = useEditionPlugins
