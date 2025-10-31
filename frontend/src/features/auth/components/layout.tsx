@@ -1,9 +1,9 @@
-import { Grid, Typography } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { NavLink } from "react-router-dom";
-import { ReactNode } from "react";
-import storage from "../../../utils/storage.ts";
-import { TermsFooter } from "../../../../customAssets/TermsFooter.tsx";
+import { Grid, Typography } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { NavLink } from 'react-router-dom';
+import { ReactNode } from 'react';
+import storage from '../../../utils/storage.ts';
+import { TermsFooter } from '../../../../customAssets/TermsFooter.tsx';
 
 type LayoutProps = {
   children: ReactNode;
@@ -16,25 +16,25 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
     <Grid
       container
       direction="column"
-      justifyContent="space-around"
-      alignItems="center"
       min-height="100vh"
       sx={{
-        height: "100vh",
-      }}>
+        height: '100vh',
+      }}
+    >
       <Grid
-       
         container
         direction="row"
         justifyContent="space-around"
-        alignItems="center">
+        alignItems="center"
+      >
         <Grid>
           <NavLink
             to="/"
             onClick={() => {
               storage.clearToken();
-            }}>
-            <ArrowBackIcon/>
+            }}
+          >
+            <ArrowBackIcon />
           </NavLink>
         </Grid>
         <Grid>
@@ -45,16 +45,16 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
         {rightButton ? rightButton : <Grid></Grid>}
       </Grid>
       <Grid
-       
         container
         direction="column"
         justifyContent="center"
         alignItems="center"
-        minHeight="80vh">
+        minHeight="80vh"
+      >
         {children}
       </Grid>
-      <Grid container sx={{ width: "100%" }}>
-        <TermsFooter/>
+      <Grid container sx={{ width: '100%' }}>
+        <TermsFooter />
       </Grid>
     </Grid>
   );
