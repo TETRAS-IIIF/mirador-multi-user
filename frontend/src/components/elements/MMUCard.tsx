@@ -1,31 +1,12 @@
-import {
-  Card,
-  CardActions,
-  SelectChangeEvent,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Card, CardActions, SelectChangeEvent, Tooltip, Typography, } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { MMUModal } from './modal.tsx';
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useState,
-} from 'react';
+import { Dispatch, ReactNode, SetStateAction, useCallback, useState, } from 'react';
 import { MMUModalEdit } from './MMUModalEdit.tsx';
 import { ListItem } from '../types.ts';
 import { ItemsRights } from '../../features/user-group/types/types.ts';
-import {
-  MediaGroupRights,
-  mediaOrigin,
-  MediaTypes,
-} from '../../features/media/types/types.ts';
-import {
-  ManifestGroupRights,
-  manifestOrigin,
-} from '../../features/manifest/types/types.ts';
+import { MediaGroupRights, mediaOrigin, MediaTypes, } from '../../features/media/types/types.ts';
+import { ManifestGroupRights, manifestOrigin, } from '../../features/manifest/types/types.ts';
 import dayjs, { Dayjs } from 'dayjs';
 import { ObjectTypes } from '../../features/tag/type.ts';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
@@ -317,7 +298,7 @@ const MMUCard = <
 
         <Grid alignSelf="center">
           <CardActions sx={{ p: 1 }}>
-            <Grid container wrap="nowrap" spacing={1}>
+            <Grid container wrap="nowrap" spacing={2}>
               {Boolean(id) && (
                 <Grid display="flex" alignItems="center">
                   {rights === ItemsRights.READER ? (

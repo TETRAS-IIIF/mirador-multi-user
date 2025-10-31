@@ -75,7 +75,7 @@ export const MediaCard = ({
       objectTypes={ObjectTypes.MEDIA}
       AddAccessListItemFunction={handleGrantAccess}
       DefaultButton={
-        <Grid container spacing={1} flexDirection={'row'} wrap="nowrap">
+        <Grid container spacing={2} flexDirection={'row'} wrap="nowrap">
           <Grid>
             <ModalButton
               tooltipButton={t('tooltipMediaLink')}
@@ -88,7 +88,8 @@ export const MediaCard = ({
                   : () => HandleCopyToClipBoard(media.url)
               }
               disabled={false}
-              icon={<ContentCopyIcon/>}/>
+              icon={<ContentCopyIcon />}
+            />
           </Grid>
           <Grid>
             <ModalButton
@@ -103,7 +104,8 @@ export const MediaCard = ({
                   : () => window.open(media.url, '_blank')
               }
               disabled={false}
-              icon={<OpenInNewIcon/>}/>
+              icon={<OpenInNewIcon />}
+            />
           </Grid>
         </Grid>
       }
@@ -111,8 +113,9 @@ export const MediaCard = ({
         <ModalButton
           tooltipButton={t('editMedia')}
           onClickFunction={() => HandleOpenModal(media.id)}
-          icon={<ModeEditIcon/>}
-          disabled={false}/>
+          icon={<ModeEditIcon />}
+          disabled={false}
+        />
       }
       HandleOpenModal={() => HandleOpenModal(media.id)}
       deleteItem={() => HandleDeleteMedia(media.id)}
@@ -140,6 +143,7 @@ export const MediaCard = ({
           media.share ? media.share : undefined,
         )
       }
-      thumbnailUrl={media.thumbnailUrl ? media.thumbnailUrl : placeholder}/>
+      thumbnailUrl={media.thumbnailUrl ? media.thumbnailUrl : placeholder}
+    />
   );
 };
