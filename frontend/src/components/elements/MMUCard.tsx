@@ -1,15 +1,15 @@
 import {
   Card,
   CardActions,
-  Grid,
   SelectChangeEvent,
   Tooltip,
   Typography,
 } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { MMUModal } from './modal.tsx';
 import {
   Dispatch,
-  ReactElement,
+  ReactNode,
   SetStateAction,
   useCallback,
   useState,
@@ -51,8 +51,8 @@ interface IMMUCardProps<T, X> {
   description: string;
   HandleOpenModal: () => void;
   openModal: boolean;
-  DefaultButton?: ReactElement;
-  EditorButton?: ReactElement;
+  DefaultButton?: ReactNode;
+  EditorButton?: ReactNode;
   itemLabel: string;
   handleSelectorChange?: (
     itemList: ListItem,
@@ -103,7 +103,8 @@ const MMUCard = <
     title?: string;
     updated_at: Dayjs;
   },
-  X extends { id: number },>({
+  X extends { id: number },
+>({
   AddAccessListItemFunction,
   DefaultButton,
   EditorButton,
@@ -141,9 +142,8 @@ const MMUCard = <
   const { t, i18n } = useTranslation();
 
   const fetchData = useCallback(async () => {
-    let list;
     if (getAccessToItem && setItemList) {
-      list = await getAccessToItem(item.id);
+      const list = await getAccessToItem(item.id);
       setItemList(list);
     }
   }, [getAccessToItem, item.id, setItemList]);
@@ -163,7 +163,7 @@ const MMUCard = <
   };
 
   const handleChangeSelectedItem =
-    (itemSelected: ListItem) => async (event: SelectChangeEvent) => {
+    (itemSelected: ListItem) => async (event: SelectChangeEvent<string>) => {
       if (handleSelectorChange) {
         await handleSelectorChange(
           itemSelected,
@@ -173,33 +173,29 @@ const MMUCard = <
         );
       }
     };
+
   const handleConfirmRemoveFromListModal = () => {
-    setOpenRemoveItemFromListModal(!openRemoveItemFromListModal);
+    setOpenRemoveItemFromListModal((prev) => !prev);
   };
 
   return (
     <Card>
       <Grid
         container
-       
-        flexDirection="row"
         wrap="nowrap"
         justifyContent="space-between"
-        sx={{ minHeight: '120px' }}>
+        sx={{ minHeight: 120 }}
+      >
         <Grid
-         
           container
-          flexDirection="row"
           alignItems="center"
           justifyContent="flex-start"
-          spacing={2}>
-          <Grid
-            size={{
-              xs: 12,
-              sm: 1
-            }}>
+          spacing={2}
+          size={12}
+        >
+          <Grid size={{ xs: 4, sm: 1 }}>
             {isLoading ? (
-              <LoadingSpinner/>
+              <LoadingSpinner />
             ) : (
               <img
                 src={
@@ -212,59 +208,56 @@ const MMUCard = <
                   height: 100,
                   width: 100,
                   objectFit: 'contain',
-                  marginLeft: '10px',
-                }}/>
+                  marginLeft: 10,
+                }}
+                loading="lazy"
+                decoding="async"
+              />
             )}
           </Grid>
+
           <Grid
-            size={{
-              xs: 12,
-              sm: 1
-            }}>
-            {item.origin === manifestOrigin.LINK && <LinkIcon/>}
-            {item.origin === manifestOrigin.UPLOAD && <UploadFileIcon/>}
-            {item.origin === manifestOrigin.CREATE && <CreateIcon/>}
+            size={{ xs: 1, sm: 1 }}
+            display="flex"
+            alignItems="center"
+            gap={0.5}
+          >
+            {item.origin === manifestOrigin.LINK && (
+              <LinkIcon fontSize="small" />
+            )}
+            {item.origin === manifestOrigin.UPLOAD && (
+              <UploadFileIcon fontSize="small" />
+            )}
+            {item.origin === manifestOrigin.CREATE && (
+              <CreateIcon fontSize="small" />
+            )}
             {item.shared && (
               <Tooltip title={t('shared')}>
-                <ShareIcon/>
+                <ShareIcon fontSize="small" />
               </Tooltip>
             )}
           </Grid>
+
           {objectTypes === ObjectTypes.MEDIA &&
             item.mediaTypes === MediaTypes.VIDEO && (
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 1
-                }}>
-                <OndemandVideoIcon/>
+              <Grid size={{ xs: 12, sm: 1 }}>
+                <OndemandVideoIcon />
               </Grid>
             )}
           {objectTypes === ObjectTypes.MEDIA &&
             item.mediaTypes === MediaTypes.IMAGE && (
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 1
-                }}>
-                <ImageIcon/>
+              <Grid size={{ xs: 12, sm: 1 }}>
+                <ImageIcon />
               </Grid>
             )}
           {objectTypes === ObjectTypes.MEDIA &&
             item.mediaTypes === MediaTypes.OTHER && (
-              <Grid
-                size={{
-                  xs: 12,
-                  sm: 1
-                }}>
-                <DescriptionIcon/>
+              <Grid size={{ xs: 12, sm: 1 }}>
+                <DescriptionIcon />
               </Grid>
             )}
-          <Grid
-            size={{
-              xs: 12,
-              sm: 3
-            }}>
+
+          <Grid size={{ xs: 4, sm: 3 }}>
             <Tooltip title={itemLabel} placement="bottom-start">
               <Typography
                 variant="subtitle1"
@@ -272,17 +265,15 @@ const MMUCard = <
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
-                  maxWidth: '400px',
-                }}>
+                  maxWidth: 400,
+                }}
+              >
                 {itemLabel}
               </Typography>
             </Tooltip>
           </Grid>
-          <Grid
-            size={{
-              xs: 12,
-              sm: 3
-            }}>
+
+          <Grid size={{ xs: 3, sm: 3 }}>
             <Tooltip title={description}>
               <Typography
                 variant="subtitle1"
@@ -290,31 +281,31 @@ const MMUCard = <
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
-                  maxWidth: '400px',
-                }}>
+                  maxWidth: 400,
+                }}
+              >
                 {description}
               </Typography>
             </Tooltip>
           </Grid>
-          <Grid
-            size={{
-              xs: 12,
-              sm: 1
-            }}>
+
+          <Grid size={{ xs: 12, sm: 1 }}>
             {item.updated_at && (
               <Tooltip
                 title={dayjs(item.updated_at)
                   .locale(i18n.language)
                   .format('LLLL')
-                  .toString()}>
+                  .toString()}
+              >
                 <Typography
                   variant="subtitle1"
                   sx={{
                     textOverflow: 'ellipsis',
                     overflow: 'hidden',
                     whiteSpace: 'nowrap',
-                    maxWidth: '200px',
-                  }}>
+                    maxWidth: 200,
+                  }}
+                >
                   {dayjs(item.updated_at)
                     .locale(i18n.language)
                     .format('ddd, D MMM')}
@@ -323,17 +314,19 @@ const MMUCard = <
             )}
           </Grid>
         </Grid>
+
         <Grid alignSelf="center">
-          <CardActions sx={{ padding: 1 }}>
-            <Grid container flexDirection="row" wrap="nowrap" spacing={1}>
+          <CardActions sx={{ p: 2 }}>
+            <Grid container wrap="nowrap" spacing={2}>
               {Boolean(id) && (
-                <Grid alignContent={'center'}>
+                <Grid display="flex" alignItems="center">
                   {rights === ItemsRights.READER ? (
                     <ModalButton
                       tooltipButton={t('removeProjectFromList')}
                       onClickFunction={handleConfirmRemoveFromListModal}
-                      icon={<CancelIcon/>}
-                      disabled={false}/>
+                      icon={<CancelIcon />}
+                      disabled={false}
+                    />
                   ) : (
                     EditorButton
                   )}
@@ -342,45 +335,49 @@ const MMUCard = <
               {DefaultButton && <Grid>{DefaultButton}</Grid>}
             </Grid>
           </CardActions>
+
           <MMUModal
             width={1000}
             openModal={openModal}
             setOpenModal={HandleOpenModal}
-            children={
-              <MMUModalEdit
-                fetchItems={fetchItems}
-                objectTypes={objectTypes}
-                isGroups={isGroups}
-                metadata={metadata ? metadata : undefined}
-                thumbnailUrl={thumbnailUrl as string}
-                HandleOpenModalEdit={HandleOpenModal}
-                description={description}
-                searchBarLabel={searchBarLabel ?? ''}
-                itemLabel={itemLabel}
-                handleSelectorChange={handleChangeSelectedItem}
-                fetchData={fetchData}
-                listOfItem={listOfItem}
-                deleteItem={deleteItem}
-                getOptionLabel={getOptionLabel}
-                getGroupByOption={getGroupByOption}
-                setSearchInput={setSearchInput}
-                handleAddAccessListItem={handleAddAccessListItem}
-                item={item}
-                searchInput={searchInput}
-                searchModalEditItem={searchModalEditItem}
-                setItemToAdd={setItemToAdd}
-                updateItem={updateItem}
-                rights={rights}
-                handleDeleteAccessListItem={handleRemoveAccessListItem}
-                duplicateItem={duplicateItem}
-                ownerId={ownerId}/>
-            }/>
+          >
+            <MMUModalEdit
+              fetchItems={fetchItems}
+              objectTypes={objectTypes}
+              isGroups={isGroups}
+              metadata={metadata || undefined}
+              thumbnailUrl={thumbnailUrl as string}
+              HandleOpenModalEdit={HandleOpenModal}
+              description={description}
+              searchBarLabel={searchBarLabel ?? ''}
+              itemLabel={itemLabel}
+              handleSelectorChange={handleChangeSelectedItem}
+              fetchData={fetchData}
+              listOfItem={listOfItem}
+              deleteItem={deleteItem}
+              getOptionLabel={getOptionLabel}
+              getGroupByOption={getGroupByOption}
+              setSearchInput={setSearchInput}
+              handleAddAccessListItem={handleAddAccessListItem}
+              item={item}
+              searchInput={searchInput}
+              searchModalEditItem={searchModalEditItem}
+              setItemToAdd={setItemToAdd}
+              updateItem={updateItem}
+              rights={rights}
+              handleDeleteAccessListItem={handleRemoveAccessListItem}
+              duplicateItem={duplicateItem}
+              ownerId={ownerId}
+            />
+          </MMUModal>
         </Grid>
       </Grid>
+
       <MMUModal
         width={400}
         openModal={openRemoveItemFromListModal}
-        setOpenModal={handleConfirmRemoveFromListModal}>
+        setOpenModal={handleConfirmRemoveFromListModal}
+      >
         <ModalConfirmDelete
           deleteItem={handleRemoveFromList!}
           itemId={item.id}
@@ -388,7 +385,8 @@ const MMUCard = <
           content={t('confirm_remove_item_from_list', {
             itemName: item.title ?? 'item',
           })}
-          buttonLabel={t('deleteDefinitely')}/>
+          buttonLabel={t('deleteDefinitely')}
+        />
       </MMUModal>
     </Card>
   );

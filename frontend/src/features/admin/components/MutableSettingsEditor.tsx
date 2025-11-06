@@ -11,8 +11,12 @@ interface IMutableSettingsEditorProps {
   settings: Setting[];
 }
 
-export const MutableSettingsEditor = ({ settings }: IMutableSettingsEditorProps) => {
-  const [editableSettings, setEditableSettings] = useState<Setting[]>([...settings]);
+export const MutableSettingsEditor = ({
+  settings,
+}: IMutableSettingsEditorProps) => {
+  const [editableSettings, setEditableSettings] = useState<Setting[]>([
+    ...settings,
+  ]);
   const queryClient = useQueryClient();
 
   const { t } = useTranslation();
@@ -23,7 +27,7 @@ export const MutableSettingsEditor = ({ settings }: IMutableSettingsEditorProps)
   };
 
   const handleChange = async (id: number, newValue: string) => {
-    const settingToUpdate = editableSettings.find(s => s.id === id);
+    const settingToUpdate = editableSettings.find((s) => s.id === id);
     if (!settingToUpdate) return;
 
     await fetchBackendAPIConnected(
@@ -39,39 +43,35 @@ export const MutableSettingsEditor = ({ settings }: IMutableSettingsEditorProps)
         }),
       },
       () => {
-        toast.success(
-          t('setting_updated'),
-        )
-        handleRefreshSettings()
+        toast.success(t('setting_updated'));
+        handleRefreshSettings();
       },
       () => {
-        toast.error(
-          t('error_update_settings'),
-        )
+        toast.error(t('error_update_settings'));
       },
-    )
+    );
 
-    setEditableSettings(prev =>
-      prev.map(setting =>
+    setEditableSettings((prev) =>
+      prev.map((setting) =>
         setting.id === id ? { ...setting, value: newValue } : setting,
       ),
     );
   };
 
   return (
-    <Grid container sx={{ p: 3 }}>
+    <Grid container direction={'column'} sx={{ p: 3 }}>
       <Grid>
         <Typography variant="h6" gutterBottom>
           Mutable Settings
         </Typography>
       </Grid>
-      <Grid container flexDirection="column" spacing={2}>
-        {editableSettings.map(setting => (
+      <Grid container direction="column" spacing={2}>
+        {editableSettings.map((setting) => (
           <Grid key={setting.id}>
-            <RenderInput setting={setting} handleChange={handleChange}/>
+            <RenderInput setting={setting} handleChange={handleChange} />
           </Grid>
         ))}
       </Grid>
     </Grid>
   );
-}
+};

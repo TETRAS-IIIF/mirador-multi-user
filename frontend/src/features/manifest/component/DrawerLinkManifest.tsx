@@ -1,13 +1,4 @@
-import {
-  AppBar,
-  Button,
-  Drawer,
-  Grid,
-  Paper,
-  TextField,
-  Toolbar,
-  Typography,
-} from '@mui/material';
+import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography, } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, FormEvent, useCallback, useRef, useState } from 'react';
 import { LoadingButton } from '@mui/lab';
@@ -69,7 +60,8 @@ export const DrawerLinkManifest = ({
       onClose={handleToggleModalGroupCreation}
       ModalProps={{
         onAnimationEnd: handleDrawerTransition,
-      }}>
+      }}
+    >
       <Paper
         sx={{
           left: '0',
@@ -79,11 +71,12 @@ export const DrawerLinkManifest = ({
           paddingRight: { sm: 3, xs: 2 },
           paddingTop: 2,
           right: '0',
-        }}>
+        }}
+      >
         <AppBar position="absolute" color="primary" enableColorOnDark>
           <Toolbar variant="dense">
             <Button color="inherit" onClick={toggleModalManifestCreation}>
-              <ExpandMoreIcon/>
+              <ExpandMoreIcon />
             </Button>
             <Typography>{t('linkManifest')}</Typography>
           </Toolbar>
@@ -95,13 +88,14 @@ export const DrawerLinkManifest = ({
             </Grid>
             <Grid sx={{ width: '70%' }}>
               <TextField
-                inputProps={{
-                  maxLength: 255,
+                slotProps={{
+                  htmlInput: { maxLength: 255 },
                 }}
                 inputRef={inputRef}
                 onChange={handleNameChange}
                 sx={{ width: '100%' }}
-                placeholder={t('validURLToManifest')}></TextField>
+                placeholder={t('validURLToManifest')}
+              ></TextField>
             </Grid>
             <Grid>
               <LoadingButton
@@ -109,7 +103,8 @@ export const DrawerLinkManifest = ({
                 variant="contained"
                 onClick={handleLinkingManifest}
                 loading={isPending}
-                disabled={!manifestLink}>
+                disabled={!manifestLink}
+              >
                 {t('linkManifest')}
               </LoadingButton>
             </Grid>
