@@ -5,6 +5,8 @@
 
   const params = new URLSearchParams(window.location.search);
   const mode = (params.get('mode') || 'panel').toLowerCase(); // 'panel' | 'full' | 'debug'
+  const selectedId = params.get('id');
+
   const enablePanel = mode === 'panel' || mode === 'full' || mode === 'debug';
   const enableCollapse = mode === 'full';
   const enableDebugBorders = mode === 'debug';
@@ -22,6 +24,7 @@
     textNoId.forEach(el => { el.style.border = '2px solid red'; });
   }
 
+  // ---- Build collapsible sections from headings (FULL mode) ----
   if (enableCollapse) {
     const headings = Array.from(document.querySelectorAll('h1,h2,h3,h4,h5,h6'));
     for (const h of headings) {
@@ -29,7 +32,7 @@
       const lvl = levelOf(h);
       const details = document.createElement('details');
       details.className = '__idnav_details__';
-      details.open = false;
+      details.open = false; // collapsed by default
 
       const summary = document.createElement('summary');
       while (h.firstChild) summary.appendChild(h.firstChild);
@@ -39,6 +42,7 @@
       summary.onmouseenter = () => (summary.style.background = '#eef2ff');
       summary.onmouseleave = () => (summary.style.background = 'transparent');
 
+      // Move heading id to the details wrapper to keep anchors working
       if (h.id) {
         details.id = h.id;
         h.removeAttribute('id');
@@ -59,6 +63,29 @@
       h.remove();
 
       if (content.childNodes.length) details.appendChild(content);
+    }
+
+    // If an id is provided: open only the section(s) that contain that element
+    if (selectedId) {
+      const target = document.getElementById(selectedId);
+      if (target) {
+        // Highlight selected element with light red background
+        target.style.backgroundColor = 'rgba(255, 0, 0, 0.12)';
+        target.style.transition = 'background-color 200ms ease-in-out';
+
+        // Open only ancestor sections; collapse the rest
+        const ancestorSet = new Set();
+        let p = target;
+        while (p && p !== document.body) {
+          if (p.tagName === 'DETAILS' && p.classList.contains('__idnav_details__')) ancestorSet.add(p);
+          p = p.parentElement;
+        }
+        const allDetails = Array.from(document.querySelectorAll('details.__idnav_details__'));
+        for (const d of allDetails) d.open = ancestorSet.has(d);
+
+        // Ensure visibility
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
   }
 
@@ -125,12 +152,46 @@
     const treeContainer = document.createElement('div');
     panel.appendChild(treeContainer);
 
-    function nodeRow(text, el) {
+    function makeCopyBtn(id) {
+      const btn = document.createElement('button');
+      btn.textContent = '📋';
+      btn.title = 'Copy link (full mode)';
+      Object.assign(btn.style, {
+        border: 'none',
+        background: 'transparent',
+        cursor: 'pointer',
+        fontSize: '12px',
+        padding: '0 4px',
+        lineHeight: '1',
+      });
+      btn.onclick = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const u = new URL(window.location.origin + window.location.pathname);
+        u.searchParams.set('mode', 'full');
+        u.searchParams.set('id', id);
+        navigator.clipboard?.writeText(u.toString());
+        btn.title = 'Copied';
+        setTimeout(() => (btn.title = 'Copy link (full mode)'), 1200);
+      };
+      return btn;
+    }
+
+    function nodeRow(text, el, idRaw) {
       const row = document.createElement('div');
-      row.textContent = text;
+      row.style.display = 'flex';
+      row.style.alignItems = 'center';
+      row.style.gap = '6px';
       row.style.cursor = 'pointer';
       row.style.padding = '2px 4px';
       row.style.borderRadius = '4px';
+
+      const label = document.createElement('span');
+      label.textContent = text;
+      row.appendChild(label);
+
+      if (idRaw) row.appendChild(makeCopyBtn(idRaw));
+
       row.onmouseenter = () => (row.style.background = '#eef2ff');
       row.onmouseleave = () => (row.style.background = 'transparent');
       row.onclick = () => {
@@ -144,17 +205,23 @@
 
     function buildDetailsNode(node) {
       const hasChildren = node.children && node.children.length > 0;
-      if (!hasChildren) return nodeRow(labelFor(node.el, node.id), node.el);
+      if (!hasChildren) return nodeRow(labelFor(node.el, node.id), node.el, node.id);
 
       const details = document.createElement('details');
       details.open = false;
       const summary = document.createElement('summary');
-      summary.textContent = labelFor(node.el, node.id);
       summary.style.cursor = 'pointer';
       summary.style.padding = '2px 4px';
       summary.style.borderRadius = '4px';
       summary.onmouseenter = () => (summary.style.background = '#eef2ff');
       summary.onmouseleave = () => (summary.style.background = 'transparent');
+
+      const wrap = document.createElement('span');
+      wrap.textContent = labelFor(node.el, node.id);
+      summary.appendChild(wrap);
+      const copyBtn = makeCopyBtn(node.id);
+      copyBtn.addEventListener('click', (e) => e.stopPropagation());
+      summary.appendChild(copyBtn);
       details.appendChild(summary);
 
       const inner = document.createElement('div');
