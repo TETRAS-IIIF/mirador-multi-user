@@ -102,7 +102,7 @@
   const idFreq = elsWithId.reduce((m, el) => (m[el.id] = (m[el.id] || 0) + 1, m), {});
 
   const normalizeSpaces = (s) => (s || '').replace(/\s+/g, ' ').trim();
-  const snippet = (s, n = 80) => {
+  const snippet = (s, n = 40) => {
     const t = normalizeSpaces(s);
     return t.length > n ? t.slice(0, n - 1) + '…' : t;
   };
@@ -112,13 +112,13 @@
       const text = sum ? sum.textContent : '';
       return {
         label: snippet(text || (el.id ? `#${el.id}` : '')),
-        tooltip: text // only text, hide HTML tags
+        tooltip: text
       };
     }
     const txt = el.textContent || '';
     return {
       label: snippet(txt || (el.id ? `#${el.id}` : '')),
-      tooltip: txt // only text, hide HTML tags
+      tooltip: txt
     };
   }
 
@@ -169,6 +169,7 @@
         background: 'transparent',
         cursor: 'pointer',
         fontSize: '12px',
+        flexShrink: '0',
         padding: '0 4px',
         lineHeight: '1',
       });
@@ -190,7 +191,7 @@
       const row = document.createElement('div');
       row.style.display = 'flex';
       row.style.alignItems = 'center';
-      row.style.gap = '6px';
+      row.style.justifyContent = 'space-between';
       row.style.cursor = 'pointer';
       row.style.padding = '2px 4px';
       row.style.borderRadius = '4px';
@@ -201,6 +202,8 @@
       labelEl.style.whiteSpace = 'nowrap';
       labelEl.style.overflow = 'hidden';
       labelEl.style.textOverflow = 'ellipsis';
+      labelEl.style.flex = '1';
+      labelEl.style.paddingRight = '18px'; // reserve space for icon
       row.appendChild(labelEl);
 
       if (idRaw) row.appendChild(makeCopyBtn(idRaw));
@@ -237,6 +240,8 @@
       wrap.style.whiteSpace = 'nowrap';
       wrap.style.overflow = 'hidden';
       wrap.style.textOverflow = 'ellipsis';
+      wrap.style.flex = '1';
+      wrap.style.paddingRight = '18px'; // reserve space for icon
       if (node.id === selectedId) {
         wrap.style.background = 'rgba(255,0,0,.3)';
         wrap.style.fontWeight = '700';
