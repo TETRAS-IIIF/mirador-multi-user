@@ -1,30 +1,13 @@
-import { Box, Button, ImageListItemBar, styled } from '@mui/material';
+import { Box,  ImageListItemBar } from '@mui/material';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import ImageIcon from '@mui/icons-material/Image';
 import { Media, MediaTypes } from '../types/types';
 import placeholder from '../../../assets/Placeholder.svg';
 import videoPlaceHolder from '../../../assets/video_placeholder.webp';
 import otherPlaceHolder from '../../../assets/other_placeholder.webp';
+import { GetMediaLinkForAnnotation } from './GetMediaLinkForAnnotation.tsx';
+import { CustomImageItem } from './CustomImageItem.tsx';
 
-const CustomImageItem = styled('div')({
-  position: 'relative',
-  '&:hover img': {
-    opacity: 0.4,
-  },
-  '&:hover .overlayButton': {
-    opacity: 1,
-  },
-});
-
-const CustomButton = styled(Button)({
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  textAlign: 'center',
-  opacity: 0,
-  transition: 'opacity 0.3s ease',
-});
 
 interface ImageBoxProps {
   media: Media;
@@ -37,6 +20,7 @@ export const MediaImageBox = ({
   caddyUrl,
   handleCopyToClipBoard,
 }: ImageBoxProps) => {
+
   const thumbnailUrl = (): string | undefined => {
     if (media.mediaTypes === MediaTypes.IMAGE) {
       return media.hash
@@ -94,18 +78,9 @@ export const MediaImageBox = ({
           <ImageIcon/>
         )}
       </Box>
-      <CustomButton
-        className="overlayButton"
-        disableRipple
-        onClick={() =>
-          handleCopyToClipBoard(
-            media.path
-              ? `${caddyUrl}/${media.hash}/${media.path}`
-              : `${media.url}`,
-          )
-        }>
-        Copy path to clipboard
-      </CustomButton>
+      <GetMediaLinkForAnnotation
+        media={media}
+        handleCopyToClipBoard={handleCopyToClipBoard}/>
     </CustomImageItem>
   );
 };

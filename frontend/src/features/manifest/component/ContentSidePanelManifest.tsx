@@ -24,15 +24,7 @@ import { isValidUrl } from '../../../utils/utils.ts';
 import placeholder from '../../../assets/Placeholder.svg';
 import { useLinkManifest } from '../hooks/useLinkManifest.ts';
 
-const CustomButton = styled(Button)({
-  position: 'absolute',
-  top: '40%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  textAlign: 'center',
-  opacity: 0,
-  transition: 'opacity 0.3s ease',
-});
+
 
 const StyledImageListItem = styled(ImageListItem)({
   position: 'relative',
@@ -159,7 +151,7 @@ export const ContentSidePanelManifest = ({
   return (
     <>
       <Grid
-       
+
         container
         spacing={1}
         sx={{ padding: '20px' }}
@@ -224,7 +216,7 @@ export const ContentSidePanelManifest = ({
         </ImageList>
       ) : (
         <Grid
-         
+
           container
           sx={{ minWidth: 400, padding: 1, width: 400, minHeight: 400 }}
           alignItems={'center'}

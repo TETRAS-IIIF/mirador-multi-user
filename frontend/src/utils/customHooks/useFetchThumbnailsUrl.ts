@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { manifestOrigin } from "../../features/manifest/types/types.ts";
 import placeholder from "../../assets/Placeholder.svg";
 import { Dayjs } from "dayjs";
-import { mediaOrigin, MediaTypes } from "../../features/media/types/types.ts";
+import { MEDIA_ORIGIN, MediaTypes } from "../../features/media/types/types.ts";
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 
@@ -11,7 +11,7 @@ interface IUseFetchThumbnailsUrlParams {
     id: number;
     created_at: Dayjs;
     mediaTypes?: MediaTypes;
-    origin?: manifestOrigin | mediaOrigin;
+    origin?: manifestOrigin | MEDIA_ORIGIN;
     snapShotHash?: string;
     title?: string;
     share?: string;

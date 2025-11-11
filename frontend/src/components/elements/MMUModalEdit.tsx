@@ -26,7 +26,7 @@ import { ListItem } from '../types.ts';
 import CancelIcon from '@mui/icons-material/Cancel';
 import {
   MediaGroupRights,
-  mediaOrigin,
+  MEDIA_ORIGIN,
 } from '../../features/media/types/types.ts';
 import {
   ManifestGroupRights,
@@ -122,7 +122,7 @@ export const MMUModalEdit = <
     hash?: string;
     id: number;
     noteTemplate?: Template[];
-    origin?: manifestOrigin | mediaOrigin;
+    origin?: manifestOrigin | MEDIA_ORIGIN;
     ownerId?: number;
     path?: string;
     personalOwnerGroupId?: number;

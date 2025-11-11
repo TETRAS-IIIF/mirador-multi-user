@@ -19,7 +19,7 @@ import { ListItem } from '../types.ts';
 import { ItemsRights } from '../../features/user-group/types/types.ts';
 import {
   MediaGroupRights,
-  mediaOrigin,
+  MEDIA_ORIGIN,
   MediaTypes,
 } from '../../features/media/types/types.ts';
 import {
@@ -94,7 +94,7 @@ const MMUCard = <
     created_at: Dayjs;
     id: number;
     mediaTypes?: MediaTypes;
-    origin?: manifestOrigin | mediaOrigin;
+    origin?: manifestOrigin | MEDIA_ORIGIN;
     path?: string;
     share?: string;
     shared?: boolean;

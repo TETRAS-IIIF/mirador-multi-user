@@ -13,7 +13,7 @@ export type LinkMediaDto = {
   url: string;
 };
 
-export enum mediaOrigin {
+export enum MEDIA_ORIGIN {
   UPLOAD = "upload",
   LINK = "link",
 }
@@ -25,7 +25,7 @@ export type Media = {
   id: number;
   idCreator: number;
   title: string;
-  origin: mediaOrigin;
+  origin: MEDIA_ORIGIN;
   path?: string;
   rights: MediaGroupRights;
   updated_at: Dayjs;
