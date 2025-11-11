@@ -62,3 +62,12 @@ export function isValidUrl(string: string) {
     /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
   return pattern.test(string);
 }
+
+export const caddyUrl = import.meta.env.VITE_CADDY_URL;
+
+export const MEDIA_TYPES_TABS = {
+  ALL: 0,
+  VIDEO: 1,
+  IMAGE: 2,
+  OTHER: 3,
+};

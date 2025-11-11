@@ -2,7 +2,6 @@ import {
   Button,
   Grid,
   ImageList,
-  styled,
   Tab,
   Tabs,
   Tooltip,
@@ -18,9 +17,7 @@ import {
 import toast from 'react-hot-toast';
 import { Media, MediaTypes } from '../types/types.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
-import { UserGroup } from '../../user-group/types/types.ts';
 import { createMedia } from '../api/createMedia.ts';
-import { User } from '../../auth/types/types.ts';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import { createMediaLink } from '../api/createMediaWithLink.ts';
@@ -30,18 +27,10 @@ import { useTranslation } from 'react-i18next';
 import { useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
 import { MediaImageBox } from './MediaImageBox.tsx';
 import { DrawerLinkMedia } from './DrawerLinkMedia.tsx';
-
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+import { UserGroup } from '../../user-group/types/types.ts';
+import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
+import { User } from '../../auth/types/types.ts';
+import { caddyUrl, MEDIA_TYPES_TABS } from '../../../utils/utils.ts';
 
 interface PopUpMediaProps {
   medias: Media[];
@@ -50,15 +39,6 @@ interface PopUpMediaProps {
   fetchMediaForUser: () => void;
   open: boolean;
 }
-
-const caddyUrl = import.meta.env.VITE_CADDY_URL;
-
-const MEDIA_TYPES_TABS = {
-  ALL: 0,
-  VIDEO: 1,
-  IMAGE: 2,
-  OTHER: 3,
-};
 
 export const ContentSidePanelMedia = ({
   medias,
