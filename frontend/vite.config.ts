@@ -49,4 +49,7 @@ export default defineConfig({
       transformMixedEsModules: true,
     },
   },
+  server: {
+    port: 4000,
+  }
 });
