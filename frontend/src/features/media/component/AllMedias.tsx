@@ -2,7 +2,6 @@ import {
   Box,
   Grid,
   IconButton,
-  styled,
   Tab,
   Tabs,
   Tooltip,
@@ -51,9 +50,11 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { removeMediaFromList } from '../api/removeManifestFromList.ts';
 import { MediaFooter } from '../../../../customAssets/MediaFooter.tsx';
 import {
+  caddyUrl,
   getSettingValue,
   isFileSizeOverLimit,
   isValidFileForUpload,
+  MEDIA_TYPES_TABS,
   SettingKeys,
 } from '../../../utils/utils.ts';
 import {
@@ -64,18 +65,7 @@ import {
 import { useCreateMediaLink } from '../hooks/useCreateMediaLink.ts';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 import { getAccessToMedia } from '../api/getAccessToMedia.ts';
-
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
 
 interface IAllMediasProps {
   user: User;
@@ -84,15 +74,6 @@ interface IAllMediasProps {
   fetchMediaForUser: () => void;
   setMedias: Dispatch<SetStateAction<Media[]>>;
 }
-
-const caddyUrl = import.meta.env.VITE_CADDY_URL;
-
-const MEDIA_TYPES_TABS = {
-  ALL: 0,
-  VIDEO: 1,
-  IMAGE: 2,
-  OTHER: 3,
-};
 
 export const AllMedias = ({
   user,
@@ -397,7 +378,7 @@ export const AllMedias = ({
               onChange={handleCreateMedia}/>
           </Grid>
           <Grid
-           
+
             container
             spacing={2}
             sx={{ width: 'auto', paddingTop: 1, paddingBottom: 1 }}
@@ -433,7 +414,7 @@ export const AllMedias = ({
           </Grid>
         )}
         <Grid
-         
+
           container
           spacing={1}
           flexDirection="column"
@@ -473,7 +454,7 @@ export const AllMedias = ({
                 ))
               ) : (
                 <Grid
-                 
+
                   container
                   justifyContent="center"
                   alignItems="center">
@@ -498,7 +479,7 @@ export const AllMedias = ({
             modalCreateMediaIsOpen={modalLinkMediaIsOpen}/>
         </Grid>
         <Grid
-         
+
           sx={{ position: 'fixed', right: '10px', bottom: '3px', zIndex: 999 }}>
           <SpeedDialTooltipOpen actions={actions}/>
         </Grid>
