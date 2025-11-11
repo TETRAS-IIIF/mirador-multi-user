@@ -4,7 +4,7 @@
   const HEADING_TAGS = ['H1','H2','H3','H4','H5','H6'];
 
   const params = new URLSearchParams(window.location.search);
-  const mode = (params.get('mode') || 'panel').toLowerCase(); // 'panel' | 'full' | 'debug'
+  const mode = (params.get('mode') || 'panel').toLowerCase();
   const selectedId = params.get('id');
 
   const enablePanel = mode === 'panel' || mode === 'full' || mode === 'debug';
@@ -100,12 +100,26 @@
 
   const forest = buildIdForest();
   const idFreq = elsWithId.reduce((m, el) => (m[el.id] = (m[el.id] || 0) + 1, m), {});
-  function labelFor(el, id, useIndex = true) {
-    if (idFreq[id] > 1 && useIndex) {
-      const idx = elsWithId.filter(e => e.id === id).indexOf(el) + 1;
-      return `#${id} [${idx}/${idFreq[id]}]`;
+
+  const normalizeSpaces = (s) => (s || '').replace(/\s+/g, ' ').trim();
+  const snippet = (s, n = 80) => {
+    const t = normalizeSpaces(s);
+    return t.length > n ? t.slice(0, n - 1) + '…' : t;
+  };
+  function labelAndTooltipFor(el) {
+    if (el.tagName === 'DETAILS') {
+      const sum = el.querySelector(':scope > summary');
+      const text = sum ? sum.textContent : '';
+      return {
+        label: snippet(text || (el.id ? `#${el.id}` : '')),
+        tooltip: text // only text, hide HTML tags
+      };
     }
-    return `#${id}`;
+    const txt = el.textContent || '';
+    return {
+      label: snippet(txt || (el.id ? `#${el.id}` : '')),
+      tooltip: txt // only text, hide HTML tags
+    };
   }
 
   if (enablePanel) {
@@ -171,7 +185,8 @@
       return btn;
     }
 
-    function nodeRow(text, el, idRaw) {
+    function nodeRow(el, idRaw) {
+      const { label, tooltip } = labelAndTooltipFor(el);
       const row = document.createElement('div');
       row.style.display = 'flex';
       row.style.alignItems = 'center';
@@ -179,10 +194,14 @@
       row.style.cursor = 'pointer';
       row.style.padding = '2px 4px';
       row.style.borderRadius = '4px';
+      row.title = tooltip;
 
-      const label = document.createElement('span');
-      label.textContent = text;
-      row.appendChild(label);
+      const labelEl = document.createElement('span');
+      labelEl.textContent = label;
+      labelEl.style.whiteSpace = 'nowrap';
+      labelEl.style.overflow = 'hidden';
+      labelEl.style.textOverflow = 'ellipsis';
+      row.appendChild(labelEl);
 
       if (idRaw) row.appendChild(makeCopyBtn(idRaw));
 
@@ -202,21 +221,22 @@
       return row;
     }
 
-    let __pathIds = null;
     function buildDetailsNode(node) {
-      const hasChildren = node.children && node.children.length > 0;
+      const { label, tooltip } = labelAndTooltipFor(node.el);
       const details = document.createElement('details');
-      details.open = __pathIds ? __pathIds.has(node.id) : false;
+      details.open = true;
 
       const summary = document.createElement('summary');
       summary.style.cursor = 'pointer';
       summary.style.padding = '2px 4px';
       summary.style.borderRadius = '4px';
-      summary.onmouseenter = () => (summary.style.background = '#eef2ff');
-      summary.onmouseleave = () => (summary.style.background = 'transparent');
+      summary.title = tooltip;
 
       const wrap = document.createElement('span');
-      wrap.textContent = labelFor(node.el, node.id);
+      wrap.textContent = label;
+      wrap.style.whiteSpace = 'nowrap';
+      wrap.style.overflow = 'hidden';
+      wrap.style.textOverflow = 'ellipsis';
       if (node.id === selectedId) {
         wrap.style.background = 'rgba(255,0,0,.3)';
         wrap.style.fontWeight = '700';
@@ -224,54 +244,21 @@
         wrap.style.borderRadius = '3px';
       }
       summary.appendChild(wrap);
-      const copyBtn = makeCopyBtn(node.id);
-      copyBtn.addEventListener('click', (e) => e.stopPropagation());
-      summary.appendChild(copyBtn);
+      summary.appendChild(makeCopyBtn(node.id));
       details.appendChild(summary);
 
       const inner = document.createElement('div');
       inner.style.marginLeft = '12px';
-      for (const child of node.children) inner.appendChild(buildDetailsNode(child));
+      for (const child of node.children) {
+        inner.appendChild(child.children && child.children.length ? buildDetailsNode(child) : nodeRow(child.el, child.id));
+      }
       details.appendChild(inner);
 
       return details;
     }
 
-    function renderTree(filterText = '') {
-      treeContainer.innerHTML = '';
-      treeContainer.style.marginTop = '20px';
-      const ft = filterText.trim().toLowerCase();
-
-      __pathIds = null;
-      let targetEl = null;
-      if (selectedId) {
-        targetEl = document.getElementById(selectedId);
-        if (targetEl) {
-          __pathIds = new Set();
-          let p = targetEl;
-          while (p && p !== document.body) {
-            if (p.id) __pathIds.add(p.id);
-            p = p.parentElement;
-          }
-        }
-      }
-
-      const forestNow = buildIdForest();
-      for (const node of forestNow) {
-        const built = buildDetailsNode(node);
-        treeContainer.appendChild(built);
-      }
-
-      if (selectedId) {
-        const selectedSummary = Array.from(panel.querySelectorAll('summary')).find(s => s.textContent.trim().startsWith(`#${selectedId}`));
-        selectedSummary?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      }
-    }
-
-    renderTree();
-
-    const filterInput = header.querySelector('#__id_nav_filter__');
-    filterInput.addEventListener('input', () => renderTree(filterInput.value));
+    const forestNow = buildIdForest();
+    forestNow.forEach(node => treeContainer.appendChild(buildDetailsNode(node)));
 
     const toggle = document.createElement('button');
     toggle.id = '__id_nav_toggle__';
