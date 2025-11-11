@@ -2,7 +2,7 @@
   const HEADING_TAGS = ['H1','H2','H3','H4','H5','H6'];
 
   const params = new URLSearchParams(window.location.search);
-  const mode = (params.get('mode') || 'panel').toLowerCase(); // panel | full | debug
+  const mode = (params.get('mode') || '').toLowerCase(); // panel | full | debug
   const selectedId = params.get('id') || null;
 
   const enablePanel = mode === 'panel' || mode === 'full' || mode === 'debug';
