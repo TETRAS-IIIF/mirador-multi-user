@@ -1,4 +1,3 @@
-// Paste into console or include in a <script> tag
 (() => {
   const TEXT_TAGS = ['P','H1','H2','H3','H4','H5','H6','SPAN','DIV'];
   const HEADING_TAGS = ['H1','H2','H3','H4','H5','H6'];
@@ -11,24 +10,19 @@
   const enableCollapse = mode === 'full';
   const enableDebugBorders = mode === 'debug';
 
-  const levelOf = (el) => (HEADING_TAGS.includes(el.tagName) ? Number(el.tagName[1]) : Infinity);
-  const isHeading = (el) => HEADING_TAGS.includes(el.tagName || '');
-
   const allEls = Array.from(document.querySelectorAll('*'));
   const elsWithId = allEls.filter(el => el.id);
-  const textNoId = allEls.filter(el => !el.id && TEXT_TAGS.includes(el.tagName));
 
   if (enableDebugBorders) {
     allEls.forEach(el => { el.style.border = '1px solid rgba(0,0,0,.15)'; });
     elsWithId.forEach(el => { el.style.border = '2px solid blue'; });
-    textNoId.forEach(el => { el.style.border = '2px solid red'; });
   }
 
   if (enableCollapse) {
     const headings = Array.from(document.querySelectorAll('h1,h2,h3,h4,h5,h6'));
     for (const h of headings) {
       if (h.closest('details.__idnav_details__')) continue;
-      const lvl = levelOf(h);
+      const lvl = Number(h.tagName[1]);
       const details = document.createElement('details');
       details.className = '__idnav_details__';
       details.open = false;
@@ -36,30 +30,22 @@
       const summary = document.createElement('summary');
       while (h.firstChild) summary.appendChild(h.firstChild);
       summary.style.cursor = 'pointer';
-      summary.style.padding = '2px 4px';
-      summary.style.borderRadius = '4px';
-      summary.onmouseenter = () => (summary.style.background = '#eef2ff');
-      summary.onmouseleave = () => (summary.style.background = 'transparent');
-
       if (h.id) {
         details.id = h.id;
         h.removeAttribute('id');
       }
 
       const content = document.createElement('div');
-      content.className = '__idnav_section__';
-
       h.parentNode.insertBefore(details, h);
       details.appendChild(summary);
 
       let sib = h.nextSibling;
-      while (sib && !(sib.nodeType === 1 && isHeading(sib) && levelOf(sib) <= lvl)) {
+      while (sib && !(sib.nodeType === 1 && /^H[1-6]$/.test(sib.tagName) && Number(sib.tagName[1]) <= lvl)) {
         const next = sib.nextSibling;
         content.appendChild(sib);
         sib = next;
       }
       h.remove();
-
       if (content.childNodes.length) details.appendChild(content);
     }
 
@@ -67,8 +53,6 @@
       const target = document.getElementById(selectedId);
       if (target) {
         target.style.backgroundColor = 'rgba(255, 0, 0, 0.12)';
-        target.style.transition = 'background-color 200ms ease-in-out';
-
         const ancestorSet = new Set();
         let p = target;
         while (p && p !== document.body) {
@@ -77,7 +61,6 @@
         }
         const allDetails = Array.from(document.querySelectorAll('details.__idnav_details__'));
         for (const d of allDetails) d.open = ancestorSet.has(d);
-
         target.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
@@ -98,23 +81,13 @@
     return forest;
   }
 
-  const forest = buildIdForest();
-  const idFreq = elsWithId.reduce((m, el) => (m[el.id] = (m[el.id] || 0) + 1, m), {});
-
   const normalizeSpaces = (s) => (s || '').replace(/\s+/g, ' ').trim();
   const snippet = (s, n = 40) => {
     const t = normalizeSpaces(s);
     return t.length > n ? t.slice(0, n - 1) + '…' : t;
   };
+
   function labelAndTooltipFor(el) {
-    if (el.tagName === 'DETAILS') {
-      const sum = el.querySelector(':scope > summary');
-      const text = sum ? sum.textContent : '';
-      return {
-        label: snippet(text || (el.id ? `#${el.id}` : '')),
-        tooltip: text
-      };
-    }
     const txt = el.textContent || '';
     return {
       label: snippet(txt || (el.id ? `#${el.id}` : '')),
@@ -124,7 +97,6 @@
 
   if (enablePanel) {
     document.getElementById('__id_nav_panel__')?.remove();
-    document.getElementById('__id_nav_toggle__')?.remove();
 
     const panel = document.createElement('div');
     panel.id = '__id_nav_panel__';
@@ -146,17 +118,6 @@
       display: 'block'
     });
 
-    const header = document.createElement('div');
-    header.innerHTML = `
-      <div style="font-weight:600;margin-bottom:8px;">ID Navigator</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-        <span style="background:#e8f0fe;border:1px solid #c6d2ff;border-radius:4px;padding:2px 6px;">with ID: ${document.querySelectorAll('[id]').length}</span>
-      </div>
-      <input id="__id_nav_filter__" placeholder="Filter IDs…" style="width:100%;padding:6px 8px;border:1px solid #d1d5db;border-radius:6px;margin-bottom:8px;outline:none"/>
-      <div style="border-top:1px solid #e5e7eb;margin:8px 0;"></div>
-    `;
-    panel.appendChild(header);
-
     const treeContainer = document.createElement('div');
     panel.appendChild(treeContainer);
 
@@ -170,8 +131,7 @@
         cursor: 'pointer',
         fontSize: '12px',
         flexShrink: '0',
-        padding: '0 4px',
-        lineHeight: '1',
+        padding: '0 4px'
       });
       btn.onclick = (e) => {
         e.stopPropagation();
@@ -180,8 +140,6 @@
         u.searchParams.set('mode', 'full');
         u.searchParams.set('id', id);
         navigator.clipboard?.writeText(u.toString());
-        btn.title = 'Copied';
-        setTimeout(() => (btn.title = 'Copy link (full mode)'), 1200);
       };
       return btn;
     }
@@ -194,7 +152,6 @@
       row.style.justifyContent = 'space-between';
       row.style.cursor = 'pointer';
       row.style.padding = '2px 4px';
-      row.style.borderRadius = '4px';
       row.title = tooltip;
 
       const labelEl = document.createElement('span');
@@ -203,24 +160,9 @@
       labelEl.style.overflow = 'hidden';
       labelEl.style.textOverflow = 'ellipsis';
       labelEl.style.flex = '1';
-      labelEl.style.paddingRight = '18px'; // reserve space for icon
+      labelEl.style.paddingRight = '10px';
       row.appendChild(labelEl);
-
       if (idRaw) row.appendChild(makeCopyBtn(idRaw));
-
-      if (idRaw && idRaw === selectedId) {
-        row.style.background = 'rgba(255,0,0,.3)';
-        row.style.fontWeight = '700';
-      }
-
-      row.onmouseenter = () => (row.style.background = idRaw === selectedId ? 'rgba(255,0,0,.4)' : '#eef2ff');
-      row.onmouseleave = () => (row.style.background = idRaw === selectedId ? 'rgba(255,0,0,.3)' : 'transparent');
-      row.onclick = () => {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        const prev = el.style.outline;
-        el.style.outline = '3px solid orange';
-        setTimeout(() => { el.style.outline = prev; }, 1500);
-      };
       return row;
     }
 
@@ -232,7 +174,6 @@
       const summary = document.createElement('summary');
       summary.style.cursor = 'pointer';
       summary.style.padding = '2px 4px';
-      summary.style.borderRadius = '4px';
       summary.title = tooltip;
 
       const wrap = document.createElement('span');
@@ -241,13 +182,7 @@
       wrap.style.overflow = 'hidden';
       wrap.style.textOverflow = 'ellipsis';
       wrap.style.flex = '1';
-      wrap.style.paddingRight = '18px'; // reserve space for icon
-      if (node.id === selectedId) {
-        wrap.style.background = 'rgba(255,0,0,.3)';
-        wrap.style.fontWeight = '700';
-        wrap.style.padding = '0 4px';
-        wrap.style.borderRadius = '3px';
-      }
+      wrap.style.paddingRight = '10px';
       summary.appendChild(wrap);
       summary.appendChild(makeCopyBtn(node.id));
       details.appendChild(summary);
@@ -265,30 +200,12 @@
     const forestNow = buildIdForest();
     forestNow.forEach(node => treeContainer.appendChild(buildDetailsNode(node)));
 
-    const toggle = document.createElement('button');
-    toggle.id = '__id_nav_toggle__';
-    toggle.textContent = '☰ IDs';
-    Object.assign(toggle.style, {
-      position: 'fixed',
-      top: '10px',
-      left: '10px',
-      zIndex: '2147483647',
-      background: '#2563eb',
-      color: '#fff',
-      border: 'none',
-      padding: '6px 10px',
-      borderRadius: '6px',
-      cursor: 'pointer',
-      boxShadow: '0 1px 2px rgba(0,0,0,.2)'
-    });
-
-    let visible = true;
-    toggle.onclick = () => {
-      visible = !visible;
-      panel.style.display = visible ? 'block' : 'none';
-    };
-
-    document.body.appendChild(toggle);
     document.body.appendChild(panel);
+
+    if (mode === 'panel') {
+      Array.from(document.body.children).forEach(child => {
+        if (child !== panel) child.style.display = 'none';
+      });
+    }
   }
 })();
