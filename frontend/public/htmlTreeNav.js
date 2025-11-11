@@ -24,7 +24,6 @@
     textNoId.forEach(el => { el.style.border = '2px solid red'; });
   }
 
-  // ---- Build collapsible sections from headings (FULL mode) ----
   if (enableCollapse) {
     const headings = Array.from(document.querySelectorAll('h1,h2,h3,h4,h5,h6'));
     for (const h of headings) {
@@ -32,7 +31,7 @@
       const lvl = levelOf(h);
       const details = document.createElement('details');
       details.className = '__idnav_details__';
-      details.open = false; // collapsed by default
+      details.open = false;
 
       const summary = document.createElement('summary');
       while (h.firstChild) summary.appendChild(h.firstChild);
@@ -42,7 +41,6 @@
       summary.onmouseenter = () => (summary.style.background = '#eef2ff');
       summary.onmouseleave = () => (summary.style.background = 'transparent');
 
-      // Move heading id to the details wrapper to keep anchors working
       if (h.id) {
         details.id = h.id;
         h.removeAttribute('id');
@@ -65,15 +63,12 @@
       if (content.childNodes.length) details.appendChild(content);
     }
 
-    // If an id is provided: open only the section(s) that contain that element
     if (selectedId) {
       const target = document.getElementById(selectedId);
       if (target) {
-        // Highlight selected element with light red background
         target.style.backgroundColor = 'rgba(255, 0, 0, 0.12)';
         target.style.transition = 'background-color 200ms ease-in-out';
 
-        // Open only ancestor sections; collapse the rest
         const ancestorSet = new Set();
         let p = target;
         while (p && p !== document.body) {
@@ -83,7 +78,6 @@
         const allDetails = Array.from(document.querySelectorAll('details.__idnav_details__'));
         for (const d of allDetails) d.open = ancestorSet.has(d);
 
-        // Ensure visibility
         target.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
@@ -129,7 +123,7 @@
       background: '#f7f7f9',
       overflowY: 'auto',
       zIndex: '2147483646',
-      padding: '10px 12px',
+      padding: '60px 12px 10px 12px',
       boxShadow: '2px 0 6px rgba(0,0,0,.2)',
       fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, sans-serif',
       fontSize: '13px',
@@ -192,8 +186,13 @@
 
       if (idRaw) row.appendChild(makeCopyBtn(idRaw));
 
-      row.onmouseenter = () => (row.style.background = '#eef2ff');
-      row.onmouseleave = () => (row.style.background = 'transparent');
+      if (idRaw && idRaw === selectedId) {
+        row.style.background = 'rgba(255,0,0,.3)';
+        row.style.fontWeight = '700';
+      }
+
+      row.onmouseenter = () => (row.style.background = idRaw === selectedId ? 'rgba(255,0,0,.4)' : '#eef2ff');
+      row.onmouseleave = () => (row.style.background = idRaw === selectedId ? 'rgba(255,0,0,.3)' : 'transparent');
       row.onclick = () => {
         el.scrollIntoView({ behavior: 'smooth', block: 'center' });
         const prev = el.style.outline;
@@ -203,12 +202,12 @@
       return row;
     }
 
+    let __pathIds = null;
     function buildDetailsNode(node) {
       const hasChildren = node.children && node.children.length > 0;
-      if (!hasChildren) return nodeRow(labelFor(node.el, node.id), node.el, node.id);
-
       const details = document.createElement('details');
-      details.open = false;
+      details.open = __pathIds ? __pathIds.has(node.id) : false;
+
       const summary = document.createElement('summary');
       summary.style.cursor = 'pointer';
       summary.style.padding = '2px 4px';
@@ -218,6 +217,12 @@
 
       const wrap = document.createElement('span');
       wrap.textContent = labelFor(node.el, node.id);
+      if (node.id === selectedId) {
+        wrap.style.background = 'rgba(255,0,0,.3)';
+        wrap.style.fontWeight = '700';
+        wrap.style.padding = '0 4px';
+        wrap.style.borderRadius = '3px';
+      }
       summary.appendChild(wrap);
       const copyBtn = makeCopyBtn(node.id);
       copyBtn.addEventListener('click', (e) => e.stopPropagation());
@@ -228,22 +233,39 @@
       inner.style.marginLeft = '12px';
       for (const child of node.children) inner.appendChild(buildDetailsNode(child));
       details.appendChild(inner);
+
       return details;
     }
 
     function renderTree(filterText = '') {
       treeContainer.innerHTML = '';
+      treeContainer.style.marginTop = '20px';
       const ft = filterText.trim().toLowerCase();
-      const matches = (node) => labelFor(node.el, node.id, false).toLowerCase().includes(ft);
-      function filterNode(node) {
-        if (!ft) return node;
-        const kids = (node.children || []).map(filterNode).filter(Boolean);
-        if (matches(node) || kids.length) return { ...node, children: kids };
-        return null;
+
+      __pathIds = null;
+      let targetEl = null;
+      if (selectedId) {
+        targetEl = document.getElementById(selectedId);
+        if (targetEl) {
+          __pathIds = new Set();
+          let p = targetEl;
+          while (p && p !== document.body) {
+            if (p.id) __pathIds.add(p.id);
+            p = p.parentElement;
+          }
+        }
       }
+
       const forestNow = buildIdForest();
-      const filtered = ft ? forestNow.map(filterNode).filter(Boolean) : forestNow;
-      for (const node of filtered) treeContainer.appendChild(buildDetailsNode(node));
+      for (const node of forestNow) {
+        const built = buildDetailsNode(node);
+        treeContainer.appendChild(built);
+      }
+
+      if (selectedId) {
+        const selectedSummary = Array.from(panel.querySelectorAll('summary')).find(s => s.textContent.trim().startsWith(`#${selectedId}`));
+        selectedSummary?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     }
 
     renderTree();
