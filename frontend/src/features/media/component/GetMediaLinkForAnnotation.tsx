@@ -25,9 +25,15 @@ export const GetMediaLinkForAnnotation = ({
 
   const { t } = useTranslation();
 
+  const mediaLink =  media.path
+    ? `${caddyUrl}/${media.hash}/${media.path}`
+    : `${media.url}` ;
+
   if(isHTMLMediaFile(media)){
     return (
-      <h1>Toto</h1>
+      // Popover containing an iframe to mediaLink
+
+      // TODO
     )
   }
 
@@ -37,9 +43,7 @@ export const GetMediaLinkForAnnotation = ({
       disableRipple
       onClick={() =>
         handleCopyToClipBoard(
-          media.path
-            ? `${caddyUrl}/${media.hash}/${media.path}`
-            : `${media.url}`,
+          mediaLink
         )
       }>
       {t('copyToClipboard')}
