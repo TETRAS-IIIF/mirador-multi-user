@@ -1,5 +1,20 @@
-import { Button, Grid, ImageList, styled, Tab, Tabs, Tooltip, Typography, } from '@mui/material';
-import { ChangeEvent, SyntheticEvent, useCallback, useEffect, useState, } from 'react';
+import {
+  Button,
+  Grid,
+  ImageList,
+  styled,
+  Tab,
+  Tabs,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import {
+  ChangeEvent,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import toast from 'react-hot-toast';
 import { Media, MediaTypes } from '../types/types.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
@@ -192,7 +207,7 @@ export const ContentSidePanelMedia = ({
       <Grid
         container
         spacing={2}
-        sx={{ padding: '20px' }}
+        sx={{ padding: '5px' }}
         alignItems="center"
         flexDirection="row"
       >
