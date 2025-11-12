@@ -1,4 +1,4 @@
-import { Button, styled } from '@mui/material';
+import { Button, styled, Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { Media } from '../types/types.ts';
@@ -6,14 +6,20 @@ import { caddyUrl } from '../../../utils/utils.ts';
 import { isHTMLMediaFile } from '../utils/utils.ts';
 import { DraggableResizablePopover } from './DraggableResizablePopover';
 
-const CustomButton = styled(Button)({
+const OverlayActions = styled(Box)({
   position: 'absolute',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  textAlign: 'center',
+  display: 'flex',
+  gap: 8,
   opacity: 0,
   transition: 'opacity 0.3s ease',
+  textAlign: 'center',
+});
+
+const ActionButton = styled(Button)({
+  pointerEvents: 'auto',
 });
 
 interface IGetMediaLinkForAnnotationProps {
@@ -30,7 +36,7 @@ export const GetMediaLinkForAnnotation = ({
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const baseLink = media.path ? `${caddyUrl}/${media.hash}/${media.path}` : `${media.url}`;
-  const mediaLink = isHTMLMediaFile(media) ? `${baseLink}?mode=panel` : baseLink;
+  const previewLink = isHTMLMediaFile(media) ? `${baseLink}?mode=panel` : baseLink;
 
   const handleOpen = (e: React.MouseEvent<HTMLElement>) => {
     if (!isHTMLMediaFile(media)) return;
@@ -43,9 +49,18 @@ export const GetMediaLinkForAnnotation = ({
   if (isHTMLMediaFile(media)) {
     return (
       <>
-        <CustomButton className="overlayButton" disableRipple onClick={handleOpen}>
-          {t('openPreview')}
-        </CustomButton>
+        <OverlayActions className="overlayButton">
+          <ActionButton variant="contained" disableRipple onClick={handleOpen}>
+            {t('openPreview')}
+          </ActionButton>
+          <ActionButton
+            variant="outlined"
+            disableRipple
+            onClick={() => handleCopyToClipBoard(baseLink)} // copy canonical URL
+          >
+            {t('copyToClipboard')}
+          </ActionButton>
+        </OverlayActions>
 
         <DraggableResizablePopover
           open={open}
@@ -57,7 +72,7 @@ export const GetMediaLinkForAnnotation = ({
           initialSize={{ width: 520, height: 360 }}
         >
           <iframe
-            src={mediaLink}
+            src={previewLink}
             style={{ width: '100%', height: '100%', border: 'none' }}
             title={media.title}
           />
@@ -67,12 +82,14 @@ export const GetMediaLinkForAnnotation = ({
   }
 
   return (
-    <CustomButton
-      className="overlayButton"
-      disableRipple
-      onClick={() => handleCopyToClipBoard(mediaLink)}
-    >
-      {t('copyToClipboard')}
-    </CustomButton>
+    <OverlayActions className="overlayButton">
+      <ActionButton
+        variant="outlined"
+        disableRipple
+        onClick={() => handleCopyToClipBoard(baseLink)}
+      >
+        {t('copyToClipboard')}
+      </ActionButton>
+    </OverlayActions>
   );
 };
