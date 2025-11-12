@@ -12,6 +12,7 @@ const OverlayActions = styled(Box)({
   left: '50%',
   transform: 'translate(-50%, -50%)',
   display: 'flex',
+  flexDirection: 'column',
   gap: 8,
   opacity: 0,
   transition: 'opacity 0.3s ease',
@@ -20,6 +21,7 @@ const OverlayActions = styled(Box)({
 
 const ActionButton = styled(Button)({
   pointerEvents: 'auto',
+  width: 180,
 });
 
 interface IGetMediaLinkForAnnotationProps {
@@ -56,7 +58,7 @@ export const GetMediaLinkForAnnotation = ({
           <ActionButton
             variant="outlined"
             disableRipple
-            onClick={() => handleCopyToClipBoard(baseLink)} // copy canonical URL
+            onClick={() => handleCopyToClipBoard(baseLink)}
           >
             {t('copyToClipboard')}
           </ActionButton>
