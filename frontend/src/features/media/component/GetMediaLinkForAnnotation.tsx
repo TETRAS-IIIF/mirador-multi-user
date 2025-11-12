@@ -68,8 +68,12 @@ export const GetMediaLinkForAnnotation = ({
           onClose={handleClose}
           anchorOrigin={{ vertical: 'center', horizontal: 'center' }}
           transformOrigin={{ vertical: 'center', horizontal: 'center' }}
-          // Ensure the popover renders *under* the Drawer (Drawer default zIndex: 1200)
-          sx={{ zIndex: (theme) => theme.zIndex.drawer - 1 }}
+          sx={{
+            zIndex: (theme) => theme.zIndex.drawer - 1,
+            '& .MuiPaper-root': {
+              marginLeft: '-500px', // Shift popover 300px to the left
+            },
+          }}
           PaperProps={{
             sx: {
               width: '40vw',
