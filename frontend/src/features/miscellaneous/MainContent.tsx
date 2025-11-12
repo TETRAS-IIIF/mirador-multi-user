@@ -11,24 +11,25 @@ export const MainContent = () => {
   const user = useUser();
   const logout = useLogout({});
   const [selectedProjectId, setSelectedProjectId] = useState<
-    number | undefined>(undefined);
+    number | undefined
+  >(undefined);
   const [viewer, setViewer] = useState<any>(undefined);
 
   if (user.isError) {
     const error = user.error as { code?: string };
     if (error.code === ErrorCode.EMAIL_NOT_CONFIRMED) {
-      return <NotConfirmedAccount/>;
+      return <NotConfirmedAccount />;
     }
   }
   if (!user?.data) {
-    return <Loading/>;
+    return <Loading />;
   }
   if (!user.data.termsValidatedAt) {
-    return <ValidateTerms/>;
+    return <ValidateTerms />;
   }
 
   if (!user.data.id) {
-    return <NotConfirmedAccount/>;
+    return <NotConfirmedAccount />;
   }
 
   const handleDisconnect = () => {
@@ -46,7 +47,8 @@ export const MainContent = () => {
         viewer={viewer}
         setViewer={setViewer}
         selectedProjectId={selectedProjectId}
-        setSelectedProjectId={setSelectedProjectId}/>
+        setSelectedProjectId={setSelectedProjectId}
+      />
     </Grid>
   );
 };
