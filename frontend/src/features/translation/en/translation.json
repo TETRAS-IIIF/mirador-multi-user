@@ -111,6 +111,7 @@
   "general": "General",
   "generate_iframe": "Create Iframe",
   "generate_snapshot": "Generate snapshot",
+  "generate_snapshot_tooltip": "Generate a sharable and read only version of your project with all current annotation inside",
   "group": "Groups",
   "groupTitle": "Groups",
   "groupTitleLabel": "Group's title :",
