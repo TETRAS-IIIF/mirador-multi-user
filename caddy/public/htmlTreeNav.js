@@ -6,7 +6,7 @@
   const selectedId = params.get('id') || null;
 
   const enablePanel = mode === 'panel' || mode === 'full' || mode === 'debug';
-  const enableCollapse = mode === 'full';
+  const enableCollapse = mode === 'full' || mode === 'panel';
   const enableDebugBorders = mode === 'debug';
 
   const allEls = Array.from(document.querySelectorAll('*'));
