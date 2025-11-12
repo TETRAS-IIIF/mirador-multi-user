@@ -170,6 +170,8 @@
         u.searchParams.set('mode', 'full');
         u.searchParams.set('id', id);
         navigator.clipboard?.writeText(u.toString());
+        window.parent.postMessage('close-annotation-popover', '*');
+        console.log("Close Popover")
       };
       return btn;
     }
