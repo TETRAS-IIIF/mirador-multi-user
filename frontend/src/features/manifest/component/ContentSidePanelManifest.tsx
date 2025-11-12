@@ -158,12 +158,20 @@ export const ContentSidePanelManifest = ({
   }, [fetchThumbnails]);
   return (
     <>
-      <Grid container spacing={1} sx={{ padding: '20px' }} alignItems="center">
+      <Grid
+        container
+        spacing={1}
+        sx={{ padding: '20px', width: '400px' }}
+        alignItems="center"
+      >
         <Grid>
           <SearchBar label={t('search')} setFilter={setManifestFilter} />
         </Grid>
         <Grid>
-          <Tooltip title={t('linkManifest')}>
+          <Tooltip
+            title={t('linkManifest')}
+            slotProps={{ popper: { sx: { zIndex: 9999 } } }}
+          >
             <Button
               variant="contained"
               onClick={() =>

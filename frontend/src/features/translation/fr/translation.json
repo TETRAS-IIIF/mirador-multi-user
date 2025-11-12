@@ -112,6 +112,7 @@
   "general": "Général",
   "generate_iframe": "Créer l'Iframe",
   "generate_snapshot": "Générer le snapshot",
+  "generate_snapshot_tooltip": "Générer une version partageable et en lecture seule de votre projet avec toutes les annotations actuelles incluses.",
   "group": "Groupes",
   "groupTitle": "Groupes",
   "groupTitleLabel": "Titre du groupe :",
