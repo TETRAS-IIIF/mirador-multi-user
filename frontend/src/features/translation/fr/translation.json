@@ -313,5 +313,7 @@
   "Youtube_not_allowed_error": "Les liens YouTube ne sont pas pris en charge.",
   "validURLToManifest": "URL valide vers un manifeste",
   "validURLToMedia": "URL valide vers un média",
-  "copyToClipboard": "Copier dans le presse-papier"
+  "copyToClipboard": "Copier dans le presse-papier",
+  "openPreview": "Ouvrir l'aperçu",
+  "preview": "Aperçu"
 }
