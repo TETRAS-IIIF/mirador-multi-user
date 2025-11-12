@@ -207,7 +207,7 @@ export const ContentSidePanelMedia = ({
       <Grid
         container
         spacing={2}
-        sx={{ padding: '5px' }}
+        sx={{ padding: '5px', width: '400px' }}
         alignItems="center"
         flexDirection="row"
       >
@@ -217,14 +217,22 @@ export const ContentSidePanelMedia = ({
         <Grid>
           <Grid container direction="column" spacing={1}>
             <Grid>
-              <Tooltip title="Upload Media">
+              <Tooltip
+                title={t('actionsDial.upload')}
+                placement="left"
+                slotProps={{ popper: { sx: { zIndex: 9999 } } }}
+              >
                 <Button onClick={handleButtonClick} variant="contained">
                   <UploadFileIcon />
                 </Button>
               </Tooltip>
             </Grid>
             <Grid>
-              <Tooltip title="Link Media">
+              <Tooltip
+                title={t('actionsDial.link')}
+                placement="left"
+                slotProps={{ popper: { sx: { zIndex: 9999 } } }}
+              >
                 <Button
                   variant="contained"
                   onClick={() => setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)}
