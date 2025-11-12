@@ -1,20 +1,5 @@
-import {
-  Button,
-  Grid,
-  ImageList,
-  styled,
-  Tab,
-  Tabs,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import {
-  ChangeEvent,
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { Button, Grid, ImageList, styled, Tab, Tabs, Tooltip, Typography, } from '@mui/material';
+import { ChangeEvent, SyntheticEvent, useCallback, useEffect, useState, } from 'react';
 import toast from 'react-hot-toast';
 import { Media, MediaTypes } from '../types/types.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
@@ -215,7 +200,7 @@ export const ContentSidePanelMedia = ({
           <SearchBar label={t('search')} setFilter={setMediaFilter} />
         </Grid>
         <Grid>
-          <Grid container direction="row" spacing={1}>
+          <Grid container direction="column" spacing={1}>
             <Grid>
               <Tooltip title="Upload Media">
                 <Button onClick={handleButtonClick} variant="contained">
