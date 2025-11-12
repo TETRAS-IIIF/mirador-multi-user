@@ -18,7 +18,7 @@
     elsWithId.forEach(el => { el.style.border = '2px solid blue'; });
   }
 
-  // ---------------- FULL mode: collapse content under headings ----------------
+  // ---------------- Collapse content under headings (full/panel) ----------------
   if (enableCollapse) {
     const levelOf = (el) => (HEADING_TAGS.includes(el.tagName) ? Number(el.tagName[1]) : Infinity);
     const isHeading = (el) => HEADING_TAGS.includes(el.tagName || '');
@@ -95,6 +95,12 @@
   };
 
   function labelAndTooltipFor(el) {
+    // For sections wrapped in <details>, only use the <summary> text as the title
+    if (el.tagName === 'DETAILS') {
+      const sum = el.querySelector(':scope > summary');
+      const txt = sum ? sum.textContent || '' : '';
+      return { label: snippet(txt || (el.id ? `#${el.id}` : '')), tooltip: txt };
+    }
     const txt = el.textContent || '';
     return { label: snippet(txt || (el.id ? `#${el.id}` : '')), tooltip: txt };
   }
@@ -170,8 +176,6 @@
         u.searchParams.set('mode', 'full');
         u.searchParams.set('id', id);
         navigator.clipboard?.writeText(u.toString());
-        window.parent.postMessage('close-annotation-popover', '*');
-        console.log("Close Popover")
       };
       return btn;
     }
@@ -196,6 +200,11 @@
       labelEl.style.paddingRight = '10px';
       row.appendChild(labelEl);
       if (idRaw) row.appendChild(makeCopyBtn(idRaw));
+
+      // Hover feedback
+      row.addEventListener('mouseenter', () => row.style.background = '#eef2ff');
+      row.addEventListener('mouseleave', () => row.style.background = 'transparent');
+
       return row;
     }
 
@@ -223,6 +232,10 @@
       summary.style.padding = mode === 'panel' ? '4px 8px' : '2px 4px';
       summary.title = tooltip;
       if (mode === 'panel') summary.style.borderBottom = '1px solid #e5e7eb';
+
+      // Hover feedback
+      summary.addEventListener('mouseenter', () => summary.style.background = '#eef2ff');
+      summary.addEventListener('mouseleave', () => summary.style.background = 'transparent');
 
       const wrap = document.createElement('span');
       wrap.textContent = label;
