@@ -34,9 +34,9 @@ export function MediaImageThumbnail({ media, t }: MediaImageThumbnailProps) {
           onError={() => setIsMediaValidURL(false)}
           onClick={() => isMediaValidURL && setIsModalOpen(true)}
           sx={{
-            width: 50,
-            height: 50,
-            objectFit: 'cover',
+            width: 100,
+            height: 100,
+            objectFit: 'contain',
             cursor: isMediaValidURL ? 'pointer' : 'default',
             '@media(min-resolution: 2dppx)': {
               width: 100,

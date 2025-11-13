@@ -57,9 +57,9 @@ export const ManifestCreationFormThumbnail = ({
                     !isManifestThumbnailBadURL && setIsThumbnailModalOpen(true)
                   }
                   sx={{
-                    width: 50,
-                    height: 50,
-                    objectFit: 'cover',
+                    width: 100,
+                    height: 100,
+                    objectFit: 'contain',
                     cursor: isManifestThumbnailBadURL ? 'default' : 'pointer',
                     '@media (min-resolution: 2dppx)': {
                       width: 100,
