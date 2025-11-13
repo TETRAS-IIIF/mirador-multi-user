@@ -1,12 +1,31 @@
-import { Card, CardActions, SelectChangeEvent, Tooltip, Typography, } from '@mui/material';
+import {
+  Card,
+  CardActions,
+  SelectChangeEvent,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { MMUModal } from './modal.tsx';
-import { Dispatch, ReactNode, SetStateAction, useCallback, useState, } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useState,
+} from 'react';
 import { MMUModalEdit } from './MMUModalEdit.tsx';
 import { ListItem } from '../types.ts';
 import { ItemsRights } from '../../features/user-group/types/types.ts';
-import { MediaGroupRights, mediaOrigin, MediaTypes, } from '../../features/media/types/types.ts';
-import { ManifestGroupRights, manifestOrigin, } from '../../features/manifest/types/types.ts';
+import {
+  MediaGroupRights,
+  mediaOrigin,
+  MediaTypes,
+} from '../../features/media/types/types.ts';
+import {
+  ManifestGroupRights,
+  manifestOrigin,
+} from '../../features/manifest/types/types.ts';
 import dayjs, { Dayjs } from 'dayjs';
 import { ObjectTypes } from '../../features/tag/type.ts';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
@@ -143,6 +162,8 @@ const MMUCard = <
     fetchData();
   };
 
+  const thumbnailSrc = isValidUrl(thumbnailUrl) ? thumbnailUrl : placeholder;
+
   const handleChangeSelectedItem =
     (itemSelected: ListItem) => async (event: SelectChangeEvent<string>) => {
       if (handleSelectorChange) {
@@ -165,13 +186,13 @@ const MMUCard = <
         container
         wrap="nowrap"
         justifyContent="space-between"
-        sx={{ minHeight: 120 }}
+        sx={{ height: 100 }}
       >
         <Grid
           container
           alignItems="center"
           justifyContent="flex-start"
-          spacing={2}
+          spacing={1}
           size={12}
         >
           <Grid size={{ xs: 4, sm: 1 }}>
@@ -179,15 +200,11 @@ const MMUCard = <
               <LoadingSpinner />
             ) : (
               <img
-                src={
-                  thumbnailUrl && isValidUrl(thumbnailUrl as string)
-                    ? (thumbnailUrl as string)
-                    : placeholder
-                }
+                src={thumbnailSrc}
                 alt={t('thumbnailMissing')}
                 style={{
-                  height: 100,
-                  width: 100,
+                  height: 80,
+                  width: 80,
                   objectFit: 'contain',
                   marginLeft: 10,
                 }}
