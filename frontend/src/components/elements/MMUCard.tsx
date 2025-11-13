@@ -182,18 +182,13 @@ const MMUCard = <
 
   return (
     <Card>
-      <Grid
-        container
-        wrap="nowrap"
-        justifyContent="space-between"
-        sx={{ height: 100 }}
-      >
+      <Grid container wrap="nowrap" alignItems="center" sx={{ height: 100 }}>
         <Grid
           container
           alignItems="center"
-          justifyContent="flex-start"
           spacing={1}
           size={12}
+          sx={{ flex: 1, minWidth: 0 }}
         >
           <Grid size={{ xs: 4, sm: 1 }}>
             {isLoading ? (
@@ -213,8 +208,9 @@ const MMUCard = <
               />
             )}
           </Grid>
+
           <Grid
-            size={{ xs: 1, sm: 1 }}
+            size={{ xs: 3, sm: 2 }}
             display="flex"
             alignItems="center"
             gap={0.5}
@@ -239,13 +235,7 @@ const MMUCard = <
                 <ShareIcon fontSize="small" />
               </Tooltip>
             )}
-          </Grid>
-          <Grid
-            size={{ xs: 1, sm: 1 }}
-            display="flex"
-            alignItems="center"
-            gap={0.5}
-          >
+
             {objectTypes === ObjectTypes.MEDIA &&
               item.mediaTypes === MediaTypes.VIDEO && (
                 <Tooltip title={t('video')}>
@@ -266,7 +256,7 @@ const MMUCard = <
               )}
           </Grid>
 
-          <Grid size={{ xs: 4, sm: 3 }}>
+          <Grid size={{ xs: 5, sm: 3 }}>
             <Tooltip title={itemLabel} placement="bottom-start">
               <Typography
                 variant="subtitle1"
@@ -282,7 +272,7 @@ const MMUCard = <
             </Tooltip>
           </Grid>
 
-          <Grid size={{ xs: 3, sm: 3 }}>
+          <Grid size={{ xs: 3, sm: 5 }}>
             <Tooltip title={description}>
               <Typography
                 variant="subtitle1"
@@ -290,7 +280,7 @@ const MMUCard = <
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
-                  maxWidth: 400,
+                  maxWidth: 500,
                 }}
               >
                 {description}
@@ -298,13 +288,14 @@ const MMUCard = <
             </Tooltip>
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 1 }}>
+          <Grid>
             {item.updated_at && (
               <Tooltip
-                title={dayjs(item.updated_at)
-                  .locale(i18n.language)
-                  .format('LLLL')
-                  .toString()}
+                title={t('lastEdited', {
+                  date: dayjs(item.updated_at)
+                    .locale(i18n.language)
+                    .format('LLLL'),
+                })}
               >
                 <Typography
                   variant="subtitle1"
@@ -312,7 +303,7 @@ const MMUCard = <
                     textOverflow: 'ellipsis',
                     overflow: 'hidden',
                     whiteSpace: 'nowrap',
-                    maxWidth: 200,
+                    maxWidth: 100,
                   }}
                 >
                   {dayjs(item.updated_at)
@@ -324,9 +315,9 @@ const MMUCard = <
           </Grid>
         </Grid>
 
-        <Grid alignSelf="center">
+        <Grid alignSelf="center" sx={{ ml: 1 }}>
           <CardActions sx={{ p: 2 }}>
-            <Grid container wrap="nowrap" spacing={2}>
+            <Grid container wrap="nowrap" spacing={1}>
               {Boolean(id) && (
                 <Grid display="flex" alignItems="center">
                   {rights === ItemsRights.READER ? (

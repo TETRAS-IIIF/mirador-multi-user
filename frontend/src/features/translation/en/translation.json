@@ -138,6 +138,7 @@
   "labelProjectTitle": "Project's title:",
   "last_migration": "Last Migration",
   "last_starting_time": "Last Starting Time",
+  "lastEdited": "Last edited {{date}}",
   "leaveGroupTooltip": "Leave the group",
   "linkManifest": "Link manifest",
   "linkMedia": "LINK MEDIA",
