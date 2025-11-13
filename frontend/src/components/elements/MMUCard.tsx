@@ -223,13 +223,19 @@ const MMUCard = <
             gap={0.5}
           >
             {item.origin === manifestOrigin.LINK && (
-              <LinkIcon fontSize="small" />
+              <Tooltip title={t('linkedManifest')}>
+                <LinkIcon fontSize="small" />
+              </Tooltip>
             )}
             {item.origin === manifestOrigin.UPLOAD && (
-              <UploadFileIcon fontSize="small" />
+              <Tooltip title={t('uploadedManifest')}>
+                <UploadFileIcon fontSize="small" />
+              </Tooltip>
             )}
             {item.origin === manifestOrigin.CREATE && (
-              <CreateIcon fontSize="small" />
+              <Tooltip title={t('createdManifest')}>
+                <CreateIcon fontSize="small" />
+              </Tooltip>
             )}
             {item.shared && (
               <Tooltip title={t('shared')}>
