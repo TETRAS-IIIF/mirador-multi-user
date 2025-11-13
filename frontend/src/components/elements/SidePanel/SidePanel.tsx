@@ -1,4 +1,10 @@
-import { Box, Drawer, IconButton, IconButtonProps, styled, } from '@mui/material';
+import {
+  Box,
+  Drawer,
+  IconButton,
+  IconButtonProps,
+  styled,
+} from '@mui/material';
 import { ReactNode, useEffect, useState } from 'react';
 import { CloseButton } from '../SideBar/CloseButton.tsx';
 import { OpenButton } from '../SideBar/OpenButton.tsx';

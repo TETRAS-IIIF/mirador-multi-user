@@ -185,7 +185,12 @@ export const ContentSidePanelManifest = ({
       </Grid>
       {currentPageData.length > 0 ? (
         <ImageList
-          sx={{ minWidth: 400, padding: 1, width: 400 }}
+          sx={{
+            minWidth: 400,
+            padding: 1,
+            width: 400,
+            height: '100%',
+          }}
           cols={2}
           rowHeight={200}
         >
@@ -240,11 +245,13 @@ export const ContentSidePanelManifest = ({
           <Typography>{t('noMatchingManifestFilter')}</Typography>
         </Grid>
       )}
-      <PaginationControls
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      <Grid sx={{ margin: 1 }}>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </Grid>
       <Grid>
         <DrawerLinkManifest
           modalCreateManifestIsOpen={modalLinkManifestIsOpen}

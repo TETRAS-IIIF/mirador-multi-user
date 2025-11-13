@@ -159,7 +159,11 @@ export const ContentSidePanelMedia = ({
   } else if (currentPageData.length > 0) {
     mediaContent = (
       <ImageList
-        sx={{ minWidth: 400, padding: 1, width: 400 }}
+        sx={{
+          minWidth: 400,
+          padding: 1,
+          width: 400,
+        }}
         cols={2}
         rowHeight={200}
       >
@@ -230,19 +234,14 @@ export const ContentSidePanelMedia = ({
         <Tab label={t('Images')} {...a11yProps(2)} />
         <Tab label={t('other')} {...a11yProps(3)} />
       </Tabs>
-      {!medias.length && (
-        <Grid container justifyContent={'center'}>
-          <Typography variant="h6" component="h2">
-            {t('noMediaYet')}
-          </Typography>
-        </Grid>
-      )}
-      {mediaContent}
-      <PaginationControls
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      <Grid sx={{ height: '100%' }}>{mediaContent}</Grid>
+      <Grid sx={{ margin: 1 }}>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </Grid>
       <Grid>
         <VisuallyHiddenInput
           id="file-upload"
