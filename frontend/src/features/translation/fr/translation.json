@@ -199,6 +199,12 @@
   "not_allowed_to_modify_rights": "Vous ne pouvez pas modifier un utilisateur ayant des privilèges plus élevés.",
   "notAllowedMessage": "Vous n'êtes pas autorisé à faire cela",
   "notConfirmedAccountTitle": "Vous devez confirmer votre e-mail et les conditions d'utilisations",
+  "objectNames": {
+    "media": "média",
+    "manifest": "manifeste",
+    "group": "groupe",
+    "project": "projet"
+  },
   "oldPassword": "Ancien mot de passe",
   "openInNewTab": "Ouvrir dans un nouvel onglet",
   "openGroupTooltip": "Ouvrir le groupe",
@@ -309,6 +315,7 @@
   "yourAccount": "Votre compte",
   "yourTextHere": "Votre texte ici",
   "charactersNotAllowed": "Caractères spéciaux non autorisés",
+  "deleteObject": "Supprimer {{object}}",
   "deleteTemplate": "Supprimer le modèle",
   "noteTemplateInfo": "Créer un ou plusieurs modèles de notes. Ceux ci seront disponibles lors de l'édition d'annotation.",
   "templateChoice": "Choisissez un modèle",

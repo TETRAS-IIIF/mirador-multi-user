@@ -1,22 +1,5 @@
-import {
-  Button,
-  Grid,
-  SelectChangeEvent,
-  Tab,
-  Tabs,
-  TextField,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { Button, Grid, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography, } from '@mui/material';
+import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useCallback, useEffect, useState, } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import { ItemList } from './ItemList.tsx';
 import { MMUModal } from './modal.tsx';
@@ -24,14 +7,8 @@ import { ModalConfirmDelete } from '../../features/projects/components/ModalConf
 import { ItemsRights } from '../../features/user-group/types/types.ts';
 import { ListItem } from '../types.ts';
 import CancelIcon from '@mui/icons-material/Cancel';
-import {
-  MediaGroupRights,
-  mediaOrigin,
-} from '../../features/media/types/types.ts';
-import {
-  ManifestGroupRights,
-  manifestOrigin,
-} from '../../features/manifest/types/types.ts';
+import { MediaGroupRights, mediaOrigin, } from '../../features/media/types/types.ts';
+import { ManifestGroupRights, manifestOrigin, } from '../../features/manifest/types/types.ts';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -52,11 +29,7 @@ import { updateManifestJson } from '../../features/manifest/api/updateManifestJs
 import { Selector } from '../Selector.tsx';
 import { useTranslation } from 'react-i18next';
 import { NoteTemplate } from './CustomizationEditModal/NoteTemplate.tsx';
-import {
-  Project,
-  Snapshot,
-  Template,
-} from '../../features/projects/types/types.ts';
+import { Project, Snapshot, Template, } from '../../features/projects/types/types.ts';
 import { TagMaker } from './TagsFactory/TagMaker.tsx';
 
 import { SnapshotFactory } from './SnapshotFactory.tsx';
@@ -416,8 +389,6 @@ export const MMUModalEdit = <
   };
 
   const handleUpdateAdvancedEditMetadata = async (data: any) => {
-    // We can edit manifest or project userworkspace
-
     if (objectTypes === ObjectTypes.MANIFEST) {
       const newManifest = {
         manifestId: item.id,
@@ -429,7 +400,6 @@ export const MMUModalEdit = <
       await updateManifestJson(newManifest);
     }
     if (objectTypes === ObjectTypes.PROJECT && item.userWorkspace) {
-      // Update project userworkspace
       if (updateItem) {
         updateItem(
           {
@@ -798,7 +768,11 @@ export const MMUModalEdit = <
             <Grid container flexDirection="row" spacing={1} columns={4}>
               <Grid>
                 {rights === ItemsRights.ADMIN && tabValue === 0 && (
-                  <Tooltip title={t('deleteItem')}>
+                  <Tooltip
+                    title={t('deleteObject', {
+                      object: t(`objectNames.${objectTypes}`),
+                    })}
+                  >
                     <Button
                       color="error"
                       onClick={handleConfirmDeleteItemModal}
