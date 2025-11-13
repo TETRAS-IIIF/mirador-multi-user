@@ -535,7 +535,7 @@ export const MMUModalEdit = <
         container
         flexDirection="column"
         justifyContent="space-between"
-        sx={{ height: '90%' }}
+        sx={{ height: '90%', width: '100%' }}
       >
         <CustomTabPanel value={tabValue} index={0}>
           <Grid
@@ -755,8 +755,6 @@ export const MMUModalEdit = <
         <CustomTabPanel value={tabValue} index={5}>
           <Grid
             container
-            spacing={1}
-            flexDirection="column"
             sx={{
               minHeight: '55px',
               height: '100%',
@@ -774,15 +772,13 @@ export const MMUModalEdit = <
         <CustomTabPanel index={6} value={tabValue}>
           <Grid
             container
-            spacing={1}
-            flexDirection="column"
             sx={{
               minHeight: '55px',
               height: '100%',
               overflowY: 'auto',
             }}
           >
-            <Grid sx={{ height: '100%' }}>
+            <Grid container sx={{ width: '100%', height: '100%' }}>
               <SnapshotFactory
                 fetchItems={fetchItems!}
                 objectTypes={objectTypes!}

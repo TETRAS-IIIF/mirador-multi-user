@@ -19,11 +19,12 @@ export const SnapshotFactory = <
     snapshots?: Snapshot[];
     ownerId?: number;
     personalOwnerGroupId?: number;
-  },>({
-    objectTypes,
-    item,
-    fetchItems,
-  }: ISnapshotFactoryProps<T>) => {
+  },
+>({
+  objectTypes,
+  item,
+  fetchItems,
+}: ISnapshotFactoryProps<T>) => {
   const { t } = useTranslation();
 
   const handleCreateSnapshot = async () => {
@@ -55,44 +56,50 @@ export const SnapshotFactory = <
     fetchItems();
   };
   return (
-    <>
+    <Grid
+      container
+      spacing={2}
+      flexDirection="column"
+      sx={{ width: '100%', marginTop: 1 }}
+    >
       {objectTypes === ObjectTypes.PROJECT && (
         <Grid
           alignItems="center"
           container
           flexDirection="column"
-         
           spacing={1}
-          sx={{ width: '100%', padding: 0, margin: 0 }}>
+          sx={{ padding: 0, margin: 0 }}
+        >
           <Grid
-           
             container
             sx={{
               width: '100%',
               padding: 0,
               margin: 0,
             }}
-            spacing={1}>
+            spacing={1}
+          >
             <Grid>
               <Typography variant="h5">{t('snapshot')}</Typography>
             </Grid>
           </Grid>
           <Grid
-           
             sx={{
               width: '100%',
               margin: 0,
               padding: 0,
-            }}>
+            }}
+          >
             <ShareLink
               handleCreateSnapshot={handleCreateSnapshot}
               handleDeleteSnapshot={handleDeleteSnapshot!}
               itemId={item.id}
               snapShots={item.snapshots ? item.snapshots : []}
-              updateSnapshot={UpdateSnapshot!}/>
+              updateSnapshot={UpdateSnapshot!}
+            />
           </Grid>
         </Grid>
       )}
-    </>
+    </Grid>
   );
 };

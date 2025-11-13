@@ -23,7 +23,14 @@ export function CustomTabPanel({
       hidden={!isActive}
       id={`tab-panel-${index}`}
       aria-labelledby={`tab-${index}`}
-      sx={{ height: '85%', ...sx }}
+      sx={{
+        height: '85%',
+        ...sx,
+        position: 'relative',
+        isolation: 'isolate',
+        zIndex: 1,
+        overflow: 'hidden',
+      }}
       {...other}
     >
       {isActive ? children : null}

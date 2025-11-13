@@ -1,5 +1,5 @@
 import { ChangeEvent, KeyboardEvent, useState } from 'react';
-import { Box, Button, Chip, TextField } from '@mui/material';
+import { Button, Chip, Grid, TextField } from '@mui/material';
 import { Project } from '../../../features/projects/types/types.ts';
 import { useTranslation } from 'react-i18next';
 
@@ -36,9 +36,8 @@ export const TagMaker = ({ project, handleUpdateTags }: TagMakerProps) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-      <Box
-        sx={{ display: 'flex', gap: 1, justifyContent: 'center', marginTop: 2 }}>
+    <Grid container spacing={2} flexDirection="column" sx={{ marginTop: 1 }}>
+      <Grid container spacing={1} flexDirection="row">
         <TextField
           label={t('addTag')}
           variant="outlined"
@@ -46,16 +45,20 @@ export const TagMaker = ({ project, handleUpdateTags }: TagMakerProps) => {
           onChange={(e: ChangeEvent<HTMLInputElement>) =>
             setInputValue(e.target.value)
           }
-          onKeyDown={handleKeyDown}/>
+          onKeyDown={handleKeyDown}
+        />
         <Button
           variant="contained"
           onClick={handleAddTag}
-          disabled={!inputValue.trim()}>
+          disabled={!inputValue.trim()}
+        >
           {t('addTag')}
         </Button>
-      </Box>
+      </Grid>
 
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, maxWidth: '100%' }}>
+      <Grid
+        sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, maxWidth: '100%' }}
+      >
         {tags.map((tag) => (
           <Chip
             key={tag}
@@ -68,9 +71,10 @@ export const TagMaker = ({ project, handleUpdateTags }: TagMakerProps) => {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-            }}/>
+            }}
+          />
         ))}
-      </Box>
-    </Box>
+      </Grid>
+    </Grid>
   );
 };
