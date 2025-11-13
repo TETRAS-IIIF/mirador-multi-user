@@ -112,6 +112,7 @@ export const MetadataForm = <T extends { id: number }>({
       container
       sx={{
         overflowY: 'auto',
+        width: '100%',
       }}
     >
       {loading ? (
