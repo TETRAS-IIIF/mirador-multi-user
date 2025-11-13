@@ -87,36 +87,41 @@ export const ItemList = <
         minWidth: 935,
       }}
     >
-      <Grid>
-        <Typography variant="h5">{t('Permissions')}</Typography>
-        <MMUToolTip>
-          <div>
-            {t('MMUTooltipAdmin')}
-            <br />
-            {t('MMUTooltipEditor')}
-            <br />
-            {t('MMUTooltipReader')}
-          </div>
-        </MMUToolTip>
+      <Grid container direction={'row'} alignItems={'center'}>
+        <Grid>
+          <Typography variant="h5">{t('Permissions')}</Typography>
+        </Grid>
+        <Grid>
+          <MMUToolTip>
+            <div>
+              {t('MMUTooltipAdmin')}
+              <br />
+              {t('MMUTooltipEditor')}
+              <br />
+              {t('MMUTooltipReader')}
+            </div>
+          </MMUToolTip>
+        </Grid>
       </Grid>
+      <Grid container alignItems={'center'} direction={'row'}>
+        <Grid>
+          <SearchBar
+            label={searchBarLabel}
+            handleAdd={handleAddAccessListItem}
+            setSelectedData={setItemToAdd!}
+            getOptionLabel={handleGetOptionLabel}
+            fetchFunction={handleSearchModalEditItem}
+            setSearchInput={setSearchInput}
+            actionButtonLabel={t('add')}
+            groupByOption={getGroupByOption}
+          />
+        </Grid>
 
-      <Grid>
-        <SearchBar
-          label={searchBarLabel}
-          handleAdd={handleAddAccessListItem}
-          setSelectedData={setItemToAdd!}
-          getOptionLabel={handleGetOptionLabel}
-          fetchFunction={handleSearchModalEditItem}
-          setSearchInput={setSearchInput}
-          actionButtonLabel={t('add')}
-          groupByOption={getGroupByOption}
-        />
-      </Grid>
-
-      <Grid>
-        <MMUToolTip>
-          <div>{t('MMUTooltipSearchForUser')}</div>
-        </MMUToolTip>
+        <Grid>
+          <MMUToolTip>
+            <div>{t('MMUTooltipSearchForUser')}</div>
+          </MMUToolTip>
+        </Grid>
       </Grid>
 
       <Grid container direction="column" spacing={1}>
