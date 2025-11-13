@@ -90,14 +90,16 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
           justifyContent: 'center',
         }}
       >
-        <Grid>
-          <Button
-            variant={'contained'}
-            onClick={redirectToSubscriptionDashboard}
-          >
-            {t('subscription_dashboard')}
-          </Button>
-        </Grid>
+        {import.meta.env.VITE_EXTERNAL_DASHBOARD_URL && (
+          <Grid>
+            <Button
+              variant={'contained'}
+              onClick={redirectToSubscriptionDashboard}
+            >
+              {t('subscription_dashboard')}
+            </Button>
+          </Grid>
+        )}
         <Grid>
           <Grid>
             <Typography variant="h5">{t('changeLanguage')}</Typography>
