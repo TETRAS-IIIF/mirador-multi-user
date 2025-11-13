@@ -264,7 +264,7 @@
   "system_settings": "System Settings",
   "swagger_url": "Swagger URL",
   "tags": "Tags",
-  "templates": "templates",
+  "template": "template",
   "termsValidationFailed": "Failed to validate terms. Please try again.",
   "thumbnailMissing": "Thumbnail is missing",
   "thumbnailUrl": "Thumbnail Url",
