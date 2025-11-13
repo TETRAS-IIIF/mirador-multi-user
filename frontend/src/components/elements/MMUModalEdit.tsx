@@ -452,53 +452,98 @@ export const MMUModalEdit = <
         aria-label="basic tabs"
         sx={{ height: '50px' }}
       >
-        <Tab label={t('general')} {...a11yProps(0)} />
         <Tab
-          label={objectTypes != ObjectTypes.GROUP ? t('share') : t('members')}
+          label={
+            <Tooltip title={t('tab_general_desc')}>
+              <span>{t('general')}</span>
+            </Tooltip>
+          }
+          {...a11yProps(0)}
+        />
+
+        <Tab
+          label={
+            <Tooltip title={t('tab_share_desc')}>
+              <span>
+                {objectTypes != ObjectTypes.GROUP ? t('share') : t('members')}
+              </span>
+            </Tooltip>
+          }
           {...a11yProps(2)}
         />
+
         {objectTypes !== ObjectTypes.GROUP && (
-          <Tab label={t('metadata')} {...a11yProps(1)} />
+          <Tab
+            label={
+              <Tooltip title={t('tab_metadata_desc')}>
+                <span>{t('metadata')}</span>
+              </Tooltip>
+            }
+            {...a11yProps(1)}
+          />
         )}
+
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
             item.origin !== manifestOrigin.LINK)) &&
           !jsonElementToEditInAdvancedEditor && (
-            <Tooltip
-              title={
-                !jsonElementToEditInAdvancedEditor
-                  ? t('advanced_edit_disabled')
-                  : ''
+            <Tab
+              label={
+                <Tooltip title={t('advanced_edit_disabled')}>
+                  <span>{t('advancedEdit')}</span>
+                </Tooltip>
               }
-              disableHoverListener={!!jsonElementToEditInAdvancedEditor}
-            >
-              <span>
-                <Tab
-                  label={t('advancedEdit')}
-                  {...a11yProps(3)}
-                  disabled={!jsonElementToEditInAdvancedEditor}
-                />
-              </span>
-            </Tooltip>
+              {...a11yProps(3)}
+              disabled
+            />
           )}
+
         {(objectTypes === ObjectTypes.PROJECT ||
           (objectTypes === ObjectTypes.MANIFEST &&
             item.origin !== manifestOrigin.LINK)) &&
           jsonElementToEditInAdvancedEditor && (
             <Tab
-              label={t('advancedEdit')}
+              label={
+                <Tooltip title={t('tab_advanced_desc')}>
+                  <span>{t('advancedEdit')}</span>
+                </Tooltip>
+              }
               {...a11yProps(3)}
               disabled={!jsonElementToEditInAdvancedEditor}
             />
           )}
+
         {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t('template')} {...a11yProps(4)} />
+          <Tab
+            label={
+              <Tooltip title={t('tab_template_desc')}>
+                <span>{t('template')}</span>
+              </Tooltip>
+            }
+            {...a11yProps(4)}
+          />
         )}
+
         {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t('tags')} {...a11yProps(5)} />
+          <Tab
+            label={
+              <Tooltip title={t('tab_tags_desc')}>
+                <span>{t('tags')}</span>
+              </Tooltip>
+            }
+            {...a11yProps(5)}
+          />
         )}
+
         {objectTypes === ObjectTypes.PROJECT && (
-          <Tab label={t('snapshots')} {...a11yProps(6)} />
+          <Tab
+            label={
+              <Tooltip title={t('tab_snapshots_desc')}>
+                <span>{t('snapshots')}</span>
+              </Tooltip>
+            }
+            {...a11yProps(6)}
+          />
         )}
       </Tabs>
       <Grid
@@ -510,14 +555,13 @@ export const MMUModalEdit = <
         <CustomTabPanel value={tabValue} index={0}>
           <Grid
             container
+            spacing={2}
             sx={{
               overflowY: 'auto',
-              height: '100%',
             }}
           >
             <Grid
               sx={{
-                minHeight: '50px',
                 width: '100%',
                 marginTop: '10px',
               }}
@@ -670,6 +714,7 @@ export const MMUModalEdit = <
               sx={{
                 overflowY: 'auto',
                 height: '100%',
+                width: '100%',
               }}
             >
               <MetadataForm
@@ -854,7 +899,6 @@ export const MMUModalEdit = <
         >
           <Grid>
             <Typography>
-              {' '}
               {t('areYouSureDuplicate')} <b>{itemLabel}</b> ?
             </Typography>
             <Button onClick={() => confirmDuplicate(item.id)}>
