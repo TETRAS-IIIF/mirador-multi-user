@@ -1,31 +1,12 @@
-import {
-  Card,
-  CardActions,
-  SelectChangeEvent,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Card, CardActions, SelectChangeEvent, Tooltip, Typography, } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { MMUModal } from './modal.tsx';
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useState,
-} from 'react';
+import { Dispatch, ReactNode, SetStateAction, useCallback, useState, } from 'react';
 import { MMUModalEdit } from './MMUModalEdit.tsx';
 import { ListItem } from '../types.ts';
 import { ItemsRights } from '../../features/user-group/types/types.ts';
-import {
-  MediaGroupRights,
-  mediaOrigin,
-  MediaTypes,
-} from '../../features/media/types/types.ts';
-import {
-  ManifestGroupRights,
-  manifestOrigin,
-} from '../../features/manifest/types/types.ts';
+import { MediaGroupRights, mediaOrigin, MediaTypes, } from '../../features/media/types/types.ts';
+import { ManifestGroupRights, manifestOrigin, } from '../../features/manifest/types/types.ts';
 import dayjs, { Dayjs } from 'dayjs';
 import { ObjectTypes } from '../../features/tag/type.ts';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
@@ -216,21 +197,39 @@ const MMUCard = <
             alignItems="center"
             gap={0.5}
           >
-            {item.origin === manifestOrigin.LINK && (
-              <Tooltip title={t('linkedManifest')}>
+            {item.origin === manifestOrigin.LINK &&
+              item.mediaTypes === undefined && (
+                <Tooltip title={t('linkedManifest')}>
+                  <LinkIcon fontSize="small" />
+                </Tooltip>
+              )}
+            {item.origin === manifestOrigin.LINK && item.mediaTypes && (
+              <Tooltip title={t('linkedMedia')}>
                 <LinkIcon fontSize="small" />
               </Tooltip>
             )}
-            {item.origin === manifestOrigin.UPLOAD && (
-              <Tooltip title={t('uploadedManifest')}>
+            {item.origin === manifestOrigin.UPLOAD &&
+              item.mediaTypes === undefined && (
+                <Tooltip title={t('uploadedManifest')}>
+                  <UploadFileIcon fontSize="small" />
+                </Tooltip>
+              )}
+            {item.origin === manifestOrigin.UPLOAD && item.mediaTypes && (
+              <Tooltip title={t('uploadedMedia')}>
                 <UploadFileIcon fontSize="small" />
               </Tooltip>
             )}
-            {item.origin === manifestOrigin.CREATE && (
-              <Tooltip title={t('createdManifest')}>
+            {item.origin === manifestOrigin.CREATE && item.mediaTypes && (
+              <Tooltip title={t('createdMedia')}>
                 <CreateIcon fontSize="small" />
               </Tooltip>
             )}
+            {item.origin === manifestOrigin.CREATE &&
+              item.mediaTypes === undefined && (
+                <Tooltip title={t('createdManifest')}>
+                  <CreateIcon fontSize="small" />
+                </Tooltip>
+              )}
             {item.shared && (
               <Tooltip title={t('shared')}>
                 <ShareIcon fontSize="small" />
@@ -239,13 +238,13 @@ const MMUCard = <
 
             {objectTypes === ObjectTypes.MEDIA &&
               item.mediaTypes === MediaTypes.VIDEO && (
-                <Tooltip title={t('video')}>
+                <Tooltip title={t('Video')}>
                   <OndemandVideoIcon />
                 </Tooltip>
               )}
             {objectTypes === ObjectTypes.MEDIA &&
               item.mediaTypes === MediaTypes.IMAGE && (
-                <Tooltip title={t('image')}>
+                <Tooltip title={t('Image')}>
                   <ImageIcon />
                 </Tooltip>
               )}
