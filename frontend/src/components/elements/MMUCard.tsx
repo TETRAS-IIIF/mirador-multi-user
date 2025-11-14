@@ -186,6 +186,7 @@ const MMUCard = <
         <Grid
           container
           alignItems="center"
+          wrap="nowrap"
           spacing={1}
           size={12}
           sx={{ flex: 1, minWidth: 0 }}
