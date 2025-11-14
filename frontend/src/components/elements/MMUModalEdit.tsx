@@ -1,5 +1,22 @@
-import { Button, Grid, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography, } from '@mui/material';
-import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useCallback, useEffect, useState, } from 'react';
+import {
+  Button,
+  Grid,
+  SelectChangeEvent,
+  Tab,
+  Tabs,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import { ItemList } from './ItemList.tsx';
 import { MMUModal } from './modal.tsx';
@@ -7,8 +24,14 @@ import { ModalConfirmDelete } from '../../features/projects/components/ModalConf
 import { ItemsRights } from '../../features/user-group/types/types.ts';
 import { ListItem } from '../types.ts';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { MediaGroupRights, mediaOrigin, } from '../../features/media/types/types.ts';
-import { ManifestGroupRights, manifestOrigin, } from '../../features/manifest/types/types.ts';
+import {
+  MediaGroupRights,
+  mediaOrigin,
+} from '../../features/media/types/types.ts';
+import {
+  ManifestGroupRights,
+  manifestOrigin,
+} from '../../features/manifest/types/types.ts';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -29,7 +52,11 @@ import { updateManifestJson } from '../../features/manifest/api/updateManifestJs
 import { Selector } from '../Selector.tsx';
 import { useTranslation } from 'react-i18next';
 import { NoteTemplate } from './CustomizationEditModal/NoteTemplate.tsx';
-import { Project, Snapshot, Template, } from '../../features/projects/types/types.ts';
+import {
+  Project,
+  Snapshot,
+  Template,
+} from '../../features/projects/types/types.ts';
 import { TagMaker } from './TagsFactory/TagMaker.tsx';
 
 import { SnapshotFactory } from './SnapshotFactory.tsx';

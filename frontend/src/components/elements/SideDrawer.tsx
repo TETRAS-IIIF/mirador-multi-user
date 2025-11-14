@@ -1,27 +1,13 @@
-import {
-  Dispatch,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import { Dispatch, useCallback, useEffect, useMemo, useRef, useState, } from 'react';
 import { updateProject } from '../../features/projects/api/Project/updateProject.ts';
-import {
-  CreateProjectDto,
-  Project,
-} from '../../features/projects/types/types.ts';
+import { CreateProjectDto, Project, } from '../../features/projects/types/types.ts';
 import IState from '../../features/mirador/interface/IState.ts';
 import { getUserAllProjects } from '../../features/projects/api/Project/getUserAllProjects.ts';
 import { createProject } from '../../features/projects/api/Project/createProject.ts';
 import { User } from '../../features/auth/types/types.ts';
 import { Media } from '../../features/media/types/types.ts';
 import { getUserPersonalGroup } from '../../features/projects/api/group/getUserPersonalGroup.ts';
-import {
-  ItemsRights,
-  UserGroup,
-  UserGroupTypes,
-} from '../../features/user-group/types/types.ts';
+import { ItemsRights, UserGroup, UserGroupTypes, } from '../../features/user-group/types/types.ts';
 import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
 import { handleLock } from '../../features/projects/api/Project/handleLock.ts';
 import { useTranslation } from 'react-i18next';
@@ -186,6 +172,7 @@ export const SideDrawer = ({
 
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = miradorViewerRef.current?.setViewer();
+    console.log('selectedProjectId :', selectedProjectId);
     if (selectedProjectId) {
       const projectToUpdate: Project = userProjects.find(
         (projectUser) => projectUser.id == selectedProjectId,
@@ -215,6 +202,7 @@ export const SideDrawer = ({
         }
       }
     } else {
+      console.log('CALL TO SAVE without selectedProjectId');
       const project: CreateProjectDto = {
         title: t('defaultProjectTitle'),
         ownerId: user.id,
@@ -291,7 +279,7 @@ export const SideDrawer = ({
             const currRightsIndex = curr.rights
               ? rightsOrder.indexOf(curr.rights)
               : -1;
-            return currRightsIndex> prevRightsIndex ? curr : prev;
+            return currRightsIndex > prevRightsIndex ? curr : prev;
           },
         );
 
@@ -345,7 +333,8 @@ export const SideDrawer = ({
         saveProject={saveProject}
         setShowSignOutModal={setShowSignOutModal}
         user={user}
-        handleGenerateSnapshot={handleGenerateSnapshot}/>
+        handleGenerateSnapshot={handleGenerateSnapshot}
+      />
       <Content
         setMedias={setMedias}
         HandleSetIsRunning={HandleSetIsRunning}
@@ -372,7 +361,8 @@ export const SideDrawer = ({
         userPersonalGroup={userPersonalGroup!}
         userProjects={userProjects}
         viewer={viewer}
-        fetchProjects={fetchProjects}/>
+        fetchProjects={fetchProjects}
+      />
     </>
   );
 };
