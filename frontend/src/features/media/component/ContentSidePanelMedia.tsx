@@ -31,6 +31,7 @@ import { UserGroup } from '../../user-group/types/types.ts';
 import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
 import { User } from '../../auth/types/types.ts';
 import { caddyUrl, MEDIA_TYPES_TABS } from '../../../utils/utils.ts';
+import { useItemsPerPage } from '../../../utils/customHooks/useItemsPerPage.ts';
 
 interface PopUpMediaProps {
   medias: Media[];
@@ -53,7 +54,7 @@ export const ContentSidePanelMedia = ({
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [sortField] = useState<keyof Media>('title');
   const [sortOrder] = useState('asc');
-  const itemsPerPage = 6;
+  const itemsPerPage = useItemsPerPage(2);
   const { t } = useTranslation();
   const handleCopyToClipBoard = async (path: string) => {
     try {
