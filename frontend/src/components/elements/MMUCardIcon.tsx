@@ -87,7 +87,6 @@ export const MMUCardIcon = <
           <ShareIcon fontSize="small" />
         </Tooltip>
       )}
-      s
       {objectTypes === OBJECT_TYPES.MEDIA &&
         item.mediaTypes === MEDIA_TYPES.VIDEO && (
           <Tooltip title={t('Video')}>
