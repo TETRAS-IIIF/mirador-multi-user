@@ -41,7 +41,7 @@ export const ToggleButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<ToggleButtonProps>(({ theme, open }) => ({
   position: 'fixed',
-  top: open ? 40 : 40,
+  top: 40,
   right: open ? 400 : 0,
   zIndex: 9999,
   transition: theme.transitions.create('right', {
