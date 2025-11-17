@@ -16,7 +16,7 @@ export const LoginPage = () => {
     <Grid container direction="column" spacing={4}>
       {allowClassic && (
         <Grid>
-          <LoginForm/>
+          <LoginForm />
         </Grid>
       )}
 
@@ -28,7 +28,7 @@ export const LoginPage = () => {
 
       {allowOpenId && (
         <>
-          <OpenIdLogin/>
+          <OpenIdLogin />
         </>
       )}
     </Grid>

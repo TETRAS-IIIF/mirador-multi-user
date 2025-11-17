@@ -1,6 +1,6 @@
-import { ListItem, Tooltip } from "@mui/material";
-import { ItemButton } from "../../SideBar/ItemButton";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import { ListItem, Tooltip } from '@mui/material';
+import { ItemButton } from '../../SideBar/ItemButton';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 interface DrawerElementAdminProps {
   open: boolean;
@@ -21,9 +21,10 @@ export function DrawerElementAdmin({
         <ItemButton
           open={open}
           selected={false}
-          icon={<AdminPanelSettingsIcon/>}
+          icon={<AdminPanelSettingsIcon />}
           text={text}
-          action={action}/>
+          action={action}
+        />
       </ListItem>
     </Tooltip>
   );

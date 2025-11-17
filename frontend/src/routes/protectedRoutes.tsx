@@ -9,27 +9,27 @@ import { Terms } from '../features/miscellaneous/Terms.tsx';
 export const protectedRoutes = [
   {
     path: '/app/my-projects',
-    element: <MainContent/>,
+    element: <MainContent />,
   },
-  { path: '*', element: <Navigate to="/app/my-projects"/> },
+  { path: '*', element: <Navigate to="/app/my-projects" /> },
   {
     path: '/mirador/*',
-    element: <MiradorPublicExposed/>,
+    element: <MiradorPublicExposed />,
   },
   {
     path: '/manifest/*',
-    element: <MiradorManifestExposed/>,
+    element: <MiradorManifestExposed />,
   },
   {
     path: '/impersonate/*',
-    element: <Impersonate/>,
+    element: <Impersonate />,
   },
   {
     path: '/token/*',
-    element: <MailConfirmation/>,
+    element: <MailConfirmation />,
   },
   {
     path: '/terms/*',
-    element: <Terms/>,
+    element: <Terms />,
   },
 ];

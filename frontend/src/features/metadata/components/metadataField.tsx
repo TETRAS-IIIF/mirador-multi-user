@@ -1,6 +1,6 @@
-import { memo } from "react";
-import { Grid, TextField } from "@mui/material";
-import { MMUToolTip } from "../../../components/elements/MMUTootlTip.tsx";
+import { memo } from 'react';
+import { Grid, TextField } from '@mui/material';
+import { MMUToolTip } from '../../../components/elements/MMUTootlTip.tsx';
 
 interface MetadataFieldProps {
   field: {
@@ -30,12 +30,13 @@ const MetadataField = memo(
               onChange={(e) => handleInputChange(field.term, e.target.value)}
               inputProps={{
                 style: {
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 },
                 maxLength: 255,
-              }}/>
+              }}
+            />
           </Grid>
           <Grid size={1}>
             {field.comment && (

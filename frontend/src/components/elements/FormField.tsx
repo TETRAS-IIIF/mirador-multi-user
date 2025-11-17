@@ -25,7 +25,8 @@ const FormField: React.FC<FormFieldProps> = ({
       container
       alignItems="center"
       spacing={2}
-      justifyContent="space-between">
+      justifyContent="space-between"
+    >
       <Grid>
         <TextField
           type={type}
@@ -35,7 +36,8 @@ const FormField: React.FC<FormFieldProps> = ({
           label={placeholder}
           variant="outlined"
           {...register(name, { valueAsNumber })}
-          error={!!error}/>
+          error={!!error}
+        />
       </Grid>
       {error && (
         <Grid width={200}>

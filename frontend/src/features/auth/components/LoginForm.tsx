@@ -42,7 +42,8 @@ export const LoginForm = () => {
             name="mail"
             required={true}
             register={register}
-            error={errors.mail}/>
+            error={errors.mail}
+          />
         </Grid>
         <Grid container alignItems="center" spacing={2}>
           <Grid>
@@ -52,13 +53,15 @@ export const LoginForm = () => {
               name="password"
               register={register}
               required={true}
-              error={errors.password}/>
+              error={errors.password}
+            />
           </Grid>
           <Grid>
             <Button
               variant="text"
               color="primary"
-              onClick={() => (window.location.href = '/forgot-password')}>
+              onClick={() => (window.location.href = '/forgot-password')}
+            >
               {t('forgot-password')}
             </Button>
           </Grid>
@@ -68,7 +71,8 @@ export const LoginForm = () => {
             type="submit"
             variant="contained"
             color="primary"
-            onClick={handleSubmit(onSubmit)}>
+            onClick={handleSubmit(onSubmit)}
+          >
             {t('submit')}
           </Button>
         </Grid>

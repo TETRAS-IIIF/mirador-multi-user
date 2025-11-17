@@ -23,9 +23,10 @@ export const Login = () => {
             </NavLink>
           </Grid>
         )
-      }>
+      }
+    >
       <Grid>
-        <LoginPage/>
+        <LoginPage />
       </Grid>
     </Layout>
   );

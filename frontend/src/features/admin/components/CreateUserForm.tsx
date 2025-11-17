@@ -13,7 +13,9 @@ interface ICreateUserFormProps {
   setopenAddUserModal: Dispatch<SetStateAction<boolean>>;
 }
 
-export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) => {
+export const CreateUserForm = ({
+  setopenAddUserModal,
+}: ICreateUserFormProps) => {
   const { t } = useTranslation();
   const { mutateAsync: createUser } = useRegister();
   const {
@@ -24,13 +26,12 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
     resolver: zodResolver(UserSchema),
   });
 
-
   const onSubmit = async (data: RegisterCredentialsDTO) => {
     try {
       await createUser(data, {
         onSuccess: () => {
           toast.success(t('accountCreated'));
-          setopenAddUserModal(false)
+          setopenAddUserModal(false);
         },
       });
     } catch (error: any) {
@@ -48,9 +49,7 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
   return (
     <Grid container wrap="nowrap" spacing={2} flexDirection="column">
       <Grid>
-        <Typography variant="h6">
-          {t('create_user_form')}
-        </Typography>
+        <Typography variant="h6">{t('create_user_form')}</Typography>
       </Grid>
       <form>
         <Grid
@@ -58,7 +57,8 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
           direction="column"
           justifyContent="center"
           spacing={2}
-          maxWidth={'1000px'}>
+          maxWidth={'1000px'}
+        >
           <Grid>
             <FormField
               type="mail"
@@ -66,7 +66,8 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
               name="mail"
               required={true}
               register={register}
-              error={errors.mail}/>
+              error={errors.mail}
+            />
           </Grid>
           <Grid>
             <FormField
@@ -75,7 +76,8 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
               name="name"
               required={true}
               register={register}
-              error={errors.name}/>
+              error={errors.name}
+            />
           </Grid>
           <Grid>
             <FormField
@@ -84,7 +86,8 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
               name="password"
               register={register}
               required={true}
-              error={errors.password}/>
+              error={errors.password}
+            />
           </Grid>
           <Grid>
             <FormField
@@ -93,19 +96,21 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
               name="confirmPassword"
               register={register}
               required={true}
-              error={errors.confirmPassword}/>
+              error={errors.confirmPassword}
+            />
           </Grid>
           <Grid container>
             <Button
               type="submit"
               variant="contained"
               color="primary"
-              onClick={handleSubmit(onSubmit)}>
+              onClick={handleSubmit(onSubmit)}
+            >
               {t('submit')}
             </Button>
           </Grid>
         </Grid>
       </form>
     </Grid>
-  )
-}
+  );
+};

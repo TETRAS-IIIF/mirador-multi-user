@@ -34,14 +34,16 @@ export const ValidateTerms = () => {
         direction="column"
         justifyContent="center"
         alignItems="center"
-        spacing={3}>
+        spacing={3}
+      >
         <Grid>
           <FormControlLabel
             required
             control={
               <Checkbox
                 checked={checked}
-                onChange={() => setChecked((prev) => !prev)}/>
+                onChange={() => setChecked((prev) => !prev)}
+              />
             }
             label={
               <>
@@ -50,7 +52,8 @@ export const ValidateTerms = () => {
                   {t('terms')}
                 </Link>
               </>
-            }/>
+            }
+          />
         </Grid>
         <Grid>
           <LoadingButton
@@ -58,7 +61,8 @@ export const ValidateTerms = () => {
             color="primary"
             onClick={handleValidate}
             disabled={!checked}
-            loading={isPending}>
+            loading={isPending}
+          >
             {t('validateTerms')}
           </LoadingButton>
         </Grid>

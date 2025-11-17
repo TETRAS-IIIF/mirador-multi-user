@@ -1,4 +1,4 @@
-import { ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { ListItem, ListItemButton, ListItemText } from '@mui/material';
 
 interface ListRowProps {
   content: string;
@@ -10,7 +10,7 @@ export const ListRow = ({ content, index, action }: ListRowProps) => {
   return (
     <ListItem key={index} component="div" disablePadding>
       <ListItemButton onClick={() => action(content)}>
-        <ListItemText primary={content}/>
+        <ListItemText primary={content} />
       </ListItemButton>
     </ListItem>
   );

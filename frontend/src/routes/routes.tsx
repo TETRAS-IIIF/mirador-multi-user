@@ -11,7 +11,7 @@ export function AppRoutes() {
   const commonRoutes = [
     {
       path: '/*',
-      element: <Landing/>,
+      element: <Landing />,
     },
   ];
 

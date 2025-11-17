@@ -1,6 +1,6 @@
-import { upsertAnnotationPage } from "../api/upsertAnnotationPage.ts";
-import { gettingAnnotationPage } from "../api/gettingAnnotationPage.ts";
-import { deleteAnnotationPage } from "../api/deleteAnnotationPage.ts";
+import { upsertAnnotationPage } from '../api/upsertAnnotationPage.ts';
+import { gettingAnnotationPage } from '../api/gettingAnnotationPage.ts';
+import { deleteAnnotationPage } from '../api/deleteAnnotationPage.ts';
 
 export default class MMUAdapter {
   /** */
@@ -23,7 +23,7 @@ export default class MMUAdapter {
     const emptyAnnoPage = {
       id: this.annotationPageId,
       items: [],
-      type: "AnnotationPage",
+      type: 'AnnotationPage',
     };
     let annotationPage = await this.all();
     if (annotationPage.length < 1) {
@@ -88,7 +88,7 @@ export default class MMUAdapter {
       this.annotationPageId,
       this.projectId,
     );
-    if (annotationPage.length> 0) {
+    if (annotationPage.length > 0) {
       return annotationPage[0].content;
     } else {
       return [];
