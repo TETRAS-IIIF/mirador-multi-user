@@ -24,7 +24,7 @@ import { isValidUrl } from '../../../utils/utils.ts';
 import placeholder from '../../../assets/Placeholder.svg';
 import { useLinkManifest } from '../hooks/useLinkManifest.ts';
 import { useItemsPerPage } from '../../../utils/customHooks/useItemsPerPage.ts';
-import { ITEM_RIGHTS } from '../../../utils/types.ts';
+import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 
 const CustomButton = styled(Button)({
   position: 'absolute',

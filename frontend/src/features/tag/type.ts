@@ -1,4 +1,4 @@
-import { OBJECT_TYPES } from '../../utils/types.ts';
+import { OBJECT_TYPES } from '../../utils/mmu_types.ts';
 
 export type Tag = {
   title: string;

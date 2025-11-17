@@ -1,4 +1,4 @@
-import { OBJECT_TYPES } from '../../utils/types.ts';
+import { OBJECT_TYPES } from '../../utils/mmu_types.ts';
 import { Grid, Typography } from '@mui/material';
 import { ShareLink } from './shareLink.tsx';
 import { Snapshot } from '../../features/projects/types/types.ts';

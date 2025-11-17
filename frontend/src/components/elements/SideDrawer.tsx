@@ -18,7 +18,7 @@ import { User } from '../../features/auth/types/types.ts';
 import { Media } from '../../features/media/types/types.ts';
 import { getUserPersonalGroup } from '../../features/projects/api/group/getUserPersonalGroup.ts';
 import { UserGroup } from '../../features/user-group/types/types.ts';
-import { ITEM_RIGHTS, USER_GROUP_TYPES } from '../../utils/types.ts';
+import { ITEM_RIGHTS, USER_GROUP_TYPES } from '../../utils/mmu_types.ts';
 import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
 import { handleLock } from '../../features/projects/api/Project/handleLock.ts';
 import { useTranslation } from 'react-i18next';

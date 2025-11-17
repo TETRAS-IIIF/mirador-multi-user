@@ -4,7 +4,7 @@ import {
   ITEM_RIGHTS,
   MEDIA_TYPES,
   OBJECT_ORIGIN,
-} from '../../../utils/types.ts';
+} from '../../../utils/mmu_types.ts';
 
 export type CreateMediaDto = {
   idCreator: number;

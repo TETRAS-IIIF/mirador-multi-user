@@ -20,7 +20,7 @@ import {
   MEDIA_TYPES,
   OBJECT_ORIGIN,
   OBJECT_TYPES,
-} from '../../utils/types.ts';
+} from '../../utils/mmu_types.ts';
 
 import dayjs, { Dayjs } from 'dayjs';
 

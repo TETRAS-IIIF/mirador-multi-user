@@ -1,6 +1,6 @@
 import { Media } from '../types/types.ts';
 import MMUCard from '../../../components/elements/MMUCard.tsx';
-import { OBJECT_TYPES } from '../../../utils/types';
+import { OBJECT_TYPES } from '../../../utils/mmu_types.ts';
 import { ModalButton } from '../../../components/elements/ModalButton.tsx';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';

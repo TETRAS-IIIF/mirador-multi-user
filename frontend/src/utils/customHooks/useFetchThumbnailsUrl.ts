@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Dayjs } from 'dayjs';
 import placeholder from '../../assets/Placeholder.svg';
-import { MEDIA_TYPES, OBJECT_ORIGIN } from '../types.ts';
+import { MEDIA_TYPES, OBJECT_ORIGIN } from '../mmu_types.ts';
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 

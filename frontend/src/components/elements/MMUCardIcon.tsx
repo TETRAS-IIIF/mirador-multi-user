@@ -9,7 +9,11 @@ import { Tooltip } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Dayjs } from 'dayjs';
 import { Snapshot } from '../../features/projects/types/types.ts';
-import { MEDIA_TYPES, OBJECT_ORIGIN, OBJECT_TYPES } from '../../utils/types.ts';
+import {
+  MEDIA_TYPES,
+  OBJECT_ORIGIN,
+  OBJECT_TYPES,
+} from '../../utils/mmu_types.ts';
 
 interface IMMUCardProps<T> {
   item: T;

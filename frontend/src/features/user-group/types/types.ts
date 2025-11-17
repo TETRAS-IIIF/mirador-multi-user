@@ -1,4 +1,4 @@
-import { ITEM_RIGHTS, USER_GROUP_TYPES } from 'utils/types.ts';
+import { ITEM_RIGHTS, USER_GROUP_TYPES } from '../../../utils/mmu_types.ts';
 import { User } from '../../auth/types/types.ts';
 import { Dayjs } from 'dayjs';
 

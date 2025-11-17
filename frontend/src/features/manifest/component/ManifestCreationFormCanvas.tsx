@@ -1,7 +1,7 @@
 import { FieldForm } from '../../../components/elements/FieldForm';
 import { Button, Grid, Paper } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
-import { MEDIA_TYPES } from '../../../utils/types';
+import { MEDIA_TYPES } from '../../../utils/mmu_types.ts';
 import { MediaImageThumbnail } from './MediaImageThumbnail';
 import { MediaVideoThumbnail } from './MediaVideoThumbnail';
 import { IIIFCanvases, MediaField } from './ManifestCreationForm';

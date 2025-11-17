@@ -1,4 +1,4 @@
-import { ITEM_RIGHTS, USER_GROUP_TYPES } from '../utils/types';
+import { ITEM_RIGHTS, USER_GROUP_TYPES } from '../utils/mmu_types.ts';
 import { User } from '../features/auth/types/types.ts';
 
 export type ListItem = {

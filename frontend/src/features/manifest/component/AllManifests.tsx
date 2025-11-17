@@ -60,7 +60,7 @@ import {
   OBJECT_ORIGIN,
   OBJECT_TYPES,
   USER_GROUP_TYPES,
-} from '../../../utils/types.ts';
+} from '../../../utils/mmu_types.ts';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',

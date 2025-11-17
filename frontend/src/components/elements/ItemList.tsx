@@ -9,7 +9,7 @@ import { ListItem } from '../types.ts';
 import { LoadingSpinner } from './loadingSpinner.tsx';
 import { SearchBar } from './SearchBar.tsx';
 import { MMUToolTip } from './MMUTootlTip.tsx';
-import { OBJECT_TYPES, USER_GROUP_TYPES } from 'utils/types.ts';
+import { OBJECT_TYPES, USER_GROUP_TYPES } from '../../utils/mmu_types.ts';
 
 interface IProjectUserGroup<G, T> {
   children?: (item: ListItem) => ReactNode;

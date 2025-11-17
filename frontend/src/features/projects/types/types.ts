@@ -2,7 +2,7 @@ import IState from '../../mirador/interface/IState.ts';
 import { User } from '../../auth/types/types.ts';
 import { UserGroup } from '../../user-group/types/types.ts';
 import { Dayjs } from 'dayjs';
-import { ITEM_RIGHTS } from '../../../utils/types.ts';
+import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 
 export type Project = {
   created_at: Dayjs;

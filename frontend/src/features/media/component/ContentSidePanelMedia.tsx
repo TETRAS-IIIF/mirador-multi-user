@@ -32,7 +32,7 @@ import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
 import { User } from '../../auth/types/types.ts';
 import { caddyUrl } from '../../../utils/utils.ts';
 import { useItemsPerPage } from '../../../utils/customHooks/useItemsPerPage.ts';
-import { MEDIA_TYPES, MEDIA_TYPES_TABS } from '../../../utils/types.ts';
+import { MEDIA_TYPES, MEDIA_TYPES_TABS } from '../../../utils/mmu_types.ts';
 
 interface PopUpMediaProps {
   medias: Media[];

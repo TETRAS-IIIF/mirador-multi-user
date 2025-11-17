@@ -66,7 +66,7 @@ import {
   MEDIA_TYPES,
   MEDIA_TYPES_TABS,
   USER_GROUP_TYPES,
-} from '../../../utils/types.ts';
+} from '../../../utils/mmu_types.ts';
 
 interface IAllMediasProps {
   user: User;

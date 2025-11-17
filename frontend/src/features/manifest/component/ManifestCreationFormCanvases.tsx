@@ -8,7 +8,7 @@ import {
   isRawVideo,
   isYouTubeVideo,
 } from '../../media/utils/utils';
-import { MEDIA_TYPES } from '../../../utils/types';
+import { MEDIA_TYPES } from '../../../utils/mmu_types.ts';
 import { ManifestCreationFormCanvas } from './ManifestCreationFormCanvas';
 import { IIIFCanvases, MediaField } from './ManifestCreationForm';
 

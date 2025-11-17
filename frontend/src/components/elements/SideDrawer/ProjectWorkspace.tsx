@@ -5,7 +5,7 @@ import { SidePanel } from '../SidePanel/SidePanel.tsx';
 import { Media } from '../../../features/media/types/types.ts';
 import { Manifest } from '../../../features/manifest/types/types.ts';
 import { User } from '../../../features/auth/types/types.ts';
-import { ITEM_RIGHTS } from '../../../utils/types.ts';
+import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 
 interface ProjectWorkspaceProps {
   HandleSetIsRunning: () => void;

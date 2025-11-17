@@ -5,7 +5,7 @@ import { Media } from '../types/types';
 import placeholder from '../../../assets/Placeholder.svg';
 import videoPlaceHolder from '../../../assets/video_placeholder.webp';
 import otherPlaceHolder from '../../../assets/other_placeholder.webp';
-import { MEDIA_TYPES } from '../../../utils/types';
+import { MEDIA_TYPES } from '../../../utils/mmu_types.ts';
 
 const CustomImageItem = styled('div')({
   position: 'relative',

@@ -33,7 +33,7 @@ import {
   UPDATED_AT,
   useCurrentPageData,
 } from '../../../utils/customHooks/filterHook.ts';
-import { ITEM_RIGHTS, OBJECT_TYPES } from '../../../utils/types.ts';
+import { ITEM_RIGHTS, OBJECT_TYPES } from '../../../utils/mmu_types.ts';
 
 interface allGroupsProps {
   user: User;

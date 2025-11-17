@@ -16,7 +16,7 @@ import { Tag, Tagging } from '../type.ts';
 import { getTagsForObject } from '../api/getTagsForObject.ts';
 import { removeTag } from '../api/RemoveTag.ts';
 import { TagChip } from './TagChip.tsx';
-import { OBJECT_TYPES } from '../../../utils/types.ts';
+import { OBJECT_TYPES } from '../../../utils/mmu_types.ts';
 
 interface ITaggingFormProps {
   object: { id: number };

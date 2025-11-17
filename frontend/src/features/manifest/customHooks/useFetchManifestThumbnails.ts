@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Manifest } from '../types/types.ts';
-import { OBJECT_ORIGIN } from '../../../utils/types.ts';
+import { OBJECT_ORIGIN } from '../../../utils/mmu_types.ts';
 
 const placeholder = '../../../assets/images/placeholder.png';
 const caddyUrl = import.meta.env.VITE_CADDY_URL;

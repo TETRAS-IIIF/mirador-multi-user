@@ -3,7 +3,7 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
-import { ITEM_RIGHTS } from '../utils/types.ts';
+import { ITEM_RIGHTS } from '../utils/mmu_types.ts';
 
 export interface SelectorProps {
   value: string;

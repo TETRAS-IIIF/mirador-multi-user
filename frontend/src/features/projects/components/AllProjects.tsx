@@ -32,7 +32,7 @@ import {
   ITEM_RIGHTS,
   OBJECT_TYPES,
   USER_GROUP_TYPES,
-} from '../../../utils/types.ts';
+} from '../../../utils/mmu_types.ts';
 import toast from 'react-hot-toast';
 import { duplicateProject } from '../api/Project/duplicateProject.ts';
 import { getUserNameWithId } from '../../auth/api/getUserNameWithId.ts';

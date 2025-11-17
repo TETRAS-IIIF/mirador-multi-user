@@ -1,6 +1,6 @@
 import { UserGroup } from '../../user-group/types/types.ts';
 import { Dayjs } from 'dayjs';
-import { ITEM_RIGHTS, OBJECT_ORIGIN } from '../../../utils/types.ts';
+import { ITEM_RIGHTS, OBJECT_ORIGIN } from '../../../utils/mmu_types.ts';
 
 export type Manifest = {
   created_at: Dayjs;

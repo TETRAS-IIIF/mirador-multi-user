@@ -1,5 +1,5 @@
 import storage from '../../../utils/storage.ts';
-import { OBJECT_TYPES } from '../../../utils/types.ts';
+import { OBJECT_TYPES } from '../../../utils/mmu_types.ts';
 
 export const removeTag = async (
   tagTitle: string,

@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { FieldForm } from '../../../components/elements/FieldForm.tsx';
-import { MEDIA_TYPES } from '../../../utils/types.ts';
+import { MEDIA_TYPES } from '../../../utils/mmu_types.ts';
 import { ManifestCreationFormCanvases } from './ManifestCreationFormCanvases.tsx';
 import { ManifestCreationFormThumbnail } from './ManifestCreationFormThumbnail.tsx';
 import toast from 'react-hot-toast';

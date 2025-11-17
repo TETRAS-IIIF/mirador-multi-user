@@ -1,4 +1,4 @@
-import { ITEM_RIGHTS } from '../../../utils/types.ts';
+import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 import storage from '../../../utils/storage.ts';
 
 export const updateAccessToManifest = async (
