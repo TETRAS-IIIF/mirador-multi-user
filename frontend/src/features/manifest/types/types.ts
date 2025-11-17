@@ -1,5 +1,9 @@
 import { UserGroup } from '../../user-group/types/types.ts';
 import { Dayjs } from 'dayjs';
+import {
+  MANIFEST_GROUP_RIGHTS,
+  MANIFEST_ORIGIN,
+} from '../../../utils/types.ts';
 
 export type Manifest = {
   created_at: Dayjs;
@@ -9,12 +13,12 @@ export type Manifest = {
   idCreator: number;
   json?: any;
   title: string;
-  origin: manifestOrigin;
+  origin: MANIFEST_ORIGIN;
   path: string;
   updated_at: Dayjs;
   thumbnailUrl?: string;
   metadata: Record<string, string>;
-  rights?: ManifestGroupRights;
+  rights?: MANIFEST_GROUP_RIGHTS;
   url: string;
   share?: string;
   shared?: boolean;
@@ -24,7 +28,7 @@ export type Manifest = {
 export type updateManifestJsonDto = {
   manifestId: number;
   json: any;
-  origin: manifestOrigin;
+  origin: MANIFEST_ORIGIN;
   path: string;
   hash: string;
 };
@@ -33,18 +37,6 @@ export type grantAccessToManifestDto = {
   userGroupId: number;
   manifestId: number;
 };
-
-export enum ManifestGroupRights {
-  ADMIN = 'admin',
-  READER = 'reader',
-  EDITOR = 'editor',
-}
-
-export enum manifestOrigin {
-  UPLOAD = 'upload',
-  LINK = 'link',
-  CREATE = 'create',
-}
 
 export type manifestCreationDto = {
   idCreator: number;
@@ -68,9 +60,10 @@ export type UploadAndLinkManifestDto = {
   user_group?: UserGroup;
   file?: File;
   path?: string;
-  rights?: ManifestGroupRights;
+  rights?: MANIFEST_GROUP_RIGHTS;
 };
 
+// TODO removed useless
 export type ManifestItem = {
   id: string;
   type: string;

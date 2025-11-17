@@ -1,6 +1,10 @@
 import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Project, ProjectGroup, ProjectGroupUpdateDto, } from '../types/types.ts';
+import {
+  Project,
+  ProjectGroup,
+  ProjectGroupUpdateDto,
+} from '../types/types.ts';
 import IState from '../../mirador/interface/IState.ts';
 import { User } from '../../auth/types/types.ts';
 import { deleteProject } from '../api/Project/deleteProject.ts';
@@ -10,7 +14,7 @@ import { FloatingActionButton } from '../../../components/elements/FloatingActio
 import { DrawerCreateProject } from './DrawerCreateProject.tsx';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
 import { getUserPersonalGroup } from '../api/group/getUserPersonalGroup.ts';
-import { ItemsRights, LinkUserGroup, UserGroup, UserGroupTypes, } from '../../user-group/types/types.ts';
+import { LinkUserGroup, UserGroup } from '../../user-group/types/types.ts';
 import MMUCard from '../../../components/elements/MMUCard.tsx';
 import { removeProjectToGroup } from '../../user-group/api/removeProjectToGroup.ts';
 import { addProjectToGroup } from '../../user-group/api/addProjectToGroup.ts';
@@ -24,7 +28,11 @@ import { Media } from '../../media/types/types.ts';
 import { PaginationControls } from '../../../components/elements/Pagination.tsx';
 import { updateAccessToProject } from '../api/Project/UpdateAccessToProject.ts';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { ObjectTypes } from '../../tag/type.ts';
+import {
+  ITEM_RIGHTS,
+  OBJECT_TYPES,
+  USER_GROUP_TYPES,
+} from '../../../utils/types.ts';
 import toast from 'react-hot-toast';
 import { duplicateProject } from '../api/Project/duplicateProject.ts';
 import { getUserNameWithId } from '../../auth/api/getUserNameWithId.ts';
@@ -38,7 +46,11 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { removeProjectFromList } from '../api/Project/removeProjectFromList.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { Manifest } from '../../manifest/types/types.ts';
-import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHooks/filterHook.ts';
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from '../../../utils/customHooks/filterHook.ts';
 
 interface AllProjectsProps {
   user: User;
@@ -236,7 +248,7 @@ export const AllProjects = ({
     const newRights = await updateAccessToProject(
       projectId,
       group.id,
-      eventValue as ItemsRights,
+      eventValue as ITEM_RIGHTS,
     );
     if (newRights.error) {
       toast.error(t('not_allowed_to_modify_rights'));
@@ -272,7 +284,7 @@ export const AllProjects = ({
   };
 
   const getGroupByOption = (option: UserGroup): string => {
-    if (option.type === UserGroupTypes.MULTI_USER) {
+    if (option.type === USER_GROUP_TYPES.MULTI_USER) {
       return t('groups');
     } else {
       return t('users');
@@ -383,7 +395,7 @@ export const AllProjects = ({
                           fetchItems={fetchProjects}
                           ownerId={projectUser.ownerId}
                           duplicateItem={handleDuplicateProject}
-                          objectTypes={ObjectTypes.PROJECT}
+                          objectTypes={OBJECT_TYPES.PROJECT}
                           thumbnailUrl={
                             projectUser.thumbnailUrl
                               ? projectUser.thumbnailUrl

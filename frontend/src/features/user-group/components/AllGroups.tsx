@@ -1,7 +1,7 @@
 import { User } from '../../auth/types/types.ts';
 import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { CreateGroupDto, ItemsRights, LinkUserGroup, UserGroup } from '../types/types.ts';
+import { CreateGroupDto, LinkUserGroup, UserGroup } from '../types/types.ts';
 import { FloatingActionButton } from '../../../components/elements/FloatingActionButton.tsx';
 import AddIcon from '@mui/icons-material/Add';
 import { DrawerCreateGroup } from './DrawerCreateGroup.tsx';
@@ -20,7 +20,6 @@ import { GetAllGroupUsers } from '../api/getAllGroupUsers.ts';
 import { ListItem } from '../../../components/types.ts';
 import { Media } from '../../media/types/types.ts';
 import { PaginationControls } from '../../../components/elements/Pagination.tsx';
-import { ObjectTypes } from '../../tag/type.ts';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { SortItemSelector } from '../../../components/elements/sortItemSelector.tsx';
@@ -29,7 +28,12 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { leavingGroup } from '../api/leavingGroup.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { Manifest } from '../../manifest/types/types.ts';
-import { TITLE, UPDATED_AT, useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from '../../../utils/customHooks/filterHook.ts';
+import { ITEM_RIGHTS, OBJECT_TYPES } from '../../../utils/types.ts';
 
 interface allGroupsProps {
   user: User;
@@ -43,21 +47,22 @@ interface allGroupsProps {
 }
 
 export const AllGroups = ({
-                            user,
-                            medias,
-                            fetchMediaForUser,
-                            userPersonalGroup,
-                            fetchGroups,
-                            groups,
-                            manifests,
-                            fetchManifestForUser,
-                          }: allGroupsProps) => {
+  user,
+  medias,
+  fetchMediaForUser,
+  userPersonalGroup,
+  fetchGroups,
+  groups,
+  manifests,
+  fetchManifestForUser,
+}: allGroupsProps) => {
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] =
     useState(false);
   const [openModalGroupId, setOpenModalGroupId] = useState<number | null>(null); // Updated state
   const [userToAdd, setUserToAdd] = useState<LinkUserGroup | null>(null);
   const [userPersonalGroupList, setUserPersonalGroupList] = useState<
-    LinkUserGroup[]>([]);
+    LinkUserGroup[]
+  >([]);
   const [groupFilter, setGroupFilter] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -126,11 +131,11 @@ export const AllGroups = ({
     );
     const newRights = await ChangeAccessToGroup(groupId, {
       groupId: group.id,
-      rights: eventValue as ItemsRights,
+      rights: eventValue as ITEM_RIGHTS,
       userId: userToUpdate!.user.id,
     });
     if (newRights.error) {
-      toast.error(t('not_allowed_to_modify_rights'))
+      toast.error(t('not_allowed_to_modify_rights'));
     }
   };
 
@@ -143,7 +148,7 @@ export const AllGroups = ({
 
   const handleDeleteGroup = async (groupId: number) => {
     await deleteGroup(groupId);
-    setOpenModalGroupId(null)
+    setOpenModalGroupId(null);
     fetchGroups();
   };
 
@@ -187,10 +192,10 @@ export const AllGroups = ({
         manifests={manifests}
         medias={medias}
         user={user}
-        userPersonalGroup={userPersonalGroup!}>
+        userPersonalGroup={userPersonalGroup!}
+      >
         <Grid container flexDirection="column">
           <Grid
-           
             container
             justifyContent="flex-end"
             direction="row"
@@ -202,51 +207,54 @@ export const AllGroups = ({
               zIndex: 1000,
               backgroundColor: '#dcdcdc',
               paddingBottom: '18px',
-            }}>
+            }}
+          >
             <Grid>
-              <SearchBar label={t('filterGroups')} setFilter={setGroupFilter}/>
+              <SearchBar label={t('filterGroups')} setFilter={setGroupFilter} />
             </Grid>
             <Grid>
               <SortItemSelector<UserGroup>
                 sortField={sortField}
                 setSortField={setSortField}
-                fields={[TITLE, UPDATED_AT]}/>
+                fields={[TITLE, UPDATED_AT]}
+              />
             </Grid>
             <Grid>
               <Tooltip title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}>
                 <IconButton onClick={toggleSortOrder}>
                   {sortOrder === 'asc' ? (
-                    <ArrowDropUpIcon/>
+                    <ArrowDropUpIcon />
                   ) : (
-                    <ArrowDropDownIcon/>
+                    <ArrowDropDownIcon />
                   )}
                 </IconButton>
               </Tooltip>
             </Grid>
           </Grid>
           <Grid
-           
             container
             spacing={2}
             flexDirection="column"
-            sx={{ marginBottom: '40px' }}>
+            sx={{ marginBottom: '40px' }}
+          >
             {!groups.length && (
               <Grid
                 container
                 justifyContent={'center'}
-                sx={{ marginTop: '10px' }}>
+                sx={{ marginTop: '10px' }}
+              >
                 <Typography variant="h6" component="h2">
                   {t('noGroupYet')}
                 </Typography>
               </Grid>
             )}
-            {groups.length> 0 &&
-              (currentPageData.length> 0 ? (
+            {groups.length > 0 &&
+              (currentPageData.length > 0 ? (
                 currentPageData.map((group: UserGroup) => (
                   <Grid key={group.id}>
                     <MMUCard
                       ownerId={group.ownerId}
-                      objectTypes={ObjectTypes.GROUP}
+                      objectTypes={OBJECT_TYPES.GROUP}
                       isGroups={true}
                       thumbnailUrl={
                         group.thumbnailUrl ? group.thumbnailUrl : null
@@ -266,8 +274,9 @@ export const AllGroups = ({
                         <ModalButton
                           tooltipButton={t('editGroupTooltip')}
                           disabled={false}
-                          icon={<ModeEditIcon/>}
-                          onClickFunction={() => HandleOpenModal(group.id)}/>
+                          icon={<ModeEditIcon />}
+                          onClickFunction={() => HandleOpenModal(group.id)}
+                        />
                       }
                       getAccessToItem={GetAllGroupUsers}
                       listOfItem={listOfUserPersonalGroup}
@@ -277,15 +286,12 @@ export const AllGroups = ({
                       setItemToAdd={setUserToAdd}
                       description={group.description}
                       handleSelectorChange={handleChangeRights}
-                      handleRemoveFromList={handleLeaveGroup}/>
+                      handleRemoveFromList={handleLeaveGroup}
+                    />
                   </Grid>
                 ))
               ) : (
-                <Grid
-                 
-                  container
-                  justifyContent="center"
-                  alignItems="center">
+                <Grid container justifyContent="center" alignItems="center">
                   <Typography variant="h6" component="h2">
                     {t('noMatchingGroupFilter')}
                   </Typography>
@@ -294,16 +300,19 @@ export const AllGroups = ({
             <PaginationControls
               currentPage={currentPage}
               totalPages={totalPages}
-              onPageChange={setCurrentPage}/>
+              onPageChange={setCurrentPage}
+            />
           </Grid>
           <FloatingActionButton
             onClick={toggleModalGroupCreation}
             content={t('newGroup')}
-            Icon={<AddIcon/>}/>
+            Icon={<AddIcon />}
+          />
           <DrawerCreateGroup
             handleCreatGroup={handleCreateGroup}
             modalCreateGroup={modalGroupCreationIsOpen}
-            toggleModalGroupCreation={toggleModalGroupCreation}/>
+            toggleModalGroupCreation={toggleModalGroupCreation}
+          />
         </Grid>
       </SidePanel>
     </>

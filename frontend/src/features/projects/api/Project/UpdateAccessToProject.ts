@@ -1,20 +1,20 @@
-import storage from "../../../../utils/storage.ts";
-import { ItemsRights } from "../../../user-group/types/types.ts";
+import { ITEM_RIGHTS } from 'utils/types.ts';
+import storage from '../../../../utils/storage.ts';
 
 export const updateAccessToProject = async (
   projectId: number,
   userGroupId: number,
-  rights: ItemsRights,
+  rights: ITEM_RIGHTS,
 ) => {
   const token = storage.getToken();
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/link-group-project/change-rights`,
       {
-        method: "PATCH",
+        method: 'PATCH',
         headers: {
           authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           projectId: projectId,

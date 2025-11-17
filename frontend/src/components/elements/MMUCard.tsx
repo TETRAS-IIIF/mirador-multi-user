@@ -15,19 +15,17 @@ import {
   useState,
 } from 'react';
 import { MMUModalEdit } from './MMUModalEdit.tsx';
-import { ListItem } from '../types.ts';
-import { ItemsRights } from '../../features/user-group/types/types.ts';
 import {
+  ITEM_RIGHTS,
+  MANIFEST_GROUP_RIGHTS,
+  MANIFEST_ORIGIN,
   MEDIA_GROUP_RIGHTS,
   MEDIA_ORIGIN,
   MEDIA_TYPES,
-} from '../../features/media/types/types.ts';
-import {
-  MANIFEST_GROUP_RIGHTS,
-  MANIFEST_ORIGIN,
-} from '../../features/manifest/types/types.ts';
+  OBJECT_TYPES,
+} from '../../utils/types.ts';
+
 import dayjs, { Dayjs } from 'dayjs';
-import { OBJECT_TYPES } from '../../features/tag/type.ts';
 
 import { useTranslation } from 'react-i18next';
 import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
@@ -41,10 +39,11 @@ import { Snapshot } from '../../features/projects/types/types.ts';
 import { isValidUrl } from '../../utils/utils.ts';
 import placeholder from '../../assets/Placeholder.svg';
 import { MMUCardIcon } from './MMUCardIcon.tsx';
+import { ListItem } from 'components/types.ts';
 
 interface IMMUCardProps<T, X> {
   id: number;
-  rights: ItemsRights | MEDIA_GROUP_RIGHTS | MANIFEST_GROUP_RIGHTS;
+  rights: ITEM_RIGHTS | MEDIA_GROUP_RIGHTS | MANIFEST_GROUP_RIGHTS;
   description: string;
   HandleOpenModal: () => void;
   openModal: boolean;
@@ -280,7 +279,7 @@ const MMUCard = <
             <Grid container wrap="nowrap" spacing={1}>
               {Boolean(id) && (
                 <Grid display="flex" alignItems="center">
-                  {rights === ItemsRights.READER ? (
+                  {rights === ITEM_RIGHTS.READER ? (
                     <ModalButton
                       tooltipButton={t('removeProjectFromList')}
                       onClickFunction={handleConfirmRemoveFromListModal}

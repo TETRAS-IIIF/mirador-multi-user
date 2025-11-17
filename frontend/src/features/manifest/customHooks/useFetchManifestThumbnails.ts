@@ -1,7 +1,8 @@
-import { useCallback, useState } from "react";
-import { Manifest, manifestOrigin } from "../types/types.ts";
+import { useCallback, useState } from 'react';
+import { Manifest } from '../types/types.ts';
+import { MANIFEST_ORIGIN } from '../../../utils/types.ts';
 
-const placeholder = "../../../assets/images/placeholder.png";
+const placeholder = '../../../assets/images/placeholder.png';
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 
 export const useFetchThumbnails = (currentPageData: Manifest[]) => {
@@ -19,12 +20,12 @@ export const useFetchThumbnails = (currentPageData: Manifest[]) => {
             return manifest.thumbnailUrl;
           }
 
-          let manifestUrl = "";
-          if (manifest.origin === manifestOrigin.UPLOAD) {
+          let manifestUrl = '';
+          if (manifest.origin === MANIFEST_ORIGIN.UPLOAD) {
             manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`;
-          } else if (manifest.origin === manifestOrigin.LINK) {
+          } else if (manifest.origin === MANIFEST_ORIGIN.LINK) {
             manifestUrl = manifest.path;
-          } else if (manifest.origin === manifestOrigin.CREATE) {
+          } else if (manifest.origin === MANIFEST_ORIGIN.CREATE) {
             manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.path}`;
           } else {
             return placeholder;
@@ -34,12 +35,12 @@ export const useFetchThumbnails = (currentPageData: Manifest[]) => {
             const manifestResponse = await fetch(manifestUrl);
             const manifestFetched = await manifestResponse.json();
             if (manifestFetched.thumbnail) {
-              return manifestFetched.thumbnail["@id"];
+              return manifestFetched.thumbnail['@id'];
             } else if (manifestFetched.items?.[0]?.thumbnail?.[0]?.id) {
               return manifestFetched.items[0].thumbnail[0].id;
             }
           } catch (fetchError) {
-            console.error("Error fetching manifest:", fetchError);
+            console.error('Error fetching manifest:', fetchError);
           }
           return placeholder;
         }),

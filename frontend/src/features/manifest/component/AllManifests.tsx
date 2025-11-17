@@ -7,18 +7,9 @@ import {
   useMemo,
   useState,
 } from 'react';
-import {
-  LinkUserGroup,
-  UserGroup,
-  UserGroupTypes,
-} from '../../user-group/types/types.ts';
+import { LinkUserGroup, UserGroup } from '../../user-group/types/types.ts';
 import { User } from '../../auth/types/types.ts';
-import {
-  Manifest,
-  ManifestCanvases,
-  ManifestGroupRights,
-  manifestOrigin,
-} from '../types/types.ts';
+import { Manifest, ManifestCanvases } from '../types/types.ts';
 import { uploadManifest } from '../api/uploadManifest.ts';
 import MMUCard from '../../../components/elements/MMUCard.tsx';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
@@ -43,7 +34,6 @@ import { grantAccessToManifest } from '../api/grantAccessToManifest.ts';
 import { getAllManifestGroups } from '../api/getAllManifestGroups.ts';
 import { ListItem } from '../../../components/types.ts';
 import { updateAccessToManifest } from '../api/updateAccessToManifest.ts';
-import { ObjectTypes } from '../../tag/type.ts';
 import { useTranslation } from 'react-i18next';
 import { SortItemSelector } from '../../../components/elements/sortItemSelector.tsx';
 import { IIIFResource, ManifestResource } from 'manifesto.js';
@@ -65,6 +55,12 @@ import {
   SettingKeys,
 } from '../../../utils/utils.ts';
 import { useLinkManifest } from '../hooks/useLinkManifest.ts';
+import {
+  MANIFEST_GROUP_RIGHTS,
+  MANIFEST_ORIGIN,
+  OBJECT_TYPES,
+  USER_GROUP_TYPES,
+} from '../../../utils/types.ts';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -225,7 +221,7 @@ export const AllManifests = ({
 
         await mutateAsync({
           url: path,
-          rights: ManifestGroupRights.ADMIN,
+          rights: MANIFEST_GROUP_RIGHTS.ADMIN,
           idCreator: user.id,
           path,
           title: manifestLabel ? manifestLabel : 'new manifest',
@@ -288,7 +284,7 @@ export const AllManifests = ({
 
   const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
     try {
-      if (manifestToUpdate.origin === manifestOrigin.LINK) {
+      if (manifestToUpdate.origin === MANIFEST_ORIGIN.LINK) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { json, rights, personalOwnerGroupId, ...manifestDto } =
           manifestToUpdate;
@@ -328,7 +324,7 @@ export const AllManifests = ({
   };
 
   const getGroupByOption = (option: UserGroup): string => {
-    if (option.type === UserGroupTypes.MULTI_USER) {
+    if (option.type === USER_GROUP_TYPES.MULTI_USER) {
       return 'Groups';
     } else {
       return 'Users';
@@ -353,7 +349,7 @@ export const AllManifests = ({
     const newRights = await updateAccessToManifest(
       manifestId,
       group.id,
-      eventValue as ManifestGroupRights,
+      eventValue as MANIFEST_GROUP_RIGHTS,
     );
     if (newRights.error) {
       toast.error(t('not_allowed_to_modify_rights'));
@@ -485,7 +481,7 @@ export const AllManifests = ({
                   <Grid key={manifest.id}>
                     <MMUCard
                       ownerId={manifest.idCreator}
-                      objectTypes={ObjectTypes.MANIFEST}
+                      objectTypes={OBJECT_TYPES.MANIFEST}
                       AddAccessListItemFunction={handleGrantAccess}
                       DefaultButton={
                         <Grid

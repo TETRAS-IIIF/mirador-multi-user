@@ -21,22 +21,20 @@ import SaveIcon from '@mui/icons-material/Save';
 import { ItemList } from './ItemList.tsx';
 import { MMUModal } from './modal.tsx';
 import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
-import { ItemsRights } from '../../features/user-group/types/types.ts';
 import { ListItem } from '../types.ts';
 import CancelIcon from '@mui/icons-material/Cancel';
 import {
-  MediaGroupRights,
-  mediaOrigin,
-} from '../../features/media/types/types.ts';
-import {
-  ManifestGroupRights,
-  manifestOrigin,
-} from '../../features/manifest/types/types.ts';
+  ITEM_RIGHTS,
+  MANIFEST_GROUP_RIGHTS,
+  MANIFEST_ORIGIN,
+  MEDIA_GROUP_RIGHTS,
+  MEDIA_ORIGIN,
+  OBJECT_TYPES,
+} from '../../utils/types.ts';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
-import { ObjectTypes } from '../../features/tag/type.ts';
 import { a11yProps } from './SideBar/allyProps.tsx';
 import { CustomTabPanel } from './CustomTabPanel.tsx';
 import { MetadataForm } from '../../features/metadata/components/metadataForm.tsx';
@@ -83,9 +81,9 @@ interface ModalItemProps<T> {
   itemLabel: string;
   listOfItem?: ListItem[];
   metadata?: Record<string, string>;
-  objectTypes?: ObjectTypes;
+  objectTypes?: OBJECT_TYPES;
   ownerId: number;
-  rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
+  rights: ITEM_RIGHTS | MEDIA_GROUP_RIGHTS | MANIFEST_GROUP_RIGHTS;
   searchBarLabel: string;
   searchInput: string;
   searchModalEditItem?: (partialString: string) => Promise<any[]> | any[];
@@ -122,11 +120,11 @@ export const MMUModalEdit = <
     hash?: string;
     id: number;
     noteTemplate?: Template[];
-    origin?: manifestOrigin | mediaOrigin;
+    origin?: MANIFEST_ORIGIN | MEDIA_ORIGIN;
     ownerId?: number;
     path?: string;
     personalOwnerGroupId?: number;
-    rights?: ItemsRights;
+    rights?: ITEM_RIGHTS;
     snapshots?: Snapshot[];
     tags?: string[];
     title?: string;
@@ -253,7 +251,7 @@ export const MMUModalEdit = <
       templates: templates,
     };
     if (
-      objectTypes !== ObjectTypes.GROUP &&
+      objectTypes !== OBJECT_TYPES.GROUP &&
       objectTypes &&
       selectedMetadataFormat?.title
     ) {
@@ -343,10 +341,10 @@ export const MMUModalEdit = <
     fetchData();
     fetchMetadataFormat();
     handleFetchMetadataForObject();
-    if (objectTypes === ObjectTypes.MANIFEST) {
+    if (objectTypes === OBJECT_TYPES.MANIFEST) {
       handleFetchManifest();
     }
-    if (objectTypes === ObjectTypes.PROJECT) {
+    if (objectTypes === OBJECT_TYPES.PROJECT) {
       if (item.userWorkspace) {
         setJsonElementToEditInAdvancedEditor(item.userWorkspace);
       }
@@ -416,17 +414,17 @@ export const MMUModalEdit = <
   };
 
   const handleUpdateAdvancedEditMetadata = async (data: any) => {
-    if (objectTypes === ObjectTypes.MANIFEST) {
+    if (objectTypes === OBJECT_TYPES.MANIFEST) {
       const newManifest = {
         manifestId: item.id,
         json: data.newData,
-        origin: item.origin! as manifestOrigin,
+        origin: item.origin! as MANIFEST_ORIGIN,
         path: item.path!,
         hash: item.hash!,
       };
       await updateManifestJson(newManifest);
     }
-    if (objectTypes === ObjectTypes.PROJECT && item.userWorkspace) {
+    if (objectTypes === OBJECT_TYPES.PROJECT && item.userWorkspace) {
       if (updateItem) {
         updateItem(
           {
@@ -460,9 +458,9 @@ export const MMUModalEdit = <
   };
 
   const deleteContent =
-    objectTypes === ObjectTypes.MANIFEST
+    objectTypes === OBJECT_TYPES.MANIFEST
       ? t('deleteConfirmationManifest')
-      : objectTypes === ObjectTypes.MEDIA
+      : objectTypes === OBJECT_TYPES.MEDIA
         ? t('deleteConfirmationMedia')
         : t('deleteConfirmation', { itemName: itemLabel });
 
@@ -492,14 +490,14 @@ export const MMUModalEdit = <
           label={
             <Tooltip title={t('tab_share_desc')}>
               <span>
-                {objectTypes != ObjectTypes.GROUP ? t('share') : t('members')}
+                {objectTypes != OBJECT_TYPES.GROUP ? t('share') : t('members')}
               </span>
             </Tooltip>
           }
           {...a11yProps(2)}
         />
 
-        {objectTypes !== ObjectTypes.GROUP && (
+        {objectTypes !== OBJECT_TYPES.GROUP && (
           <Tab
             label={
               <Tooltip title={t('tab_metadata_desc')}>
@@ -510,9 +508,9 @@ export const MMUModalEdit = <
           />
         )}
 
-        {(objectTypes === ObjectTypes.PROJECT ||
-          (objectTypes === ObjectTypes.MANIFEST &&
-            item.origin !== manifestOrigin.LINK)) &&
+        {(objectTypes === OBJECT_TYPES.PROJECT ||
+          (objectTypes === OBJECT_TYPES.MANIFEST &&
+            item.origin !== MANIFEST_ORIGIN.LINK)) &&
           !jsonElementToEditInAdvancedEditor && (
             <Tab
               label={
@@ -525,9 +523,9 @@ export const MMUModalEdit = <
             />
           )}
 
-        {(objectTypes === ObjectTypes.PROJECT ||
-          (objectTypes === ObjectTypes.MANIFEST &&
-            item.origin !== manifestOrigin.LINK)) &&
+        {(objectTypes === OBJECT_TYPES.PROJECT ||
+          (objectTypes === OBJECT_TYPES.MANIFEST &&
+            item.origin !== MANIFEST_ORIGIN.LINK)) &&
           jsonElementToEditInAdvancedEditor && (
             <Tab
               label={
@@ -540,7 +538,7 @@ export const MMUModalEdit = <
             />
           )}
 
-        {objectTypes === ObjectTypes.PROJECT && (
+        {objectTypes === OBJECT_TYPES.PROJECT && (
           <Tab
             label={
               <Tooltip title={t('tab_template_desc')}>
@@ -551,7 +549,7 @@ export const MMUModalEdit = <
           />
         )}
 
-        {objectTypes === ObjectTypes.PROJECT && (
+        {objectTypes === OBJECT_TYPES.PROJECT && (
           <Tab
             label={
               <Tooltip title={t('tab_tags_desc')}>
@@ -562,7 +560,7 @@ export const MMUModalEdit = <
           />
         )}
 
-        {objectTypes === ObjectTypes.PROJECT && (
+        {objectTypes === OBJECT_TYPES.PROJECT && (
           <Tab
             label={
               <Tooltip title={t('tab_snapshots_desc')}>
@@ -693,7 +691,7 @@ export const MMUModalEdit = <
             </Grid>
           </Grid>
         </CustomTabPanel>
-        {rights !== ItemsRights.READER &&
+        {rights !== ITEM_RIGHTS.READER &&
           listOfItem &&
           setItemToAdd &&
           getOptionLabel !== undefined && (
@@ -722,9 +720,9 @@ export const MMUModalEdit = <
                   {(accessListItem) => (
                     <Selector
                       rights={
-                        item.rights === ItemsRights.EDITOR
-                          ? [ItemsRights.READER, ItemsRights.EDITOR]
-                          : Object.values(ItemsRights)
+                        item.rights === ITEM_RIGHTS.EDITOR
+                          ? [ITEM_RIGHTS.READER, ITEM_RIGHTS.EDITOR]
+                          : Object.values(ITEM_RIGHTS)
                       }
                       value={accessListItem.rights!}
                       onChange={handleSelectorChange(accessListItem)}
@@ -758,7 +756,7 @@ export const MMUModalEdit = <
           </CustomTabPanel>
         )}
         {jsonElementToEditInAdvancedEditor &&
-          item.origin !== manifestOrigin.LINK && (
+          item.origin !== MANIFEST_ORIGIN.LINK && (
             <CustomTabPanel value={tabValue} index={3}>
               <Grid
                 container
@@ -829,7 +827,7 @@ export const MMUModalEdit = <
             </Grid>
           </Grid>
         </CustomTabPanel>
-        {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && (
+        {(rights === ITEM_RIGHTS.ADMIN || rights === ITEM_RIGHTS.EDITOR) && (
           <Grid
             container
             justifyContent="space-between"
@@ -839,7 +837,7 @@ export const MMUModalEdit = <
           >
             <Grid container flexDirection="row" spacing={1} columns={4}>
               <Grid>
-                {rights === ItemsRights.ADMIN && tabValue === 0 && (
+                {rights === ITEM_RIGHTS.ADMIN && tabValue === 0 && (
                   <Tooltip
                     title={t('deleteObject', {
                       object: t(`objectNames.${objectTypes}`),
@@ -856,8 +854,8 @@ export const MMUModalEdit = <
                 )}
               </Grid>
               <Grid>
-                {(rights === ItemsRights.ADMIN ||
-                  rights === ItemsRights.EDITOR) &&
+                {(rights === ITEM_RIGHTS.ADMIN ||
+                  rights === ITEM_RIGHTS.EDITOR) &&
                   tabValue === 0 &&
                   duplicateItem && (
                     <Tooltip title={t('duplicate')}>

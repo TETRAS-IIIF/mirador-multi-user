@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Dayjs } from 'dayjs';
 import placeholder from '../../assets/Placeholder.svg';
-import { mediaOrigin, MediaTypes } from '../../features/media/types/types.ts';
-import { manifestOrigin } from '../../features/manifest/types/types.ts';
+import { MANIFEST_ORIGIN, MEDIA_ORIGIN, MEDIA_TYPES } from '../types.ts';
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 
 interface Item {
   id: number;
   created_at: Dayjs;
-  mediaTypes?: MediaTypes;
-  origin?: manifestOrigin | mediaOrigin;
+  mediaTypes?: MEDIA_TYPES;
+  origin?: MANIFEST_ORIGIN | MEDIA_ORIGIN;
   snapShotHash?: string;
   title?: string;
   share?: string;
@@ -42,13 +41,13 @@ export default function useFetchThumbnailsUrl({
     };
 
     const buildManifestUrl = (): string | null => {
-      if (item.origin === manifestOrigin.UPLOAD && item.hash && item.title) {
+      if (item.origin === MANIFEST_ORIGIN.UPLOAD && item.hash && item.title) {
         return `${caddyUrl}/${item.hash}/${item.title}`;
       }
-      if (item.origin === manifestOrigin.LINK && item.path) {
+      if (item.origin === MANIFEST_ORIGIN.LINK && item.path) {
         return item.path;
       }
-      if (item.origin === manifestOrigin.CREATE && item.hash && item.path) {
+      if (item.origin === MANIFEST_ORIGIN.CREATE && item.hash && item.path) {
         return `${caddyUrl}/${item.hash}/${item.path}`;
       }
       return null;
