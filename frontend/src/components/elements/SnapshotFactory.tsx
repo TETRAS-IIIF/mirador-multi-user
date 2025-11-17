@@ -1,4 +1,4 @@
-import { ObjectTypes } from '../../features/tag/type.ts';
+import { OBJECT_TYPES } from '../../utils/mmu_types.ts';
 import { Grid, Typography } from '@mui/material';
 import { ShareLink } from './shareLink.tsx';
 import { Snapshot } from '../../features/projects/types/types.ts';
@@ -8,7 +8,7 @@ import { deleteSnapshot } from '../../features/projects/api/snapshot/deleteSnaps
 import { updateSnapshot } from '../../features/projects/api/snapshot/updateSnapshot.ts';
 
 interface ISnapshotFactoryProps<T> {
-  objectTypes: ObjectTypes;
+  objectTypes: OBJECT_TYPES;
   item: T;
   fetchItems: () => void;
 }
@@ -62,7 +62,7 @@ export const SnapshotFactory = <
       flexDirection="column"
       sx={{ width: '100%', marginTop: 1 }}
     >
-      {objectTypes === ObjectTypes.PROJECT && (
+      {objectTypes === OBJECT_TYPES.PROJECT && (
         <Grid
           alignItems="center"
           container

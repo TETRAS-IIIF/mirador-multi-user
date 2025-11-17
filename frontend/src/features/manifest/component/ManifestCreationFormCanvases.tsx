@@ -1,5 +1,5 @@
-import Grid from "@mui/material/Grid";
-import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 import {
   getPeerTubeThumbnailUrl,
   getPeerTubeVideoID,
@@ -7,10 +7,10 @@ import {
   isPeerTubeVideo,
   isRawVideo,
   isYouTubeVideo,
-} from "../../media/utils/utils";
-import { MediaTypes } from "../../media/types/types";
-import { ManifestCreationFormCanvas } from "./ManifestCreationFormCanvas";
-import { IIIFCanvases, MediaField } from "./ManifestCreationForm";
+} from '../../media/utils/utils';
+import { MEDIA_TYPES } from '../../../utils/mmu_types.ts';
+import { ManifestCreationFormCanvas } from './ManifestCreationFormCanvas';
+import { IIIFCanvases, MediaField } from './ManifestCreationForm';
 
 interface ManifestCreationFormCanvasesProps {
   canvases: IIIFCanvases[];
@@ -46,26 +46,26 @@ export const ManifestCreationFormCanvases = ({
       //TODO : refacto order of checks to optimize and handle the case where the url doesn't contain any of these case.
       if (isRawVideo(mediaURL)) {
         updatedCanvas[itemIndex].media[0].thumbnailUrl = undefined;
-        updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
+        updatedCanvas[itemIndex].media[0].type = MEDIA_TYPES.VIDEO;
       } else if (isYouTubeVideo(mediaURL)) {
         youtubeJson = await getYoutubeJson(mediaURL);
         thumbnailUrl = youtubeJson?.thumbnail_url ?? null;
         updatedCanvas[itemIndex].media[0].thumbnailUrl = thumbnailUrl!;
-        updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
+        updatedCanvas[itemIndex].media[0].type = MEDIA_TYPES.VIDEO;
       } else if (await isPeerTubeVideo(mediaURL)) {
         videoId = getPeerTubeVideoID(mediaURL);
         if (videoId) {
           thumbnailUrl = await getPeerTubeThumbnailUrl(mediaURL, videoId);
           updatedCanvas[itemIndex].media[0].thumbnailUrl = thumbnailUrl;
-          updatedCanvas[itemIndex].media[0].type = MediaTypes.VIDEO;
+          updatedCanvas[itemIndex].media[0].type = MEDIA_TYPES.VIDEO;
         }
       } else {
         // Set as image if not YouTube or PeerTube video or video classic file format
         updatedCanvas[itemIndex].media[0].thumbnailUrl = mediaURL;
-        updatedCanvas[itemIndex].media[0].type = MediaTypes.IMAGE;
+        updatedCanvas[itemIndex].media[0].type = MEDIA_TYPES.IMAGE;
       }
     } catch (error) {
-      console.error("Failed to fetch media details:", error);
+      console.error('Failed to fetch media details:', error);
     } finally {
       setCanvases(updatedCanvas);
     }
@@ -90,7 +90,7 @@ export const ManifestCreationFormCanvases = ({
         media: [
           {
             title: `media-${newCanvasIndex}`,
-            value: "",
+            value: '',
             type: undefined,
           },
         ],
@@ -108,11 +108,12 @@ export const ManifestCreationFormCanvases = ({
           t={t}
           setMedia={setMedia}
           handleMediaURLChange={handleMediaURLChange}
-          handleRemoveCanvas={handleRemoveCanvas}/>
+          handleRemoveCanvas={handleRemoveCanvas}
+        />
       ))}
       <Grid>
         <Button variant="contained" color="primary" onClick={handleNewCanvas}>
-          {t("addNewCanvas")}
+          {t('addNewCanvas')}
         </Button>
       </Grid>
     </>

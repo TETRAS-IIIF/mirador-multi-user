@@ -1,9 +1,9 @@
-import storage from "../../../utils/storage.ts";
-import { ObjectTypes } from "../type.ts";
+import storage from '../../../utils/storage.ts';
+import { OBJECT_TYPES } from '../../../utils/mmu_types.ts';
 
 export const removeTag = async (
   tagTitle: string,
-  objectType: ObjectTypes,
+  objectType: OBJECT_TYPES,
   objectId: number,
 ) => {
   try {
@@ -11,10 +11,10 @@ export const removeTag = async (
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/tagging/remove`,
       {
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           tagTitle: tagTitle,

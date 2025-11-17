@@ -9,8 +9,7 @@ import { ListItem } from '../types.ts';
 import { LoadingSpinner } from './loadingSpinner.tsx';
 import { SearchBar } from './SearchBar.tsx';
 import { MMUToolTip } from './MMUTootlTip.tsx';
-import { UserGroupTypes } from '../../features/user-group/types/types.ts';
-import { ObjectTypes } from '../../features/tag/type.ts';
+import { OBJECT_TYPES, USER_GROUP_TYPES } from '../../utils/mmu_types.ts';
 
 interface IProjectUserGroup<G, T> {
   children?: (item: ListItem) => ReactNode;
@@ -20,7 +19,7 @@ interface IProjectUserGroup<G, T> {
   handleSearchModalEditItem: (partialString: string) => Promise<any[]> | any[];
   item: T;
   items: ListItem[];
-  objectTypes: ObjectTypes;
+  objectTypes: OBJECT_TYPES;
   ownerId: number;
   removeItem: (itemId: number) => void;
   searchBarLabel: string;
@@ -54,26 +53,26 @@ export const ItemList = <
 
   const isActionAllowedForListItem = (listItem: ListItem): boolean => {
     if (
-      objectTypes === ObjectTypes.MANIFEST ||
-      objectTypes === ObjectTypes.MEDIA
+      objectTypes === OBJECT_TYPES.MANIFEST ||
+      objectTypes === OBJECT_TYPES.MEDIA
     ) {
       return (
         listItem.personalOwnerGroupId !== ownerId ||
-        listItem.type === UserGroupTypes.MULTI_USER
+        listItem.type === USER_GROUP_TYPES.MULTI_USER
       );
     }
-    if (objectTypes === ObjectTypes.GROUP) {
+    if (objectTypes === OBJECT_TYPES.GROUP) {
       return item.ownerId !== listItem.id;
     }
-    if (objectTypes === ObjectTypes.PROJECT) {
+    if (objectTypes === OBJECT_TYPES.PROJECT) {
       return item.personalOwnerGroupId !== listItem.id;
     }
     return false;
   };
 
-  const renderIcon = (type: UserGroupTypes) => {
-    if (type === UserGroupTypes.PERSONAL) return <PersonIcon />;
-    if (type === UserGroupTypes.MULTI_USER) return <GroupsIcon />;
+  const renderIcon = (type: USER_GROUP_TYPES) => {
+    if (type === USER_GROUP_TYPES.PERSONAL) return <PersonIcon />;
+    if (type === USER_GROUP_TYPES.MULTI_USER) return <GroupsIcon />;
     return <PersonIcon />;
   };
 
@@ -147,7 +146,7 @@ export const ItemList = <
                       color="error"
                       disabled={
                         listItem.personalOwnerGroupId === ownerId &&
-                        listItem.type !== UserGroupTypes.MULTI_USER
+                        listItem.type !== USER_GROUP_TYPES.MULTI_USER
                       }
                     >
                       <DeleteIcon />
