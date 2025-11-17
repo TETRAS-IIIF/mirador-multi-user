@@ -1,6 +1,6 @@
 import { UserGroup } from '../../user-group/types/types.ts';
 import { Dayjs } from 'dayjs';
-import { MANIFEST_GROUP_RIGHTS, OBJECT_ORIGIN } from '../../../utils/types.ts';
+import { ITEM_RIGHTS, OBJECT_ORIGIN } from '../../../utils/types.ts';
 
 export type Manifest = {
   created_at: Dayjs;
@@ -15,7 +15,7 @@ export type Manifest = {
   updated_at: Dayjs;
   thumbnailUrl?: string;
   metadata: Record<string, string>;
-  rights?: MANIFEST_GROUP_RIGHTS;
+  rights?: ITEM_RIGHTS;
   url: string;
   share?: string;
   shared?: boolean;
@@ -57,7 +57,7 @@ export type UploadAndLinkManifestDto = {
   user_group?: UserGroup;
   file?: File;
   path?: string;
-  rights?: MANIFEST_GROUP_RIGHTS;
+  rights?: ITEM_RIGHTS;
 };
 
 // TODO removed useless

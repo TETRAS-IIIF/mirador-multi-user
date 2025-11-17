@@ -24,7 +24,7 @@ import { isValidUrl } from '../../../utils/utils.ts';
 import placeholder from '../../../assets/Placeholder.svg';
 import { useLinkManifest } from '../hooks/useLinkManifest.ts';
 import { useItemsPerPage } from '../../../utils/customHooks/useItemsPerPage.ts';
-import { MANIFEST_GROUP_RIGHTS } from '../../../utils/types.ts';
+import { ITEM_RIGHTS } from '../../../utils/types.ts';
 
 const CustomButton = styled(Button)({
   position: 'absolute',
@@ -129,7 +129,7 @@ export const ContentSidePanelManifest = ({
 
         await mutateAsync({
           url: path,
-          rights: MANIFEST_GROUP_RIGHTS.ADMIN,
+          rights: ITEM_RIGHTS.ADMIN,
           idCreator: user.id,
           user_group: userPersonalGroup!,
           path: path,

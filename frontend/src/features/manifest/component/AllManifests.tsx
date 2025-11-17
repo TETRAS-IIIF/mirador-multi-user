@@ -56,7 +56,7 @@ import {
 } from '../../../utils/utils.ts';
 import { useLinkManifest } from '../hooks/useLinkManifest.ts';
 import {
-  MANIFEST_GROUP_RIGHTS,
+  ITEM_RIGHTS,
   OBJECT_ORIGIN,
   OBJECT_TYPES,
   USER_GROUP_TYPES,
@@ -221,7 +221,7 @@ export const AllManifests = ({
 
         await mutateAsync({
           url: path,
-          rights: MANIFEST_GROUP_RIGHTS.ADMIN,
+          rights: ITEM_RIGHTS.ADMIN,
           idCreator: user.id,
           path,
           title: manifestLabel ? manifestLabel : 'new manifest',
@@ -349,7 +349,7 @@ export const AllManifests = ({
     const newRights = await updateAccessToManifest(
       manifestId,
       group.id,
-      eventValue as MANIFEST_GROUP_RIGHTS,
+      eventValue as ITEM_RIGHTS,
     );
     if (newRights.error) {
       toast.error(t('not_allowed_to_modify_rights'));

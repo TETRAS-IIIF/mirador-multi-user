@@ -23,13 +23,7 @@ import { MMUModal } from './modal.tsx';
 import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
 import { ListItem } from '../types.ts';
 import CancelIcon from '@mui/icons-material/Cancel';
-import {
-  ITEM_RIGHTS,
-  MANIFEST_GROUP_RIGHTS,
-  MEDIA_GROUP_RIGHTS,
-  OBJECT_ORIGIN,
-  OBJECT_TYPES,
-} from '../../utils/types.ts';
+import { ITEM_RIGHTS, OBJECT_ORIGIN, OBJECT_TYPES } from '../../utils/types.ts';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -82,7 +76,7 @@ interface ModalItemProps<T> {
   metadata?: Record<string, string>;
   objectTypes?: OBJECT_TYPES;
   ownerId: number;
-  rights: ITEM_RIGHTS | MEDIA_GROUP_RIGHTS | MANIFEST_GROUP_RIGHTS;
+  rights: ITEM_RIGHTS;
   searchBarLabel: string;
   searchInput: string;
   searchModalEditItem?: (partialString: string) => Promise<any[]> | any[];

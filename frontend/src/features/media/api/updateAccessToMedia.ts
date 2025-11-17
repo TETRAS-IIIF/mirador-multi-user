@@ -1,10 +1,10 @@
-import { MEDIA_GROUP_RIGHTS } from '../../../utils/types.ts';
+import { ITEM_RIGHTS } from '../../../utils/types.ts';
 import storage from '../../../utils/storage.ts';
 
 export const updateAccessToMedia = async (
   mediaId: number,
   userGroupId: number,
-  rights: MEDIA_GROUP_RIGHTS,
+  rights: ITEM_RIGHTS,
 ) => {
   const token = storage.getToken();
   try {

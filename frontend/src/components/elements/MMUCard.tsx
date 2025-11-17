@@ -17,8 +17,6 @@ import {
 import { MMUModalEdit } from './MMUModalEdit.tsx';
 import {
   ITEM_RIGHTS,
-  MANIFEST_GROUP_RIGHTS,
-  MEDIA_GROUP_RIGHTS,
   MEDIA_TYPES,
   OBJECT_ORIGIN,
   OBJECT_TYPES,
@@ -42,7 +40,7 @@ import { ListItem } from 'components/types.ts';
 
 interface IMMUCardProps<T, X> {
   id: number;
-  rights: ITEM_RIGHTS | MEDIA_GROUP_RIGHTS | MANIFEST_GROUP_RIGHTS;
+  rights: ITEM_RIGHTS;
   description: string;
   HandleOpenModal: () => void;
   openModal: boolean;

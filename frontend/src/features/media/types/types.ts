@@ -1,7 +1,7 @@
 import { UserGroup } from '../../user-group/types/types.ts';
 import { Dayjs } from 'dayjs';
 import {
-  MEDIA_GROUP_RIGHTS,
+  ITEM_RIGHTS,
   MEDIA_TYPES,
   OBJECT_ORIGIN,
 } from '../../../utils/types.ts';
@@ -27,7 +27,7 @@ export type Media = {
   title: string;
   origin: OBJECT_ORIGIN;
   path?: string;
-  rights: MEDIA_GROUP_RIGHTS;
+  rights: ITEM_RIGHTS;
   updated_at: Dayjs;
   url: string;
   metadata: Record<string, string>;

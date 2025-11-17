@@ -18,18 +18,6 @@ export enum OBJECT_ORIGIN {
   CREATE = 'create',
 }
 
-export enum MEDIA_GROUP_RIGHTS {
-  ADMIN = 'admin',
-  READER = 'reader',
-  EDITOR = 'editor',
-}
-
-export enum MANIFEST_GROUP_RIGHTS {
-  ADMIN = 'admin',
-  READER = 'reader',
-  EDITOR = 'editor',
-}
-
 export enum ITEM_RIGHTS {
   ADMIN = 'admin',
   READER = 'reader',

@@ -62,7 +62,7 @@ import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts
 import { getAccessToMedia } from '../api/getAccessToMedia.ts';
 import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
 import {
-  MEDIA_GROUP_RIGHTS,
+  ITEM_RIGHTS,
   MEDIA_TYPES,
   MEDIA_TYPES_TABS,
   USER_GROUP_TYPES,
@@ -276,7 +276,7 @@ export const AllMedias = ({
     const newRights = await updateAccessToMedia(
       mediaId,
       group.id,
-      eventValue as MEDIA_GROUP_RIGHTS,
+      eventValue as ITEM_RIGHTS,
     );
 
     if (newRights.error) {
