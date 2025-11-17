@@ -1,4 +1,12 @@
-import { Box, Grid, IconButton, Tab, Tabs, Tooltip, Typography, } from '@mui/material';
+import {
+  Box,
+  Grid,
+  IconButton,
+  Tab,
+  Tabs,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import {
   ChangeEvent,
   Dispatch,
@@ -12,8 +20,8 @@ import {
 } from 'react';
 import { createMedia } from '../api/createMedia.ts';
 import { User } from '../../auth/types/types.ts';
-import { LinkUserGroup, UserGroup, UserGroupTypes, } from '../../user-group/types/types.ts';
-import { Media, MediaGroupRights, MediaTypes } from '../types/types.ts';
+import { LinkUserGroup, UserGroup } from '../../user-group/types/types.ts';
+import { Media } from '../types/types.ts';
 import toast from 'react-hot-toast';
 import { deleteMedia } from '../api/deleteMedia.ts';
 import { updateMedia } from '../api/updateMedia.ts';
@@ -42,14 +50,23 @@ import {
   getSettingValue,
   isFileSizeOverLimit,
   isValidFileForUpload,
-  MEDIA_TYPES_TABS,
   SettingKeys,
 } from '../../../utils/utils.ts';
-import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHooks/filterHook.ts';
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from '../../../utils/customHooks/filterHook.ts';
 import { useCreateMediaLink } from '../hooks/useCreateMediaLink.ts';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 import { getAccessToMedia } from '../api/getAccessToMedia.ts';
 import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
+import {
+  ITEM_RIGHTS,
+  MEDIA_TYPES,
+  MEDIA_TYPES_TABS,
+  USER_GROUP_TYPES,
+} from '../../../utils/mmu_types.ts';
 
 interface IAllMediasProps {
   user: User;
@@ -100,11 +117,11 @@ export const AllMedias = ({
 
   const filterByMediaType = (medias: Media[]) => {
     if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-      return medias.filter((media) => media.mediaTypes === MediaTypes.VIDEO);
+      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.VIDEO);
     } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-      return medias.filter((media) => media.mediaTypes === MediaTypes.IMAGE);
+      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.IMAGE);
     } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
-      return medias.filter((media) => media.mediaTypes === MediaTypes.OTHER);
+      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.OTHER);
     } else if (mediaTabShown === MEDIA_TYPES_TABS.ALL) {
       return medias;
     }
@@ -124,11 +141,11 @@ export const AllMedias = ({
   const totalPages = Math.ceil(
     medias.filter((media) => {
       if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-        return media.mediaTypes === MediaTypes.VIDEO;
+        return media.mediaTypes === MEDIA_TYPES.VIDEO;
       } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-        return media.mediaTypes === MediaTypes.IMAGE;
+        return media.mediaTypes === MEDIA_TYPES.IMAGE;
       } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
-        return media.mediaTypes === MediaTypes.OTHER;
+        return media.mediaTypes === MEDIA_TYPES.OTHER;
       }
       return true;
     }).length / itemsPerPage,
@@ -259,7 +276,7 @@ export const AllMedias = ({
     const newRights = await updateAccessToMedia(
       mediaId,
       group.id,
-      eventValue as MediaGroupRights,
+      eventValue as ITEM_RIGHTS,
     );
 
     if (newRights.error) {
@@ -308,7 +325,7 @@ export const AllMedias = ({
   };
 
   const getGroupByOption = (option: UserGroup): string => {
-    if (option.type === UserGroupTypes.MULTI_USER) {
+    if (option.type === USER_GROUP_TYPES.MULTI_USER) {
       return 'Groups';
     } else {
       return 'Users';
@@ -416,7 +433,7 @@ export const AllMedias = ({
                       media={{
                         ...media,
                         thumbnailUrl:
-                          media.hash && media.mediaTypes === MediaTypes.IMAGE
+                          media.hash && media.mediaTypes === MEDIA_TYPES.IMAGE
                             ? `${caddyUrl}/${media.hash}/thumbnail.webp`
                             : undefined,
                       }}

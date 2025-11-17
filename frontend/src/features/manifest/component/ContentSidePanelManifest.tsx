@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Manifest, ManifestGroupRights } from '../types/types.ts';
+import { Manifest } from '../types/types.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
 import { UserGroup } from '../../user-group/types/types.ts';
 import { User } from '../../auth/types/types.ts';
@@ -24,6 +24,7 @@ import { isValidUrl } from '../../../utils/utils.ts';
 import placeholder from '../../../assets/Placeholder.svg';
 import { useLinkManifest } from '../hooks/useLinkManifest.ts';
 import { useItemsPerPage } from '../../../utils/customHooks/useItemsPerPage.ts';
+import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 
 const CustomButton = styled(Button)({
   position: 'absolute',
@@ -128,7 +129,7 @@ export const ContentSidePanelManifest = ({
 
         await mutateAsync({
           url: path,
-          rights: ManifestGroupRights.ADMIN,
+          rights: ITEM_RIGHTS.ADMIN,
           idCreator: user.id,
           user_group: userPersonalGroup!,
           path: path,

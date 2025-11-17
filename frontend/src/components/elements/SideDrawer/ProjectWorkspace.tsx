@@ -1,13 +1,11 @@
-import { Grid } from "@mui/material";
-import MiradorViewer from "../../../features/mirador/Mirador";
-import {
-  ItemsRights,
-  UserGroup,
-} from "../../../features/user-group/types/types";
-import { SidePanel } from "../SidePanel/SidePanel.tsx";
-import { Media } from "../../../features/media/types/types.ts";
-import { Manifest } from "../../../features/manifest/types/types.ts";
-import { User } from "../../../features/auth/types/types.ts";
+import { Grid } from '@mui/material';
+import MiradorViewer from '../../../features/mirador/Mirador';
+import { UserGroup } from '../../../features/user-group/types/types';
+import { SidePanel } from '../SidePanel/SidePanel.tsx';
+import { Media } from '../../../features/media/types/types.ts';
+import { Manifest } from '../../../features/manifest/types/types.ts';
+import { User } from '../../../features/auth/types/types.ts';
+import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 
 interface ProjectWorkspaceProps {
   HandleSetIsRunning: () => void;
@@ -42,7 +40,7 @@ export function ProjectWorkspace({
   medias,
   fetchMediaForUser,
 }: ProjectWorkspaceProps) {
-  const isEditor = projectSelected.rights !== ItemsRights.READER;
+  const isEditor = projectSelected.rights !== ITEM_RIGHTS.READER;
 
   return (
     <SidePanel
@@ -52,13 +50,14 @@ export function ProjectWorkspace({
       user={user}
       fetchMediaForUser={fetchMediaForUser}
       fetchManifestForUser={fetchManifestForUser}
-      display={true}>
+      display={true}
+    >
       <Grid sx={{ paddingRight: 5 }}>
         <MiradorViewer
           language={
             user.preferredLanguage
               ? user.preferredLanguage
-              : navigator.language.split("-")[0]
+              : navigator.language.split('-')[0]
           }
           miradorState={miradorState!}
           setMiradorState={handleSetMiradorState}
@@ -69,7 +68,8 @@ export function ProjectWorkspace({
           ref={myRef}
           HandleSetIsRunning={HandleSetIsRunning}
           useEditionPlugins={isEditor}
-          user={user}/>
+          user={user}
+        />
       </Grid>
     </SidePanel>
   );

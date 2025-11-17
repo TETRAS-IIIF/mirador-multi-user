@@ -1,7 +1,7 @@
 import { FieldForm } from '../../../components/elements/FieldForm';
 import { Button, Grid, Paper } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
-import { MediaTypes } from '../../media/types/types';
+import { MEDIA_TYPES } from '../../../utils/mmu_types.ts';
 import { MediaImageThumbnail } from './MediaImageThumbnail';
 import { MediaVideoThumbnail } from './MediaVideoThumbnail';
 import { IIIFCanvases, MediaField } from './ManifestCreationForm';
@@ -54,20 +54,22 @@ export const ManifestCreationFormCanvas = ({
                 placeholder={t('mediaLink')}
                 label={t('mediaLink')}
                 value={media.value}
-                onChange={onMediaURLChange}/>
+                onChange={onMediaURLChange}
+              />
             </Grid>
             {isMediaLoading && <h2>Loading ...</h2>}
             {media.value && !isMediaLoading && (
               <Grid>
-                {media.type === MediaTypes.VIDEO && (
+                {media.type === MEDIA_TYPES.VIDEO && (
                   <MediaVideoThumbnail
                     media={media}
                     setMedia={(media: MediaField) =>
                       setMedia(media, canvasIndex)
-                    }/>
+                    }
+                  />
                 )}
-                {media.type === MediaTypes.IMAGE && (
-                  <MediaImageThumbnail media={media} t={t}/>
+                {media.type === MEDIA_TYPES.IMAGE && (
+                  <MediaImageThumbnail media={media} t={t} />
                 )}
               </Grid>
             )}
@@ -76,7 +78,8 @@ export const ManifestCreationFormCanvas = ({
             <Button
               variant="contained"
               color="error"
-              onClick={() => handleRemoveCanvas(canvasIndex)}>
+              onClick={() => handleRemoveCanvas(canvasIndex)}
+            >
               {t('canvasRemoving', { index: canvasIndex + 1 })}
             </Button>
           </Grid>
