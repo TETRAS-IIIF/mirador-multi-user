@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import { AdminActions } from './AdminActions.tsx';
 
 export const AdminSettings = () => {
-  const [settings, setSettings] = useState<Settings>()
+  const [settings, setSettings] = useState<Settings>();
   const { t, i18n } = useTranslation();
 
   const fetchSettings = async () => {
@@ -26,38 +26,37 @@ export const AdminSettings = () => {
         toast.error(t('error_fetch_settings'));
       },
     );
-    const formattedUnMutableSettings = responseSettings.unMutableSettings.map(([key, value]) => {
-      if (['LAST_STARTING_TIME', 'LAST_MIGRATION'].includes(key)) {
-        return [
-          key,
-          dayjs(value)
-            .locale(i18n.language)
-            .format('LLLL')
-            .toString(),
-        ] as [string, string];
-      }
+    const formattedUnMutableSettings = responseSettings.unMutableSettings.map(
+      ([key, value]) => {
+        if (['LAST_STARTING_TIME', 'LAST_MIGRATION'].includes(key)) {
+          return [
+            key,
+            dayjs(value).locale(i18n.language).format('LLLL').toString(),
+          ] as [string, string];
+        }
 
-      return [key, value] as [string, string];
+        return [key, value] as [string, string];
+      },
+    );
+    setSettings({
+      ...responseSettings,
+      unMutableSettings: formattedUnMutableSettings,
     });
-    setSettings({ ...responseSettings, unMutableSettings: formattedUnMutableSettings });
   };
 
   useEffect(() => {
-    fetchSettings()
-  }, [])
+    fetchSettings();
+  }, []);
 
   return (
     <>
-      {
-        settings && (
-          <>
-            <MutableSettingsEditor
-              settings={settings.mutableSettings}/>
-            <AdminActions/>
-            <UnMutableSettingsViewer settings={settings.unMutableSettings}/>
-          </>
-        )
-      }
+      {settings && (
+        <>
+          <MutableSettingsEditor settings={settings.mutableSettings} />
+          <AdminActions />
+          <UnMutableSettingsViewer settings={settings.unMutableSettings} />
+        </>
+      )}
     </>
-  )
-}
+  );
+};

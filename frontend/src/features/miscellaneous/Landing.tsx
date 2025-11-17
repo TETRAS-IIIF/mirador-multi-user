@@ -55,9 +55,10 @@ export const Landing = () => {
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
         marginTop: 0,
-      }}>
+      }}
+    >
       {isLoading ? (
-        <LoadingSpinner/>
+        <LoadingSpinner />
       ) : (
         <>
           <Grid>
@@ -69,11 +70,11 @@ export const Landing = () => {
           </Grid>
 
           <Grid
-           
             container
             justifyContent="center"
             spacing={5}
-            alignItems="center">
+            alignItems="center"
+          >
             {showInscription && (
               <Grid>
                 <Button variant="contained" onClick={HandleSignIn}>

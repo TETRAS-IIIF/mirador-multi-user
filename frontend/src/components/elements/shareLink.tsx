@@ -15,37 +15,30 @@ interface IShareLinkProps {
 }
 
 export const ShareLink = ({
-                            itemId,
-                            snapShots,
-                            updateSnapshot,
-                            handleDeleteSnapshot,
-                            handleCreateSnapshot,
-                          }: IShareLinkProps) => {
+  itemId,
+  snapShots,
+  updateSnapshot,
+  handleDeleteSnapshot,
+  handleCreateSnapshot,
+}: IShareLinkProps) => {
   return (
-    <Grid
-      container
-     
-      spacing={2}
-      sx={{ width: '100%', padding: 0, margin: 0 }}>
-      <Grid
-       
-        container
-        spacing={1}
-        sx={{ width: '100%', padding: 0, margin: 0 }}>
+    <Grid container spacing={2} sx={{ width: '100%', padding: 0, margin: 0 }}>
+      <Grid container spacing={1} sx={{ width: '100%', padding: 0, margin: 0 }}>
         <Grid
           container
-         
           flexDirection="row"
           alignItems="center"
           spacing={2}
-          sx={{ width: '100%' }}>
+          sx={{ width: '100%' }}
+        >
           <Grid sx={{ width: '100%' }}>
             <SnapShotList
               handleCreateSnapshot={handleCreateSnapshot}
               handleDeleteSnapshot={handleDeleteSnapshot}
               snapShots={snapShots}
               itemId={itemId}
-              updateSnapshot={updateSnapshot}/>
+              updateSnapshot={updateSnapshot}
+            />
           </Grid>
         </Grid>
       </Grid>

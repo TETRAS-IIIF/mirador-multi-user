@@ -1,5 +1,5 @@
-import { Box, Pagination } from "@mui/material";
-import { ChangeEvent } from "react";
+import { Box, Pagination } from '@mui/material';
+import { ChangeEvent } from 'react';
 
 interface PaginationControlsProps {
   currentPage: number;
@@ -17,12 +17,13 @@ export const PaginationControls = ({
   };
 
   return (
-    <Box display="flex" justifyContent="center" mt={2}>
+    <Box display="flex" justifyContent="center">
       <Pagination
         count={totalPages}
         page={currentPage}
         onChange={handleChange}
-        color="primary"/>
+        color="primary"
+      />
     </Box>
   );
 };

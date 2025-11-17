@@ -17,11 +17,8 @@ import { createProject } from '../../features/projects/api/Project/createProject
 import { User } from '../../features/auth/types/types.ts';
 import { Media } from '../../features/media/types/types.ts';
 import { getUserPersonalGroup } from '../../features/projects/api/group/getUserPersonalGroup.ts';
-import {
-  ItemsRights,
-  UserGroup,
-  UserGroupTypes,
-} from '../../features/user-group/types/types.ts';
+import { UserGroup } from '../../features/user-group/types/types.ts';
+import { ITEM_RIGHTS, USER_GROUP_TYPES } from '../../utils/mmu_types.ts';
 import { getAllUserGroups } from '../../features/user-group/api/getAllUserGroups.ts';
 import { handleLock } from '../../features/projects/api/Project/handleLock.ts';
 import { useTranslation } from 'react-i18next';
@@ -179,7 +176,7 @@ export const SideDrawer = ({
   const fetchGroups = async () => {
     let groups = await getAllUserGroups(user.id);
     groups = groups.filter(
-      (group: UserGroup) => group.type == UserGroupTypes.MULTI_USER,
+      (group: UserGroup) => group.type == USER_GROUP_TYPES.MULTI_USER,
     );
     setGroups(groups);
   };
@@ -272,9 +269,9 @@ export const SideDrawer = ({
       const projects = await getUserAllProjects(user.id);
 
       const rightsOrder = [
-        ItemsRights.READER,
-        ItemsRights.EDITOR,
-        ItemsRights.ADMIN,
+        ITEM_RIGHTS.READER,
+        ITEM_RIGHTS.EDITOR,
+        ITEM_RIGHTS.ADMIN,
       ];
       const uniqueProjects = Array.from(
         new Set(projects.map((project: Project) => project.id)),
@@ -284,14 +281,14 @@ export const SideDrawer = ({
         );
 
         const highestRightsProject = allMatchingProjects.reduce(
-          (prev: { rights: ItemsRights }, curr: { rights: ItemsRights }) => {
+          (prev: { rights: ITEM_RIGHTS }, curr: { rights: ITEM_RIGHTS }) => {
             const prevRightsIndex = prev.rights
               ? rightsOrder.indexOf(prev.rights)
               : -1;
             const currRightsIndex = curr.rights
               ? rightsOrder.indexOf(curr.rights)
               : -1;
-            return currRightsIndex> prevRightsIndex ? curr : prev;
+            return currRightsIndex > prevRightsIndex ? curr : prev;
           },
         );
 
@@ -345,7 +342,8 @@ export const SideDrawer = ({
         saveProject={saveProject}
         setShowSignOutModal={setShowSignOutModal}
         user={user}
-        handleGenerateSnapshot={handleGenerateSnapshot}/>
+        handleGenerateSnapshot={handleGenerateSnapshot}
+      />
       <Content
         setMedias={setMedias}
         HandleSetIsRunning={HandleSetIsRunning}
@@ -372,7 +370,8 @@ export const SideDrawer = ({
         userPersonalGroup={userPersonalGroup!}
         userProjects={userProjects}
         viewer={viewer}
-        fetchProjects={fetchProjects}/>
+        fetchProjects={fetchProjects}
+      />
     </>
   );
 };

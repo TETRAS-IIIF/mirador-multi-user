@@ -15,7 +15,7 @@ import {
   useState,
 } from 'react';
 import toast from 'react-hot-toast';
-import { Media, MediaTypes } from '../types/types.ts';
+import { Media } from '../types/types.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
 import { createMedia } from '../api/createMedia.ts';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
@@ -30,7 +30,9 @@ import { DrawerLinkMedia } from './DrawerLinkMedia.tsx';
 import { UserGroup } from '../../user-group/types/types.ts';
 import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
 import { User } from '../../auth/types/types.ts';
-import { caddyUrl, MEDIA_TYPES_TABS } from '../../../utils/utils.ts';
+import { caddyUrl } from '../../../utils/utils.ts';
+import { useItemsPerPage } from '../../../utils/customHooks/useItemsPerPage.ts';
+import { MEDIA_TYPES, MEDIA_TYPES_TABS } from '../../../utils/mmu_types.ts';
 
 interface PopUpMediaProps {
   medias: Media[];
@@ -53,7 +55,7 @@ export const ContentSidePanelMedia = ({
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [sortField] = useState<keyof Media>('title');
   const [sortOrder] = useState('asc');
-  const itemsPerPage = 6;
+  const itemsPerPage = useItemsPerPage(2);
   const { t } = useTranslation();
   const handleCopyToClipBoard = async (path: string) => {
     try {
@@ -75,11 +77,11 @@ export const ContentSidePanelMedia = ({
   const filterByMediaType = (medias: Media[]) => {
     switch (mediaTabShown) {
       case MEDIA_TYPES_TABS.VIDEO:
-        return medias.filter((media) => media.mediaTypes === MediaTypes.VIDEO);
+        return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.VIDEO);
       case MEDIA_TYPES_TABS.IMAGE:
-        return medias.filter((media) => media.mediaTypes === MediaTypes.IMAGE);
+        return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.IMAGE);
       case MEDIA_TYPES_TABS.OTHER:
-        return medias.filter((media) => media.mediaTypes === MediaTypes.OTHER);
+        return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.OTHER);
       default:
         return medias;
     }
@@ -98,11 +100,11 @@ export const ContentSidePanelMedia = ({
   const totalPages = Math.ceil(
     medias.filter((media) => {
       if (mediaTabShown === 1) {
-        return media.mediaTypes === MediaTypes.VIDEO;
+        return media.mediaTypes === MEDIA_TYPES.VIDEO;
       } else if (mediaTabShown === 2) {
-        return media.mediaTypes === MediaTypes.IMAGE;
+        return media.mediaTypes === MEDIA_TYPES.IMAGE;
       } else if (mediaTabShown === 3) {
-        return media.mediaTypes === MediaTypes.OTHER;
+        return media.mediaTypes === MEDIA_TYPES.OTHER;
       }
       return true;
     }).length / itemsPerPage,
@@ -159,7 +161,11 @@ export const ContentSidePanelMedia = ({
   } else if (currentPageData.length > 0) {
     mediaContent = (
       <ImageList
-        sx={{ minWidth: 400, padding: 1, width: 400 }}
+        sx={{
+          minWidth: 400,
+          padding: 1,
+          width: 400,
+        }}
         cols={2}
         rowHeight={200}
       >
@@ -230,19 +236,14 @@ export const ContentSidePanelMedia = ({
         <Tab label={t('Images')} {...a11yProps(2)} />
         <Tab label={t('other')} {...a11yProps(3)} />
       </Tabs>
-      {!medias.length && (
-        <Grid container justifyContent={'center'}>
-          <Typography variant="h6" component="h2">
-            {t('noMediaYet')}
-          </Typography>
-        </Grid>
-      )}
-      {mediaContent}
-      <PaginationControls
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      <Grid sx={{ height: '100%' }}>{mediaContent}</Grid>
+      <Grid sx={{ margin: 1 }}>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </Grid>
       <Grid>
         <VisuallyHiddenInput
           id="file-upload"

@@ -1,6 +1,6 @@
-import { Button, Grid, Typography } from "@mui/material";
-import { useTranslation } from "react-i18next";
-import LogoutIcon from "@mui/icons-material/Logout";
+import { Button, Grid, Typography } from '@mui/material';
+import { useTranslation } from 'react-i18next';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 interface IConfirmDisconnect {
   handleDisconnect: () => void;
@@ -13,12 +13,12 @@ export const ConfirmDisconnect = ({ handleDisconnect }: IConfirmDisconnect) => {
     <Grid container>
       <Grid container spacing={1} justifyContent="center">
         <Grid>
-          <Typography>{t("messageDisconnect")}</Typography>
+          <Typography>{t('messageDisconnect')}</Typography>
         </Grid>
         <Grid>
           <Button color="error" variant="contained" onClick={handleDisconnect}>
-            <LogoutIcon sx={{ marginRight: 1 }}/>
-            {t("disconnect")}
+            <LogoutIcon sx={{ marginRight: 1 }} />
+            {t('disconnect')}
           </Button>
         </Grid>
       </Grid>

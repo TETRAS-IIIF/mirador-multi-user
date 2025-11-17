@@ -14,14 +14,16 @@ export const FixedSizeList = ({ contents, action }: FixedSizeListProps) => {
         maxHeight: 400,
         maxWidth: 360,
         bgcolor: 'background.paper',
-      }}>
+      }}
+    >
       <List>
         {contents.map((content) => (
           <ListRow
             key={content}
             content={content}
             index={content}
-            action={action}/>
+            action={action}
+          />
         ))}
       </List>
     </Box>

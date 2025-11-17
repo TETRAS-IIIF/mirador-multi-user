@@ -10,7 +10,7 @@ const isVideoOrAudioFile = (file: File) => {
 
 export const isFileSizeOverLimit = (file: File, MAX_UPLOAD_SIZE: number) => {
   const fileSizeMo = file.size / (1024 * 1024);
-  return fileSizeMo>= MAX_UPLOAD_SIZE;
+  return fileSizeMo >= MAX_UPLOAD_SIZE;
 };
 
 export const MENU_ELEMENT = {
@@ -58,16 +58,12 @@ export const OIDC_CLIENT_ID = import.meta.env.VITE_OIDC_CLIENT_ID;
 export const OIDC_REDIRECT_URI = import.meta.env.VITE_OIDC_REDIRECT_URI;
 
 export function isValidUrl(string: string) {
-  const pattern =
-    /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
-  return pattern.test(string);
+  try {
+    const url = new URL(string);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
 }
 
 export const caddyUrl = import.meta.env.VITE_CADDY_URL;
-
-export const MEDIA_TYPES_TABS = {
-  ALL: 0,
-  VIDEO: 1,
-  IMAGE: 2,
-  OTHER: 3,
-};

@@ -7,16 +7,16 @@ import {
   TextField,
   Toolbar,
   Typography,
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import {
   ChangeEvent,
   KeyboardEvent,
   useCallback,
   useRef,
   useState,
-} from "react";
-import { useTranslation } from "react-i18next";
+} from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface IDrawerCreateGroupProps {
   modalCreateGroup: boolean;
@@ -29,7 +29,7 @@ export const DrawerCreateGroup = ({
   toggleModalGroupCreation,
   handleCreatGroup,
 }: IDrawerCreateGroupProps) => {
-  const [userGroupName, setUserGroupName] = useState<string>("");
+  const [userGroupName, setUserGroupName] = useState<string>('');
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -44,17 +44,17 @@ export const DrawerCreateGroup = ({
     if (userGroupName.trim()) {
       toggleModalGroupCreation();
       handleCreatGroup(userGroupName);
-      setUserGroupName("");
+      setUserGroupName('');
     }
   }, [handleCreatGroup, userGroupName, toggleModalGroupCreation]);
 
   const handleToggleModalGroupCreation = useCallback(() => {
     toggleModalGroupCreation();
-    setUserGroupName("");
+    setUserGroupName('');
   }, [toggleModalGroupCreation]);
 
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter" && userGroupName.trim()) {
+    if (event.key === 'Enter' && userGroupName.trim()) {
       event.preventDefault();
       handleUserCreation();
     }
@@ -74,30 +74,32 @@ export const DrawerCreateGroup = ({
         onClose={handleToggleModalGroupCreation}
         ModalProps={{
           onAnimationEnd: handleDrawerTransition,
-        }}>
+        }}
+      >
         <Paper
           sx={{
-            left: "0",
+            left: '0',
             marginTop: 6,
             paddingBottom: 2,
             paddingLeft: { sm: 3, xs: 2 },
             paddingTop: 2,
-            right: "0",
-          }}>
+            right: '0',
+          }}
+        >
           <AppBar position="absolute" color="primary" enableColorOnDark>
             <Toolbar variant="dense">
               <Button color="inherit" onClick={toggleModalGroupCreation}>
-                <ExpandMoreIcon/>
+                <ExpandMoreIcon />
               </Button>
-              <Typography>{t("createGroup")}</Typography>
+              <Typography>{t('createGroup')}</Typography>
             </Toolbar>
           </AppBar>
           <Grid>
             <Grid container alignItems="center" spacing={2}>
               <Grid>
-                <Typography>{t("groupTitleLabel")}</Typography>
+                <Typography>{t('groupTitleLabel')}</Typography>
               </Grid>
-              <Grid sx={{ width: "70%" }}>
+              <Grid sx={{ width: '70%' }}>
                 <TextField
                   inputProps={{
                     maxLength: 255,
@@ -105,15 +107,17 @@ export const DrawerCreateGroup = ({
                   inputRef={inputRef}
                   onChange={handleNameChange}
                   onKeyDown={handleKeyDown}
-                  sx={{ width: "100%" }}/>
+                  sx={{ width: '100%' }}
+                />
               </Grid>
               <Grid>
                 <Button
                   size="large"
                   variant="contained"
                   onClick={handleUserCreation}
-                  disabled={userGroupName.length < 1}>
-                  {t("createGroupMAJ")}
+                  disabled={userGroupName.length < 1}
+                >
+                  {t('createGroupMAJ')}
                 </Button>
               </Grid>
             </Grid>

@@ -1,4 +1,10 @@
-import { Box, Drawer, IconButton, IconButtonProps, styled, } from '@mui/material';
+import {
+  Box,
+  Drawer,
+  IconButton,
+  IconButtonProps,
+  styled,
+} from '@mui/material';
 import { ReactNode, useEffect, useState } from 'react';
 import { CloseButton } from '../SideBar/CloseButton.tsx';
 import { OpenButton } from '../SideBar/OpenButton.tsx';
@@ -35,7 +41,7 @@ export const ToggleButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'open',
 })<ToggleButtonProps>(({ theme, open }) => ({
   position: 'fixed',
-  top: open ? 40 : 40,
+  top: 40,
   right: open ? 400 : 0,
   zIndex: 9999,
   transition: theme.transitions.create('right', {

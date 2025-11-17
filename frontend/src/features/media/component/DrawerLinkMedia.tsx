@@ -71,7 +71,8 @@ export const DrawerLinkMedia = ({
           onClose={handleToggleModalGroupCreation}
           ModalProps={{
             onAnimationEnd: handleDrawerTransition,
-          }}>
+          }}
+        >
           <Paper
             sx={{
               left: '0',
@@ -82,11 +83,12 @@ export const DrawerLinkMedia = ({
               paddingTop: 2,
               right: '0',
               zIndex: 9999,
-            }}>
+            }}
+          >
             <AppBar position="absolute" color="primary" enableColorOnDark>
               <Toolbar variant="dense">
                 <Button color="inherit" onClick={toggleModalMediaCreation}>
-                  <ExpandMoreIcon/>
+                  <ExpandMoreIcon />
                 </Button>
                 <Typography>{t('linkMedia')}</Typography>
               </Toolbar>
@@ -104,14 +106,16 @@ export const DrawerLinkMedia = ({
                     inputRef={inputRef}
                     onChange={handleNameChange}
                     sx={{ width: '100%' }}
-                    placeholder={t('validURLToMedia')}></TextField>
+                    placeholder={t('validURLToMedia')}
+                  ></TextField>
                 </Grid>
                 <Grid>
                   <LoadingButton
                     size="large"
                     variant="contained"
                     onClick={handleLinkingMedia}
-                    loading={isPending}>
+                    loading={isPending}
+                  >
                     {t('add')}
                   </LoadingButton>
                 </Grid>

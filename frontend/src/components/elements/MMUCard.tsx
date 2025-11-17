@@ -15,39 +15,32 @@ import {
   useState,
 } from 'react';
 import { MMUModalEdit } from './MMUModalEdit.tsx';
-import { ListItem } from '../types.ts';
-import { ItemsRights } from '../../features/user-group/types/types.ts';
 import {
-  MediaGroupRights,
-  MEDIA_ORIGIN,
-  MediaTypes,
-} from '../../features/media/types/types.ts';
-import {
-  ManifestGroupRights,
-  manifestOrigin,
-} from '../../features/manifest/types/types.ts';
+  ITEM_RIGHTS,
+  MEDIA_TYPES,
+  OBJECT_ORIGIN,
+  OBJECT_TYPES,
+} from '../../utils/mmu_types.ts';
+
 import dayjs, { Dayjs } from 'dayjs';
-import { ObjectTypes } from '../../features/tag/type.ts';
-import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import ImageIcon from '@mui/icons-material/Image';
+
 import { useTranslation } from 'react-i18next';
 import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
 import { ModalButton } from './ModalButton.tsx';
 import CancelIcon from '@mui/icons-material/Cancel';
-import ShareIcon from '@mui/icons-material/Share';
+
 import useFetchThumbnailsUrl from '../../utils/customHooks/useFetchThumbnailsUrl.ts';
 import { LoadingSpinner } from './loadingSpinner.tsx';
 import { Snapshot } from '../../features/projects/types/types.ts';
-import LinkIcon from '@mui/icons-material/Link';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
-import CreateIcon from '@mui/icons-material/Create';
-import DescriptionIcon from '@mui/icons-material/Description';
+
 import { isValidUrl } from '../../utils/utils.ts';
 import placeholder from '../../assets/Placeholder.svg';
+import { MMUCardIcon } from './MMUCardIcon.tsx';
+import { ListItem } from 'components/types.ts';
 
 interface IMMUCardProps<T, X> {
   id: number;
-  rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
+  rights: ITEM_RIGHTS;
   description: string;
   HandleOpenModal: () => void;
   openModal: boolean;
@@ -79,7 +72,7 @@ interface IMMUCardProps<T, X> {
   thumbnailUrl?: string | null;
   metadata?: Record<string, string>;
   isGroups?: boolean;
-  objectTypes: ObjectTypes;
+  objectTypes: OBJECT_TYPES;
   getGroupByOption?: (option: any) => string;
   handleRemoveFromList?: (
     manifestId: number,
@@ -93,8 +86,8 @@ const MMUCard = <
   T extends {
     created_at: Dayjs;
     id: number;
-    mediaTypes?: MediaTypes;
-    origin?: manifestOrigin | MEDIA_ORIGIN;
+    mediaTypes?: MEDIA_TYPES;
+    origin?: OBJECT_ORIGIN;
     path?: string;
     share?: string;
     shared?: boolean;
@@ -162,6 +155,8 @@ const MMUCard = <
     fetchData();
   };
 
+  const thumbnailSrc = isValidUrl(thumbnailUrl) ? thumbnailUrl : placeholder;
+
   const handleChangeSelectedItem =
     (itemSelected: ListItem) => async (event: SelectChangeEvent<string>) => {
       if (handleSelectorChange) {
@@ -180,33 +175,25 @@ const MMUCard = <
 
   return (
     <Card>
-      <Grid
-        container
-        wrap="nowrap"
-        justifyContent="space-between"
-        sx={{ minHeight: 120 }}
-      >
+      <Grid container wrap="nowrap" alignItems="center" sx={{ height: 100 }}>
         <Grid
           container
           alignItems="center"
-          justifyContent="flex-start"
-          spacing={2}
+          wrap="nowrap"
+          spacing={1}
           size={12}
+          sx={{ flex: 1, minWidth: 0 }}
         >
           <Grid size={{ xs: 4, sm: 1 }}>
             {isLoading ? (
               <LoadingSpinner />
             ) : (
               <img
-                src={
-                  thumbnailUrl && isValidUrl(thumbnailUrl as string)
-                    ? (thumbnailUrl as string)
-                    : placeholder
-                }
+                src={thumbnailSrc}
                 alt={t('thumbnailMissing')}
                 style={{
-                  height: 100,
-                  width: 100,
+                  height: 80,
+                  width: 80,
                   objectFit: 'contain',
                   marginLeft: 10,
                 }}
@@ -217,47 +204,15 @@ const MMUCard = <
           </Grid>
 
           <Grid
-            size={{ xs: 1, sm: 1 }}
+            size={{ xs: 3, sm: 2 }}
             display="flex"
             alignItems="center"
             gap={0.5}
           >
-            {item.origin === manifestOrigin.LINK && (
-              <LinkIcon fontSize="small" />
-            )}
-            {item.origin === manifestOrigin.UPLOAD && (
-              <UploadFileIcon fontSize="small" />
-            )}
-            {item.origin === manifestOrigin.CREATE && (
-              <CreateIcon fontSize="small" />
-            )}
-            {item.shared && (
-              <Tooltip title={t('shared')}>
-                <ShareIcon fontSize="small" />
-              </Tooltip>
-            )}
+            <MMUCardIcon item={item} objectTypes={objectTypes} />
           </Grid>
 
-          {objectTypes === ObjectTypes.MEDIA &&
-            item.mediaTypes === MediaTypes.VIDEO && (
-              <Grid size={{ xs: 12, sm: 1 }}>
-                <OndemandVideoIcon />
-              </Grid>
-            )}
-          {objectTypes === ObjectTypes.MEDIA &&
-            item.mediaTypes === MediaTypes.IMAGE && (
-              <Grid size={{ xs: 12, sm: 1 }}>
-                <ImageIcon />
-              </Grid>
-            )}
-          {objectTypes === ObjectTypes.MEDIA &&
-            item.mediaTypes === MediaTypes.OTHER && (
-              <Grid size={{ xs: 12, sm: 1 }}>
-                <DescriptionIcon />
-              </Grid>
-            )}
-
-          <Grid size={{ xs: 4, sm: 3 }}>
+          <Grid size={{ xs: 5, sm: 3 }}>
             <Tooltip title={itemLabel} placement="bottom-start">
               <Typography
                 variant="subtitle1"
@@ -273,7 +228,7 @@ const MMUCard = <
             </Tooltip>
           </Grid>
 
-          <Grid size={{ xs: 3, sm: 3 }}>
+          <Grid size={{ xs: 3, sm: 5 }}>
             <Tooltip title={description}>
               <Typography
                 variant="subtitle1"
@@ -281,7 +236,7 @@ const MMUCard = <
                   textOverflow: 'ellipsis',
                   overflow: 'hidden',
                   whiteSpace: 'nowrap',
-                  maxWidth: 400,
+                  maxWidth: 500,
                 }}
               >
                 {description}
@@ -289,13 +244,14 @@ const MMUCard = <
             </Tooltip>
           </Grid>
 
-          <Grid size={{ xs: 12, sm: 1 }}>
+          <Grid>
             {item.updated_at && (
               <Tooltip
-                title={dayjs(item.updated_at)
-                  .locale(i18n.language)
-                  .format('LLLL')
-                  .toString()}
+                title={t('lastEdited', {
+                  date: dayjs(item.updated_at)
+                    .locale(i18n.language)
+                    .format('LLLL'),
+                })}
               >
                 <Typography
                   variant="subtitle1"
@@ -303,7 +259,7 @@ const MMUCard = <
                     textOverflow: 'ellipsis',
                     overflow: 'hidden',
                     whiteSpace: 'nowrap',
-                    maxWidth: 200,
+                    maxWidth: 100,
                   }}
                 >
                   {dayjs(item.updated_at)
@@ -315,12 +271,12 @@ const MMUCard = <
           </Grid>
         </Grid>
 
-        <Grid alignSelf="center">
+        <Grid alignSelf="center" sx={{ ml: 1 }}>
           <CardActions sx={{ p: 2 }}>
-            <Grid container wrap="nowrap" spacing={2}>
+            <Grid container wrap="nowrap" spacing={1}>
               {Boolean(id) && (
                 <Grid display="flex" alignItems="center">
-                  {rights === ItemsRights.READER ? (
+                  {rights === ITEM_RIGHTS.READER ? (
                     <ModalButton
                       tooltipButton={t('removeProjectFromList')}
                       onClickFunction={handleConfirmRemoveFromListModal}

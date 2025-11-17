@@ -1,8 +1,8 @@
-import { createTheme } from "@mui/material/styles";
-import InputMonoNarrow from "../fonts/InputMonoNarrow-ExtraLight.ttf";
-import backgroundImage from "../../../customAssets/landing-background.webp";
+import { createTheme } from '@mui/material/styles';
+import InputMonoNarrow from '../fonts/InputMonoNarrow-ExtraLight.ttf';
+import backgroundImage from '../../../customAssets/landing-background.webp';
 
-declare module "@mui/material/styles" {
+declare module '@mui/material/styles' {
   interface Palette {
     selectedBackground: string;
     selectedText: string;
@@ -20,13 +20,20 @@ export const theme = createTheme({
   typography: {},
   palette: {
     background: {
-      default: "#dcdcdc",
+      default: '#dcdcdc',
     },
-    selectedBackground: "#1976d2",
-    selectedText: "#F5EBFF",
+    selectedBackground: '#1976d2',
+    selectedText: '#F5EBFF',
     backgroundImage: `url(${backgroundImage})`,
   },
   components: {
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          fontSize: '1rem',
+        },
+      },
+    },
     MuiCssBaseline: {
       styleOverrides: `
         @font-face {

@@ -1,12 +1,13 @@
 import { Box,  ImageListItemBar } from '@mui/material';
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import ImageIcon from '@mui/icons-material/Image';
-import { Media, MediaTypes } from '../types/types';
+import { Media } from '../types/types';
 import placeholder from '../../../assets/Placeholder.svg';
 import videoPlaceHolder from '../../../assets/video_placeholder.webp';
 import otherPlaceHolder from '../../../assets/other_placeholder.webp';
 import { GetMediaLinkForAnnotation } from './GetMediaLinkForAnnotation.tsx';
 import { CustomImageItem } from './CustomImageItem.tsx';
+import { MEDIA_TYPES } from '../../../utils/mmu_types.ts';
 
 
 interface ImageBoxProps {
@@ -22,17 +23,17 @@ export const MediaImageBox = ({
 }: ImageBoxProps) => {
 
   const thumbnailUrl = (): string | undefined => {
-    if (media.mediaTypes === MediaTypes.IMAGE) {
+    if (media.mediaTypes === MEDIA_TYPES.IMAGE) {
       return media.hash
         ? `${caddyUrl}/${media.hash}/thumbnail.webp`
         : placeholder;
     }
-    if (media.mediaTypes === MediaTypes.VIDEO) {
+    if (media.mediaTypes === MEDIA_TYPES.VIDEO) {
       return media.hash
         ? `${caddyUrl}/${media.hash}/thumbnail.webp`
         : videoPlaceHolder;
     }
-    if (media.mediaTypes === MediaTypes.OTHER) {
+    if (media.mediaTypes === MEDIA_TYPES.OTHER) {
       return otherPlaceHolder;
     }
     return undefined;
@@ -52,14 +53,16 @@ export const MediaImageBox = ({
             width: '100%',
             height: '100%',
           },
-        }}/>
+        }}
+      />
       <ImageListItemBar
         title={media.title}
         sx={{
           position: 'absolute',
           bottom: 0,
           color: 'white',
-        }}/>
+        }}
+      />
       <Box
         sx={{
           position: 'absolute',
@@ -71,11 +74,12 @@ export const MediaImageBox = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-        }}>
-        {media.mediaTypes === MediaTypes.VIDEO ? (
-          <OndemandVideoIcon/>
+        }}
+      >
+        {media.mediaTypes === MEDIA_TYPES.VIDEO ? (
+          <OndemandVideoIcon />
         ) : (
-          <ImageIcon/>
+          <ImageIcon />
         )}
       </Box>
       <GetMediaLinkForAnnotation

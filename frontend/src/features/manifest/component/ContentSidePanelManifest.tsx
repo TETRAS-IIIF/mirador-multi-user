@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Manifest, ManifestGroupRights } from '../types/types.ts';
+import { Manifest } from '../types/types.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
 import { UserGroup } from '../../user-group/types/types.ts';
 import { User } from '../../auth/types/types.ts';
@@ -23,6 +23,8 @@ import { useFetchThumbnails } from '../customHooks/useFetchManifestThumbnails.ts
 import { isValidUrl } from '../../../utils/utils.ts';
 import placeholder from '../../../assets/Placeholder.svg';
 import { useLinkManifest } from '../hooks/useLinkManifest.ts';
+import { useItemsPerPage } from '../../../utils/customHooks/useItemsPerPage.ts';
+import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 
 const CustomButton = styled(Button)({
   position: 'absolute',
@@ -59,10 +61,10 @@ export const ContentSidePanelManifest = ({
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const { mutateAsync, isPending } = useLinkManifest();
-  const itemsPerPage = 6;
   const [manifestFilter, setManifestFilter] = useState<string | null>(null);
 
   const { t } = useTranslation();
+  const itemsPerPage = useItemsPerPage(2);
 
   const isInFilter = (manifest: Manifest) => {
     if (manifestFilter) {
@@ -127,7 +129,7 @@ export const ContentSidePanelManifest = ({
 
         await mutateAsync({
           url: path,
-          rights: ManifestGroupRights.ADMIN,
+          rights: ITEM_RIGHTS.ADMIN,
           idCreator: user.id,
           user_group: userPersonalGroup!,
           path: path,
@@ -185,7 +187,12 @@ export const ContentSidePanelManifest = ({
       </Grid>
       {currentPageData.length > 0 ? (
         <ImageList
-          sx={{ minWidth: 400, padding: 1, width: 400 }}
+          sx={{
+            minWidth: 400,
+            padding: 1,
+            width: 400,
+            height: '100%',
+          }}
           cols={2}
           rowHeight={200}
         >
@@ -240,11 +247,13 @@ export const ContentSidePanelManifest = ({
           <Typography>{t('noMatchingManifestFilter')}</Typography>
         </Grid>
       )}
-      <PaginationControls
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      <Grid sx={{ margin: 1 }}>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </Grid>
       <Grid>
         <DrawerLinkManifest
           modalCreateManifestIsOpen={modalLinkManifestIsOpen}

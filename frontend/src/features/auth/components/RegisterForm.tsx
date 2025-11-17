@@ -54,13 +54,14 @@ export const RegisterForm = () => {
         </SuccessCard>
       ) : (
         <form>
-          <Snackbar open={open} message={message} autoHideDuration={10}/>
+          <Snackbar open={open} message={message} autoHideDuration={10} />
           <Grid
             container
             direction="column"
             justifyContent="center"
             spacing={2}
-            maxWidth={'1000px'}>
+            maxWidth={'1000px'}
+          >
             <Grid>
               <FormField
                 type="mail"
@@ -68,7 +69,8 @@ export const RegisterForm = () => {
                 name="mail"
                 required={true}
                 register={register}
-                error={errors.mail}/>
+                error={errors.mail}
+              />
             </Grid>
             <Grid>
               <FormField
@@ -77,7 +79,8 @@ export const RegisterForm = () => {
                 name="name"
                 required={true}
                 register={register}
-                error={errors.name}/>
+                error={errors.name}
+              />
             </Grid>
             <Grid>
               <FormField
@@ -86,7 +89,8 @@ export const RegisterForm = () => {
                 name="password"
                 register={register}
                 required={true}
-                error={errors.password}/>
+                error={errors.password}
+              />
             </Grid>
             <Grid>
               <FormField
@@ -95,14 +99,16 @@ export const RegisterForm = () => {
                 name="confirmPassword"
                 register={register}
                 required={true}
-                error={errors.confirmPassword}/>
+                error={errors.confirmPassword}
+              />
             </Grid>
             <Grid container>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
-                onClick={handleSubmit(onSubmit)}>
+                onClick={handleSubmit(onSubmit)}
+              >
                 {t('submit')}
               </Button>
             </Grid>
@@ -110,6 +116,5 @@ export const RegisterForm = () => {
         </form>
       )}
     </>
-
   );
 };

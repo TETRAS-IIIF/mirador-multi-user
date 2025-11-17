@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { Button, Grid, Typography } from "@mui/material";
-import { theme } from "../../assets/theme/mainTheme.ts";
-import { useTranslation } from "react-i18next";
+import { useNavigate } from 'react-router-dom';
+import { Button, Grid, Typography } from '@mui/material';
+import { theme } from '../../assets/theme/mainTheme.ts';
+import { useTranslation } from 'react-i18next';
 
 export const Disconnect = () => {
   const navigate = useNavigate();
@@ -14,33 +14,35 @@ export const Disconnect = () => {
       justifyContent="center"
       alignItems="center"
       spacing={1}
-      minHeight={"100vh"}
+      minHeight={'100vh'}
       sx={{
         backgroundImage: theme.palette.backgroundImage,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         marginTop: 0,
-      }}>
+      }}
+    >
       <Grid
-       
         container
-        sx={{ backgroundColor: "rgba(255, 255, 255, 0.4)" }}
+        sx={{ backgroundColor: 'rgba(255, 255, 255, 0.4)' }}
         justifyContent="center"
         alignItems="center"
         flexDirection="column"
-        spacing={1}>
+        spacing={1}
+      >
         <Grid>
           <Typography variant="h5" component="div">
-            {t("disconnect_error")}
+            {t('disconnect_error')}
           </Typography>
         </Grid>
         <Grid>
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigate("/auth/login")}>
-            {t("login")}
+            onClick={() => navigate('/auth/login')}
+          >
+            {t('login')}
           </Button>
         </Grid>
       </Grid>
