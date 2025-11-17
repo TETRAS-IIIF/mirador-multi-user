@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import MetadataField from './metadataField.tsx';
+import { OBJECT_ORIGIN } from '../../../utils/mmu_types.ts';
 
 interface MetadataFormProps<T> {
   handleSetMetadataFormData: (data: any) => void;
@@ -75,7 +76,7 @@ export const MetadataForm = <T extends { id: number }>({
   const handleFormatChange = async (event: SelectChangeEvent) => {
     setGeneratingFields(true);
     const selectedFormatTitle = event.target.value;
-    if (selectedFormatTitle === 'upload') {
+    if (selectedFormatTitle === OBJECT_ORIGIN.UPLOAD) {
       if (fileInputRef.current) {
         fileInputRef.current.click();
       }

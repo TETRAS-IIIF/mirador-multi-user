@@ -41,7 +41,7 @@ export type YoutubeVideoJson = {
   title: string;
   author_name: string;
   author_url: string;
-  type: 'video';
+  type: MEDIA_TYPES.VIDEO;
   height: number;
   width: number;
   version: string;
