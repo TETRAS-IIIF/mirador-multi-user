@@ -1,6 +1,7 @@
 import { YoutubeVideoJson } from '../types/types.ts';
 
-import { Media, MEDIA_ORIGIN, MediaTypes } from '../types/types';
+import { Media } from '../types/types';
+import { MEDIA_TYPES, OBJECT_ORIGIN } from '../../../utils/mmu_types.ts';
 
 /*************************************************************
  * IMPORTANT: The functions need to be the same as their clones in backend    *
@@ -83,11 +84,12 @@ export const getYoutubeJson = async (
   }
 };
 
-
-
-
 export function isHTMLMediaFile(media: Media): boolean {
-  if (media.mediaTypes === MediaTypes.OTHER && media.origin === MEDIA_ORIGIN.UPLOAD && media.title) {
+  if (
+    media.mediaTypes === MEDIA_TYPES.OTHER &&
+    media.origin === OBJECT_ORIGIN.UPLOAD &&
+    media.title
+  ) {
     const extension = media.title.split('.').pop()?.toLowerCase();
     const htmlExtensions = ['html', 'htm', 'xhtml'];
     return extension ? htmlExtensions.includes(extension) : false;
