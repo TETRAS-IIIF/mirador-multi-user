@@ -26,9 +26,8 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import {
   ITEM_RIGHTS,
   MANIFEST_GROUP_RIGHTS,
-  MANIFEST_ORIGIN,
   MEDIA_GROUP_RIGHTS,
-  MEDIA_ORIGIN,
+  OBJECT_ORIGIN,
   OBJECT_TYPES,
 } from '../../utils/types.ts';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -120,7 +119,7 @@ export const MMUModalEdit = <
     hash?: string;
     id: number;
     noteTemplate?: Template[];
-    origin?: MANIFEST_ORIGIN | MEDIA_ORIGIN;
+    origin?: OBJECT_ORIGIN;
     ownerId?: number;
     path?: string;
     personalOwnerGroupId?: number;
@@ -418,7 +417,7 @@ export const MMUModalEdit = <
       const newManifest = {
         manifestId: item.id,
         json: data.newData,
-        origin: item.origin! as MANIFEST_ORIGIN,
+        origin: item.origin! as OBJECT_ORIGIN,
         path: item.path!,
         hash: item.hash!,
       };
@@ -510,7 +509,7 @@ export const MMUModalEdit = <
 
         {(objectTypes === OBJECT_TYPES.PROJECT ||
           (objectTypes === OBJECT_TYPES.MANIFEST &&
-            item.origin !== MANIFEST_ORIGIN.LINK)) &&
+            item.origin !== OBJECT_ORIGIN.LINK)) &&
           !jsonElementToEditInAdvancedEditor && (
             <Tab
               label={
@@ -525,7 +524,7 @@ export const MMUModalEdit = <
 
         {(objectTypes === OBJECT_TYPES.PROJECT ||
           (objectTypes === OBJECT_TYPES.MANIFEST &&
-            item.origin !== MANIFEST_ORIGIN.LINK)) &&
+            item.origin !== OBJECT_ORIGIN.LINK)) &&
           jsonElementToEditInAdvancedEditor && (
             <Tab
               label={
@@ -756,7 +755,7 @@ export const MMUModalEdit = <
           </CustomTabPanel>
         )}
         {jsonElementToEditInAdvancedEditor &&
-          item.origin !== MANIFEST_ORIGIN.LINK && (
+          item.origin !== OBJECT_ORIGIN.LINK && (
             <CustomTabPanel value={tabValue} index={3}>
               <Grid
                 container

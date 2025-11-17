@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Manifest } from '../types/types.ts';
-import { MANIFEST_ORIGIN } from '../../../utils/types.ts';
+import { OBJECT_ORIGIN } from '../../../utils/types.ts';
 
 const placeholder = '../../../assets/images/placeholder.png';
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
@@ -21,11 +21,11 @@ export const useFetchThumbnails = (currentPageData: Manifest[]) => {
           }
 
           let manifestUrl = '';
-          if (manifest.origin === MANIFEST_ORIGIN.UPLOAD) {
+          if (manifest.origin === OBJECT_ORIGIN.UPLOAD) {
             manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`;
-          } else if (manifest.origin === MANIFEST_ORIGIN.LINK) {
+          } else if (manifest.origin === OBJECT_ORIGIN.LINK) {
             manifestUrl = manifest.path;
-          } else if (manifest.origin === MANIFEST_ORIGIN.CREATE) {
+          } else if (manifest.origin === OBJECT_ORIGIN.CREATE) {
             manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.path}`;
           } else {
             return placeholder;

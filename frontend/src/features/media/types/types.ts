@@ -2,8 +2,8 @@ import { UserGroup } from '../../user-group/types/types.ts';
 import { Dayjs } from 'dayjs';
 import {
   MEDIA_GROUP_RIGHTS,
-  MEDIA_ORIGIN,
   MEDIA_TYPES,
+  OBJECT_ORIGIN,
 } from '../../../utils/types.ts';
 
 export type CreateMediaDto = {
@@ -25,7 +25,7 @@ export type Media = {
   id: number;
   idCreator: number;
   title: string;
-  origin: MEDIA_ORIGIN;
+  origin: OBJECT_ORIGIN;
   path?: string;
   rights: MEDIA_GROUP_RIGHTS;
   updated_at: Dayjs;

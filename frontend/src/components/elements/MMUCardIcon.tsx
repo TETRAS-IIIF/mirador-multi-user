@@ -9,12 +9,7 @@ import { Tooltip } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Dayjs } from 'dayjs';
 import { Snapshot } from '../../features/projects/types/types.ts';
-import {
-  MANIFEST_ORIGIN,
-  MEDIA_ORIGIN,
-  MEDIA_TYPES,
-  OBJECT_TYPES,
-} from '../../utils/types.ts';
+import { MEDIA_TYPES, OBJECT_ORIGIN, OBJECT_TYPES } from '../../utils/types.ts';
 
 interface IMMUCardProps<T> {
   item: T;
@@ -30,7 +25,7 @@ export const MMUCardIcon = <
     created_at: Dayjs;
     id: number;
     mediaTypes?: MEDIA_TYPES;
-    origin?: MANIFEST_ORIGIN | MEDIA_ORIGIN;
+    origin?: OBJECT_ORIGIN;
     path?: string;
     share?: string;
     shared?: boolean;
@@ -51,34 +46,33 @@ export const MMUCardIcon = <
 
   return (
     <>
-      {item.origin === MANIFEST_ORIGIN.LINK &&
-        item.mediaTypes === undefined && (
-          <Tooltip title={t('linkedManifest')}>
-            <LinkIcon fontSize="small" />
-          </Tooltip>
-        )}
-      {item.origin === MANIFEST_ORIGIN.LINK && item.mediaTypes && (
+      {item.origin === OBJECT_ORIGIN.LINK && item.mediaTypes === undefined && (
+        <Tooltip title={t('linkedManifest')}>
+          <LinkIcon fontSize="small" />
+        </Tooltip>
+      )}
+      {item.origin === OBJECT_ORIGIN.LINK && item.mediaTypes && (
         <Tooltip title={t('linkedMedia')}>
           <LinkIcon fontSize="small" />
         </Tooltip>
       )}
-      {item.origin === MANIFEST_ORIGIN.UPLOAD &&
+      {item.origin === OBJECT_ORIGIN.UPLOAD &&
         item.mediaTypes === undefined && (
           <Tooltip title={t('uploadedManifest')}>
             <UploadFileIcon fontSize="small" />
           </Tooltip>
         )}
-      {item.origin === MANIFEST_ORIGIN.UPLOAD && item.mediaTypes && (
+      {item.origin === OBJECT_ORIGIN.UPLOAD && item.mediaTypes && (
         <Tooltip title={t('uploadedMedia')}>
           <UploadFileIcon fontSize="small" />
         </Tooltip>
       )}
-      {item.origin === MANIFEST_ORIGIN.CREATE && item.mediaTypes && (
+      {item.origin === OBJECT_ORIGIN.CREATE && item.mediaTypes && (
         <Tooltip title={t('createdMedia')}>
           <CreateIcon fontSize="small" />
         </Tooltip>
       )}
-      {item.origin === MANIFEST_ORIGIN.CREATE &&
+      {item.origin === OBJECT_ORIGIN.CREATE &&
         item.mediaTypes === undefined && (
           <Tooltip title={t('createdManifest')}>
             <CreateIcon fontSize="small" />

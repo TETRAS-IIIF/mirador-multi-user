@@ -12,21 +12,22 @@ export enum OBJECT_TYPES {
   PROJECT = 'project',
 }
 
-export enum MANIFEST_GROUP_RIGHTS {
-  ADMIN = 'admin',
-  READER = 'reader',
-  EDITOR = 'editor',
-}
-
-export enum MANIFEST_ORIGIN {
+export enum OBJECT_ORIGIN {
   UPLOAD = 'upload',
   LINK = 'link',
   CREATE = 'create',
 }
 
-export enum USER_GROUP_TYPES {
-  PERSONAL = 'personal',
-  MULTI_USER = 'multi-user',
+export enum MEDIA_GROUP_RIGHTS {
+  ADMIN = 'admin',
+  READER = 'reader',
+  EDITOR = 'editor',
+}
+
+export enum MANIFEST_GROUP_RIGHTS {
+  ADMIN = 'admin',
+  READER = 'reader',
+  EDITOR = 'editor',
 }
 
 export enum ITEM_RIGHTS {
@@ -35,15 +36,9 @@ export enum ITEM_RIGHTS {
   EDITOR = 'editor',
 }
 
-export enum MEDIA_ORIGIN {
-  UPLOAD = 'upload',
-  LINK = 'link',
-}
-
-export enum MEDIA_GROUP_RIGHTS {
-  ADMIN = 'admin',
-  READER = 'reader',
-  EDITOR = 'editor',
+export enum USER_GROUP_TYPES {
+  PERSONAL = 'personal',
+  MULTI_USER = 'multi-user',
 }
 
 export const MEDIA_TYPES_TABS = {

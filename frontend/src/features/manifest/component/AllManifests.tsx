@@ -57,7 +57,7 @@ import {
 import { useLinkManifest } from '../hooks/useLinkManifest.ts';
 import {
   MANIFEST_GROUP_RIGHTS,
-  MANIFEST_ORIGIN,
+  OBJECT_ORIGIN,
   OBJECT_TYPES,
   USER_GROUP_TYPES,
 } from '../../../utils/types.ts';
@@ -284,7 +284,7 @@ export const AllManifests = ({
 
   const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
     try {
-      if (manifestToUpdate.origin === MANIFEST_ORIGIN.LINK) {
+      if (manifestToUpdate.origin === OBJECT_ORIGIN.LINK) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { json, rights, personalOwnerGroupId, ...manifestDto } =
           manifestToUpdate;

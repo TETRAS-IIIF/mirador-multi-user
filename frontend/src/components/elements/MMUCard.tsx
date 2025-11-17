@@ -18,10 +18,9 @@ import { MMUModalEdit } from './MMUModalEdit.tsx';
 import {
   ITEM_RIGHTS,
   MANIFEST_GROUP_RIGHTS,
-  MANIFEST_ORIGIN,
   MEDIA_GROUP_RIGHTS,
-  MEDIA_ORIGIN,
   MEDIA_TYPES,
+  OBJECT_ORIGIN,
   OBJECT_TYPES,
 } from '../../utils/types.ts';
 
@@ -90,7 +89,7 @@ const MMUCard = <
     created_at: Dayjs;
     id: number;
     mediaTypes?: MEDIA_TYPES;
-    origin?: MANIFEST_ORIGIN | MEDIA_ORIGIN;
+    origin?: OBJECT_ORIGIN;
     path?: string;
     share?: string;
     shared?: boolean;

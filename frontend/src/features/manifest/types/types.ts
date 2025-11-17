@@ -1,9 +1,6 @@
 import { UserGroup } from '../../user-group/types/types.ts';
 import { Dayjs } from 'dayjs';
-import {
-  MANIFEST_GROUP_RIGHTS,
-  MANIFEST_ORIGIN,
-} from '../../../utils/types.ts';
+import { MANIFEST_GROUP_RIGHTS, OBJECT_ORIGIN } from '../../../utils/types.ts';
 
 export type Manifest = {
   created_at: Dayjs;
@@ -13,7 +10,7 @@ export type Manifest = {
   idCreator: number;
   json?: any;
   title: string;
-  origin: MANIFEST_ORIGIN;
+  origin: OBJECT_ORIGIN;
   path: string;
   updated_at: Dayjs;
   thumbnailUrl?: string;
@@ -28,7 +25,7 @@ export type Manifest = {
 export type updateManifestJsonDto = {
   manifestId: number;
   json: any;
-  origin: MANIFEST_ORIGIN;
+  origin: OBJECT_ORIGIN;
   path: string;
   hash: string;
 };
