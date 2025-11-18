@@ -71,8 +71,7 @@ export function addScriptTagInHtmlDocument(htmlContent: string): string {
 }
 
 // Script tag to be added
-const viewerScript =
-  '<!-- Added by MMU --><script src="/public/htmlTreeNav.js">';
+const viewerScript = '<script src="/public/htmlTreeNav.js"></script>\n';
 
 // Prefix for MMU element IDs
 const mmuIDPrefix = 'mmu-element-';
@@ -82,14 +81,8 @@ const mmuIDPrefix = 'mmu-element-';
  * @param content
  */
 export function postTreatmentOfHtmlFile(content): string {
-  console.log('Original HTML Content:', content);
-
   let updatedContent = addIDToHtmlElementWithText(content);
-  console.log('File content after adding id :', updatedContent);
   updatedContent = addScriptTagInHtmlDocument(updatedContent);
-
-  // Log original HTML content
-  console.log('Original HTML Content:', updatedContent);
 
   return updatedContent;
 }
