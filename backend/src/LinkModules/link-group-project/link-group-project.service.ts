@@ -717,6 +717,10 @@ export class LinkGroupProjectService {
       if (project.lockedByUserId === null && project.lockedAt === null) {
         return false;
       }
+      //If user is the one that lock project we allow him to reopen it.
+      if (userId === project.lockedByUserId) {
+        return false;
+      }
       const now = Date.now();
       const isLockRelevant =
         now - 2 * 60 * 1000 < new Date(project.lockedAt).getTime();
