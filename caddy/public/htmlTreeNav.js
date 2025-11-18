@@ -53,7 +53,7 @@
       while (
         sib &&
         !(sib.nodeType === 1 && isHeading(sib) && levelOf(sib) <= lvl)
-      ) {
+        ) {
         const next = sib.nextSibling;
         content.appendChild(sib);
         sib = next;
@@ -78,7 +78,7 @@
           p = p.parentElement;
         }
         const allDetails = Array.from(
-          document.querySelectorAll("details.__idnav_details__"),
+          document.querySelectorAll("details.__idnav_details__")
         );
         for (const d of allDetails) d.open = ancestorSet.has(d);
         target.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -117,7 +117,7 @@
       const txt = sum ? sum.textContent || "" : "";
       return {
         label: snippet(txt || (el.id ? `#${el.id}` : "")),
-        tooltip: txt,
+        tooltip: txt
       };
     }
     const txt = el.textContent || "";
@@ -147,7 +147,7 @@
         padding: "20px 0",
         fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
         fontSize: "13px",
-        lineHeight: "1.4",
+        lineHeight: "1.4"
       });
     } else {
       // Fixed left sidebar (for full/debug)
@@ -166,11 +166,11 @@
         fontSize: "13px",
         lineHeight: "1.4",
         borderRight: "1px solid #e5e7eb",
-        display: "block",
+        display: "block"
       });
       // Make room for the sidebar
       if (!document.body.style.marginLeft)
-        document.body.style.marginLeft = "300px";
+        document.body.style.marginLeft = "340px";
     }
 
     const treeContainer = document.createElement("div");
@@ -188,7 +188,7 @@
         cursor: "pointer",
         fontSize: "12px",
         flexShrink: "0",
-        padding: "0 4px",
+        padding: "0 4px"
       });
       btn.onclick = (e) => {
         e.stopPropagation();
@@ -227,11 +227,11 @@
       // Hover feedback
       row.addEventListener(
         "mouseenter",
-        () => (row.style.background = "#eef2ff"),
+        () => (row.style.background = "#eef2ff")
       );
       row.addEventListener(
         "mouseleave",
-        () => (row.style.background = "transparent"),
+        () => (row.style.background = "transparent")
       );
 
       return row;
@@ -265,11 +265,11 @@
       // Hover feedback
       summary.addEventListener(
         "mouseenter",
-        () => (summary.style.background = "#eef2ff"),
+        () => (summary.style.background = "#eef2ff")
       );
       summary.addEventListener(
         "mouseleave",
-        () => (summary.style.background = "transparent"),
+        () => (summary.style.background = "transparent")
       );
 
       const wrap = document.createElement("span");
@@ -289,7 +289,7 @@
         inner.appendChild(
           child.children && child.children.length
             ? buildDetailsNode(child)
-            : nodeRow(child.el, child.id),
+            : nodeRow(child.el, child.id)
         );
       }
       details.appendChild(inner);
@@ -299,7 +299,7 @@
 
     const forestNow = buildIdForest();
     forestNow.forEach((node) =>
-      treeContainer.appendChild(buildDetailsNode(node)),
+      treeContainer.appendChild(buildDetailsNode(node))
     );
 
     document.body.appendChild(panel);
