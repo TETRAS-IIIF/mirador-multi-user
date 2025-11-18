@@ -1,12 +1,4 @@
-import {
-  Box,
-  Grid,
-  IconButton,
-  Tab,
-  Tabs,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Box, Grid, IconButton, Tab, Tabs, Tooltip, Typography, } from '@mui/material';
 import {
   ChangeEvent,
   Dispatch,
@@ -52,21 +44,12 @@ import {
   isValidFileForUpload,
   SettingKeys,
 } from '../../../utils/utils.ts';
-import {
-  TITLE,
-  UPDATED_AT,
-  useCurrentPageData,
-} from '../../../utils/customHooks/filterHook.ts';
+import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHooks/filterHook.ts';
 import { useCreateMediaLink } from '../hooks/useCreateMediaLink.ts';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 import { getAccessToMedia } from '../api/getAccessToMedia.ts';
 import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
-import {
-  ITEM_RIGHTS,
-  MEDIA_TYPES,
-  MEDIA_TYPES_TABS,
-  USER_GROUP_TYPES,
-} from '../../../utils/mmu_types.ts';
+import { ITEM_RIGHTS, MEDIA_TYPES, MEDIA_TYPES_TABS, USER_GROUP_TYPES, } from '../../../utils/mmu_types.ts';
 
 interface IAllMediasProps {
   user: User;
@@ -345,6 +328,8 @@ export const AllMedias = ({
     }
   };
 
+  const handleReplaceMedia = async () => {};
+
   return (
     <Box sx={{ padding: 2 }}>
       <Grid container flexDirection="column" spacing={1}>
@@ -445,6 +430,7 @@ export const AllMedias = ({
                       HandleDeleteMedia={HandleDeleteMedia}
                       handleGrantAccess={handleGrantAccess}
                       HandleCopyToClipBoard={HandleCopyToClipBoard}
+                      handleReplaceMedia={handleReplaceMedia}
                       HandleUpdateMedia={HandleUpdateMedia}
                       caddyUrl={caddyUrl}
                       handleChangeRights={handleChangeRights}

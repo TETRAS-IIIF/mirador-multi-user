@@ -57,6 +57,7 @@ import { TagMaker } from './TagsFactory/TagMaker.tsx';
 import { SnapshotFactory } from './SnapshotFactory.tsx';
 import { isValidUrl } from '../../utils/utils.ts';
 import JsonEditorWithControls from './jsonAvancedEditor.tsx';
+import { ReplaceModalContent } from '../../features/projects/ReplaceModalContent.tsx';
 
 interface ModalItemProps<T> {
   HandleOpenModalEdit: () => void;
@@ -89,6 +90,7 @@ interface ModalItemProps<T> {
   thumbnailUrl?: string | null;
   updateItem?: (newItem: T) => void;
   fetchItems?: () => void;
+  handleReplaceMedia?: () => void;
 }
 
 type MetadataFormat = {
@@ -137,6 +139,7 @@ export const MMUModalEdit = <
   getOptionLabel,
   handleAddAccessListItem,
   handleDeleteAccessListItem,
+  handleReplaceMedia,
   handleSelectorChange,
   isGroups,
   item,
@@ -166,6 +169,7 @@ export const MMUModalEdit = <
   );
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openDuplicateModal, setOpenDuplicateModal] = useState(false);
+  const [openReplaceModal, setOpenReplaceModal] = useState(false);
   const [metadataFormData, setMetadataFormData] = useState<MetadataArray>();
   const [selectedMetadataData, setSelectedMetadataData] =
     useState<MetadataFields>();
@@ -324,6 +328,10 @@ export const MMUModalEdit = <
 
   const handleDuplicateModal = () => {
     setOpenDuplicateModal(!openDuplicateModal);
+  };
+
+  const handleReplaceModal = () => {
+    setOpenReplaceModal(!openReplaceModal);
   };
   const handleFetchManifest = async () => {
     try {
@@ -851,6 +859,25 @@ export const MMUModalEdit = <
                 )}
               </Grid>
               <Grid>
+                {rights === ITEM_RIGHTS.ADMIN &&
+                  tabValue === 0 &&
+                  objectTypes === OBJECT_TYPES.MEDIA && (
+                    <Tooltip
+                      title={t('replaceObjectTooltip', {
+                        object: t(`objectNames.${objectTypes}`),
+                      })}
+                    >
+                      <Button
+                        color="error"
+                        onClick={handleReplaceModal}
+                        variant="contained"
+                      >
+                        {t('replace')}
+                      </Button>
+                    </Tooltip>
+                  )}
+              </Grid>
+              <Grid>
                 {(rights === ITEM_RIGHTS.ADMIN ||
                   rights === ITEM_RIGHTS.EDITOR) &&
                   tabValue === 0 &&
@@ -930,6 +957,15 @@ export const MMUModalEdit = <
               {t('no')}
             </Button>
           </Grid>
+        </MMUModal>
+      )}
+      {openReplaceModal && (
+        <MMUModal
+          width={400}
+          openModal={openReplaceModal}
+          setOpenModal={handleConfirmDuplicateItem}
+        >
+          <ReplaceModalContent handleReplaceMedia={() => console.log('toto')} />
         </MMUModal>
       )}
     </Grid>

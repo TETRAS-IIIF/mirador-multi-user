@@ -80,6 +80,7 @@ interface IMMUCardProps<T, X> {
   ) => Promise<void> | void;
   ownerId: number;
   fetchItems?: () => void;
+  handleReplaceMedia: () => void;
 }
 
 const MMUCard = <
@@ -105,10 +106,12 @@ const MMUCard = <
   deleteItem,
   description,
   duplicateItem,
+  fetchItems,
   getAccessToItem,
   getGroupByOption,
   getOptionLabel,
   handleRemoveFromList,
+  handleReplaceMedia,
   handleSelectorChange,
   id,
   isGroups,
@@ -126,7 +129,6 @@ const MMUCard = <
   setItemList,
   setItemToAdd,
   updateItem,
-  fetchItems,
 }: IMMUCardProps<T, X>) => {
   const [searchInput, setSearchInput] = useState<string>('');
   const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
@@ -298,32 +300,33 @@ const MMUCard = <
             setOpenModal={HandleOpenModal}
           >
             <MMUModalEdit
-              fetchItems={fetchItems}
-              objectTypes={objectTypes}
-              isGroups={isGroups}
-              metadata={metadata || undefined}
-              thumbnailUrl={thumbnailUrl as string}
               HandleOpenModalEdit={HandleOpenModal}
-              description={description}
-              searchBarLabel={searchBarLabel ?? ''}
-              itemLabel={itemLabel}
-              handleSelectorChange={handleChangeSelectedItem}
-              fetchData={fetchData}
-              listOfItem={listOfItem}
               deleteItem={deleteItem}
-              getOptionLabel={getOptionLabel}
+              description={description}
+              duplicateItem={duplicateItem}
+              fetchData={fetchData}
+              fetchItems={fetchItems}
               getGroupByOption={getGroupByOption}
-              setSearchInput={setSearchInput}
+              getOptionLabel={getOptionLabel}
               handleAddAccessListItem={handleAddAccessListItem}
+              handleDeleteAccessListItem={handleRemoveAccessListItem}
+              handleReplaceMedia={handleReplaceMedia}
+              handleSelectorChange={handleChangeSelectedItem}
+              isGroups={isGroups}
               item={item}
+              itemLabel={itemLabel}
+              listOfItem={listOfItem}
+              metadata={metadata || undefined}
+              objectTypes={objectTypes}
+              ownerId={ownerId}
+              rights={rights}
+              searchBarLabel={searchBarLabel ?? ''}
               searchInput={searchInput}
               searchModalEditItem={searchModalEditItem}
               setItemToAdd={setItemToAdd}
+              setSearchInput={setSearchInput}
+              thumbnailUrl={thumbnailUrl as string}
               updateItem={updateItem}
-              rights={rights}
-              handleDeleteAccessListItem={handleRemoveAccessListItem}
-              duplicateItem={duplicateItem}
-              ownerId={ownerId}
             />
           </MMUModal>
         </Grid>

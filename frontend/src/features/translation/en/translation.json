@@ -235,6 +235,8 @@
   "removedProjectFromList": "The project was removed from the list",
   "removedManifestFromList": "The manifest was removed from the list",
   "removedMediaFromList": "The media was removed from the list",
+  "replace": "Replace",
+  "replaceObjectTooltip": "Replace this {{object}} by a new one",
   "register": "REGISTER",
   "resendError": "An error occurred while sending your confirmation link email",
   "resendConfirmationLink": "Resend Confirmation Link",
