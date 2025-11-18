@@ -1,10 +1,6 @@
 import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Project,
-  ProjectGroup,
-  ProjectGroupUpdateDto,
-} from '../types/types.ts';
+import { Project, ProjectGroup, ProjectGroupUpdateDto, } from '../types/types.ts';
 import IState from '../../mirador/interface/IState.ts';
 import { User } from '../../auth/types/types.ts';
 import { deleteProject } from '../api/Project/deleteProject.ts';
@@ -28,11 +24,7 @@ import { Media } from '../../media/types/types.ts';
 import { PaginationControls } from '../../../components/elements/Pagination.tsx';
 import { updateAccessToProject } from '../api/Project/UpdateAccessToProject.ts';
 import SettingsIcon from '@mui/icons-material/Settings';
-import {
-  ITEM_RIGHTS,
-  OBJECT_TYPES,
-  USER_GROUP_TYPES,
-} from '../../../utils/mmu_types.ts';
+import { ITEM_RIGHTS, OBJECT_TYPES, USER_GROUP_TYPES, } from '../../../utils/mmu_types.ts';
 import toast from 'react-hot-toast';
 import { duplicateProject } from '../api/Project/duplicateProject.ts';
 import { getUserNameWithId } from '../../auth/api/getUserNameWithId.ts';
@@ -46,11 +38,9 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { removeProjectFromList } from '../api/Project/removeProjectFromList.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { Manifest } from '../../manifest/types/types.ts';
-import {
-  TITLE,
-  UPDATED_AT,
-  useCurrentPageData,
-} from '../../../utils/customHooks/filterHook.ts';
+import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHooks/filterHook.ts';
+import { MMUModal } from '../../../components/elements/modal.tsx';
+import { ModalProjectAlreadyOpenByUser } from './ModalProjectAlreadyOpenByUser.tsx';
 
 interface AllProjectsProps {
   user: User;
@@ -92,7 +82,12 @@ export const AllProjects = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<keyof Project>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState('desc');
-
+  const [openModalConfirmReopenProject, setOpenModalConfirmReopenProject] =
+    useState(false);
+  const [pendingProject, setPendingProject] = useState<Project | null>(null);
+  const [pendingMiradorState, setPendingMiradorState] = useState<
+    IState | undefined
+  >(undefined);
   const { t } = useTranslation();
   const itemsPerPage = 10;
 
@@ -162,23 +157,68 @@ export const AllProjects = ({
   };
 
   const initializeMirador = useCallback(
-    async (miradorState: IState | undefined, projectUser: Project) => {
+    async (
+      miradorState: IState | undefined,
+      projectUser: Project,
+      forced: boolean = false,
+    ) => {
+      const SELF_LOCK = -1;
       try {
-        const Locked = await isProjectLocked(projectUser.id);
-        if (Locked) {
-          const userName = await getUserNameWithId(Locked);
-          return toast.error(t('errorProjectAlreadyOpen') + userName);
+        if (!forced) {
+          const lockStatus = await isProjectLocked(projectUser.id);
+          // locked by someone else
+          if (typeof lockStatus === 'number' && lockStatus !== SELF_LOCK) {
+            const userName = await getUserNameWithId(lockStatus);
+            toast.error(t('errorProjectAlreadyOpen') + userName);
+            return;
+          }
+          // locked by current user → open confirmation modal
+          if (lockStatus === SELF_LOCK) {
+            setPendingProject(projectUser);
+            setPendingMiradorState(miradorState);
+            setOpenModalConfirmReopenProject(true);
+            return;
+          }
         }
         await handleLock({ projectId: projectUser.id, lock: true });
       } catch (error) {
         console.error(error);
-        toast.error(error as string);
+        toast.error(String(error));
+        return;
       }
       setSelectedProjectId(projectUser.id);
       handleSetMiradorState(miradorState);
     },
-    [handleSetMiradorState, setSelectedProjectId],
+    [
+      handleSetMiradorState,
+      setSelectedProjectId,
+      t,
+      setOpenModalConfirmReopenProject,
+      setPendingProject,
+      setPendingMiradorState,
+    ],
   );
+
+  const handleConfirmForceOpen = useCallback(async () => {
+    if (!pendingProject) return;
+
+    await initializeMirador(pendingMiradorState, pendingProject, true);
+
+    setOpenModalConfirmReopenProject(false);
+    setPendingProject(null);
+    setPendingMiradorState(undefined);
+  }, [
+    pendingProject,
+    pendingMiradorState,
+    initializeMirador,
+    setOpenModalConfirmReopenProject,
+  ]);
+
+  const handleCancelForceOpen = useCallback(() => {
+    setOpenModalConfirmReopenProject(false);
+    setPendingProject(null);
+    setPendingMiradorState(undefined);
+  }, [setOpenModalConfirmReopenProject]);
 
   const toggleModalProjectCreation = useCallback(() => {
     setModalCreateProjectIsOpen(!modalCreateProjectIsOpen);
@@ -478,6 +518,18 @@ export const AllProjects = ({
                   onPageChange={setCurrentPage}
                 />
               </Grid>
+            )}
+            {openModalConfirmReopenProject && (
+              <MMUModal
+                openModal={openModalConfirmReopenProject}
+                setOpenModal={setOpenModalConfirmReopenProject}
+                width={400}
+              >
+                <ModalProjectAlreadyOpenByUser
+                  onConfirm={handleConfirmForceOpen}
+                  onCancel={handleCancelForceOpen}
+                />
+              </MMUModal>
             )}
           </Grid>
         </Grid>
