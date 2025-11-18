@@ -75,12 +75,17 @@ export const ContentSidePanelManifest = ({
   };
 
   const currentPageData = useMemo(() => {
-    const filteredAndSortedItems = [...manifests].filter((manifest) =>
-      isInFilter(manifest),
-    );
+    const filtered = manifests.filter((m) => isInFilter(m));
+
+    filtered.sort((a, b) => {
+      const tA = a.updated_at?.valueOf() ?? 0;
+      const tB = b.updated_at?.valueOf() ?? 0;
+      return tB - tA;
+    });
+
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return filteredAndSortedItems.slice(start, end);
+    return filtered.slice(start, end);
   }, [currentPage, itemsPerPage, manifests, manifestFilter]);
 
   const { thumbnailUrls, fetchThumbnails } =
