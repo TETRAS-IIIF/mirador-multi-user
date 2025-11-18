@@ -59,7 +59,9 @@ export class LinkMediaGroupService {
   async createMedia(mediaDto: CreateMediaDto) {
     try {
       const { user_group } = mediaDto;
+      console.log('Creating media with DTO:', mediaDto);
       const media = await this.mediaService.create(mediaDto);
+      console.log('Created media:', media);
       await this.addMediaToGroup({
         userGroupId: user_group.id,
         mediasId: [media.id],

@@ -13,6 +13,7 @@ import { generateAlphanumericSHA1Hash } from '../hashGenerator';
 import { THUMBNAIL_FILE_SUFFIX, UPLOAD_FOLDER } from '../constants';
 import { isImage } from '../checkTypes/isImage';
 import { mediaTypes } from '../../enum/mediaTypes';
+import { isHtmlFile, postTreatmentOfHtmlFile } from './htmlFileTreatment';
 
 @Injectable()
 export class SharpPipeInterceptor implements NestInterceptor {
@@ -20,6 +21,7 @@ export class SharpPipeInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<any>> {
+    console.log('SharpPipeInterceptor called');
     const request = context.switchToHttp().getRequest();
     const file = request.file;
     const isThisAnImage = isImage(request.file);
@@ -83,6 +85,15 @@ export class SharpPipeInterceptor implements NestInterceptor {
       }
     } else {
       request.fileType = mediaTypes.OTHER;
+    }
+
+    if (file && isHtmlFile(file)) {
+      const filepath = file?.path;
+      console.log('Uploaded file path:', filepath);
+      const htmlContent = fs.readFileSync(filepath, 'utf-8');
+      const updatedContent = postTreatmentOfHtmlFile(htmlContent);
+
+      fs.writeFileSync(filepath, updatedContent, 'utf-8');
     }
     return next.handle();
   }
