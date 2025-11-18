@@ -46,7 +46,7 @@ const authConfig = {
   LoaderComponent() {
     return (
       <Grid>
-        <CircularProgress/>
+        <CircularProgress />
       </Grid>
     );
   },
@@ -56,4 +56,5 @@ export const { useUser, useLogin, useRegister, useLogout } = configureAuth<
   User | null,
   unknown,
   LoginCredentialsDTO,
-  RegisterCredentialsDTO>(authConfig);
+  RegisterCredentialsDTO
+>(authConfig);

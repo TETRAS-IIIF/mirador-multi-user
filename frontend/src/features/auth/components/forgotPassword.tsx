@@ -40,7 +40,8 @@ const ForgotPassword = () => {
             <Typography variant="button">{t('login')}</Typography>
           </NavLink>
         </Grid>
-      }>
+      }
+    >
       <Container maxWidth="sm">
         <Box display="flex" justifyContent="center" alignItems="center">
           <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3, width: '100%' }}>
@@ -60,7 +61,8 @@ const ForgotPassword = () => {
               margin="normal"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              required/>
+              required
+            />
             {error && (
               <Alert severity="error" sx={{ mt: 2 }}>
                 {userFeedBack}
@@ -77,7 +79,8 @@ const ForgotPassword = () => {
               disabled={!email}
               fullWidth
               sx={{ mt: 3 }}
-              onClick={handleForgotPassword}>
+              onClick={handleForgotPassword}
+            >
               {t('submit')}
             </Button>
           </Box>

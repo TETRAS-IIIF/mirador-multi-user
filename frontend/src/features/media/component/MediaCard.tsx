@@ -1,6 +1,6 @@
 import { Media } from '../types/types.ts';
 import MMUCard from '../../../components/elements/MMUCard.tsx';
-import { ObjectTypes } from '../../tag/type.ts';
+import { OBJECT_TYPES } from '../../../utils/mmu_types.ts';
 import { ModalButton } from '../../../components/elements/ModalButton.tsx';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -72,7 +72,7 @@ export const MediaCard = ({
   return (
     <MMUCard
       ownerId={ownerId}
-      objectTypes={ObjectTypes.MEDIA}
+      objectTypes={OBJECT_TYPES.MEDIA}
       AddAccessListItemFunction={handleGrantAccess}
       DefaultButton={
         <Grid container spacing={2} flexDirection={'row'} wrap="nowrap">

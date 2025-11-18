@@ -24,7 +24,8 @@ export const OpenIdLogin = () => {
         fullWidth
         variant="contained"
         color="primary"
-        onClick={redirectToOpenIdLogin}>
+        onClick={redirectToOpenIdLogin}
+      >
         {t('openid_connection')}
       </Button>
     </Grid>

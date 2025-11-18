@@ -1,34 +1,46 @@
-import { Card, CardActions, SelectChangeEvent, Tooltip, Typography, } from '@mui/material';
+import {
+  Card,
+  CardActions,
+  SelectChangeEvent,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { MMUModal } from './modal.tsx';
-import { Dispatch, ReactNode, SetStateAction, useCallback, useState, } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useState,
+} from 'react';
 import { MMUModalEdit } from './MMUModalEdit.tsx';
-import { ListItem } from '../types.ts';
-import { ItemsRights } from '../../features/user-group/types/types.ts';
-import { MediaGroupRights, mediaOrigin, MediaTypes, } from '../../features/media/types/types.ts';
-import { ManifestGroupRights, manifestOrigin, } from '../../features/manifest/types/types.ts';
+import {
+  ITEM_RIGHTS,
+  MEDIA_TYPES,
+  OBJECT_ORIGIN,
+  OBJECT_TYPES,
+} from '../../utils/mmu_types.ts';
+
 import dayjs, { Dayjs } from 'dayjs';
-import { ObjectTypes } from '../../features/tag/type.ts';
-import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
-import ImageIcon from '@mui/icons-material/Image';
+
 import { useTranslation } from 'react-i18next';
 import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
 import { ModalButton } from './ModalButton.tsx';
 import CancelIcon from '@mui/icons-material/Cancel';
-import ShareIcon from '@mui/icons-material/Share';
+
 import useFetchThumbnailsUrl from '../../utils/customHooks/useFetchThumbnailsUrl.ts';
 import { LoadingSpinner } from './loadingSpinner.tsx';
 import { Snapshot } from '../../features/projects/types/types.ts';
-import LinkIcon from '@mui/icons-material/Link';
-import UploadFileIcon from '@mui/icons-material/UploadFile';
-import CreateIcon from '@mui/icons-material/Create';
-import DescriptionIcon from '@mui/icons-material/Description';
+
 import { isValidUrl } from '../../utils/utils.ts';
 import placeholder from '../../assets/Placeholder.svg';
+import { MMUCardIcon } from './MMUCardIcon.tsx';
+import { ListItem } from 'components/types.ts';
 
 interface IMMUCardProps<T, X> {
   id: number;
-  rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
+  rights: ITEM_RIGHTS;
   description: string;
   HandleOpenModal: () => void;
   openModal: boolean;
@@ -60,7 +72,7 @@ interface IMMUCardProps<T, X> {
   thumbnailUrl?: string | null;
   metadata?: Record<string, string>;
   isGroups?: boolean;
-  objectTypes: ObjectTypes;
+  objectTypes: OBJECT_TYPES;
   getGroupByOption?: (option: any) => string;
   handleRemoveFromList?: (
     manifestId: number,
@@ -74,8 +86,8 @@ const MMUCard = <
   T extends {
     created_at: Dayjs;
     id: number;
-    mediaTypes?: MediaTypes;
-    origin?: manifestOrigin | mediaOrigin;
+    mediaTypes?: MEDIA_TYPES;
+    origin?: OBJECT_ORIGIN;
     path?: string;
     share?: string;
     shared?: boolean;
@@ -197,63 +209,7 @@ const MMUCard = <
             alignItems="center"
             gap={0.5}
           >
-            {item.origin === manifestOrigin.LINK &&
-              item.mediaTypes === undefined && (
-                <Tooltip title={t('linkedManifest')}>
-                  <LinkIcon fontSize="small" />
-                </Tooltip>
-              )}
-            {item.origin === manifestOrigin.LINK && item.mediaTypes && (
-              <Tooltip title={t('linkedMedia')}>
-                <LinkIcon fontSize="small" />
-              </Tooltip>
-            )}
-            {item.origin === manifestOrigin.UPLOAD &&
-              item.mediaTypes === undefined && (
-                <Tooltip title={t('uploadedManifest')}>
-                  <UploadFileIcon fontSize="small" />
-                </Tooltip>
-              )}
-            {item.origin === manifestOrigin.UPLOAD && item.mediaTypes && (
-              <Tooltip title={t('uploadedMedia')}>
-                <UploadFileIcon fontSize="small" />
-              </Tooltip>
-            )}
-            {item.origin === manifestOrigin.CREATE && item.mediaTypes && (
-              <Tooltip title={t('createdMedia')}>
-                <CreateIcon fontSize="small" />
-              </Tooltip>
-            )}
-            {item.origin === manifestOrigin.CREATE &&
-              item.mediaTypes === undefined && (
-                <Tooltip title={t('createdManifest')}>
-                  <CreateIcon fontSize="small" />
-                </Tooltip>
-              )}
-            {item.shared && (
-              <Tooltip title={t('shared')}>
-                <ShareIcon fontSize="small" />
-              </Tooltip>
-            )}
-
-            {objectTypes === ObjectTypes.MEDIA &&
-              item.mediaTypes === MediaTypes.VIDEO && (
-                <Tooltip title={t('Video')}>
-                  <OndemandVideoIcon />
-                </Tooltip>
-              )}
-            {objectTypes === ObjectTypes.MEDIA &&
-              item.mediaTypes === MediaTypes.IMAGE && (
-                <Tooltip title={t('Image')}>
-                  <ImageIcon />
-                </Tooltip>
-              )}
-            {objectTypes === ObjectTypes.MEDIA &&
-              item.mediaTypes === MediaTypes.OTHER && (
-                <Tooltip title={t('other')}>
-                  <DescriptionIcon />
-                </Tooltip>
-              )}
+            <MMUCardIcon item={item} objectTypes={objectTypes} />
           </Grid>
 
           <Grid size={{ xs: 5, sm: 3 }}>
@@ -320,7 +276,7 @@ const MMUCard = <
             <Grid container wrap="nowrap" spacing={1}>
               {Boolean(id) && (
                 <Grid display="flex" alignItems="center">
-                  {rights === ItemsRights.READER ? (
+                  {rights === ITEM_RIGHTS.READER ? (
                     <ModalButton
                       tooltipButton={t('removeProjectFromList')}
                       onClickFunction={handleConfirmRemoveFromListModal}

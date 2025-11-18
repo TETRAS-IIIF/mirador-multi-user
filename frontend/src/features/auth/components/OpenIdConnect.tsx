@@ -40,5 +40,5 @@ export const OpenIdConnect = () => {
     tryToIdentify();
   }, []);
 
-  return <LoadingSpinner/>;
+  return <LoadingSpinner />;
 };
