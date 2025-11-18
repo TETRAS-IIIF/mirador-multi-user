@@ -959,13 +959,13 @@ export const MMUModalEdit = <
           </Grid>
         </MMUModal>
       )}
-      {openReplaceModal && (
+      {openReplaceModal && handleReplaceMedia && (
         <MMUModal
           width={400}
           openModal={openReplaceModal}
           setOpenModal={handleConfirmDuplicateItem}
         >
-          <ReplaceModalContent handleReplaceMedia={() => console.log('toto')} />
+          <ReplaceModalContent handleReplaceMedia={handleReplaceMedia} />
         </MMUModal>
       )}
     </Grid>
