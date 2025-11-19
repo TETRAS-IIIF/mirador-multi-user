@@ -7,12 +7,20 @@ interface UsePostMessageCloseParams {
   allowedOrigins?: string[]; // if undefined, accept all origins
 }
 
+/**
+ * Hook to listen for postMessage events to trigger onClose callback.
+ * It's used to close popovers from an event from the embedded iframe.
+ * @param enabled
+ * @param onClose
+ * @param type
+ * @param allowedOrigins
+ */
 export function usePostMessageClose({
-                                      enabled,
-                                      onClose,
-                                      type = 'close-annotation-popover',
-                                      allowedOrigins,
-                                    }: UsePostMessageCloseParams) {
+  enabled,
+  onClose,
+  type = 'close-annotation-popover',
+  allowedOrigins,
+}: UsePostMessageCloseParams) {
   useEffect(() => {
     if (!enabled) return;
 

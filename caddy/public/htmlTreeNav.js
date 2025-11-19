@@ -1,14 +1,30 @@
 (() => {
+  /**
+   * This file implements an ID-based navigation panel for HTML documents.
+   * It supports three modes, controlled via URL parameters:
+   * - panel: shows a navigation panel only, hiding the main content. Used in a popover inside MMU HTML viewer.
+   * - full: shows a navigation panel alongside the main content. It allows collapsing section and highlighting a selected element.
+   * - debug: shows a navigation panel alongside the main content, with debug borders.
+   *
+   * URL Parameters:
+   * - mode (optional): "panel", "full", or "debug". When omitted or invalid, the script do nothing.
+   * - id (optional) : the ID of the element to highlight and focus on (used in "full" mode)
+   */
+
+  // ---------------- Heading tags for content collapsing ----------------
   const HEADING_TAGS = ["H1", "H2", "H3", "H4", "H5", "H6"];
 
+  // ---------------- Parse URL params ----------------
   const params = new URLSearchParams(window.location.search);
   const mode = (params.get("mode") || "").toLowerCase(); // panel | full | debug
   const selectedId = params.get("id") || null;
 
+  /* If mode is not recognized, do nothing */
   const enablePanel = mode === "panel" || mode === "full" || mode === "debug";
   const enableCollapse = mode === "full" || mode === "panel";
   const enableDebugBorders = mode === "debug";
 
+  // ---------------- Collect elements with IDs ----------------
   const allEls = Array.from(document.querySelectorAll("*"));
   const elsWithId = allEls.filter((el) => el.id);
 
@@ -53,7 +69,7 @@
       while (
         sib &&
         !(sib.nodeType === 1 && isHeading(sib) && levelOf(sib) <= lvl)
-        ) {
+      ) {
         const next = sib.nextSibling;
         content.appendChild(sib);
         sib = next;
@@ -78,7 +94,7 @@
           p = p.parentElement;
         }
         const allDetails = Array.from(
-          document.querySelectorAll("details.__idnav_details__")
+          document.querySelectorAll("details.__idnav_details__"),
         );
         for (const d of allDetails) d.open = ancestorSet.has(d);
         target.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -86,7 +102,11 @@
     }
   }
 
-  // ---------------- Tree data ----------------
+  /**
+   * Build a forest of elements with IDs
+   * @param root
+   * @returns {*[]}
+   */
   function buildIdForest(root = document.body) {
     const forest = [];
 
@@ -104,12 +124,29 @@
     return forest;
   }
 
+  /**
+   * Normalize spaces in a string
+   * @param s
+   * @returns {string}
+   */
   const normalizeSpaces = (s) => (s || "").replace(/\s+/g, " ").trim();
+
+  /**
+   * Generate a short snippet from a string (used for labels)
+   * @param s
+   * @param n
+   * @returns {string|*}
+   */
   const snippet = (s, n = 40) => {
     const t = normalizeSpaces(s);
     return t.length > n ? t.slice(0, n - 1) + "…" : t;
   };
 
+  /**
+   * Generate label and tooltip for an element
+   * @param el
+   * @returns {{label: (string|*), tooltip: (*|string)}}
+   */
   function labelAndTooltipFor(el) {
     // For sections wrapped in <details>, only use the <summary> text as the title
     if (el.tagName === "DETAILS") {
@@ -117,7 +154,7 @@
       const txt = sum ? sum.textContent || "" : "";
       return {
         label: snippet(txt || (el.id ? `#${el.id}` : "")),
-        tooltip: txt
+        tooltip: txt,
       };
     }
     const txt = el.textContent || "";
@@ -147,7 +184,7 @@
         padding: "20px 0",
         fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
         fontSize: "13px",
-        lineHeight: "1.4"
+        lineHeight: "1.4",
       });
     } else {
       // Fixed left sidebar (for full/debug)
@@ -166,7 +203,7 @@
         fontSize: "13px",
         lineHeight: "1.4",
         borderRight: "1px solid #e5e7eb",
-        display: "block"
+        display: "block",
       });
       // Make room for the sidebar
       if (!document.body.style.marginLeft)
@@ -174,10 +211,16 @@
     }
 
     const treeContainer = document.createElement("div");
-    if (mode === "panel")
+    if (mode === "panel") {
       Object.assign(treeContainer.style, { width: "90%", maxWidth: "600px" });
+    }
     panel.appendChild(treeContainer);
 
+    /**
+     * Make a "copy link" button for an element ID
+     * @param id
+     * @returns {HTMLButtonElement}
+     */
     function makeCopyBtn(id) {
       const btn = document.createElement("button");
       btn.textContent = "📋";
@@ -188,7 +231,7 @@
         cursor: "pointer",
         fontSize: "12px",
         flexShrink: "0",
-        padding: "0 4px"
+        padding: "0 4px",
       });
       btn.onclick = (e) => {
         e.stopPropagation();
@@ -197,12 +240,19 @@
         u.searchParams.set("mode", "full");
         u.searchParams.set("id", id);
         navigator.clipboard?.writeText(u.toString());
+        // Send message to parent to close the popover (if any)
         window.parent.postMessage("close-annotation-popover", "*");
         console.log("Close html viewer");
       };
       return btn;
     }
 
+    /**
+     * Create a row for a node. Used for leaf nodes in the tree.
+     * @param el
+     * @param idRaw
+     * @returns {HTMLDivElement}
+     */
     function nodeRow(el, idRaw) {
       const { label, tooltip } = labelAndTooltipFor(el);
       const row = document.createElement("div");
@@ -227,11 +277,11 @@
       // Hover feedback
       row.addEventListener(
         "mouseenter",
-        () => (row.style.background = "#eef2ff")
+        () => (row.style.background = "#eef2ff"),
       );
       row.addEventListener(
         "mouseleave",
-        () => (row.style.background = "transparent")
+        () => (row.style.background = "transparent"),
       );
 
       return row;
@@ -251,6 +301,11 @@
       }
     }
 
+    /**
+     * Build a details node for a tree node. Used for non-leaf nodes.
+     * @param node
+     * @returns {HTMLDetailsElement}
+     */
     function buildDetailsNode(node) {
       const { label, tooltip } = labelAndTooltipFor(node.el);
       const details = document.createElement("details");
@@ -265,11 +320,11 @@
       // Hover feedback
       summary.addEventListener(
         "mouseenter",
-        () => (summary.style.background = "#eef2ff")
+        () => (summary.style.background = "#eef2ff"),
       );
       summary.addEventListener(
         "mouseleave",
-        () => (summary.style.background = "transparent")
+        () => (summary.style.background = "transparent"),
       );
 
       const wrap = document.createElement("span");
@@ -289,7 +344,7 @@
         inner.appendChild(
           child.children && child.children.length
             ? buildDetailsNode(child)
-            : nodeRow(child.el, child.id)
+            : nodeRow(child.el, child.id),
         );
       }
       details.appendChild(inner);
@@ -299,11 +354,12 @@
 
     const forestNow = buildIdForest();
     forestNow.forEach((node) =>
-      treeContainer.appendChild(buildDetailsNode(node))
+      treeContainer.appendChild(buildDetailsNode(node)),
     );
 
     document.body.appendChild(panel);
 
+    // In panel mode: hide all other content
     if (mode === "panel") {
       Array.from(document.body.children).forEach((child) => {
         if (child !== panel) child.style.display = "none";
