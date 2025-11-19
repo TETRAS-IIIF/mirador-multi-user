@@ -9,6 +9,8 @@
    * URL Parameters:
    * - mode (optional): "panel", "full", or "debug". When omitted or invalid, the script do nothing.
    * - id (optional) : the ID of the element to highlight and focus on (used in "full" mode)
+   *
+   * TODO Handle traductions in labels/tooltips if needed. Only english for now.
    */
 
   // ---------------- Heading tags for content collapsing ----------------
@@ -27,6 +29,16 @@
   // ---------------- Collect elements with IDs ----------------
   const allEls = Array.from(document.querySelectorAll("*"));
   const elsWithId = allEls.filter((el) => el.id);
+
+  // ---------------- Duplicate ID detection ----------------
+  const idCounts = {};
+  for (const el of elsWithId) {
+    const id = el.id.trim();
+    if (!id) continue;
+    idCounts[id] = (idCounts[id] || 0) + 1;
+  }
+  const duplicateIds = Object.keys(idCounts).filter((id) => idCounts[id] > 1);
+  const duplicateIdSet = new Set(duplicateIds);
 
   // ---------------- Debug borders (debug mode only) ----------------
   if (enableDebugBorders) {
@@ -214,6 +226,33 @@
     if (mode === "panel") {
       Object.assign(treeContainer.style, { width: "90%", maxWidth: "600px" });
     }
+
+    // ---- NEW: duplicate ID info at top in panel mode ----
+    // ---- duplicate ID info at top in panel mode ----
+    if (mode === "panel" && duplicateIds.length > 0) {
+      const info = document.createElement("div");
+      info.textContent =
+        `Warning: duplicate IDs detected (${duplicateIds.length}): ` +
+        duplicateIds.join(", ") +
+        ". " +
+        "Annotations using these elements can be impacted, edit your media to fix them.";
+      Object.assign(info.style, {
+        width: "90%",
+        maxWidth: "600px",
+        marginBottom: "12px",
+        padding: "6px 8px",
+        borderRadius: "4px",
+        background: "#fef2f2",
+        color: "#991b1b",
+        fontSize: "12px",
+        border: "1px solid #fecaca",
+        boxSizing: "border-box",
+      });
+      panel.appendChild(info);
+    }
+
+    // ---- END NEW BLOCK ----
+
     panel.appendChild(treeContainer);
 
     /**
@@ -271,13 +310,21 @@
       labelEl.style.textOverflow = "ellipsis";
       labelEl.style.flex = "1";
       labelEl.style.paddingRight = "10px";
+
+      // highlight duplicates
+      if (idRaw && duplicateIdSet.has(idRaw)) {
+        labelEl.style.color = "#b91c1c"; // red text
+        labelEl.style.fontWeight = "600"; // semi-bold
+        row.title = `${tooltip || ""} (duplicate ID: ${idRaw})`.trim();
+      }
+
       row.appendChild(labelEl);
       if (idRaw) row.appendChild(makeCopyBtn(idRaw));
 
       // Hover feedback
       row.addEventListener(
         "mouseenter",
-        () => (row.style.background = "#eef2ff"),
+        () => (row.style.background = "#fee2e2"), // light red on hover
       );
       row.addEventListener(
         "mouseleave",
@@ -309,7 +356,7 @@
     function buildDetailsNode(node) {
       const { label, tooltip } = labelAndTooltipFor(node.el);
       const details = document.createElement("details");
-      details.open = pathIds ? pathIds.has(node.id) : true; // open only branch for selected; else open by default
+      details.open = pathIds ? pathIds.has(node.id) : true;
 
       const summary = document.createElement("summary");
       summary.style.cursor = "pointer";
@@ -334,6 +381,14 @@
       wrap.style.textOverflow = "ellipsis";
       wrap.style.flex = "1";
       wrap.style.paddingRight = "10px";
+
+      // highlight duplicates
+      if (node.id && duplicateIdSet.has(node.id)) {
+        wrap.style.color = "#b91c1c";
+        wrap.style.fontWeight = "600";
+        summary.title = `${tooltip || ""} (duplicate ID: ${node.id})`.trim();
+      }
+
       summary.appendChild(wrap);
       summary.appendChild(makeCopyBtn(node.id));
       details.appendChild(summary);
