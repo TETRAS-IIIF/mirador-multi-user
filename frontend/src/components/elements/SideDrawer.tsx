@@ -154,9 +154,22 @@ export const SideDrawer = ({
   const getManifestFromUrl = async (manifestUrl: string) => {
     try {
       const response = await fetch(manifestUrl);
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const contentType = response.headers.get('content-type') || '';
+      if (
+        !contentType.includes('application/json') &&
+        !contentType.includes('application/ld+json')
+      ) {
+        return null;
+      }
+
       return await response.json();
-    } catch (error) {
-      console.error(error);
+    } catch {
+      return null;
     }
   };
 

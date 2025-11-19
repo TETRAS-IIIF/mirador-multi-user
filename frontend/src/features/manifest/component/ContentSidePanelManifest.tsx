@@ -163,7 +163,7 @@ export const ContentSidePanelManifest = ({
       <Grid
         container
         spacing={1}
-        sx={{ padding: '20px', width: '400px' }}
+        sx={{ padding: '20px', width: '400px', border: 'solid red' }}
         alignItems="center"
       >
         <Grid>
@@ -186,57 +186,63 @@ export const ContentSidePanelManifest = ({
         </Grid>
       </Grid>
       {currentPageData.length > 0 ? (
-        <ImageList
+        <Grid
           sx={{
-            minWidth: 400,
-            padding: 1,
-            width: 400,
             height: '100%',
+            border: 'solid blue',
           }}
-          cols={2}
-          rowHeight={200}
         >
-          {currentPageData.map((manifest, index) => (
-            <>
-              <StyledImageListItem key={manifest.id}>
-                <Box
-                  component="img"
-                  src={
-                    isValidUrl(thumbnailUrls[index])
-                      ? `${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`
-                      : placeholder
-                  }
-                  alt={manifest.title}
-                  loading="lazy"
-                  sx={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    '@media(min-resolution: 2dppx)': {
+          <ImageList
+            sx={{
+              padding: 1,
+              width: 400,
+              border: 'solid green',
+            }}
+            cols={2}
+            rowHeight={200}
+          >
+            {currentPageData.map((manifest, index) => (
+              <>
+                <StyledImageListItem key={manifest.id}>
+                  <Box
+                    component="img"
+                    src={
+                      isValidUrl(thumbnailUrls[index])
+                        ? `${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`
+                        : placeholder
+                    }
+                    alt={manifest.title}
+                    loading="lazy"
+                    sx={{
                       width: '100%',
                       height: '100%',
-                    },
-                  }}
-                />
-                <ImageListItemBar
-                  title={manifest.title}
-                  sx={{
-                    position: 'absolute',
-                    bottom: 0,
-                    color: 'white',
-                  }}
-                />
-                <CustomButton
-                  className="overlayButton"
-                  disableRipple
-                  onClick={() => handleCopyToClipBoard(manifest!)}
-                >
-                  {t('copyPathToClipboard')}
-                </CustomButton>
-              </StyledImageListItem>
-            </>
-          ))}
-        </ImageList>
+                      objectFit: 'cover',
+                      '@media(min-resolution: 2dppx)': {
+                        width: '100%',
+                        height: '100%',
+                      },
+                    }}
+                  />
+                  <ImageListItemBar
+                    title={manifest.title}
+                    sx={{
+                      position: 'absolute',
+                      bottom: 0,
+                      color: 'white',
+                    }}
+                  />
+                  <CustomButton
+                    className="overlayButton"
+                    disableRipple
+                    onClick={() => handleCopyToClipBoard(manifest!)}
+                  >
+                    {t('copyPathToClipboard')}
+                  </CustomButton>
+                </StyledImageListItem>
+              </>
+            ))}
+          </ImageList>
+        </Grid>
       ) : (
         <Grid
           container
