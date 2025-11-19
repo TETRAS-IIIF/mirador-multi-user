@@ -90,7 +90,12 @@ interface ModalItemProps<T> {
   thumbnailUrl?: string | null;
   updateItem?: (newItem: T) => void;
   fetchItems?: () => void;
-  handleReplaceMedia?: () => void;
+  handleReplaceItem?: (
+    file: File,
+    itemId: number,
+    itemName: string,
+    hash: string,
+  ) => void;
 }
 
 type MetadataFormat = {
@@ -139,7 +144,7 @@ export const MMUModalEdit = <
   getOptionLabel,
   handleAddAccessListItem,
   handleDeleteAccessListItem,
-  handleReplaceMedia,
+  handleReplaceItem,
   handleSelectorChange,
   isGroups,
   item,
@@ -959,13 +964,19 @@ export const MMUModalEdit = <
           </Grid>
         </MMUModal>
       )}
-      {openReplaceModal && handleReplaceMedia && (
+      {openReplaceModal && handleReplaceItem && (
         <MMUModal
           width={400}
           openModal={openReplaceModal}
-          setOpenModal={handleConfirmDuplicateItem}
+          setOpenModal={setOpenReplaceModal}
         >
-          <ReplaceModalContent handleReplaceMedia={handleReplaceMedia} />
+          <ReplaceModalContent
+            handleReplaceItem={handleReplaceItem}
+            itemId={item.id}
+            itemName={item.title!}
+            hash={item.hash!}
+            setOpenReplaceModal={setOpenReplaceModal}
+          />
         </MMUModal>
       )}
     </Grid>

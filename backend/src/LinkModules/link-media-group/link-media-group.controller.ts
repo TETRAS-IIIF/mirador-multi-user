@@ -110,18 +110,29 @@ export class LinkMediaGroupController {
     FileInterceptor('file', {
       storage: diskStorage({
         destination: (req, file, callback) => {
-          const hash = (req as any).hash;
+          const body = (req as any).body as {
+            hash?: string;
+          };
+          const hash = body.hash;
+          if (!hash) {
+            return callback(new Error('Missing hash'), '');
+          }
           const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
           fs.mkdirSync(uploadPath, { recursive: true });
           (req as any).generatedHash = hash;
           callback(null, uploadPath);
         },
         filename: (req, file, cb) => {
-          const fileName = (req as any).fileName;
+          const body = (req as any).body as {
+            fileName?: string;
+          };
+          const fileName = body.fileName;
+          if (!fileName) {
+            return cb(new Error('Missing fileName'), '');
+          }
           cb(null, fileName);
         },
       }),
-
       fileFilter: fileFilterMedia,
     }),
     SharpPipeInterceptor,

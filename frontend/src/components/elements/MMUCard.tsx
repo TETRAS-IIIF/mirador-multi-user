@@ -80,7 +80,13 @@ interface IMMUCardProps<T, X> {
   ) => Promise<void> | void;
   ownerId: number;
   fetchItems?: () => void;
-  handleReplaceMedia: () => void;
+  handleReplaceItem: (
+    file: File,
+    itemId: number,
+    itemName: string,
+    hash: string,
+  ) => void;
+  thumbnailRefreshKey: number;
 }
 
 const MMUCard = <
@@ -111,7 +117,7 @@ const MMUCard = <
   getGroupByOption,
   getOptionLabel,
   handleRemoveFromList,
-  handleReplaceMedia,
+  handleReplaceItem,
   handleSelectorChange,
   id,
   isGroups,
@@ -128,6 +134,7 @@ const MMUCard = <
   searchModalEditItem,
   setItemList,
   setItemToAdd,
+  thumbnailRefreshKey,
   updateItem,
 }: IMMUCardProps<T, X>) => {
   const [searchInput, setSearchInput] = useState<string>('');
@@ -191,7 +198,10 @@ const MMUCard = <
               <LoadingSpinner />
             ) : (
               <img
-                src={thumbnailSrc}
+                decoding="async"
+                key={thumbnailRefreshKey}
+                loading="lazy"
+                src={`${thumbnailSrc}?v=${thumbnailRefreshKey}`}
                 alt={t('thumbnailMissing')}
                 style={{
                   height: 80,
@@ -199,8 +209,6 @@ const MMUCard = <
                   objectFit: 'contain',
                   marginLeft: 10,
                 }}
-                loading="lazy"
-                decoding="async"
               />
             )}
           </Grid>
@@ -310,7 +318,7 @@ const MMUCard = <
               getOptionLabel={getOptionLabel}
               handleAddAccessListItem={handleAddAccessListItem}
               handleDeleteAccessListItem={handleRemoveAccessListItem}
-              handleReplaceMedia={handleReplaceMedia}
+              handleReplaceItem={handleReplaceItem}
               handleSelectorChange={handleChangeSelectedItem}
               isGroups={isGroups}
               item={item}

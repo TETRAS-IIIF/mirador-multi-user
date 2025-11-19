@@ -44,18 +44,24 @@ interface IMediaCardProps {
     share: string | undefined,
   ) => void;
   ownerId: number;
-  handleReplaceMedia: () => void;
+  handleReplaceItem: (
+    file: File,
+    itemId: number,
+    itemName: string,
+    hash: string,
+  ) => void;
+  thumbnailRefreshKey: number;
 }
 
 export const MediaCard = ({
-  HandleCopyToClipBoard,
-  HandleDeleteMedia,
-  HandleOpenModal,
-  HandleUpdateMedia,
   caddyUrl,
   getGroupByOption,
   getAccessToMedia,
   getOptionLabel,
+  HandleCopyToClipBoard,
+  HandleDeleteMedia,
+  HandleOpenModal,
+  HandleUpdateMedia,
   handleChangeRights,
   handleGrantAccess,
   handleLookingForUserGroups,
@@ -67,7 +73,8 @@ export const MediaCard = ({
   ownerId,
   setGroupList,
   setUserToAdd,
-  handleReplaceMedia,
+  thumbnailRefreshKey,
+  handleReplaceItem,
 }: IMediaCardProps) => {
   const { t } = useTranslation();
 
@@ -117,7 +124,7 @@ export const MediaCard = ({
           disabled={false}
         />
       }
-      handleReplaceMedia={handleReplaceMedia}
+      handleReplaceItem={handleReplaceItem}
       HandleOpenModal={() => HandleOpenModal(media.id)}
       deleteItem={() => HandleDeleteMedia(media.id)}
       description={media.description}
@@ -145,6 +152,7 @@ export const MediaCard = ({
       searchModalEditItem={handleLookingForUserGroups}
       setItemList={setGroupList}
       setItemToAdd={setUserToAdd}
+      thumbnailRefreshKey={thumbnailRefreshKey}
       thumbnailUrl={media.thumbnailUrl ? media.thumbnailUrl : placeholder}
       updateItem={HandleUpdateMedia}
     />
