@@ -235,7 +235,7 @@
         `Warning: duplicate IDs detected (${duplicateIds.length}): ` +
         duplicateIds.join(", ") +
         ". " +
-        "Annotations using these elements can be impacted, edit your media to fix them.";
+        "Annotations using these elements can be impacted, edit your media to remove duplicates.";
       Object.assign(info.style, {
         width: "90%",
         maxWidth: "600px",
