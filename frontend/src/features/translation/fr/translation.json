@@ -231,7 +231,7 @@
   "projectSavedFailed": "{{projectTitle}} n'a pu être sauvegardé",
   "projectSnapshotUrl": "URL de l'aperçu du projet",
   "projectTitle": "Mes projets",
-  "projectLockedByYouTitle": "Projet déjà ouvert par vous",
+  "projectLockedByYouTitle": "Vous avez déjà ouvert ce projet",
   "projectLockedByYouInfo": "Vous avez peut-être déjà ouvert ce projet dans un autre onglet, ou vous essayez d’y accéder après avoir rafraîchi la page. Gardez un seul onglet par projet afin d’éviter tout conflit d’enregistrement.",
   "reopenProject": "Rouvrir le projet",
   "register": "S'INSCRIRE",

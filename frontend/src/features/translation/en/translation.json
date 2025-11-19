@@ -229,7 +229,7 @@
   "projectSavedFailed": "Project {{projectTitle}} failed to save",
   "projectSnapshotUrl": "Project snapshot URL",
   "projectTitle": "My projects",
-  "projectLockedByYouTitle": "Project already opened by you",
+  "projectLockedByYouTitle": "You have already opened this project",
   "projectLockedByYouInfo": "You may have already opened this project in another tab, or you are trying to re-open it after refreshing the page. Keep only one tab per project to avoid save conflicts.",
   "reopenProject": "Reopen project",
   "removeProjectFromList": "Remove project from list",
