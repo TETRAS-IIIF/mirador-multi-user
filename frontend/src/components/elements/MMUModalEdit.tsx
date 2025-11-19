@@ -2,8 +2,6 @@ import {
   Button,
   Grid,
   SelectChangeEvent,
-  Tab,
-  Tabs,
   TextField,
   Tooltip,
   Typography,
@@ -32,7 +30,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs, { Dayjs } from 'dayjs';
-import { a11yProps } from './SideBar/allyProps.tsx';
 import { CustomTabPanel } from './CustomTabPanel.tsx';
 import { MetadataForm } from '../../features/metadata/components/metadataForm.tsx';
 import { getMetadataFormat } from '../../features/metadata/api/getMetadataFormat.ts';
@@ -57,6 +54,7 @@ import { TagMaker } from './TagsFactory/TagMaker.tsx';
 import { SnapshotFactory } from './SnapshotFactory.tsx';
 import { isValidUrl } from '../../utils/utils.ts';
 import JsonEditorWithControls from './jsonAvancedEditor.tsx';
+import { MMUModalEditTabs } from './MMUModalEditTabs.tsx';
 
 interface ModalItemProps<T> {
   HandleOpenModalEdit: () => void;
@@ -468,106 +466,14 @@ export const MMUModalEdit = <
         height: '70vh',
       }}
     >
-      <Tabs
-        value={tabValue}
-        onChange={handleChangeTab}
-        aria-label="basic tabs"
-        sx={{ height: '50px' }}
-      >
-        <Tab
-          label={
-            <Tooltip title={t('tab_general_desc')}>
-              <span>{t('general')}</span>
-            </Tooltip>
-          }
-          {...a11yProps(0)}
-        />
+      <MMUModalEditTabs
+        editableJsonElement={jsonElementToEditInAdvancedEditor !== undefined}
+        handleChangeTab={handleChangeTab}
+        objectOrigin={item.origin!}
+        objectType={objectTypes!}
+        tabValue={tabValue}
+      ></MMUModalEditTabs>
 
-        <Tab
-          label={
-            <Tooltip title={t('tab_share_desc')}>
-              <span>
-                {objectTypes != OBJECT_TYPES.GROUP ? t('share') : t('members')}
-              </span>
-            </Tooltip>
-          }
-          {...a11yProps(2)}
-        />
-
-        {objectTypes !== OBJECT_TYPES.GROUP && (
-          <Tab
-            label={
-              <Tooltip title={t('tab_metadata_desc')}>
-                <span>{t('metadata')}</span>
-              </Tooltip>
-            }
-            {...a11yProps(1)}
-          />
-        )}
-
-        {(objectTypes === OBJECT_TYPES.PROJECT ||
-          (objectTypes === OBJECT_TYPES.MANIFEST &&
-            item.origin !== OBJECT_ORIGIN.LINK)) &&
-          !jsonElementToEditInAdvancedEditor && (
-            <Tab
-              label={
-                <Tooltip title={t('advanced_edit_disabled')}>
-                  <span>{t('advancedEdit')}</span>
-                </Tooltip>
-              }
-              {...a11yProps(3)}
-              disabled
-            />
-          )}
-
-        {(objectTypes === OBJECT_TYPES.PROJECT ||
-          (objectTypes === OBJECT_TYPES.MANIFEST &&
-            item.origin !== OBJECT_ORIGIN.LINK)) &&
-          jsonElementToEditInAdvancedEditor && (
-            <Tab
-              label={
-                <Tooltip title={t('tab_advanced_desc')}>
-                  <span>{t('advancedEdit')}</span>
-                </Tooltip>
-              }
-              {...a11yProps(3)}
-              disabled={!jsonElementToEditInAdvancedEditor}
-            />
-          )}
-
-        {objectTypes === OBJECT_TYPES.PROJECT && (
-          <Tab
-            label={
-              <Tooltip title={t('tab_template_desc')}>
-                <span>{t('template')}</span>
-              </Tooltip>
-            }
-            {...a11yProps(4)}
-          />
-        )}
-
-        {objectTypes === OBJECT_TYPES.PROJECT && (
-          <Tab
-            label={
-              <Tooltip title={t('tab_tags_desc')}>
-                <span>{t('tags')}</span>
-              </Tooltip>
-            }
-            {...a11yProps(5)}
-          />
-        )}
-
-        {objectTypes === OBJECT_TYPES.PROJECT && (
-          <Tab
-            label={
-              <Tooltip title={t('tab_snapshots_desc')}>
-                <span>{t('snapshots')}</span>
-              </Tooltip>
-            }
-            {...a11yProps(6)}
-          />
-        )}
-      </Tabs>
       <Grid
         container
         flexDirection="column"
