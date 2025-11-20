@@ -1,4 +1,3 @@
-import { OBJECT_TYPES } from '../../utils/mmu_types.ts';
 import { Grid, Typography } from '@mui/material';
 import { ShareLink } from './shareLink.tsx';
 import { Snapshot } from '../../features/projects/types/types.ts';
@@ -8,7 +7,6 @@ import { deleteSnapshot } from '../../features/projects/api/snapshot/deleteSnaps
 import { updateSnapshot } from '../../features/projects/api/snapshot/updateSnapshot.ts';
 
 interface ISnapshotFactoryProps<T> {
-  objectTypes: OBJECT_TYPES;
   item: T;
   fetchItems: () => void;
 }
@@ -21,7 +19,6 @@ export const SnapshotFactory = <
     personalOwnerGroupId?: number;
   },
 >({
-  objectTypes,
   item,
   fetchItems,
 }: ISnapshotFactoryProps<T>) => {
@@ -57,49 +54,40 @@ export const SnapshotFactory = <
   };
   return (
     <Grid
+      alignItems="center"
       container
-      spacing={2}
       flexDirection="column"
-      sx={{ width: '100%', marginTop: 1 }}
+      spacing={1}
+      sx={{ padding: 0, margin: 0 }}
     >
-      {objectTypes === OBJECT_TYPES.PROJECT && (
-        <Grid
-          alignItems="center"
-          container
-          flexDirection="column"
-          spacing={1}
-          sx={{ padding: 0, margin: 0 }}
-        >
-          <Grid
-            container
-            sx={{
-              width: '100%',
-              padding: 0,
-              margin: 0,
-            }}
-            spacing={1}
-          >
-            <Grid>
-              <Typography variant="h5">{t('snapshot')}</Typography>
-            </Grid>
-          </Grid>
-          <Grid
-            sx={{
-              width: '100%',
-              margin: 0,
-              padding: 0,
-            }}
-          >
-            <ShareLink
-              handleCreateSnapshot={handleCreateSnapshot}
-              handleDeleteSnapshot={handleDeleteSnapshot!}
-              itemId={item.id}
-              snapShots={item.snapshots ? item.snapshots : []}
-              updateSnapshot={UpdateSnapshot!}
-            />
-          </Grid>
+      <Grid
+        container
+        sx={{
+          width: '100%',
+          padding: 0,
+          margin: 0,
+        }}
+        spacing={1}
+      >
+        <Grid>
+          <Typography variant="h5">{t('snapshot')}</Typography>
         </Grid>
-      )}
+      </Grid>
+      <Grid
+        sx={{
+          width: '100%',
+          margin: 0,
+          padding: 0,
+        }}
+      >
+        <ShareLink
+          handleCreateSnapshot={handleCreateSnapshot}
+          handleDeleteSnapshot={handleDeleteSnapshot!}
+          itemId={item.id}
+          snapShots={item.snapshots ? item.snapshots : []}
+          updateSnapshot={UpdateSnapshot!}
+        />
+      </Grid>
     </Grid>
   );
 };

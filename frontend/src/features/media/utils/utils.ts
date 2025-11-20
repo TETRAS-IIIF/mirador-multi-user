@@ -80,3 +80,33 @@ export const getYoutubeJson = async (
     console.error(`Error getYoutubeJson: ${error.message}`);
   }
 };
+
+export const getEditorLanguageFromMedia = (ext: string): string => {
+  switch (ext) {
+    case 'html':
+    case 'htm':
+      return 'html';
+    case 'json':
+      return 'json';
+    case 'xml':
+      return 'xml';
+    case 'md':
+    case 'markdown':
+      return 'markdown';
+    case 'yml':
+    case 'yaml':
+      return 'yaml';
+    case 'js':
+      return 'javascript';
+    case 'ts':
+      return 'typescript';
+    case 'css':
+    case 'scss':
+      return 'css';
+    case 'csv':
+      return 'plaintext';
+    case 'txt':
+    default:
+      return 'plaintext';
+  }
+};

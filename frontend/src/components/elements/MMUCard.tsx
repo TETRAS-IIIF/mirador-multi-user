@@ -95,6 +95,7 @@ const MMUCard = <
     thumbnailUrl?: string;
     title?: string;
     updated_at: Dayjs;
+    url?: string;
   },
   X extends { id: number },
 >({
