@@ -81,7 +81,11 @@ export const getYoutubeJson = async (
   }
 };
 
-export const getEditorLanguageFromMedia = (ext: string): string => {
+export const getEditorLanguageFromMedia = (url: string): string => {
+  if (!url) return 'plaintext';
+
+  const clean = url.split('?')[0].split('#')[0];
+  const ext = clean.split('.').pop()?.toLowerCase();
   switch (ext) {
     case 'html':
     case 'htm':

@@ -1,7 +1,17 @@
 import { useMemo, useRef, useState } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
 import type * as monaco from 'monaco-editor';
-import { AppBar, Box, Button, Dialog, GlobalStyles, IconButton, Stack, Toolbar, Typography, } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  Button,
+  Dialog,
+  GlobalStyles,
+  IconButton,
+  Stack,
+  Toolbar,
+  Typography,
+} from '@mui/material';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 
@@ -11,6 +21,7 @@ interface IAdvancedTextEditorProps {
   language: string;
   title?: string;
   fullscreenMode?: 'dialog' | 'browser';
+  onSave: (value: string) => Promise<void> | void;
 }
 
 export const AdvancedTextEditor = ({
@@ -19,30 +30,26 @@ export const AdvancedTextEditor = ({
   language,
   title = 'Advanced editor',
   fullscreenMode = 'dialog',
+  onSave,
 }: IAdvancedTextEditorProps) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleMount: OnMount = (editor) => {
     editorRef.current = editor;
   };
-
-  const undo = () => {
-    editorRef.current?.trigger('toolbar', 'undo', null);
-  };
-
-  const redo = () => {
-    editorRef.current?.trigger('toolbar', 'redo', null);
-  };
-
-  const search = () => {
-    editorRef.current?.getAction('actions.find')?.run();
-  };
-
-  const replace = () => {
+  console.log('language', language);
+  const undo = () => editorRef.current?.trigger('toolbar', 'undo', null);
+  const redo = () => editorRef.current?.trigger('toolbar', 'redo', null);
+  const search = () => editorRef.current?.getAction('actions.find')?.run();
+  const replace = () =>
     editorRef.current?.getAction('editor.action.startFindReplaceAction')?.run();
+
+  const handleSave = async () => {
+    const current = editorRef.current?.getValue() ?? value;
+    onChange(current);
+    await onSave(current);
   };
 
   const toggleFullscreen = async () => {
@@ -50,43 +57,46 @@ export const AdvancedTextEditor = ({
       setDialogOpen((v) => !v);
       return;
     }
-
     const el = containerRef.current;
     if (!el) return;
-
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-    } else {
-      await el.requestFullscreen();
-    }
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else await el.requestFullscreen();
   };
 
   const exitDialog = () => setDialogOpen(false);
 
-  const fullscreenIcon = useMemo(() => {
-    if (fullscreenMode === 'dialog') {
-      return dialogOpen ? <FullscreenExitIcon /> : <FullscreenIcon />;
-    }
-    return document.fullscreenElement ? (
-      <FullscreenExitIcon />
-    ) : (
-      <FullscreenIcon />
-    );
-  }, [fullscreenMode, dialogOpen]);
+  const fullscreenIcon = useMemo(
+    () =>
+      fullscreenMode === 'dialog' ? (
+        dialogOpen ? (
+          <FullscreenExitIcon />
+        ) : (
+          <FullscreenIcon />
+        )
+      ) : document.fullscreenElement ? (
+        <FullscreenExitIcon />
+      ) : (
+        <FullscreenIcon />
+      ),
+    [fullscreenMode, dialogOpen],
+  );
 
   const Controls = () => (
     <Stack direction="row" spacing={1}>
-      <Button size="small" variant="outlined" color="inherit" onClick={undo}>
+      <Button size="small" variant="outlined" onClick={undo}>
         Undo
       </Button>
-      <Button size="small" variant="outlined" color="inherit" onClick={redo}>
+      <Button size="small" variant="outlined" onClick={redo}>
         Redo
       </Button>
-      <Button size="small" variant="outlined" color="inherit" onClick={search}>
+      <Button size="small" variant="outlined" onClick={search}>
         Search
       </Button>
-      <Button size="small" variant="outlined" color="inherit" onClick={replace}>
+      <Button size="small" variant="outlined" onClick={replace}>
         Replace
+      </Button>
+      <Button size="small" variant="contained" onClick={handleSave}>
+        Save
       </Button>
     </Stack>
   );
@@ -149,6 +159,7 @@ export const AdvancedTextEditor = ({
           },
         }}
       />
+
       {!hideOuterToolbar && (
         <AppBar position="static" color="default" elevation={0}>
           <Toolbar variant="dense" sx={{ gap: 1 }}>
@@ -166,6 +177,7 @@ export const AdvancedTextEditor = ({
           </Toolbar>
         </AppBar>
       )}
+
       {fullscreenMode === 'dialog' ? (
         <>
           {!dialogOpen && editor}
