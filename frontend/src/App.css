@@ -16,6 +16,8 @@ body, #root {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-
 }
 
+.ql-tooltip {
+    white-space: normal !important;
+}
