@@ -32,9 +32,6 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import useFetchThumbnailsUrl from '../../utils/customHooks/useFetchThumbnailsUrl.ts';
 import { LoadingSpinner } from './loadingSpinner.tsx';
 import { Snapshot } from '../../features/projects/types/types.ts';
-
-import { isValidUrl } from '../../utils/utils.ts';
-import placeholder from '../../assets/Placeholder.svg';
 import { MMUCardIcon } from './MMUCardIcon.tsx';
 import { ListItem } from 'components/types.ts';
 
@@ -80,6 +77,13 @@ interface IMMUCardProps<T, X> {
   ) => Promise<void> | void;
   ownerId: number;
   fetchItems?: () => void;
+  handleReplaceItem?: (
+    file: File,
+    itemId: number,
+    itemName: string,
+    hash: string,
+  ) => void;
+  thumbnailRefreshKey?: number;
 }
 
 const MMUCard = <
@@ -106,10 +110,12 @@ const MMUCard = <
   deleteItem,
   description,
   duplicateItem,
+  fetchItems,
   getAccessToItem,
   getGroupByOption,
   getOptionLabel,
   handleRemoveFromList,
+  handleReplaceItem,
   handleSelectorChange,
   id,
   isGroups,
@@ -126,13 +132,16 @@ const MMUCard = <
   searchModalEditItem,
   setItemList,
   setItemToAdd,
+  thumbnailRefreshKey,
   updateItem,
-  fetchItems,
 }: IMMUCardProps<T, X>) => {
   const [searchInput, setSearchInput] = useState<string>('');
   const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
     useState(false);
-  const [isLoading, thumbnailUrl] = useFetchThumbnailsUrl({ item });
+  const [isLoading, thumbnailUrl] = useFetchThumbnailsUrl({
+    item,
+    refreshKey: thumbnailRefreshKey,
+  });
   const { t, i18n } = useTranslation();
 
   const fetchData = useCallback(async () => {
@@ -155,8 +164,6 @@ const MMUCard = <
     }
     fetchData();
   };
-
-  const thumbnailSrc = isValidUrl(thumbnailUrl) ? thumbnailUrl : placeholder;
 
   const handleChangeSelectedItem =
     (itemSelected: ListItem) => async (event: SelectChangeEvent<string>) => {
@@ -187,10 +194,12 @@ const MMUCard = <
         >
           <Grid size={{ xs: 4, sm: 1 }}>
             {isLoading ? (
-              <LoadingSpinner />
+              <Grid sx={{ ml: 2 }}>
+                <LoadingSpinner />
+              </Grid>
             ) : (
               <img
-                src={thumbnailSrc}
+                src={thumbnailUrl}
                 alt={t('thumbnailMissing')}
                 style={{
                   height: 80,
@@ -299,32 +308,33 @@ const MMUCard = <
             setOpenModal={HandleOpenModal}
           >
             <MMUModalEdit
-              fetchItems={fetchItems}
-              objectTypes={objectTypes}
-              isGroups={isGroups}
-              metadata={metadata || undefined}
-              thumbnailUrl={thumbnailUrl as string}
               HandleOpenModalEdit={HandleOpenModal}
-              description={description}
-              searchBarLabel={searchBarLabel ?? ''}
-              itemLabel={itemLabel}
-              handleSelectorChange={handleChangeSelectedItem}
-              fetchData={fetchData}
-              listOfItem={listOfItem}
               deleteItem={deleteItem}
-              getOptionLabel={getOptionLabel}
+              description={description}
+              duplicateItem={duplicateItem}
+              fetchData={fetchData}
+              fetchItems={fetchItems}
               getGroupByOption={getGroupByOption}
-              setSearchInput={setSearchInput}
+              getOptionLabel={getOptionLabel}
               handleAddAccessListItem={handleAddAccessListItem}
+              handleDeleteAccessListItem={handleRemoveAccessListItem}
+              handleReplaceItem={handleReplaceItem}
+              handleSelectorChange={handleChangeSelectedItem}
+              isGroups={isGroups}
               item={item}
+              itemLabel={itemLabel}
+              listOfItem={listOfItem}
+              metadata={metadata || undefined}
+              objectTypes={objectTypes}
+              ownerId={ownerId}
+              rights={rights}
+              searchBarLabel={searchBarLabel ?? ''}
               searchInput={searchInput}
               searchModalEditItem={searchModalEditItem}
               setItemToAdd={setItemToAdd}
+              setSearchInput={setSearchInput}
+              thumbnailUrl={thumbnailUrl as string}
               updateItem={updateItem}
-              rights={rights}
-              handleDeleteAccessListItem={handleRemoveAccessListItem}
-              duplicateItem={duplicateItem}
-              ownerId={ownerId}
             />
           </MMUModal>
         </Grid>

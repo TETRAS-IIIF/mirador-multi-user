@@ -103,6 +103,59 @@ export class LinkMediaGroupController {
     return await this.linkMediaGroupService.createMedia(mediaToCreate);
   }
 
+  @ApiOperation({ summary: 'Replace a media' })
+  @UseGuards(AuthGuard)
+  @Post('/media/reupload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (req, file, callback) => {
+          const body = (req as any).body as {
+            hash?: string;
+          };
+          const hash = body.hash;
+          if (!hash) {
+            return callback(new Error('Missing hash'), '');
+          }
+          const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
+          fs.mkdirSync(uploadPath, { recursive: true });
+          (req as any).generatedHash = hash;
+          callback(null, uploadPath);
+        },
+        filename: (req, file, cb) => {
+          const body = (req as any).body as {
+            fileName?: string;
+          };
+          const fileName = body.fileName;
+          if (!fileName) {
+            return cb(new Error('Missing fileName'), '');
+          }
+          cb(null, fileName);
+        },
+      }),
+      fileFilter: fileFilterMedia,
+    }),
+    SharpPipeInterceptor,
+  )
+  @HttpCode(201)
+  async reuploadFile(@UploadedFile() file) {
+    // We fetch MAX_UPLOAD_SIZE there to handle the potential updates of this value.
+    const maxUploadSize =
+      parseInt(
+        (await this.settingService.get(SettingKeys.MAX_UPLOAD_SIZE)) ??
+          process.env.MAX_UPLOAD_SIZE ??
+          '1000',
+        10,
+      ) *
+      1024 *
+      1024;
+
+    if (file.size > maxUploadSize) {
+      throw new BadRequestException('File size exceeds the maximum allowed.');
+    }
+    return;
+  }
+
   @ApiOperation({ summary: 'Create a media with an url' })
   @UseGuards(AuthGuard)
   @Post('/media/link')

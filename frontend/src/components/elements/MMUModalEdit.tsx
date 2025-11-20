@@ -34,6 +34,7 @@ import { caddyUrl, isValidUrl } from '../../utils/utils.ts';
 import JsonEditorWithControls from './jsonAvancedEditor.tsx';
 import { getEditorLanguageFromMedia } from '../../features/media/utils/utils.ts';
 import { AdvancedTextEditor } from '../../features/media/component/AdvancedTextEditor.tsx';
+import { ReplaceModalContent } from '../../features/projects/ReplaceModalContent.tsx';
 
 interface ModalItemProps<T> {
   HandleOpenModalEdit: () => void;
@@ -66,6 +67,12 @@ interface ModalItemProps<T> {
   thumbnailUrl?: string | null;
   updateItem?: (newItem: T) => void;
   fetchItems?: () => void;
+  handleReplaceItem?: (
+    file: File,
+    itemId: number,
+    itemName: string,
+    hash: string,
+  ) => void;
 }
 
 type MetadataFormat = {
@@ -116,6 +123,7 @@ export const MMUModalEdit = <
   getOptionLabel,
   handleAddAccessListItem,
   handleDeleteAccessListItem,
+  handleReplaceItem,
   handleSelectorChange,
   isGroups,
   item,
@@ -145,6 +153,7 @@ export const MMUModalEdit = <
   );
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openDuplicateModal, setOpenDuplicateModal] = useState(false);
+  const [openReplaceModal, setOpenReplaceModal] = useState(false);
   const [metadataFormData, setMetadataFormData] = useState<MetadataArray>();
   const [selectedMetadataData, setSelectedMetadataData] =
     useState<MetadataFields>();
@@ -325,6 +334,10 @@ export const MMUModalEdit = <
 
   const handleDuplicateModal = () => {
     setOpenDuplicateModal(!openDuplicateModal);
+  };
+
+  const handleReplaceModal = () => {
+    setOpenReplaceModal(!openReplaceModal);
   };
   const handleFetchManifest = async () => {
     try {
@@ -905,6 +918,25 @@ export const MMUModalEdit = <
                 )}
               </Grid>
               <Grid>
+                {rights === ITEM_RIGHTS.ADMIN &&
+                  tabValue === 0 &&
+                  objectTypes === OBJECT_TYPES.MEDIA && (
+                    <Tooltip
+                      title={t('replaceObjectTooltip', {
+                        object: t(`objectNames.${objectTypes}`),
+                      })}
+                    >
+                      <Button
+                        color="error"
+                        onClick={handleReplaceModal}
+                        variant="contained"
+                      >
+                        {t('replace')}
+                      </Button>
+                    </Tooltip>
+                  )}
+              </Grid>
+              <Grid>
                 {(rights === ITEM_RIGHTS.ADMIN ||
                   rights === ITEM_RIGHTS.EDITOR) &&
                   tabValue === 0 &&
@@ -984,6 +1016,21 @@ export const MMUModalEdit = <
               {t('no')}
             </Button>
           </Grid>
+        </MMUModal>
+      )}
+      {openReplaceModal && handleReplaceItem && (
+        <MMUModal
+          width={400}
+          openModal={openReplaceModal}
+          setOpenModal={setOpenReplaceModal}
+        >
+          <ReplaceModalContent
+            handleReplaceItem={handleReplaceItem}
+            itemId={item.id}
+            itemName={item.title!}
+            hash={item.hash!}
+            setOpenReplaceModal={setOpenReplaceModal}
+          />
         </MMUModal>
       )}
     </Grid>

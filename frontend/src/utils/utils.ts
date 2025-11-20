@@ -4,6 +4,10 @@ export const isValidFileForUpload = (file: File) => {
   return !isVideoOrAudioFile(file);
 };
 
+export function isDataUrl(url: string | undefined): boolean {
+  return typeof url === 'string' && url.trim().startsWith('data:');
+}
+
 const isVideoOrAudioFile = (file: File) => {
   return file.type.startsWith('video/') || file.type.startsWith('audio/');
 };
