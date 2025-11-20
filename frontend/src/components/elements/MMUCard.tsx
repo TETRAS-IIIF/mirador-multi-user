@@ -1,9 +1,26 @@
-import { Card, CardActions, SelectChangeEvent, Tooltip, Typography, } from '@mui/material';
+import {
+  Card,
+  CardActions,
+  SelectChangeEvent,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { MMUModal } from './modal.tsx';
-import { Dispatch, ReactNode, SetStateAction, useCallback, useState, } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useState,
+} from 'react';
 import { MMUModalEdit } from './MMUModalEdit.tsx';
-import { ITEM_RIGHTS, MEDIA_TYPES, OBJECT_ORIGIN, OBJECT_TYPES, } from '../../utils/mmu_types.ts';
+import {
+  ITEM_RIGHTS,
+  MEDIA_TYPES,
+  OBJECT_ORIGIN,
+  OBJECT_TYPES,
+} from '../../utils/mmu_types.ts';
 
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -15,9 +32,6 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import useFetchThumbnailsUrl from '../../utils/customHooks/useFetchThumbnailsUrl.ts';
 import { LoadingSpinner } from './loadingSpinner.tsx';
 import { Snapshot } from '../../features/projects/types/types.ts';
-
-import { isValidUrl } from '../../utils/utils.ts';
-import placeholder from '../../assets/Placeholder.svg';
 import { MMUCardIcon } from './MMUCardIcon.tsx';
 import { ListItem } from 'components/types.ts';
 
@@ -123,7 +137,10 @@ const MMUCard = <
   const [searchInput, setSearchInput] = useState<string>('');
   const [openRemoveItemFromListModal, setOpenRemoveItemFromListModal] =
     useState(false);
-  const [isLoading, thumbnailUrl] = useFetchThumbnailsUrl({ item });
+  const [isLoading, thumbnailUrl] = useFetchThumbnailsUrl({
+    item,
+    refreshKey: thumbnailRefreshKey,
+  });
   const { t, i18n } = useTranslation();
 
   const fetchData = useCallback(async () => {
@@ -146,8 +163,6 @@ const MMUCard = <
     }
     fetchData();
   };
-
-  const thumbnailSrc = isValidUrl(thumbnailUrl) ? thumbnailUrl : placeholder;
 
   const handleChangeSelectedItem =
     (itemSelected: ListItem) => async (event: SelectChangeEvent<string>) => {
@@ -178,13 +193,12 @@ const MMUCard = <
         >
           <Grid size={{ xs: 4, sm: 1 }}>
             {isLoading ? (
-              <LoadingSpinner />
+              <Grid sx={{ ml: 2 }}>
+                <LoadingSpinner />
+              </Grid>
             ) : (
               <img
-                decoding="async"
-                key={thumbnailRefreshKey}
-                loading="lazy"
-                src={`${thumbnailSrc}?v=${thumbnailRefreshKey}`}
+                src={thumbnailUrl}
                 alt={t('thumbnailMissing')}
                 style={{
                   height: 80,
@@ -192,6 +206,8 @@ const MMUCard = <
                   objectFit: 'contain',
                   marginLeft: 10,
                 }}
+                loading="lazy"
+                decoding="async"
               />
             )}
           </Grid>
