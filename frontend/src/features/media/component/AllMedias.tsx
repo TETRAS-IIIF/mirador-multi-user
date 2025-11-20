@@ -67,6 +67,7 @@ import {
   MEDIA_TYPES_TABS,
   USER_GROUP_TYPES,
 } from '../../../utils/mmu_types.ts';
+import { reuploadMedia } from '../api/reuploadMedia.ts';
 
 interface IAllMediasProps {
   user: User;
@@ -94,6 +95,8 @@ export const AllMedias = ({
   const [sortOrder, setSortOrder] = useState('desc');
   const { mutateAsync, isPending } = useCreateMediaLink();
   const { data: settings } = useAdminSettings();
+  const [thumbRefreshKey, setThumbRefreshKey] = useState(0);
+
   const [MAX_UPLOAD_SIZE] = useState<number | undefined>(
     Number(getSettingValue(SettingKeys.MAX_UPLOAD_SIZE, settings)),
   );
@@ -332,6 +335,28 @@ export const AllMedias = ({
     }
   };
 
+  const handleReplaceItem = async (
+    file: File,
+    itemId: number,
+    itemName: string,
+    hash: string,
+  ) => {
+    try {
+      const result = await reuploadMedia(file, itemId, itemName, hash);
+
+      if (!result.ok) {
+        toast.error(t('unmatchingExtensionError'));
+        return;
+      }
+
+      toast.success(t('mediaReplaced'));
+      setThumbRefreshKey((k) => k + 1);
+    } catch {
+      toast.error(t('uploadFailed'));
+    }
+    return fetchMediaForUser();
+  };
+
   const handleRemoveMediaFromList = async (
     mediaId: number,
     share: string | undefined,
@@ -437,6 +462,7 @@ export const AllMedias = ({
                             ? `${caddyUrl}/${media.hash}/thumbnail.webp`
                             : undefined,
                       }}
+                      thumbnailRefreshKey={thumbRefreshKey}
                       ownerId={media.idCreator}
                       getAccessToMedia={getAccessToMedia}
                       getOptionLabel={getOptionLabel}
@@ -445,6 +471,7 @@ export const AllMedias = ({
                       HandleDeleteMedia={HandleDeleteMedia}
                       handleGrantAccess={handleGrantAccess}
                       HandleCopyToClipBoard={HandleCopyToClipBoard}
+                      handleReplaceItem={handleReplaceItem}
                       HandleUpdateMedia={HandleUpdateMedia}
                       caddyUrl={caddyUrl}
                       handleChangeRights={handleChangeRights}
