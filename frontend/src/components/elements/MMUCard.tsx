@@ -1,26 +1,9 @@
-import {
-  Card,
-  CardActions,
-  SelectChangeEvent,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Card, CardActions, SelectChangeEvent, Tooltip, Typography, } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { MMUModal } from './modal.tsx';
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useState,
-} from 'react';
+import { Dispatch, ReactNode, SetStateAction, useCallback, useState, } from 'react';
 import { MMUModalEdit } from './MMUModalEdit.tsx';
-import {
-  ITEM_RIGHTS,
-  MEDIA_TYPES,
-  OBJECT_ORIGIN,
-  OBJECT_TYPES,
-} from '../../utils/mmu_types.ts';
+import { ITEM_RIGHTS, MEDIA_TYPES, OBJECT_ORIGIN, OBJECT_TYPES, } from '../../utils/mmu_types.ts';
 
 import dayjs, { Dayjs } from 'dayjs';
 
@@ -80,13 +63,13 @@ interface IMMUCardProps<T, X> {
   ) => Promise<void> | void;
   ownerId: number;
   fetchItems?: () => void;
-  handleReplaceItem: (
+  handleReplaceItem?: (
     file: File,
     itemId: number,
     itemName: string,
     hash: string,
   ) => void;
-  thumbnailRefreshKey: number;
+  thumbnailRefreshKey?: number;
 }
 
 const MMUCard = <
