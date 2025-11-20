@@ -39,7 +39,6 @@ export const AdvancedTextEditor = ({
   const handleMount: OnMount = (editor) => {
     editorRef.current = editor;
   };
-  console.log('language', language);
   const undo = () => editorRef.current?.trigger('toolbar', 'undo', null);
   const redo = () => editorRef.current?.trigger('toolbar', 'redo', null);
   const search = () => editorRef.current?.getAction('actions.find')?.run();
