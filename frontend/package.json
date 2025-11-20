@@ -27,8 +27,8 @@
     "json-edit-react": "^1.26.2",
     "manifesto.js": "^4.2.21",
     "mirador": "npm:mirador-video@1.2.6",
-    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.2.7",
-    "mirador-mltools-plugin-mmu": "1.0.0",
+    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.2.9",
+    "mirador-mltools-plugin-mmu": "1.0.3",
     "react": "^19.2.0",
     "react-dom": "^19.0.0",
     "react-favicon": "^2.0.7",
@@ -63,13 +63,5 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.9.5"
-  },
-  "overrides": {
-    "mirador-annotation-editor": {
-      "mirador": "npm:mirador-video@1.2.6"
-    },
-    "mirador-mltools-plugin-mmu": {
-      "mirador": "npm:mirador-video@1.2.6"
-    }
   }
 }
