@@ -246,7 +246,7 @@
   "resendConfirmationLink": "Renvoyer le lien de confirmation",
   "reset-password": "Réinitialiser le mot de passe",
   "reset-password-title": "Réinitialiser le mot de passe",
-  "replaceWarning": "ATTENTION Ceci va remplacer le média",
+  "replaceWarning": "Le remplacement est une action définitive. Êtes-vous sûr de vouloir continuer ?",
   "replaceTooltip": "Téléversez un média pour remplacer celui-ci",
   "editor": "Éditeur",
   "reader": "Lecteur",
@@ -345,5 +345,6 @@
   "newTemplateContent": "Ajouter votre contenu",
   "Youtube_not_allowed_error": "Les liens YouTube ne sont pas pris en charge.",
   "validURLToManifest": "URL valide vers un manifeste",
-  "validURLToMedia": "URL valide vers un média"
+  "validURLToMedia": "URL valide vers un média",
+  "selectFile": "Sélectionner un fichier"
 }

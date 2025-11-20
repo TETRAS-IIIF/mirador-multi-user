@@ -343,5 +343,6 @@
   "noTemplatesAvailable": "No templates available",
   "Youtube_not_allowed_error": "YouTube links are not supported.",
   "validURLToManifest": "Valid URL to a manifest",
-  "validURLToMedia": "Valid URL to a media"
+  "validURLToMedia": "Valid URL to a media",
+  "selectFile": "Select file"
 }

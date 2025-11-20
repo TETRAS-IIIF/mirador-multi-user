@@ -1,4 +1,4 @@
-import { Grid, IconButton, styled, Tooltip, Typography } from '@mui/material';
+import { Button, Grid, styled, Tooltip, Typography } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -46,7 +46,7 @@ export const ReplaceModalContent = ({
 
   return (
     <Grid container direction="column" spacing={1}>
-      <Typography>{t('replaceWarning')}</Typography>
+      <Typography textAlign="center">{t('replaceWarning')}</Typography>
 
       <VisuallyHiddenInput
         id="hiddenFileInput"
@@ -56,11 +56,13 @@ export const ReplaceModalContent = ({
 
       <Grid container justifyContent="center">
         <Tooltip title={t('replaceTooltip')} color="primary">
-          <IconButton
+          <Button
             onClick={() => document.getElementById('hiddenFileInput')?.click()}
+            variant="contained"
           >
-            <UploadFileIcon color="primary" />
-          </IconButton>
+            <UploadFileIcon />
+            {t('selectFile')}
+          </Button>
         </Tooltip>
       </Grid>
     </Grid>
