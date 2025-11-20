@@ -1,12 +1,34 @@
-import { Button, Grid, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography, } from '@mui/material';
-import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useCallback, useEffect, useState, } from 'react';
+import {
+  Button,
+  Grid,
+  SelectChangeEvent,
+  Tab,
+  Tabs,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
+import {
+  ChangeEvent,
+  Dispatch,
+  SetStateAction,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import { ItemList } from './ItemList.tsx';
 import { MMUModal } from './modal.tsx';
 import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
 import { ListItem } from '../types.ts';
 import CancelIcon from '@mui/icons-material/Cancel';
-import { ITEM_RIGHTS, MEDIA_TYPES, OBJECT_ORIGIN, OBJECT_TYPES, } from '../../utils/mmu_types.ts';
+import {
+  ITEM_RIGHTS,
+  MEDIA_TYPES,
+  OBJECT_ORIGIN,
+  OBJECT_TYPES,
+} from '../../utils/mmu_types.ts';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -26,7 +48,11 @@ import { updateManifestJson } from '../../features/manifest/api/updateManifestJs
 import { Selector } from '../Selector.tsx';
 import { useTranslation } from 'react-i18next';
 import { NoteTemplate } from './CustomizationEditModal/NoteTemplate.tsx';
-import { Project, Snapshot, Template, } from '../../features/projects/types/types.ts';
+import {
+  Project,
+  Snapshot,
+  Template,
+} from '../../features/projects/types/types.ts';
 import { TagMaker } from './TagsFactory/TagMaker.tsx';
 
 import { SnapshotFactory } from './SnapshotFactory.tsx';
@@ -72,7 +98,7 @@ interface ModalItemProps<T> {
     itemId: number,
     itemName: string,
     hash: string,
-  ) => void;
+  ) => Promise<void>;
 }
 
 type MetadataFormat = {
@@ -506,6 +532,15 @@ export const MMUModalEdit = <
         ? t('deleteConfirmationMedia')
         : t('deleteConfirmation', { itemName: itemLabel });
 
+  const handleSaveText = async (newContent: string) => {
+    if (handleReplaceItem) {
+      // turn edited text into a Blob -> File so reuploadMedia can use it
+      const file = new File([newContent], item.path!, {
+        type: 'text/plain;charset=utf-8',
+      });
+      await handleReplaceItem(file, item.id, item.path!, item.hash!);
+    }
+  };
   return (
     <Grid
       container
@@ -827,7 +862,7 @@ export const MMUModalEdit = <
                     : `${caddyUrl}/${item.hash}/${item.path}`,
                 )}
                 //TODO: implement save
-                onSave={() => console.log('save')}
+                onSave={handleSaveText}
               />
             </Grid>
           )}
@@ -953,35 +988,37 @@ export const MMUModalEdit = <
                   )}
               </Grid>
             </Grid>
-            <Grid
-              container
-              flexDirection="row"
-              alignItems="center"
-              justifyContent="flex-end"
-              spacing={1}
-              columns={6}
-            >
-              <Grid>
-                <Button
-                  variant="contained"
-                  type="button"
-                  onClick={HandleOpenModalEdit}
-                >
-                  <CancelIcon />
-                  {t('cancel')}
-                </Button>
+            {tabValue != 3 && (
+              <Grid
+                container
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="flex-end"
+                spacing={1}
+                columns={6}
+              >
+                <Grid>
+                  <Button
+                    variant="contained"
+                    type="button"
+                    onClick={HandleOpenModalEdit}
+                  >
+                    <CancelIcon />
+                    {t('cancel')}
+                  </Button>
+                </Grid>
+                <Grid>
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    onClick={handleSubmit}
+                  >
+                    <SaveIcon />
+                    {t('saveMAJ')}
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  onClick={handleSubmit}
-                >
-                  <SaveIcon />
-                  {t('saveMAJ')}
-                </Button>
-              </Grid>
-            </Grid>
+            )}
           </Grid>
         )}
       </Grid>

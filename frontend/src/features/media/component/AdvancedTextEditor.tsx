@@ -21,7 +21,7 @@ interface IAdvancedTextEditorProps {
   language: string;
   title?: string;
   fullscreenMode?: 'dialog' | 'browser';
-  onSave: (value: string) => Promise<void> | void;
+  onSave: (value: string) => Promise<void>;
 }
 
 export const AdvancedTextEditor = ({

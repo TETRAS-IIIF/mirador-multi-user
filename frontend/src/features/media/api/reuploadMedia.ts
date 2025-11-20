@@ -9,7 +9,6 @@ export const reuploadMedia = async (
   const prevExt = fileName.split('.').pop()?.toLowerCase();
 
   const newExt = file.name.split('.').pop()?.toLowerCase();
-  console.log('check : ', !prevExt || !newExt || prevExt !== newExt);
   if (!prevExt || !newExt || prevExt !== newExt) {
     return {
       ok: false,
