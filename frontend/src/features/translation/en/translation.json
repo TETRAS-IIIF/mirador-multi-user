@@ -248,7 +248,7 @@
   "reset-password-title": "Reset password",
   "editor": "Editor",
   "reader": "Reader",
-  "replaceWarning": "WARNING This will replace the media",
+  "replaceWarning": "The replacement is a definitive action and can be undone. The previous media will no longer be accessible. All elements using this media will now point to the new media.",
   "replaceTooltip": "Upload a media to replace this one",
   "save": "Save",
   "saveError": "Error while saving",

@@ -246,7 +246,7 @@
   "resendConfirmationLink": "Renvoyer le lien de confirmation",
   "reset-password": "Réinitialiser le mot de passe",
   "reset-password-title": "Réinitialiser le mot de passe",
-  "replaceWarning": "Le remplacement est une action définitive. Êtes-vous sûr de vouloir continuer ?",
+  "replaceWarning": "Le remplacement est une action définitive et ne peut pas être annulée. Les elements liés utiliserons le nouveau média téléversé.",
   "replaceTooltip": "Téléversez un média pour remplacer celui-ci",
   "editor": "Éditeur",
   "reader": "Lecteur",
