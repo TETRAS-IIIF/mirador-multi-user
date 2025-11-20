@@ -25,7 +25,7 @@ export const Login = () => {
         )
       }
     >
-      <Grid item>
+      <Grid>
         <LoginPage />
       </Grid>
     </Layout>

@@ -1,18 +1,18 @@
-import { useTranslation } from "react-i18next";
-import FormControl from "@mui/material/FormControl";
-import Select, { SelectChangeEvent } from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import { useState } from "react";
-import { ItemsRights } from "../features/user-group/types/types.ts";
+import { useTranslation } from 'react-i18next';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import { useState } from 'react';
+import { ITEM_RIGHTS } from '../utils/mmu_types.ts';
 
 export interface SelectorProps {
   value: string;
   onChange?: (event: SelectChangeEvent) => void;
-  rights: ItemsRights[];
+  rights: ITEM_RIGHTS[];
 }
 
 export const Selector = ({
-  value = ItemsRights.READER,
+  value = ITEM_RIGHTS.READER,
   onChange,
   rights,
 }: SelectorProps) => {

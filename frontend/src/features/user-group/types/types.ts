@@ -1,23 +1,13 @@
-import { User } from "../../auth/types/types.ts";
-import { Dayjs } from "dayjs";
-
-export enum UserGroupTypes {
-  PERSONAL = "personal",
-  MULTI_USER = "multi-user",
-}
-
-export enum ItemsRights {
-  ADMIN = "admin",
-  READER = "reader",
-  EDITOR = "editor",
-}
+import { ITEM_RIGHTS, USER_GROUP_TYPES } from '../../../utils/mmu_types.ts';
+import { User } from '../../auth/types/types.ts';
+import { Dayjs } from 'dayjs';
 
 export type LinkUserGroup = {
   id: number;
-  rights: ItemsRights;
+  rights: ITEM_RIGHTS;
   user: User;
   user_group: UserGroup;
-  personalOwnerGroupId?:number
+  personalOwnerGroupId?: number;
 };
 
 export type UserGroup = {
@@ -25,12 +15,12 @@ export type UserGroup = {
   title: string;
   ownerId: number;
   description: string;
-  type: UserGroupTypes;
-  rights?: ItemsRights;
+  type: USER_GROUP_TYPES;
+  rights?: ITEM_RIGHTS;
   thumbnailUrl?: string;
   created_at: Dayjs;
   shared?: boolean;
-  updated_at:Dayjs;
+  updated_at: Dayjs;
 };
 
 export type CreateGroupDto = {
@@ -52,5 +42,5 @@ export type RemoveProjectToGroupDto = {
 export type changeAccessToGroupDto = {
   userId: number;
   groupId: number;
-  rights: ItemsRights;
+  rights: ITEM_RIGHTS;
 };

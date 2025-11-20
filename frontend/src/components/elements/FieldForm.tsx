@@ -1,5 +1,5 @@
-import { Grid, TextField } from "@mui/material";
-import { ChangeEventHandler } from "react";
+import { Grid, TextField } from '@mui/material';
+import { ChangeEventHandler } from 'react';
 
 interface IFieldFormProps {
   label: string;
@@ -14,12 +14,12 @@ export const FieldForm = ({
   label,
   value,
   onChange,
-  type = "text",
+  type = 'text',
   placeholder,
   name,
 }: IFieldFormProps) => {
   return (
-    <Grid item>
+    <Grid>
       <TextField
         label={label}
         inputProps={{

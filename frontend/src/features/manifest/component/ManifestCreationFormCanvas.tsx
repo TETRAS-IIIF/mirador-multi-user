@@ -1,7 +1,7 @@
 import { FieldForm } from '../../../components/elements/FieldForm';
 import { Button, Grid, Paper } from '@mui/material';
 import { ChangeEvent, useState } from 'react';
-import { MediaTypes } from '../../media/types/types';
+import { MEDIA_TYPES } from '../../../utils/mmu_types.ts';
 import { MediaImageThumbnail } from './MediaImageThumbnail';
 import { MediaVideoThumbnail } from './MediaVideoThumbnail';
 import { IIIFCanvases, MediaField } from './ManifestCreationForm';
@@ -44,11 +44,11 @@ export const ManifestCreationFormCanvas = ({
   const media = canvas.media[0];
 
   return (
-    <Grid item key={canvasIndex}>
+    <Grid key={canvasIndex}>
       <Paper elevation={3} sx={{ padding: 2, width: '100%' }}>
         <Grid container direction="column" spacing={2}>
-          <Grid item container spacing={2} alignItems="center">
-            <Grid item xs>
+          <Grid container spacing={2} alignItems="center">
+            <Grid size="grow">
               <FieldForm
                 name={media.title}
                 placeholder={t('mediaLink')}
@@ -59,8 +59,8 @@ export const ManifestCreationFormCanvas = ({
             </Grid>
             {isMediaLoading && <h2>Loading ...</h2>}
             {media.value && !isMediaLoading && (
-              <Grid item>
-                {media.type === MediaTypes.VIDEO && (
+              <Grid>
+                {media.type === MEDIA_TYPES.VIDEO && (
                   <MediaVideoThumbnail
                     media={media}
                     setMedia={(media: MediaField) =>
@@ -68,13 +68,13 @@ export const ManifestCreationFormCanvas = ({
                     }
                   />
                 )}
-                {media.type === MediaTypes.IMAGE && (
+                {media.type === MEDIA_TYPES.IMAGE && (
                   <MediaImageThumbnail media={media} t={t} />
                 )}
               </Grid>
             )}
           </Grid>
-          <Grid item>
+          <Grid>
             <Button
               variant="contained"
               color="error"

@@ -1,7 +1,8 @@
-import IState from "../../mirador/interface/IState.ts";
-import { User } from "../../auth/types/types.ts";
-import { ItemsRights, UserGroup } from "../../user-group/types/types.ts";
-import { Dayjs } from "dayjs";
+import IState from '../../mirador/interface/IState.ts';
+import { User } from '../../auth/types/types.ts';
+import { UserGroup } from '../../user-group/types/types.ts';
+import { Dayjs } from 'dayjs';
+import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 
 export type Project = {
   created_at: Dayjs;
@@ -12,7 +13,7 @@ export type Project = {
   metadata: Record<string, string>;
   noteTemplate?: Template[];
   owner: User;
-  rights?: ItemsRights;
+  rights?: ITEM_RIGHTS;
   share?: string;
   shared: boolean;
   snapShots: Snapshot[];
@@ -31,12 +32,12 @@ export type Template = {
 export type ProjectGroup = {
   personalOwnerGroupId?: number;
   id: number;
-  rights: ItemsRights;
+  rights: ITEM_RIGHTS;
   user_group: UserGroup;
 };
 export type ProjectUser = {
   id: number;
-  rights: ItemsRights;
+  rights: ITEM_RIGHTS;
   project: Project;
 };
 
@@ -50,7 +51,7 @@ export type ProjectGroupUpdateDto = {
     noteTemplate?: Template[];
     tags?: string[];
   };
-  rights?: ItemsRights;
+  rights?: ITEM_RIGHTS;
   group?: UserGroup;
   shared?: boolean;
 };
@@ -68,7 +69,7 @@ export type LockProjectDto = {
 
 export type RowData = {
   value: string;
-  align?: "left" | "right" | "center";
+  align?: 'left' | 'right' | 'center';
 };
 
 export type RowProps = {

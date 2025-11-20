@@ -1,4 +1,4 @@
-import { DrawerHeader } from "./Drawer/DrawerHeader";
+import { DrawerHeader } from './Drawer/DrawerHeader';
 import {
   CSSObject,
   Divider,
@@ -7,57 +7,57 @@ import {
   styled,
   Theme,
   Tooltip,
-} from "@mui/material";
-import { DrawerElementContentMenu } from "./Drawer/DrawerElementContentMenu";
-import { DrawerElementSaveProject } from "./Drawer/DrawerElementSaveProject";
-import { DrawerElementAdmin } from "./Drawer/DrawerElementAdmin";
-import { ItemButton } from "../SideBar/ItemButton";
-import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout";
-import MuiDrawer from "@mui/material/Drawer";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { DrawerGenerateSnapshot } from "./Drawer/DrawerGenerateSnapshot.tsx";
-import { Project } from "../../../features/projects/types/types.ts";
-import { User } from "../../../features/auth/types/types.ts";
-import { MENU_ELEMENT } from "../../../utils/utils.ts";
+} from '@mui/material';
+import { DrawerElementContentMenu } from './Drawer/DrawerElementContentMenu';
+import { DrawerElementSaveProject } from './Drawer/DrawerElementSaveProject';
+import { DrawerElementAdmin } from './Drawer/DrawerElementAdmin';
+import { ItemButton } from '../SideBar/ItemButton';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
+import MuiDrawer from '@mui/material/Drawer';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { DrawerGenerateSnapshot } from './Drawer/DrawerGenerateSnapshot.tsx';
+import { Project } from '../../../features/projects/types/types.ts';
+import { User } from '../../../features/auth/types/types.ts';
+import { MENU_ELEMENT } from '../../../utils/utils.ts';
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,
-  transition: theme.transitions.create("width", {
+  transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.enteringScreen,
   }),
-  overflowX: "hidden",
+  overflowX: 'hidden',
 });
 
 const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create("width", {
+  transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  overflowX: "hidden",
+  overflowX: 'hidden',
   width: `calc(${theme.spacing(7)} + 1px)`,
-  [theme.breakpoints.up("sm")]: {
+  [theme.breakpoints.up('sm')]: {
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
 });
 
 const StyledDrawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
+  shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme, open }) => ({
   width: drawerWidth,
   flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
+  whiteSpace: 'nowrap',
+  boxSizing: 'border-box',
   ...(open && {
     ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
+    '& .MuiDrawer-paper': openedMixin(theme),
   }),
   ...(!open && {
     ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
+    '& .MuiDrawer-paper': closedMixin(theme),
   }),
 }));
 
@@ -125,30 +125,30 @@ export function MMUDrawer({
       <List>
         {user._isAdmin && (
           <DrawerElementAdmin
-            title={t("titleAdmin")}
+            title={t('titleAdmin')}
             open={isSideDrawerExpanded}
-            text={t("admin")}
+            text={t('admin')}
             action={() => handleChangeContent(MENU_ELEMENT.ADMIN)}
           />
         )}
-        <Tooltip title={t("titleSettings")} placement="right">
+        <Tooltip title={t('titleSettings')} placement="right">
           <ListItem sx={{ padding: 0 }}>
             <ItemButton
               open={isSideDrawerExpanded}
               selected={false}
               icon={<SettingsIcon />}
-              text={t("settings")}
+              text={t('settings')}
               action={() => handleChangeContent(MENU_ELEMENT.SETTING)}
             />
           </ListItem>
         </Tooltip>
-        <Tooltip title={t("titleDisconnect")} placement="right">
+        <Tooltip title={t('titleDisconnect')} placement="right">
           <ListItem sx={{ padding: 0 }}>
             <ItemButton
               open={isSideDrawerExpanded}
               selected={false}
               icon={<LogoutIcon />}
-              text={t("disconnect")}
+              text={t('disconnect')}
               action={() => setShowSignOutModal(true)}
             />
           </ListItem>

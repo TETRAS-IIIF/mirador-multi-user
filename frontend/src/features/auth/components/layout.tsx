@@ -1,9 +1,9 @@
-import { Grid, Typography } from "@mui/material";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { NavLink } from "react-router-dom";
-import { ReactNode } from "react";
-import storage from "../../../utils/storage.ts";
-import { TermsFooter } from "../../../../customAssets/TermsFooter.tsx";
+import { Grid, Typography } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { NavLink } from 'react-router-dom';
+import { ReactNode } from 'react';
+import storage from '../../../utils/storage.ts';
+import { TermsFooter } from '../../../../customAssets/TermsFooter.tsx';
 
 type LayoutProps = {
   children: ReactNode;
@@ -16,21 +16,18 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
     <Grid
       container
       direction="column"
-      justifyContent="space-around"
-      alignItems="center"
       min-height="100vh"
       sx={{
-        height: "100vh",
+        height: '100vh',
       }}
     >
       <Grid
-        item
         container
         direction="row"
         justifyContent="space-around"
         alignItems="center"
       >
-        <Grid item>
+        <Grid>
           <NavLink
             to="/"
             onClick={() => {
@@ -40,7 +37,7 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
             <ArrowBackIcon />
           </NavLink>
         </Grid>
-        <Grid item>
+        <Grid>
           <Typography variant="h2" component="h1">
             {title}
           </Typography>
@@ -48,7 +45,6 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
         {rightButton ? rightButton : <Grid></Grid>}
       </Grid>
       <Grid
-        item
         container
         direction="column"
         justifyContent="center"
@@ -57,7 +53,7 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
       >
         {children}
       </Grid>
-      <Grid item container sx={{ width: "100%" }}>
+      <Grid container sx={{ width: '100%' }}>
         <TermsFooter />
       </Grid>
     </Grid>

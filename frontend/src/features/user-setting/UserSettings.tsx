@@ -43,28 +43,36 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
   };
 
   return (
-    <Grid container spacing={2} sx={{ padding: 2 }}>
+    <Grid
+      container
+      direction={'column'}
+      sx={{
+        padding: 2,
+      }}
+    >
       <Grid
         container
-        item
-        flexDirection="row"
-        alignItems="center"
         spacing={2}
-        sx={{ width: '100%' }}
+        direction={'row'}
+        size={12}
+        sx={{
+          alignItems: 'center',
+          padding: 1,
+        }}
       >
-        <Grid item xs={10}>
+        <Grid size={10}>
           <TextField
             label={t('labelApiToken')}
             disabled
             fullWidth
             helperText={t('helperTextApiToken')}
             defaultValue={token}
-            inputProps={{
-              maxLength: 255,
+            slotProps={{
+              htmlInput: { maxLength: 255 },
             }}
           />
         </Grid>
-        <Grid item xs={2}>
+        <Grid>
           <ModalButton
             tooltipButton={t('tooltipButtonToken')}
             onClickFunction={HandleCopyToClipBoard}
@@ -73,46 +81,60 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
           />
         </Grid>
       </Grid>
-      <Grid container item>
-        <Button variant={'contained'} onClick={redirectToSubscriptionDashboard}>
-          {t('subscription_dashboard')}
-        </Button>
-      </Grid>
-      <Grid container item flexDirection="column" spacing={1}>
-        <Grid item>
-          <Typography variant="h5">{t('changeLanguage')}</Typography>
-        </Grid>
-        <Grid item>
-          <LanguageSelector userId={user.id} />
-        </Grid>
-      </Grid>
-
-      <Grid container item xs={12}>
-        <ProfileUpdateForm />
-      </Grid>
-      <Grid item spacing={2} sx={{ width: '100%' }}>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={handleConfirmDeleteItemModal}
-        >
-          {t('DeleteAccount')}
-        </Button>
-      </Grid>
-      <MMUModal
-        width={400}
-        openModal={openDeleteModal}
-        setOpenModal={handleConfirmDeleteItemModal}
+      <Grid
+        container
+        spacing={2}
+        direction={'column'}
+        size={12}
+        sx={{
+          justifyContent: 'center',
+        }}
       >
-        <ModalConfirmDelete
-          deleteItem={handleDeleteAccount}
-          itemId={user.id}
-          content={t('deleteConfirmation', {
-            itemName: t('yourAccount'),
-          })}
-          buttonLabel={t('deleteDefinitely')}
-        />
-      </MMUModal>
+        {import.meta.env.VITE_EXTERNAL_DASHBOARD_URL && (
+          <Grid>
+            <Button
+              variant={'contained'}
+              onClick={redirectToSubscriptionDashboard}
+            >
+              {t('subscription_dashboard')}
+            </Button>
+          </Grid>
+        )}
+        <Grid>
+          <Grid>
+            <Typography variant="h5">{t('changeLanguage')}</Typography>
+          </Grid>
+          <Grid>
+            <LanguageSelector userId={user.id} />
+          </Grid>
+        </Grid>
+        <Grid>
+          <ProfileUpdateForm />
+        </Grid>
+        <Grid spacing={2}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleConfirmDeleteItemModal}
+          >
+            {t('DeleteAccount')}
+          </Button>
+        </Grid>
+        <MMUModal
+          width={400}
+          openModal={openDeleteModal}
+          setOpenModal={handleConfirmDeleteItemModal}
+        >
+          <ModalConfirmDelete
+            deleteItem={handleDeleteAccount}
+            itemId={user.id}
+            content={t('deleteConfirmation', {
+              itemName: t('yourAccount'),
+            })}
+            buttonLabel={t('deleteDefinitely')}
+          />
+        </MMUModal>
+      </Grid>
     </Grid>
   );
 };

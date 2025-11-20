@@ -1,19 +1,16 @@
-import {
-  ItemsRights,
-  UserGroupTypes,
-} from "../features/user-group/types/types.ts";
-import { User } from "../features/auth/types/types.ts";
+import { ITEM_RIGHTS, USER_GROUP_TYPES } from '../utils/mmu_types.ts';
+import { User } from '../features/auth/types/types.ts';
 
 export type ListItem = {
   id: number;
   title?: string;
-  rights?: ItemsRights;
-  type?: UserGroupTypes;
-  personalOwnerGroupId?:number;
+  rights?: ITEM_RIGHTS;
+  type?: USER_GROUP_TYPES;
+  personalOwnerGroupId?: number;
 };
 
 export type ItemOwner = {
-  rights: ItemsRights;
+  rights: ITEM_RIGHTS;
 };
 export type ModalEditItem = {
   id: number;

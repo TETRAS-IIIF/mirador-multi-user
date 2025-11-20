@@ -1,4 +1,4 @@
-import { ObjectTypes } from '../../features/tag/type.ts';
+import { OBJECT_TYPES } from '../../utils/mmu_types.ts';
 import { Grid, Typography } from '@mui/material';
 import { ShareLink } from './shareLink.tsx';
 import { Snapshot } from '../../features/projects/types/types.ts';
@@ -8,7 +8,7 @@ import { deleteSnapshot } from '../../features/projects/api/snapshot/deleteSnaps
 import { updateSnapshot } from '../../features/projects/api/snapshot/updateSnapshot.ts';
 
 interface ISnapshotFactoryProps<T> {
-  objectTypes: ObjectTypes;
+  objectTypes: OBJECT_TYPES;
   item: T;
   fetchItems: () => void;
 }
@@ -21,10 +21,10 @@ export const SnapshotFactory = <
     personalOwnerGroupId?: number;
   },
 >({
-    objectTypes,
-    item,
-    fetchItems,
-  }: ISnapshotFactoryProps<T>) => {
+  objectTypes,
+  item,
+  fetchItems,
+}: ISnapshotFactoryProps<T>) => {
   const { t } = useTranslation();
 
   const handleCreateSnapshot = async () => {
@@ -56,18 +56,21 @@ export const SnapshotFactory = <
     fetchItems();
   };
   return (
-    <>
-      {objectTypes === ObjectTypes.PROJECT && (
+    <Grid
+      container
+      spacing={2}
+      flexDirection="column"
+      sx={{ width: '100%', marginTop: 1 }}
+    >
+      {objectTypes === OBJECT_TYPES.PROJECT && (
         <Grid
           alignItems="center"
           container
           flexDirection="column"
-          item
           spacing={1}
-          sx={{ width: '100%', padding: 0, margin: 0 }}
+          sx={{ padding: 0, margin: 0 }}
         >
           <Grid
-            item
             container
             sx={{
               width: '100%',
@@ -76,12 +79,11 @@ export const SnapshotFactory = <
             }}
             spacing={1}
           >
-            <Grid item>
+            <Grid>
               <Typography variant="h5">{t('snapshot')}</Typography>
             </Grid>
           </Grid>
           <Grid
-            item
             sx={{
               width: '100%',
               margin: 0,
@@ -98,6 +100,6 @@ export const SnapshotFactory = <
           </Grid>
         </Grid>
       )}
-    </>
+    </Grid>
   );
 };

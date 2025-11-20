@@ -12,14 +12,15 @@ import { lookingForTags } from '../api/lookingForTags.ts';
 import { Manifest } from '../../manifest/types/types.ts';
 import { tagging } from '../api/tagging.ts';
 import { useEffect, useState } from 'react';
-import { ObjectTypes, Tag, Tagging } from '../type.ts';
+import { Tag, Tagging } from '../type.ts';
 import { getTagsForObject } from '../api/getTagsForObject.ts';
 import { removeTag } from '../api/RemoveTag.ts';
 import { TagChip } from './TagChip.tsx';
+import { OBJECT_TYPES } from '../../../utils/mmu_types.ts';
 
 interface ITaggingFormProps {
   object: { id: number };
-  objectTypes: ObjectTypes;
+  objectTypes: OBJECT_TYPES;
 }
 
 export const TaggingForm = ({ object, objectTypes }: ITaggingFormProps) => {
@@ -80,7 +81,7 @@ export const TaggingForm = ({ object, objectTypes }: ITaggingFormProps) => {
           style={{ width: '100%', marginBottom: '10px' }}
           onSubmit={() => console.log('taggingFormSubmit')}
         >
-          <Grid item>
+          <Grid>
             <SearchBar
               setUserInput={setUserInput}
               label={'Tagging'}
@@ -94,7 +95,7 @@ export const TaggingForm = ({ object, objectTypes }: ITaggingFormProps) => {
         </form>
         <Grid container spacing={2}>
           {tags.map((tagging) => (
-            <Grid key={tagging.tagId} item>
+            <Grid key={tagging.tagId}>
               <TagChip tag={tagging.tag} handleRemoveTag={handleRemoveTag} />
             </Grid>
           ))}

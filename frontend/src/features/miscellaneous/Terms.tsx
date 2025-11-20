@@ -1,7 +1,7 @@
-import { useNavigate } from "react-router-dom";
-import { Grid } from "@mui/material";
-import { theme } from "../../assets/theme/mainTheme.ts";
-import { CustomTerms } from "../../../customAssets/CustomTerms.tsx";
+import { useNavigate } from 'react-router-dom';
+import { Grid } from '@mui/material';
+import { theme } from '../../assets/theme/mainTheme.ts';
+import { CustomTerms } from '../../../customAssets/CustomTerms.tsx';
 
 export const Terms = () => {
   useNavigate();
@@ -13,23 +13,22 @@ export const Terms = () => {
       justifyContent="center"
       alignItems="center"
       spacing={10}
-      minHeight={"100vh"}
+      minHeight={'100vh'}
       sx={{
         backgroundImage: theme.palette.backgroundImage,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
         marginTop: 0,
       }}
     >
       <Grid
-        item
         container
-        sx={{ backgroundColor: "rgba(255, 255, 255, 0.4)" }}
+        sx={{ backgroundColor: 'rgba(255, 255, 255, 0.4)' }}
         justifyContent="center"
         alignItems="center"
       >
-        <Grid item>
+        <Grid>
           <CustomTerms></CustomTerms>
         </Grid>
       </Grid>

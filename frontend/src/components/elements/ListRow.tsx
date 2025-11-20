@@ -1,4 +1,4 @@
-import { ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { ListItem, ListItemButton, ListItemText } from '@mui/material';
 
 interface ListRowProps {
   content: string;

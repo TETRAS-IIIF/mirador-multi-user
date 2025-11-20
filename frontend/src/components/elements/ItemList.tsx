@@ -1,15 +1,15 @@
-import { Divider, Grid, IconButton, Typography } from '@mui/material';
-import { ListItem } from '../types.ts';
-import { LoadingSpinner } from './loadingSpinner.tsx';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { Box, Divider, Grid, IconButton, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { SearchBar } from './SearchBar.tsx';
-import { MMUToolTip } from './MMUTootlTip.tsx';
-import { UserGroupTypes } from '../../features/user-group/types/types.ts';
 import PersonIcon from '@mui/icons-material/Person';
 import GroupsIcon from '@mui/icons-material/Groups';
-import { ObjectTypes } from '../../features/tag/type.ts';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { ListItem } from '../types.ts';
+import { LoadingSpinner } from './loadingSpinner.tsx';
+import { SearchBar } from './SearchBar.tsx';
+import { MMUToolTip } from './MMUTootlTip.tsx';
+import { OBJECT_TYPES, USER_GROUP_TYPES } from '../../utils/mmu_types.ts';
 
 interface IProjectUserGroup<G, T> {
   children?: (item: ListItem) => ReactNode;
@@ -19,7 +19,7 @@ interface IProjectUserGroup<G, T> {
   handleSearchModalEditItem: (partialString: string) => Promise<any[]> | any[];
   item: T;
   items: ListItem[];
-  objectTypes: ObjectTypes;
+  objectTypes: OBJECT_TYPES;
   ownerId: number;
   removeItem: (itemId: number) => void;
   searchBarLabel: string;
@@ -51,39 +51,46 @@ export const ItemList = <
 }: IProjectUserGroup<G, T>) => {
   const { t } = useTranslation();
 
-  const isActionAllowedForListItem = (listItem: ListItem) => {
+  const isActionAllowedForListItem = (listItem: ListItem): boolean => {
     if (
-      objectTypes === ObjectTypes.MANIFEST ||
-      objectTypes === ObjectTypes.MEDIA
+      objectTypes === OBJECT_TYPES.MANIFEST ||
+      objectTypes === OBJECT_TYPES.MEDIA
     ) {
       return (
         listItem.personalOwnerGroupId !== ownerId ||
-        listItem.type === UserGroupTypes.MULTI_USER
+        listItem.type === USER_GROUP_TYPES.MULTI_USER
       );
     }
-    if (objectTypes === ObjectTypes.GROUP) {
+    if (objectTypes === OBJECT_TYPES.GROUP) {
       return item.ownerId !== listItem.id;
     }
-    if (objectTypes === ObjectTypes.PROJECT) {
+    if (objectTypes === OBJECT_TYPES.PROJECT) {
       return item.personalOwnerGroupId !== listItem.id;
     }
+    return false;
+  };
+
+  const renderIcon = (type: USER_GROUP_TYPES) => {
+    if (type === USER_GROUP_TYPES.PERSONAL) return <PersonIcon />;
+    if (type === USER_GROUP_TYPES.MULTI_USER) return <GroupsIcon />;
+    return <PersonIcon />;
   };
 
   return (
     <Grid
       container
-      item
-      sx={{
-        minHeight: '55px',
-        overflowY: 'auto',
-      }}
+      direction="column"
       spacing={2}
+      sx={{
+        overflowY: 'auto',
+        minWidth: 935,
+      }}
     >
-      <Grid container item alignItems="center" spacing={2}>
-        <Grid item>
+      <Grid container direction={'row'} alignItems={'center'}>
+        <Grid>
           <Typography variant="h5">{t('Permissions')}</Typography>
         </Grid>
-        <Grid item>
+        <Grid>
           <MMUToolTip>
             <div>
               {t('MMUTooltipAdmin')}
@@ -95,77 +102,74 @@ export const ItemList = <
           </MMUToolTip>
         </Grid>
       </Grid>
-      <Grid item sx={{ marginLeft: '10px' }}>
-        <SearchBar
-          label={searchBarLabel}
-          handleAdd={handleAddAccessListItem}
-          setSelectedData={setItemToAdd!}
-          getOptionLabel={handleGetOptionLabel}
-          fetchFunction={handleSearchModalEditItem}
-          setSearchInput={setSearchInput}
-          actionButtonLabel={t('add')}
-          groupByOption={getGroupByOption}
-        />
+      <Grid container alignItems={'center'} direction={'row'}>
+        <Grid>
+          <SearchBar
+            label={searchBarLabel}
+            handleAdd={handleAddAccessListItem}
+            setSelectedData={setItemToAdd!}
+            getOptionLabel={handleGetOptionLabel}
+            fetchFunction={handleSearchModalEditItem}
+            setSearchInput={setSearchInput}
+            actionButtonLabel={t('add')}
+            groupByOption={getGroupByOption}
+          />
+        </Grid>
+
+        <Grid>
+          <MMUToolTip>
+            <div>{t('MMUTooltipSearchForUser')}</div>
+          </MMUToolTip>
+        </Grid>
       </Grid>
-      <Grid item>
-        <MMUToolTip>
-          <div>{t('MMUTooltipSearchForUser')}</div>
-        </MMUToolTip>
-      </Grid>
-      <Grid item container flexDirection="column" spacing={1}>
+
+      <Grid container direction="column" spacing={1}>
         {items?.map((listItem) =>
           listItem ? (
             <Grid
               key={listItem.id}
-              item
               container
-              spacing={1}
-              flexDirection="row"
               alignItems="center"
-              justifyContent="spaceBetween"
+              justifyContent="space-between"
+              sx={{ width: '100%' }}
             >
-              <Grid
-                item
-                container
-                xs={8}
-                alignItems="center"
-                spacing={2}
-                justifyContent="space-between"
-              >
-                <Grid item>
-                  <Typography>{listItem.title}</Typography>
-                </Grid>
-              </Grid>
-              <Grid item>
-                {listItem.type === UserGroupTypes.PERSONAL && <PersonIcon />}
-                {listItem.type === UserGroupTypes.MULTI_USER && <GroupsIcon />}
-                {listItem.type !== UserGroupTypes.PERSONAL &&
-                  listItem.type !== UserGroupTypes.MULTI_USER && <PersonIcon />}
-              </Grid>
-              {isActionAllowedForListItem(listItem) && (
-                <>
-                  <Grid item>{children!(listItem)}</Grid>
-                  <Grid item>
+              <Typography>{listItem.title}</Typography>
+
+              <Box display="flex" alignItems="center" gap={1}>
+                {renderIcon(listItem.type!)}
+                {isActionAllowedForListItem(listItem) ? (
+                  <>
+                    {children && children(listItem)}
                     <IconButton
                       onClick={() => removeItem(listItem.id)}
                       aria-label="delete"
                       color="error"
                       disabled={
                         listItem.personalOwnerGroupId === ownerId &&
-                        listItem.type !== UserGroupTypes.MULTI_USER
+                        listItem.type !== USER_GROUP_TYPES.MULTI_USER
                       }
                     >
                       <DeleteIcon />
                     </IconButton>
-                  </Grid>
-                </>
-              )}
-              <Grid item xs={12} sx={{ mb: '5px' }}>
-                <Divider />
-              </Grid>
+                  </>
+                ) : (
+                  <>
+                    {children && (
+                      <Box sx={{ visibility: 'hidden' }}>
+                        {children(listItem)}
+                      </Box>
+                    )}
+                    <IconButton sx={{ visibility: 'hidden' }}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </>
+                )}
+              </Box>
+
+              <Divider sx={{ my: 1, width: '100%' }} />
             </Grid>
           ) : (
-            <LoadingSpinner />
+            <LoadingSpinner key={`spinner-${Math.random()}`} />
           ),
         )}
       </Grid>

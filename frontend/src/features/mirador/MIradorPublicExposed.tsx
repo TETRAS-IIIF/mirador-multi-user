@@ -5,7 +5,6 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import './style/mirador.css';
 import { Grid } from '@mui/material';
-import LocalStorageAdapter from 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js';
 import Mirador from 'mirador';
 
 export const MiradorPublicExposed = () => {
@@ -28,8 +27,6 @@ export const MiradorPublicExposed = () => {
           const config = {
             id: viewerRef.current.id,
             annotation: {
-              adapter: (canvasId: any) =>
-                new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
               exportLocalStorageAnnotations: false, // display annotation JSON export button
             },
             annotations: {
@@ -60,7 +57,7 @@ export const MiradorPublicExposed = () => {
   }, []);
 
   return (
-    <Grid item>
+    <Grid>
       <div ref={viewerRef} id="mirador"></div>
     </Grid>
   );

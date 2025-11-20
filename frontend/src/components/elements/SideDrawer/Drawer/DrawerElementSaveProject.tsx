@@ -1,8 +1,8 @@
-import { Divider, List, ListItem, Tooltip } from "@mui/material";
-import { ItemButton } from "../../SideBar/ItemButton";
-import WorkIcon from "@mui/icons-material/Work";
-import SaveIcon from "@mui/icons-material/Save";
-import { useTranslation } from "react-i18next";
+import { Divider, List, ListItem, Tooltip } from '@mui/material';
+import { ItemButton } from '../../SideBar/ItemButton';
+import WorkIcon from '@mui/icons-material/Work';
+import SaveIcon from '@mui/icons-material/Save';
+import { useTranslation } from 'react-i18next';
 
 interface DrawerElementSaveProjectProps {
   open: boolean;
@@ -26,18 +26,18 @@ export function DrawerElementSaveProject({
             text={projectSelected!.title}
             open={open}
             selected={false}
-            action={() => console.log("")}
+            action={() => console.log('')}
           />
         </ListItem>
       </Tooltip>
       <Divider />
-      <Tooltip title={t("save")} placement="left">
+      <Tooltip title={t('save')} placement="left">
         <ListItem sx={{ padding: 0 }}>
           <ItemButton
             open={open}
             selected={false}
             icon={<SaveIcon />}
-            text={t("saveProject")}
+            text={t('saveProject')}
             action={saveProject}
           />
         </ListItem>

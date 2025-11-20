@@ -4,6 +4,10 @@ export const isValidFileForUpload = (file: File) => {
   return !isVideoOrAudioFile(file);
 };
 
+export function isDataUrl(url: string | undefined): boolean {
+  return typeof url === 'string' && url.trim().startsWith('data:');
+}
+
 const isVideoOrAudioFile = (file: File) => {
   return file.type.startsWith('video/') || file.type.startsWith('audio/');
 };
@@ -58,7 +62,12 @@ export const OIDC_CLIENT_ID = import.meta.env.VITE_OIDC_CLIENT_ID;
 export const OIDC_REDIRECT_URI = import.meta.env.VITE_OIDC_REDIRECT_URI;
 
 export function isValidUrl(string: string) {
-  const pattern =
-    /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
-  return pattern.test(string);
+  try {
+    const url = new URL(string);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
 }
+
+export const caddyUrl = import.meta.env.VITE_CADDY_URL;

@@ -10,8 +10,7 @@ import { AdminSettings } from './AdminSettings.tsx';
 
 export const AdminPanel = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const [openAddUserModal, setopenAddUserModal] =
-    useState(false);
+  const [openAddUserModal, setopenAddUserModal] = useState(false);
   const { t } = useTranslation();
 
   const fetchUsers = async () => {
@@ -53,7 +52,8 @@ export const AdminPanel = () => {
           align: 'center' as const,
         },
         {
-          value: user.termsValidatedAt ? 'Yes' : 'No', align: 'center' as const,
+          value: user.termsValidatedAt ? 'Yes' : 'No',
+          align: 'center' as const,
         },
         {
           value: new Date(user.createdAt).toLocaleString(),
@@ -64,32 +64,37 @@ export const AdminPanel = () => {
   }, [users]);
 
   return (
-    <Grid container flexDirection="column" item sx={{ padding: 2 }} spacing={2}>
-      <Grid item>
+    <Grid container flexDirection="column" sx={{ padding: 2 }} spacing={2}>
+      <Grid>
         <AdminSettings />
       </Grid>
-      <Grid item container flexDirection="column" spacing={1}>
-        <Grid item container>
-          <Grid item container flexDirection="column" spacing={1}>
-            <Grid item>
+      <Grid container flexDirection="column" spacing={1}>
+        <Grid container>
+          <Grid container flexDirection="column" spacing={1}>
+            <Grid>
               <Typography variant="h6" gutterBottom>
                 Users
               </Typography>
             </Grid>
-            <Grid item>
-              <Button variant="contained"
-                      onClick={() => setopenAddUserModal(!openAddUserModal)}>{t('admin_create_user')}</Button>
+            <Grid>
+              <Button
+                variant="contained"
+                onClick={() => setopenAddUserModal(!openAddUserModal)}
+              >
+                {t('admin_create_user')}
+              </Button>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item>
-          <AdminCollapsibleTable
-            columns={columns}
-            rows={rows}
-          />
+        <Grid>
+          <AdminCollapsibleTable columns={columns} rows={rows} />
         </Grid>
       </Grid>
-      <MMUModal openModal={openAddUserModal} setOpenModal={setopenAddUserModal} width={500}>
+      <MMUModal
+        openModal={openAddUserModal}
+        setOpenModal={setopenAddUserModal}
+        width={500}
+      >
         <CreateUserForm setopenAddUserModal={setopenAddUserModal} />
       </MMUModal>
     </Grid>

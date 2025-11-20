@@ -2,7 +2,6 @@ import {
   Button,
   Grid,
   ImageList,
-  styled,
   Tab,
   Tabs,
   Tooltip,
@@ -16,11 +15,9 @@ import {
   useState,
 } from 'react';
 import toast from 'react-hot-toast';
-import { Media, MediaTypes } from '../types/types.ts';
+import { Media } from '../types/types.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
-import { UserGroup } from '../../user-group/types/types.ts';
 import { createMedia } from '../api/createMedia.ts';
-import { User } from '../../auth/types/types.ts';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import { createMediaLink } from '../api/createMediaWithLink.ts';
@@ -30,18 +27,12 @@ import { useTranslation } from 'react-i18next';
 import { useCurrentPageData } from '../../../utils/customHooks/filterHook.ts';
 import { MediaImageBox } from './MediaImageBox.tsx';
 import { DrawerLinkMedia } from './DrawerLinkMedia.tsx';
-
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+import { UserGroup } from '../../user-group/types/types.ts';
+import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
+import { User } from '../../auth/types/types.ts';
+import { caddyUrl } from '../../../utils/utils.ts';
+import { useItemsPerPage } from '../../../utils/customHooks/useItemsPerPage.ts';
+import { MEDIA_TYPES, MEDIA_TYPES_TABS } from '../../../utils/mmu_types.ts';
 
 interface PopUpMediaProps {
   medias: Media[];
@@ -50,15 +41,6 @@ interface PopUpMediaProps {
   fetchMediaForUser: () => void;
   open: boolean;
 }
-
-const caddyUrl = import.meta.env.VITE_CADDY_URL;
-
-const MEDIA_TYPES_TABS = {
-  ALL: 0,
-  VIDEO: 1,
-  IMAGE: 2,
-  OTHER: 3,
-};
 
 export const ContentSidePanelMedia = ({
   medias,
@@ -73,7 +55,7 @@ export const ContentSidePanelMedia = ({
   const [mediaFilter, setMediaFilter] = useState<string | null>(null);
   const [sortField] = useState<keyof Media>('title');
   const [sortOrder] = useState('asc');
-  const itemsPerPage = 6;
+  const itemsPerPage = useItemsPerPage(2);
   const { t } = useTranslation();
   const handleCopyToClipBoard = async (path: string) => {
     try {
@@ -95,11 +77,11 @@ export const ContentSidePanelMedia = ({
   const filterByMediaType = (medias: Media[]) => {
     switch (mediaTabShown) {
       case MEDIA_TYPES_TABS.VIDEO:
-        return medias.filter((media) => media.mediaTypes === MediaTypes.VIDEO);
+        return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.VIDEO);
       case MEDIA_TYPES_TABS.IMAGE:
-        return medias.filter((media) => media.mediaTypes === MediaTypes.IMAGE);
+        return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.IMAGE);
       case MEDIA_TYPES_TABS.OTHER:
-        return medias.filter((media) => media.mediaTypes === MediaTypes.OTHER);
+        return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.OTHER);
       default:
         return medias;
     }
@@ -118,11 +100,11 @@ export const ContentSidePanelMedia = ({
   const totalPages = Math.ceil(
     medias.filter((media) => {
       if (mediaTabShown === 1) {
-        return media.mediaTypes === MediaTypes.VIDEO;
+        return media.mediaTypes === MEDIA_TYPES.VIDEO;
       } else if (mediaTabShown === 2) {
-        return media.mediaTypes === MediaTypes.IMAGE;
+        return media.mediaTypes === MEDIA_TYPES.IMAGE;
       } else if (mediaTabShown === 3) {
-        return media.mediaTypes === MediaTypes.OTHER;
+        return media.mediaTypes === MEDIA_TYPES.OTHER;
       }
       return true;
     }).length / itemsPerPage,
@@ -179,7 +161,11 @@ export const ContentSidePanelMedia = ({
   } else if (currentPageData.length > 0) {
     mediaContent = (
       <ImageList
-        sx={{ minWidth: 400, padding: 1, width: 400 }}
+        sx={{
+          minWidth: 400,
+          padding: 1,
+          width: 400,
+        }}
         cols={2}
         rowHeight={200}
       >
@@ -195,7 +181,7 @@ export const ContentSidePanelMedia = ({
     );
   } else {
     mediaContent = (
-      <Grid item container justifyContent="center" alignItems="center">
+      <Grid container justifyContent="center" alignItems="center">
         <Typography variant="h6" component="h2">
           {t('noMatchingMediaFilter')}
         </Typography>
@@ -207,24 +193,32 @@ export const ContentSidePanelMedia = ({
       <Grid
         container
         spacing={2}
-        sx={{ padding: '20px' }}
+        sx={{ padding: '5px', width: '400px' }}
         alignItems="center"
         flexDirection="row"
       >
-        <Grid item>
+        <Grid>
           <SearchBar label={t('search')} setFilter={setMediaFilter} />
         </Grid>
-        <Grid item>
+        <Grid>
           <Grid container direction="column" spacing={1}>
-            <Grid item>
-              <Tooltip title="Upload Media">
+            <Grid>
+              <Tooltip
+                title={t('actionsDial.upload')}
+                placement="left"
+                slotProps={{ popper: { sx: { zIndex: 9999 } } }}
+              >
                 <Button onClick={handleButtonClick} variant="contained">
                   <UploadFileIcon />
                 </Button>
               </Tooltip>
             </Grid>
-            <Grid item>
-              <Tooltip title="Link Media">
+            <Grid>
+              <Tooltip
+                title={t('actionsDial.link')}
+                placement="left"
+                slotProps={{ popper: { sx: { zIndex: 9999 } } }}
+              >
                 <Button
                   variant="contained"
                   onClick={() => setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)}
@@ -242,20 +236,15 @@ export const ContentSidePanelMedia = ({
         <Tab label={t('Images')} {...a11yProps(2)} />
         <Tab label={t('other')} {...a11yProps(3)} />
       </Tabs>
-      {!medias.length && (
-        <Grid container justifyContent={'center'}>
-          <Typography variant="h6" component="h2">
-            {t('noMediaYet')}
-          </Typography>
-        </Grid>
-      )}
-      {mediaContent}
-      <PaginationControls
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
-      <Grid item>
+      <Grid sx={{ height: '100%' }}>{mediaContent}</Grid>
+      <Grid sx={{ margin: 1 }}>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </Grid>
+      <Grid>
         <VisuallyHiddenInput
           id="file-upload"
           type="file"

@@ -35,7 +35,7 @@ export const LoginForm = () => {
   return (
     <form>
       <Grid container flexDirection="column" spacing={2}>
-        <Grid item>
+        <Grid>
           <FormField
             type="mail"
             placeholder={t('mail')}
@@ -45,8 +45,8 @@ export const LoginForm = () => {
             error={errors.mail}
           />
         </Grid>
-        <Grid item container alignItems="center" spacing={2}>
-          <Grid item>
+        <Grid container alignItems="center" spacing={2}>
+          <Grid>
             <FormField
               type="password"
               placeholder={t('password')}
@@ -56,7 +56,7 @@ export const LoginForm = () => {
               error={errors.password}
             />
           </Grid>
-          <Grid item>
+          <Grid>
             <Button
               variant="text"
               color="primary"
@@ -66,7 +66,7 @@ export const LoginForm = () => {
             </Button>
           </Grid>
         </Grid>
-        <Grid item container>
+        <Grid container>
           <Button
             type="submit"
             variant="contained"

@@ -17,18 +17,29 @@ export const ModalConfirmDelete = ({
   buttonLabel,
 }: IModalConfirmDeleteProps) => {
   return (
-    <Grid container wrap="nowrap" spacing={2}>
-      <Grid item>
+    <Grid
+      container
+      direction="row"
+      sx={{
+        justifyContent: 'center',
+      }}
+    >
+      <Grid>
         <WarningAmberIcon sx={{ color: 'red' }} fontSize="large" />
       </Grid>
-      <Grid item container spacing={2}>
-        <Grid item>
+      <Grid container spacing={2}>
+        <Grid>
           <Typography
             sx={{ 'word-break': ' break-word' }}
             dangerouslySetInnerHTML={{ __html: content }}
           />
         </Grid>
-        <Grid item>
+        <Grid
+          container
+          size={12}
+          direction="row"
+          sx={{ justifyContent: 'center' }}
+        >
           {deleteItem && (
             <Button
               color="error"

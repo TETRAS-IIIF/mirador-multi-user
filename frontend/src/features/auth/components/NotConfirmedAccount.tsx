@@ -7,20 +7,22 @@ import toast from 'react-hot-toast';
 import storage from '../../../utils/storage.ts';
 import { SuccessCard } from './SuccesCard.tsx';
 
-
 export const NotConfirmedAccount = () => {
-  const [successSentConfirmationLink, setSuccessSentConfirmationLink] = useState(false);
+  const [successSentConfirmationLink, setSuccessSentConfirmationLink] =
+    useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
-
 
   const handleResendConfirmation = async () => {
     setIsLoading(true);
     const email = storage.getUserEmail();
-    const confirmationStatus = await ResendConfirmationMail(email!, navigator.language.split('-')[0]);
+    const confirmationStatus = await ResendConfirmationMail(
+      email!,
+      navigator.language.split('-')[0],
+    );
     if (confirmationStatus === 200) {
       toast.success(t('messageConfirmationLink'), { duration: 10000 });
-      storage.clearUserEmail()
+      storage.clearUserEmail();
       setSuccessSentConfirmationLink(true);
     } else {
       toast.error(t('resendError'), { duration: 10000 });
@@ -45,7 +47,7 @@ export const NotConfirmedAccount = () => {
               </Typography>
             </SuccessCard>
           ) : (
-            <Grid item>
+            <Grid>
               <Button
                 variant="contained"
                 color="primary"
@@ -59,9 +61,7 @@ export const NotConfirmedAccount = () => {
                 )}
               </Button>
             </Grid>
-          )
-          }
-
+          )}
         </>
       </Grid>
     </Layout>

@@ -76,7 +76,7 @@ export const ResetPassword = () => {
     >
       <Container maxWidth="sm">
         <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3 }}>
-          <Typography variant="h5" align="center" gutterBottom>
+          <Typography variant="h5" alignItems="center" gutterBottom>
             {t('reset-password')}
           </Typography>
 

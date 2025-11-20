@@ -45,10 +45,10 @@ const ForgotPassword = () => {
       <Container maxWidth="sm">
         <Box display="flex" justifyContent="center" alignItems="center">
           <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3, width: '100%' }}>
-            <Typography variant="h5" align="center" gutterBottom>
+            <Typography variant="h5" alignItems="center" gutterBottom>
               {t('forgot-password')}
             </Typography>
-            <Typography variant="body2" align="center" sx={{ mb: 2 }}>
+            <Typography variant="body2" alignItems="center" sx={{ mb: 2 }}>
               {t('explanationPasswordReset')}
             </Typography>
             <TextField

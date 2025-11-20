@@ -1,7 +1,7 @@
-import Modal from "@mui/material/Modal";
-import { Box, DialogTitle, IconButton } from "@mui/material";
-import { ReactNode } from "react";
-import CloseIcon from "@mui/icons-material/Close";
+import Modal from '@mui/material/Modal';
+import { Box, DialogTitle, IconButton } from '@mui/material';
+import { ReactNode } from 'react';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface IOpenModalProps {
   openModal: boolean;
@@ -11,11 +11,11 @@ interface IOpenModalProps {
 }
 
 const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  bgcolor: "background.paper",
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  bgcolor: 'background.paper',
   boxShadow: 24,
   pt: 2,
   px: 4,
@@ -41,7 +41,7 @@ export const MMUModal = ({
           sx: { zIndex: 800 },
         },
       }}
-      sx={{ zIndex: 1300, overflow: "scroll" }}
+      sx={{ zIndex: 1300, overflow: 'scroll' }}
     >
       <Box sx={{ ...style, width: width }}>
         <DialogTitle id="id" sx={{ padding: 0 }}>

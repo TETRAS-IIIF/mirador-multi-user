@@ -11,17 +11,13 @@ interface TextEditorProps {
 }
 
 const StyledReactQuill = styled(ReactQuill)(() => ({
-  ".ql-editor": {
-    height: "200px",
-    width: "100%",
+  '.ql-editor': {
+    height: '200px',
+    width: '100%',
   },
 }));
 
-export const TextEditor = (
-  {
-    textHtml,
-    updateText,
-  }: TextEditorProps) => {
+export const TextEditor = ({ textHtml, updateText }: TextEditorProps) => {
   const [editorHtml, setEditorHtml] = useState<string | undefined>(textHtml);
   const { t } = useTranslation();
 

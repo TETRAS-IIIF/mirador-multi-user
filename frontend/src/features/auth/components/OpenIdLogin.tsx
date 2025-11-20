@@ -19,7 +19,7 @@ export const OpenIdLogin = () => {
   }
 
   return (
-    <Grid item>
+    <Grid>
       <Button
         fullWidth
         variant="contained"

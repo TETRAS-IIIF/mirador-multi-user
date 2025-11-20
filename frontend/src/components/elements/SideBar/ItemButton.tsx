@@ -1,10 +1,5 @@
-import {
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
-import { ReactNode } from "react";
+import { ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
+import { ReactNode } from 'react';
 
 interface IItemButton {
   open: boolean;
@@ -22,41 +17,35 @@ export const ItemButton = ({
   selected,
 }: IItemButton) => {
   return (
-    <ListItem
-      key={text}
-      disablePadding
+    <ListItemButton
+      onClick={action}
+      selected={selected}
       sx={{
-        display: "block",
-        backgroundColor: selected ? "#dcdcdc" : "inherit",
+        minHeight: 48,
+        justifyContent: open ? 'initial' : 'center',
+        px: 2.5,
+        // optional: preserve your selected background
+        ...(selected && { backgroundColor: '#dcdcdc' }),
       }}
     >
-      <ListItemButton
+      <ListItemIcon
         sx={{
-          minHeight: 48,
-          justifyContent: open ? "initial" : "center",
-          px: 2.5,
+          minWidth: 0,
+          mr: open ? 3 : 'auto',
+          justifyContent: 'center',
         }}
-        onClick={action}
       >
-        <ListItemIcon
-          sx={{
-            minWidth: 0,
-            mr: open ? 3 : "auto",
-            justifyContent: "center",
-          }}
-        >
-          {icon}
-        </ListItemIcon>
-        <ListItemText
-          primary={text}
-          sx={{
-            opacity: open ? 1 : 0,
-            textOverflow: "ellipsis",
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-          }}
-        />
-      </ListItemButton>
-    </ListItem>
+        {icon}
+      </ListItemIcon>
+      <ListItemText
+        primary={text}
+        sx={{
+          opacity: open ? 1 : 0,
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+        }}
+      />
+    </ListItemButton>
   );
 };
