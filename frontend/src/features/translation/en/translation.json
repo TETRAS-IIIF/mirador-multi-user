@@ -259,6 +259,7 @@
   "search": "Search",
   "searchLabel": "Search",
   "searchUser": "Search Users",
+  "selectFile": "Select file",
   "send_test_mail": "Send test mail",
   "selectItemToast": "select an item in the list",
   "settings": "Settings",
@@ -343,6 +344,5 @@
   "noTemplatesAvailable": "No templates available",
   "Youtube_not_allowed_error": "YouTube links are not supported.",
   "validURLToManifest": "Valid URL to a manifest",
-  "validURLToMedia": "Valid URL to a media",
-  "selectFile": "Select file"
+  "validURLToMedia": "Valid URL to a media"
 }

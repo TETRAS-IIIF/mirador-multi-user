@@ -259,6 +259,7 @@
   "search": "Rechercher",
   "searchLabel": "Rechercher",
   "searchUser": "Rechercher des utilisateurs",
+  "selectFile": "Sélectionner un fichier",
   "selectItemToast": "Sélectionnez un élément dans la liste",
   "send_test_mail": "Send test mail",
   "settings": "Paramètres",
@@ -345,6 +346,5 @@
   "newTemplateContent": "Ajouter votre contenu",
   "Youtube_not_allowed_error": "Les liens YouTube ne sont pas pris en charge.",
   "validURLToManifest": "URL valide vers un manifeste",
-  "validURLToMedia": "URL valide vers un média",
-  "selectFile": "Sélectionner un fichier"
+  "validURLToMedia": "URL valide vers un média"
 }
