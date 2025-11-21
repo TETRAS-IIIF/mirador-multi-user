@@ -315,11 +315,13 @@ export default function JsonEditorWithControls({
             fullScreen
             open={dialogOpen}
             onClose={exitDialog}
-            PaperProps={{
-              sx: {
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100vh',
+            slotProps={{
+              paper: {
+                sx: {
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100vh',
+                },
               },
             }}
           >

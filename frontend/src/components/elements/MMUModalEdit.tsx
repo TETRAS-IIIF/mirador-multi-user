@@ -1,33 +1,12 @@
-import {
-  Button,
-  Grid,
-  SelectChangeEvent,
-  Tab,
-  Tabs,
-  TextField,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import {
-  ChangeEvent,
-  Dispatch,
-  SetStateAction,
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { Button, Grid, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography, } from '@mui/material';
+import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useCallback, useEffect, useState, } from 'react';
 import SaveIcon from '@mui/icons-material/Save';
 import { ItemList } from './ItemList.tsx';
 import { MMUModal } from './modal.tsx';
 import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
 import { ListItem } from '../types.ts';
 import CancelIcon from '@mui/icons-material/Cancel';
-import {
-  ITEM_RIGHTS,
-  OBJECT_ORIGIN,
-  OBJECT_TYPES,
-} from '../../utils/mmu_types.ts';
+import { ITEM_RIGHTS, MEDIA_TYPES, OBJECT_ORIGIN, OBJECT_TYPES, } from '../../utils/mmu_types.ts';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -47,16 +26,14 @@ import { updateManifestJson } from '../../features/manifest/api/updateManifestJs
 import { Selector } from '../Selector.tsx';
 import { useTranslation } from 'react-i18next';
 import { NoteTemplate } from './CustomizationEditModal/NoteTemplate.tsx';
-import {
-  Project,
-  Snapshot,
-  Template,
-} from '../../features/projects/types/types.ts';
+import { Project, Snapshot, Template, } from '../../features/projects/types/types.ts';
 import { TagMaker } from './TagsFactory/TagMaker.tsx';
 
 import { SnapshotFactory } from './SnapshotFactory.tsx';
-import { isValidUrl } from '../../utils/utils.ts';
+import { caddyUrl, isValidUrl } from '../../utils/utils.ts';
 import JsonEditorWithControls from './jsonAvancedEditor.tsx';
+import { getEditorLanguageFromMedia } from '../../features/media/utils/utils.ts';
+import { AdvancedTextEditor } from '../../features/media/component/AdvancedTextEditor.tsx';
 import { ReplaceModalContent } from '../../features/projects/ReplaceModalContent.tsx';
 
 interface ModalItemProps<T> {
@@ -95,7 +72,7 @@ interface ModalItemProps<T> {
     itemId: number,
     itemName: string,
     hash: string,
-  ) => void;
+  ) => Promise<void>;
 }
 
 type MetadataFormat = {
@@ -133,6 +110,8 @@ export const MMUModalEdit = <
     tags?: string[];
     title?: string;
     userWorkspace?: Record<string, string>;
+    mediaTypes?: MEDIA_TYPES;
+    url?: string;
   },
 >({
   HandleOpenModalEdit,
@@ -184,6 +163,28 @@ export const MMUModalEdit = <
   const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<
     MetadataFormat | undefined
   >();
+  const [advancedText, setAdvancedText] = useState<string>('');
+
+  const loadMediaContent = async (url: string): Promise<string> => {
+    const response = await fetch(url, { method: 'GET' });
+    if (!response.ok) return '';
+
+    return await response.text();
+  };
+  useEffect(() => {
+    const resolvedUrl = item.url?.includes('.')
+      ? item.url
+      : `${caddyUrl}/${item.hash}/${item.path}`;
+
+    const textContent = async () => {
+      if (objectTypes === OBJECT_TYPES.MEDIA && isEditable(item)) {
+        const content = await loadMediaContent(resolvedUrl);
+        setAdvancedText(content);
+      }
+    };
+    textContent();
+  }, [objectTypes, item]);
+
   const [
     jsonElementToEditInAdvancedEditor,
     setJsonElementToEditInAdvancedEditor,
@@ -467,6 +468,37 @@ export const MMUModalEdit = <
     }
   };
 
+  const isEditable = (m: T): boolean => {
+    if (m.mediaTypes !== MEDIA_TYPES.OTHER) return false;
+    let ext;
+
+    if (m.url) {
+      ext = m.url.split('.').pop()?.toLowerCase();
+    } else {
+      const url = `${caddyUrl}/${m.hash}/${m.path}`;
+      ext = url.split('.').pop()?.toLowerCase();
+    }
+    if (!ext) return false;
+
+    const editableExt = new Set([
+      'txt',
+      'md',
+      'html',
+      'htm',
+      'xml',
+      'json',
+      'csv',
+    ]);
+    return editableExt.has(ext);
+  };
+
+  const showAdvancedTab =
+    ((objectTypes === OBJECT_TYPES.PROJECT ||
+      (objectTypes === OBJECT_TYPES.MANIFEST &&
+        item.origin !== OBJECT_ORIGIN.LINK)) &&
+      jsonElementToEditInAdvancedEditor) ||
+    (objectTypes === OBJECT_TYPES.MEDIA && isEditable(item));
+
   const deleteContent =
     objectTypes === OBJECT_TYPES.MANIFEST
       ? t('deleteConfirmationManifest')
@@ -474,6 +506,15 @@ export const MMUModalEdit = <
         ? t('deleteConfirmationMedia')
         : t('deleteConfirmation', { itemName: itemLabel });
 
+  const handleSaveText = async (newContent: string) => {
+    if (handleReplaceItem) {
+      // turn edited text into a Blob -> File so reuploadMedia can use it
+      const file = new File([newContent], item.path!, {
+        type: 'text/plain;charset=utf-8',
+      });
+      await handleReplaceItem(file, item.id, item.path!, item.hash!);
+    }
+  };
   return (
     <Grid
       container
@@ -532,21 +573,16 @@ export const MMUModalEdit = <
               disabled
             />
           )}
-
-        {(objectTypes === OBJECT_TYPES.PROJECT ||
-          (objectTypes === OBJECT_TYPES.MANIFEST &&
-            item.origin !== OBJECT_ORIGIN.LINK)) &&
-          jsonElementToEditInAdvancedEditor && (
-            <Tab
-              label={
-                <Tooltip title={t('tab_advanced_desc')}>
-                  <span>{t('advancedEdit')}</span>
-                </Tooltip>
-              }
-              {...a11yProps(3)}
-              disabled={!jsonElementToEditInAdvancedEditor}
-            />
-          )}
+        {showAdvancedTab && (
+          <Tab
+            label={
+              <Tooltip title={t('tab_advanced_desc')}>
+                <span>{t('advancedEdit')}</span>
+              </Tooltip>
+            }
+            {...a11yProps(3)}
+          />
+        )}
 
         {objectTypes === OBJECT_TYPES.PROJECT && (
           <Tab
@@ -765,9 +801,9 @@ export const MMUModalEdit = <
             </Grid>
           </CustomTabPanel>
         )}
-        {jsonElementToEditInAdvancedEditor &&
-          item.origin !== OBJECT_ORIGIN.LINK && (
-            <CustomTabPanel value={tabValue} index={3}>
+        <CustomTabPanel value={tabValue} index={3}>
+          {jsonElementToEditInAdvancedEditor &&
+            item.origin !== OBJECT_ORIGIN.LINK && (
               <Grid
                 container
                 sx={{
@@ -781,8 +817,29 @@ export const MMUModalEdit = <
                   onUpdate={handleUpdateAdvancedEditMetadata}
                 />
               </Grid>
-            </CustomTabPanel>
+            )}
+
+          {objectTypes === OBJECT_TYPES.MEDIA && isEditable(item) && (
+            <Grid
+              container
+              sx={{
+                height: '100%',
+                overflowY: 'auto',
+              }}
+            >
+              <AdvancedTextEditor
+                value={advancedText}
+                onChange={setAdvancedText}
+                language={getEditorLanguageFromMedia(
+                  item.url?.includes('.')
+                    ? item.url
+                    : `${caddyUrl}/${item.hash}/${item.path}`,
+                )}
+                onSave={handleSaveText}
+              />
+            </Grid>
           )}
+        </CustomTabPanel>
         <CustomTabPanel value={tabValue} index={4}>
           <Grid
             container
@@ -829,11 +886,16 @@ export const MMUModalEdit = <
             }}
           >
             <Grid container sx={{ width: '100%', height: '100%' }}>
-              <SnapshotFactory
-                fetchItems={fetchItems!}
-                objectTypes={objectTypes!}
-                item={item}
-              />
+              <Grid
+                container
+                spacing={2}
+                flexDirection="column"
+                sx={{ width: '100%', marginTop: 1 }}
+              >
+                {objectTypes === OBJECT_TYPES.PROJECT && (
+                  <SnapshotFactory fetchItems={fetchItems!} item={item} />
+                )}
+              </Grid>
             </Grid>
           </Grid>
         </CustomTabPanel>
@@ -899,35 +961,37 @@ export const MMUModalEdit = <
                   )}
               </Grid>
             </Grid>
-            <Grid
-              container
-              flexDirection="row"
-              alignItems="center"
-              justifyContent="flex-end"
-              spacing={1}
-              columns={6}
-            >
-              <Grid>
-                <Button
-                  variant="contained"
-                  type="button"
-                  onClick={HandleOpenModalEdit}
-                >
-                  <CancelIcon />
-                  {t('cancel')}
-                </Button>
+            {tabValue != 3 && (
+              <Grid
+                container
+                flexDirection="row"
+                alignItems="center"
+                justifyContent="flex-end"
+                spacing={1}
+                columns={6}
+              >
+                <Grid>
+                  <Button
+                    variant="contained"
+                    type="button"
+                    onClick={HandleOpenModalEdit}
+                  >
+                    <CancelIcon />
+                    {t('cancel')}
+                  </Button>
+                </Grid>
+                <Grid>
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    onClick={handleSubmit}
+                  >
+                    <SaveIcon />
+                    {t('saveMAJ')}
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid>
-                <Button
-                  variant="contained"
-                  type="submit"
-                  onClick={handleSubmit}
-                >
-                  <SaveIcon />
-                  {t('saveMAJ')}
-                </Button>
-              </Grid>
-            </Grid>
+            )}
           </Grid>
         )}
       </Grid>

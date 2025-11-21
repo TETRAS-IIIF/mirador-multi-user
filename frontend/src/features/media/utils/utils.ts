@@ -84,6 +84,40 @@ export const getYoutubeJson = async (
   }
 };
 
+export const getEditorLanguageFromMedia = (url: string): string => {
+  if (!url) return 'plaintext';
+
+  const clean = url.split('?')[0].split('#')[0];
+  const ext = clean.split('.').pop()?.toLowerCase();
+  switch (ext) {
+    case 'html':
+    case 'htm':
+      return 'html';
+    case 'json':
+      return 'json';
+    case 'xml':
+      return 'xml';
+    case 'md':
+    case 'markdown':
+      return 'markdown';
+    case 'yml':
+    case 'yaml':
+      return 'yaml';
+    case 'js':
+      return 'javascript';
+    case 'ts':
+      return 'typescript';
+    case 'css':
+    case 'scss':
+      return 'css';
+    case 'csv':
+      return 'plaintext';
+    case 'txt':
+    default:
+      return 'plaintext';
+  }
+};
+
 export function isHTMLMediaFile(media: Media): boolean {
   if (
     media.mediaTypes === MEDIA_TYPES.OTHER &&

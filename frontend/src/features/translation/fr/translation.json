@@ -284,7 +284,7 @@
   "tab_general_desc": "Modifier les informations générales de cet élément.",
   "tab_share_desc": "Gérer les droits de partage et les accès.",
   "tab_metadata_desc": "Modifier les métadonnées associées à cet élément.",
-  "tab_advanced_desc": "Ouvrir l’éditeur JSON avancé.",
+  "tab_advanced_desc": "Ouvrir l’éditeur avancé.",
   "tab_template_desc": "Gérer les modèles associés à ce projet.",
   "tab_tags_desc": "Gérer les tags du projet.",
   "tab_snapshots_desc": "Afficher et gérer les instantanés.",
