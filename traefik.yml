@@ -14,7 +14,9 @@ services:
       - "traefik.http.middlewares.hardening-${NAME}.headers.stsIncludeSubdomains=true"
       - "traefik.http.middlewares.hardening-${NAME}.headers.stsSeconds=15552000"
       - "traefik.http.middlewares.hardening-${NAME}.headers.stsPreload=true"
-      - "traefik.http.middlewares.hardening-${NAME}.headers.referrerPolicy=no-referrer"
+      # This overwrites traefik base config to allow x-frame from other origin
+      - "traefik.http.routers.${NAME}.middlewares=hardening-${NAME}@docker"
+      - "traefik.http.middlewares.hardening-${NAME}.headers.customResponseHeaders.X-Frame-Options="
 
   backend:
     networks:
@@ -38,8 +40,9 @@ services:
       - "traefik.http.routers.${CADDY_NAME}.rule=Host(`${CADDY_HOST}`)"
       - "traefik.http.routers.${CADDY_NAME}.tls.certresolver=myresolver"
       - "traefik.http.routers.${CADDY_NAME}.entrypoints=web,websecure"
-      - "traefik.http.routers.${CADDY_NAME}.middlewares=hardening@docker"
-
+      # This overwrites traefik base config to allow x-frame from other origin
+      - "traefik.http.routers.${CADDY_NAME}.middlewares=hardening-${CADDY_NAME}@docker"
+      - "traefik.http.middlewares.hardening-${CADDY_NAME}.headers.customResponseHeaders.X-Frame-Options="
 networks:
   traefik:
     external: true
