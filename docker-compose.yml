@@ -108,6 +108,7 @@ services:
     volumes:
       - $HTTP_FOLDER:/srv
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/public:/srv/public
     networks:
       - app-network
 

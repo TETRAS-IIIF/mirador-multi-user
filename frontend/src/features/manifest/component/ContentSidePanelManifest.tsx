@@ -28,7 +28,7 @@ import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 
 const CustomButton = styled(Button)({
   position: 'absolute',
-  top: '40%',
+  top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   textAlign: 'center',

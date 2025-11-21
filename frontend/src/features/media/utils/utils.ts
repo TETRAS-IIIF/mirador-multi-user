@@ -1,5 +1,8 @@
 import { YoutubeVideoJson } from '../types/types.ts';
 
+import { Media } from '../types/types';
+import { MEDIA_TYPES, OBJECT_ORIGIN } from '../../../utils/mmu_types.ts';
+
 /*************************************************************
  * IMPORTANT: The functions need to be the same as their clones in backend    *
  * src/utils/Custom_pipes/utils.ts
@@ -114,3 +117,16 @@ export const getEditorLanguageFromMedia = (url: string): string => {
       return 'plaintext';
   }
 };
+
+export function isHTMLMediaFile(media: Media): boolean {
+  if (
+    media.mediaTypes === MEDIA_TYPES.OTHER &&
+    media.origin === OBJECT_ORIGIN.UPLOAD &&
+    media.title
+  ) {
+    const extension = media.title.split('.').pop()?.toLowerCase();
+    const htmlExtensions = ['html', 'htm', 'xhtml'];
+    return extension ? htmlExtensions.includes(extension) : false;
+  }
+  return false;
+}

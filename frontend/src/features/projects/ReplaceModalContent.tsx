@@ -46,8 +46,7 @@ export const ReplaceModalContent = ({
 
   return (
     <Grid container direction="column" spacing={1}>
-      <Typography>{t('replaceWarning')}</Typography>
-
+      <Typography textAlign="center">{t('replaceWarning')}</Typography>
       <VisuallyHiddenInput
         id="hiddenFileInput"
         type="file"

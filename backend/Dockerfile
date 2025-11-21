@@ -7,7 +7,7 @@ COPY package*.json ./
 COPY tsconfig*.json ./
 COPY ./src ./src
 
-RUN npm install
+RUN npm ci
 
 # Copy remaining application code (ensure entrypoint.sh is executable)
 COPY . .
