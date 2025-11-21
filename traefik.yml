@@ -42,12 +42,6 @@ services:
       - "traefik.http.routers.${CADDY_NAME}.entrypoints=web,websecure"
       # This overwrites traefik base config to allow x-frame from other origin
       - "traefik.http.routers.${CADDY_NAME}.middlewares=hardening-${CADDY_NAME}@docker"
-      - "traefik.http.middlewares.hardening-${CADDY_NAME}.headers.sslredirect=true"
-      - "traefik.http.middlewares.hardening-${CADDY_NAME}.headers.forceSTSHeader=true"
-      - "traefik.http.middlewares.hardening-${CADDY_NAME}.headers.stsIncludeSubdomains=true"
-      - "traefik.http.middlewares.hardening-${CADDY_NAME}.headers.stsSeconds=15552000"
-      - "traefik.http.middlewares.hardening-${CADDY_NAME}.headers.stsPreload=true"
-      - "traefik.http.middlewares.hardening-${CADDY_NAME}.headers.referrerPolicy=no-referrer"
       - "traefik.http.middlewares.hardening-${CADDY_NAME}.headers.customResponseHeaders.X-Frame-Options="
 networks:
   traefik:
