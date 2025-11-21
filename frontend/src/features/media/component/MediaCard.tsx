@@ -49,7 +49,7 @@ interface IMediaCardProps {
     itemId: number,
     itemName: string,
     hash: string,
-  ) => void;
+  ) => Promise<void>;
   thumbnailRefreshKey: number;
 }
 
