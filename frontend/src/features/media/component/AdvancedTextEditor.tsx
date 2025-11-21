@@ -116,7 +116,7 @@ export const AdvancedTextEditor = ({
         language={language}
         onChange={(v) => onChange(v ?? '')}
         onMount={handleMount}
-        theme="vs-dark"
+        theme="vs"
         options={{
           lineNumbers: 'on',
           minimap: { enabled: false },
