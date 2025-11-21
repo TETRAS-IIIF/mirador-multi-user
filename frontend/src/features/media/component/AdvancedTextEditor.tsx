@@ -199,7 +199,8 @@ export const AdvancedTextEditor = ({
           exclusive
           onChange={handleModeChange}
         >
-          <ToggleButton value="rich">Simple</ToggleButton>
+          {/*// TODO: This editor sanitize body html and remove <scipt></scipt>, this cause issue on some html medias.*/}
+          {/*<ToggleButton value="rich">Simple</ToggleButton>*/}
           <ToggleButton value="code">Avancé</ToggleButton>
         </ToggleButtonGroup>
       )}
