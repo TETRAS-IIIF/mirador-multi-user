@@ -1,9 +1,28 @@
-import { Card, CardActions, IconButton, SelectChangeEvent, Tooltip, Typography, } from '@mui/material';
+import {
+  Card,
+  CardActions,
+  IconButton,
+  SelectChangeEvent,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { MMUModal } from './modal.tsx';
-import { Dispatch, MouseEvent, ReactNode, SetStateAction, useCallback, useState, } from 'react';
+import {
+  Dispatch,
+  MouseEvent,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useState,
+} from 'react';
 import { MMUModalEdit } from './MMUModalEdit.tsx';
-import { ITEM_RIGHTS, MEDIA_TYPES, OBJECT_ORIGIN, OBJECT_TYPES, } from '../../utils/mmu_types.ts';
+import {
+  ITEM_RIGHTS,
+  MEDIA_TYPES,
+  OBJECT_ORIGIN,
+  OBJECT_TYPES,
+} from '../../utils/mmu_types.ts';
 import dayjs, { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
@@ -217,8 +236,9 @@ const MMUCard = <
           alignItems="center"
           wrap="nowrap"
           spacing={1}
-          size={12}
-          sx={{ flex: 1, minWidth: 0 }}
+          sx={{
+            width: '100%',
+          }}
         >
           <Grid size={{ xs: 2, sm: 1 }} sx={{ flexShrink: 0 }}>
             {isLoading ? (
@@ -242,7 +262,6 @@ const MMUCard = <
           </Grid>
 
           <Grid
-            size={{ xs: 2, sm: 1 }}
             display="flex"
             alignItems="center"
             gap={0.5}
@@ -251,7 +270,7 @@ const MMUCard = <
             <MMUCardIcon item={item} objectTypes={objectTypes} />
           </Grid>
 
-          <Grid size={{ xs: 4, sm: 4 }} sx={{ minWidth: 0 }}>
+          <Grid size={{ sm: 4 }} sx={{ minWidth: 0 }}>
             <Tooltip title={itemLabel} placement="bottom-start">
               <Typography
                 variant="subtitle1"
@@ -267,7 +286,7 @@ const MMUCard = <
             </Tooltip>
           </Grid>
 
-          <Grid size={{ xs: 3, sm: 4 }} sx={{ minWidth: 0 }}>
+          <Grid size={{ sm: 4 }} sx={{ minWidth: 0 }}>
             <Tooltip title={description}>
               <Typography
                 variant="subtitle1"
@@ -284,7 +303,7 @@ const MMUCard = <
           </Grid>
 
           <Grid
-            size={{ xs: 1, sm: 2 }}
+            size={{ xs: 1, sm: 1 }}
             sx={{
               flexShrink: 0,
               flexBasis: 100,
@@ -318,7 +337,17 @@ const MMUCard = <
           </Grid>
         </Grid>
 
-        <Grid alignSelf="center" sx={{ ml: 1 }}>
+        <Grid
+          alignSelf="center"
+          sx={{
+            ml: 1,
+            flexShrink: 0,
+            flexBasis: 300,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'end',
+          }}
+        >
           <CardActions sx={{ p: 2 }}>
             <Grid container wrap="nowrap" spacing={1} alignItems="center">
               {downloadUrl && (

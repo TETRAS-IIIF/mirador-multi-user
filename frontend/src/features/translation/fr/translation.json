@@ -82,6 +82,7 @@
   "display_user_inscription_page_tooltip": "Si activé, les utilisateurs peuvent créer un compte via la page d'inscription.",
   "disconnect": "Déconnexion",
   "disconnect_error": "Vous avez été déconnecté",
+  "downloadMedia": "Télécharger le média",
   "duplicate": "Dupliquer",
   "duplicateMAJ": "DUPLIQUER",
   "editGroupTooltip": "Modifier le groupe",
