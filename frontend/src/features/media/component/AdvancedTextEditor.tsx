@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
 import type * as monaco from 'monaco-editor';
 import {
@@ -39,6 +39,9 @@ export const AdvancedTextEditor = ({
 }: IAdvancedTextEditorProps) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+
+  const savedValueRef = useRef<string>(value);
+  const [isDirty, setIsDirty] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleMount: OnMount = (editor) => {
@@ -51,14 +54,34 @@ export const AdvancedTextEditor = ({
   const replace = () =>
     editorRef.current?.getAction('editor.action.startFindReplaceAction')?.run();
 
-  // Autoformat
+  // Auto-format document
   const format = () =>
     editorRef.current?.getAction('editor.action.formatDocument')?.run();
+
+  // Track dirty vs last saved value, but allow parent to load new content
+  useEffect(() => {
+    if (value === savedValueRef.current) {
+      setIsDirty(false);
+      return;
+    }
+    if (!isDirty) {
+      savedValueRef.current = value;
+      setIsDirty(false);
+    }
+  }, [value, isDirty]);
+
+  const handleEditorChange = (v?: string) => {
+    const next = v ?? '';
+    onChange(next);
+    setIsDirty(next !== savedValueRef.current);
+  };
 
   const handleSave = async () => {
     const current = editorRef.current?.getValue() ?? value;
     onChange(current);
     await onSave(current);
+    savedValueRef.current = current;
+    setIsDirty(false);
   };
 
   const toggleFullscreen = async () => {
@@ -91,7 +114,7 @@ export const AdvancedTextEditor = ({
   );
 
   const Controls = () => (
-    <Stack direction="row" spacing={0.5}>
+    <Stack direction="row" spacing={0.5} alignItems="center">
       <IconButton size="small" onClick={undo} title="Undo">
         <UndoIcon fontSize="small" />
       </IconButton>
@@ -107,9 +130,25 @@ export const AdvancedTextEditor = ({
       <IconButton size="small" onClick={format} title="Format code">
         <AutoFixHighIcon fontSize="small" />
       </IconButton>
-      <IconButton size="small" onClick={handleSave} title="Save">
+      <IconButton
+        size="small"
+        onClick={handleSave}
+        title={isDirty ? 'Save (unsaved changes)' : 'Save'}
+        disabled={!isDirty}
+      >
         <SaveIcon fontSize="small" />
       </IconButton>
+      {isDirty && (
+        <Box
+          sx={{
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            bgcolor: 'error.main',
+          }}
+          title="Unsaved changes"
+        />
+      )}
     </Stack>
   );
 
@@ -127,7 +166,7 @@ export const AdvancedTextEditor = ({
       <Editor
         value={value}
         language={language}
-        onChange={(v) => onChange(v ?? '')}
+        onChange={handleEditorChange}
         onMount={handleMount}
         theme="vs"
         options={{
