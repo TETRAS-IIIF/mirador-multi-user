@@ -192,7 +192,15 @@ export const MMUModalEdit = <
   const [advancedText, setAdvancedText] = useState<string>('');
 
   const loadMediaContent = async (url: string): Promise<string> => {
-    const response = await fetch(url, { method: 'GET' });
+    const cacheBuster = `t=${Date.now()}`;
+    const separator = url.includes('?') ? '&' : '?';
+    const finalUrl = `${url}${separator}${cacheBuster}`;
+
+    const response = await fetch(finalUrl, {
+      method: 'GET',
+      cache: 'no-store',
+    });
+
     if (!response.ok) return '';
 
     return await response.text();
@@ -861,7 +869,6 @@ export const MMUModalEdit = <
                     ? item.url
                     : `${caddyUrl}/${item.hash}/${item.path}`,
                 )}
-                //TODO: implement save
                 onSave={handleSaveText}
               />
             </Grid>
