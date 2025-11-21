@@ -4,7 +4,6 @@ import type * as monaco from 'monaco-editor';
 import {
   AppBar,
   Box,
-  Button,
   Dialog,
   GlobalStyles,
   IconButton,
@@ -14,6 +13,12 @@ import {
 } from '@mui/material';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import UndoIcon from '@mui/icons-material/Undo';
+import RedoIcon from '@mui/icons-material/Redo';
+import SearchIcon from '@mui/icons-material/Search';
+import FindReplaceIcon from '@mui/icons-material/FindReplace';
+import SaveIcon from '@mui/icons-material/Save';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 
 interface IAdvancedTextEditorProps {
   value: string;
@@ -39,11 +44,16 @@ export const AdvancedTextEditor = ({
   const handleMount: OnMount = (editor) => {
     editorRef.current = editor;
   };
+
   const undo = () => editorRef.current?.trigger('toolbar', 'undo', null);
   const redo = () => editorRef.current?.trigger('toolbar', 'redo', null);
   const search = () => editorRef.current?.getAction('actions.find')?.run();
   const replace = () =>
     editorRef.current?.getAction('editor.action.startFindReplaceAction')?.run();
+
+  // Autoformat
+  const format = () =>
+    editorRef.current?.getAction('editor.action.formatDocument')?.run();
 
   const handleSave = async () => {
     const current = editorRef.current?.getValue() ?? value;
@@ -81,22 +91,25 @@ export const AdvancedTextEditor = ({
   );
 
   const Controls = () => (
-    <Stack direction="row" spacing={1}>
-      <Button size="small" variant="outlined" onClick={undo}>
-        Undo
-      </Button>
-      <Button size="small" variant="outlined" onClick={redo}>
-        Redo
-      </Button>
-      <Button size="small" variant="outlined" onClick={search}>
-        Search
-      </Button>
-      <Button size="small" variant="outlined" onClick={replace}>
-        Replace
-      </Button>
-      <Button size="small" variant="contained" onClick={handleSave}>
-        Save
-      </Button>
+    <Stack direction="row" spacing={0.5}>
+      <IconButton size="small" onClick={undo} title="Undo">
+        <UndoIcon fontSize="small" />
+      </IconButton>
+      <IconButton size="small" onClick={redo} title="Redo">
+        <RedoIcon fontSize="small" />
+      </IconButton>
+      <IconButton size="small" onClick={search} title="Search">
+        <SearchIcon fontSize="small" />
+      </IconButton>
+      <IconButton size="small" onClick={replace} title="Replace">
+        <FindReplaceIcon fontSize="small" />
+      </IconButton>
+      <IconButton size="small" onClick={format} title="Format code">
+        <AutoFixHighIcon fontSize="small" />
+      </IconButton>
+      <IconButton size="small" onClick={handleSave} title="Save">
+        <SaveIcon fontSize="small" />
+      </IconButton>
     </Stack>
   );
 
