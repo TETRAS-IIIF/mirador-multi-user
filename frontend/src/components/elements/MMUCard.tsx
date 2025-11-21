@@ -1,7 +1,6 @@
 import {
   Card,
   CardActions,
-  IconButton,
   SelectChangeEvent,
   Tooltip,
   Typography,
@@ -10,7 +9,6 @@ import Grid from '@mui/material/Grid';
 import { MMUModal } from './modal.tsx';
 import {
   Dispatch,
-  MouseEvent,
   ReactNode,
   SetStateAction,
   useCallback,
@@ -207,10 +205,7 @@ const MMUCard = <
     return 'media';
   };
 
-  const handleDownloadClick = async (
-    e: MouseEvent<HTMLButtonElement>,
-  ): Promise<void> => {
-    e.stopPropagation();
+  const handleDownloadClick = async (): Promise<void> => {
     if (!downloadUrl) return;
 
     const response = await fetch(downloadUrl, {});
@@ -351,12 +346,13 @@ const MMUCard = <
           <CardActions sx={{ p: 2 }}>
             <Grid container wrap="nowrap" spacing={1} alignItems="center">
               {downloadUrl && (
-                <Grid display="flex" alignItems="center">
-                  <Tooltip title={t('downloadMedia')}>
-                    <IconButton size="small" onClick={handleDownloadClick}>
-                      <DownloadIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
+                <Grid>
+                  <ModalButton
+                    tooltipButton={t('downloadMedia')}
+                    onClickFunction={handleDownloadClick}
+                    disabled={false}
+                    icon={<DownloadIcon />}
+                  />
                 </Grid>
               )}
 
