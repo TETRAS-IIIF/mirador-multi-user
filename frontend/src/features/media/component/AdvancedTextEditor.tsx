@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
 import type * as monaco from 'monaco-editor';
 import ReactQuill from 'react-quill';
@@ -26,7 +26,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 
 interface IAdvancedTextEditorProps {
-  value: string;
+  value: string; // initial value
   onChange: (value: string) => void;
   language: string;
   title?: string;
@@ -45,6 +45,8 @@ export const AdvancedTextEditor = ({
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  // Local source of truth for content
+  const [localValue, setLocalValue] = useState<string>(value);
   const savedValueRef = useRef<string>(value);
   const [isDirty, setIsDirty] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -62,23 +64,12 @@ export const AdvancedTextEditor = ({
   const search = () => editorRef.current?.getAction('actions.find')?.run();
   const replace = () =>
     editorRef.current?.getAction('editor.action.startFindReplaceAction')?.run();
-
   const format = () =>
     editorRef.current?.getAction('editor.action.formatDocument')?.run();
 
-  useEffect(() => {
-    if (value === savedValueRef.current) {
-      setIsDirty(false);
-      return;
-    }
-    if (!isDirty) {
-      savedValueRef.current = value;
-      setIsDirty(false);
-    }
-  }, [value, isDirty]);
-
   const handleEditorChange = (v?: string) => {
     const next = v ?? '';
+    setLocalValue(next);
     onChange(next);
     setIsDirty(next !== savedValueRef.current);
   };
@@ -88,8 +79,7 @@ export const AdvancedTextEditor = ({
   };
 
   const handleSave = async () => {
-    const current = editorRef.current?.getValue() ?? value;
-    onChange(current);
+    const current = localValue; // always save local state
     await onSave(current);
     savedValueRef.current = current;
     setIsDirty(false);
@@ -132,6 +122,9 @@ export const AdvancedTextEditor = ({
     setEditorMode(newMode);
   };
 
+  const codeActionsDisabled =
+    !editorRef.current || !isHtml || editorMode !== 'code';
+
   const Controls = () => (
     <Stack direction="row" spacing={1} alignItems="center">
       {isHtml && (
@@ -147,23 +140,43 @@ export const AdvancedTextEditor = ({
       )}
 
       <Stack direction="row" spacing={0.5} alignItems="center">
-        <IconButton size="small" onClick={undo} title="Undo">
+        <IconButton
+          size="small"
+          onClick={undo}
+          title="Undo"
+          disabled={codeActionsDisabled}
+        >
           <UndoIcon fontSize="small" />
         </IconButton>
-        <IconButton size="small" onClick={redo} title="Redo">
+        <IconButton
+          size="small"
+          onClick={redo}
+          title="Redo"
+          disabled={codeActionsDisabled}
+        >
           <RedoIcon fontSize="small" />
         </IconButton>
-        <IconButton size="small" onClick={search} title="Search">
+        <IconButton
+          size="small"
+          onClick={search}
+          title="Search"
+          disabled={codeActionsDisabled}
+        >
           <SearchIcon fontSize="small" />
         </IconButton>
-        <IconButton size="small" onClick={replace} title="Replace">
+        <IconButton
+          size="small"
+          onClick={replace}
+          title="Replace"
+          disabled={codeActionsDisabled}
+        >
           <FindReplaceIcon fontSize="small" />
         </IconButton>
         <IconButton
           size="small"
           onClick={format}
           title="Format code"
-          disabled={!editorRef.current}
+          disabled={codeActionsDisabled}
         >
           <AutoFixHighIcon fontSize="small" />
         </IconButton>
@@ -192,7 +205,7 @@ export const AdvancedTextEditor = ({
 
   const monacoEditor = (
     <Editor
-      value={value}
+      value={localValue}
       language={language}
       onChange={handleEditorChange}
       onMount={handleMount}
@@ -215,7 +228,7 @@ export const AdvancedTextEditor = ({
   const quillEditor = (
     <ReactQuill
       theme="snow"
-      value={value}
+      value={localValue}
       onChange={handleQuillChange}
       style={{ width: '100%', height: '100%' }}
     />
