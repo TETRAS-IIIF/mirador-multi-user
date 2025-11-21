@@ -1,10 +1,10 @@
-import { useState } from "react";
-import { Box, Button, Grid, TextField } from "@mui/material";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import { MMUModal } from "../../../components/elements/modal.tsx";
-import { useTranslation } from "react-i18next";
-import CodeIcon from "@mui/icons-material/Code";
-import toast from "react-hot-toast";
+import { useState } from 'react';
+import { Box, Button, Grid, TextField } from '@mui/material';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { MMUModal } from '../../../components/elements/modal.tsx';
+import { useTranslation } from 'react-i18next';
+import CodeIcon from '@mui/icons-material/Code';
+import toast from 'react-hot-toast';
 
 interface IframeGeneratorProps {
   snapshotUrl: string | null;
@@ -19,7 +19,7 @@ export const IFrameGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
   const handleCopyToClipboard = async () => {
     if (iframeCode) {
       await navigator.clipboard.writeText(iframeCode);
-      toast.success(t("iframe_copied"));
+      toast.success(t('iframe_copied'));
     }
   };
 
@@ -34,18 +34,18 @@ export const IFrameGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
           startIcon={<CodeIcon />}
           onClick={handleIframeModal}
         >
-          {t("generate_iframe")}
+          {t('generate_iframe')}
         </Button>
         <MMUModal
           openModal={openIframeModal}
           setOpenModal={handleIframeModal}
           width={500}
         >
-          <Grid container spacing={2} flexDirection={"column"}>
-            <Grid item>
+          <Grid container spacing={2} flexDirection={'column'}>
+            <Grid>
               <TextField
-                inputProps={{
-                  maxLength: 255,
+                slotProps={{
+                  htmlInput: { maxLength: 255 },
                 }}
                 label="Iframe Code"
                 multiline
@@ -54,13 +54,13 @@ export const IFrameGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
                 InputProps={{ readOnly: true }}
               />
             </Grid>
-            <Grid item>
+            <Grid>
               <Button
                 variant="contained"
                 startIcon={<ContentCopyIcon />}
                 onClick={handleCopyToClipboard}
               >
-                {t("Copy_iframe_code")}
+                {t('Copy_iframe_code')}
               </Button>
             </Grid>
           </Grid>

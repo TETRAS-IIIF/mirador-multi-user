@@ -1,10 +1,6 @@
 import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Project,
-  ProjectGroup,
-  ProjectGroupUpdateDto,
-} from '../types/types.ts';
+import { Project, ProjectGroup, ProjectGroupUpdateDto, } from '../types/types.ts';
 import IState from '../../mirador/interface/IState.ts';
 import { User } from '../../auth/types/types.ts';
 import { deleteProject } from '../api/Project/deleteProject.ts';
@@ -14,12 +10,7 @@ import { FloatingActionButton } from '../../../components/elements/FloatingActio
 import { DrawerCreateProject } from './DrawerCreateProject.tsx';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
 import { getUserPersonalGroup } from '../api/group/getUserPersonalGroup.ts';
-import {
-  ItemsRights,
-  LinkUserGroup,
-  UserGroup,
-  UserGroupTypes,
-} from '../../user-group/types/types.ts';
+import { LinkUserGroup, UserGroup } from '../../user-group/types/types.ts';
 import MMUCard from '../../../components/elements/MMUCard.tsx';
 import { removeProjectToGroup } from '../../user-group/api/removeProjectToGroup.ts';
 import { addProjectToGroup } from '../../user-group/api/addProjectToGroup.ts';
@@ -33,7 +24,7 @@ import { Media } from '../../media/types/types.ts';
 import { PaginationControls } from '../../../components/elements/Pagination.tsx';
 import { updateAccessToProject } from '../api/Project/UpdateAccessToProject.ts';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { ObjectTypes } from '../../tag/type.ts';
+import { ITEM_RIGHTS, OBJECT_TYPES, USER_GROUP_TYPES, } from '../../../utils/mmu_types.ts';
 import toast from 'react-hot-toast';
 import { duplicateProject } from '../api/Project/duplicateProject.ts';
 import { getUserNameWithId } from '../../auth/api/getUserNameWithId.ts';
@@ -47,11 +38,9 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { removeProjectFromList } from '../api/Project/removeProjectFromList.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { Manifest } from '../../manifest/types/types.ts';
-import {
-  TITLE,
-  UPDATED_AT,
-  useCurrentPageData,
-} from '../../../utils/customHooks/filterHook.ts';
+import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHooks/filterHook.ts';
+import { MMUModal } from '../../../components/elements/modal.tsx';
+import { ModalProjectAlreadyOpenByUser } from './ModalProjectAlreadyOpenByUser.tsx';
 
 interface AllProjectsProps {
   user: User;
@@ -93,7 +82,12 @@ export const AllProjects = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<keyof Project>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState('desc');
-
+  const [openModalConfirmReopenProject, setOpenModalConfirmReopenProject] =
+    useState(false);
+  const [pendingProject, setPendingProject] = useState<Project | null>(null);
+  const [pendingMiradorState, setPendingMiradorState] = useState<
+    IState | undefined
+  >(undefined);
   const { t } = useTranslation();
   const itemsPerPage = 10;
 
@@ -163,23 +157,68 @@ export const AllProjects = ({
   };
 
   const initializeMirador = useCallback(
-    async (miradorState: IState | undefined, projectUser: Project) => {
+    async (
+      miradorState: IState | undefined,
+      projectUser: Project,
+      forced: boolean = false,
+    ) => {
+      const SELF_LOCK = -1;
       try {
-        const Locked = await isProjectLocked(projectUser.id);
-        if (Locked) {
-          const userName = await getUserNameWithId(Locked);
-          return toast.error(t('errorProjectAlreadyOpen') + userName);
+        if (!forced) {
+          const lockStatus = await isProjectLocked(projectUser.id);
+          // locked by someone else
+          if (typeof lockStatus === 'number' && lockStatus !== SELF_LOCK) {
+            const userName = await getUserNameWithId(lockStatus);
+            toast.error(t('errorProjectAlreadyOpen') + userName);
+            return;
+          }
+          // locked by current user → open confirmation modal
+          if (lockStatus === SELF_LOCK) {
+            setPendingProject(projectUser);
+            setPendingMiradorState(miradorState);
+            setOpenModalConfirmReopenProject(true);
+            return;
+          }
         }
         await handleLock({ projectId: projectUser.id, lock: true });
       } catch (error) {
         console.error(error);
-        toast.error(error as string);
+        toast.error(String(error));
+        return;
       }
       setSelectedProjectId(projectUser.id);
       handleSetMiradorState(miradorState);
     },
-    [handleSetMiradorState, setSelectedProjectId],
+    [
+      handleSetMiradorState,
+      setSelectedProjectId,
+      t,
+      setOpenModalConfirmReopenProject,
+      setPendingProject,
+      setPendingMiradorState,
+    ],
   );
+
+  const handleConfirmForceOpen = useCallback(async () => {
+    if (!pendingProject) return;
+
+    await initializeMirador(pendingMiradorState, pendingProject, true);
+
+    setOpenModalConfirmReopenProject(false);
+    setPendingProject(null);
+    setPendingMiradorState(undefined);
+  }, [
+    pendingProject,
+    pendingMiradorState,
+    initializeMirador,
+    setOpenModalConfirmReopenProject,
+  ]);
+
+  const handleCancelForceOpen = useCallback(() => {
+    setOpenModalConfirmReopenProject(false);
+    setPendingProject(null);
+    setPendingMiradorState(undefined);
+  }, [setOpenModalConfirmReopenProject]);
 
   const toggleModalProjectCreation = useCallback(() => {
     setModalCreateProjectIsOpen(!modalCreateProjectIsOpen);
@@ -249,7 +288,7 @@ export const AllProjects = ({
     const newRights = await updateAccessToProject(
       projectId,
       group.id,
-      eventValue as ItemsRights,
+      eventValue as ITEM_RIGHTS,
     );
     if (newRights.error) {
       toast.error(t('not_allowed_to_modify_rights'));
@@ -285,7 +324,7 @@ export const AllProjects = ({
   };
 
   const getGroupByOption = (option: UserGroup): string => {
-    if (option.type === UserGroupTypes.MULTI_USER) {
+    if (option.type === USER_GROUP_TYPES.MULTI_USER) {
       return t('groups');
     } else {
       return t('users');
@@ -325,7 +364,6 @@ export const AllProjects = ({
       >
         <Grid container justifyContent="center" flexDirection="column">
           <Grid
-            item
             container
             direction="row-reverse"
             alignItems="center"
@@ -339,26 +377,25 @@ export const AllProjects = ({
           >
             {!selectedProjectId && (
               <Grid
-                item
                 container
                 justifyContent="flex-end"
                 spacing={2}
                 alignItems="center"
               >
-                <Grid item>
+                <Grid>
                   <SearchBar
                     label={t('filterProjects')}
                     setFilter={setProjectFilter}
                   />
                 </Grid>
-                <Grid item>
+                <Grid>
                   <SortItemSelector<Project>
                     sortField={sortField}
                     setSortField={setSortField}
                     fields={[TITLE, UPDATED_AT]}
                   />
                 </Grid>
-                <Grid item>
+                <Grid>
                   <Tooltip
                     title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}
                   >
@@ -374,9 +411,9 @@ export const AllProjects = ({
               </Grid>
             )}
           </Grid>
-          <Grid item container spacing={1}>
+          <Grid container spacing={1}>
             {!userProjects.length && (
-              <Grid container justifyContent={'center'}>
+              <Grid container justifyContent={'center'} size={12}>
                 <Typography variant="h6" component="h2">
                   {t('messageNoProject')}
                 </Typography>
@@ -384,21 +421,21 @@ export const AllProjects = ({
             )}
             {!selectedProjectId && userProjects && (
               <Grid
-                item
                 container
                 spacing={1}
                 flexDirection="column"
+                size={12}
                 sx={{ marginBottom: '70px' }}
               >
                 {userProjects.length > 0 &&
                   (currentPageData.length > 0 ? (
                     currentPageData.map((projectUser) => (
-                      <Grid item key={projectUser.id}>
+                      <Grid key={projectUser.id}>
                         <MMUCard
                           fetchItems={fetchProjects}
                           ownerId={projectUser.ownerId}
                           duplicateItem={handleDuplicateProject}
-                          objectTypes={ObjectTypes.PROJECT}
+                          objectTypes={OBJECT_TYPES.PROJECT}
                           thumbnailUrl={
                             projectUser.thumbnailUrl
                               ? projectUser.thumbnailUrl
@@ -455,18 +492,13 @@ export const AllProjects = ({
                       </Grid>
                     ))
                   ) : (
-                    <Grid
-                      item
-                      container
-                      justifyContent="center"
-                      alignItems="center"
-                    >
+                    <Grid container justifyContent="center" alignItems="center">
                       <Typography variant="h6" component="h2">
                         {t('noProjectMatchFilter')}
                       </Typography>
                     </Grid>
                   ))}
-                <Grid item>
+                <Grid>
                   <FloatingActionButton
                     onClick={toggleModalProjectCreation}
                     content={t('newProject')}
@@ -486,6 +518,18 @@ export const AllProjects = ({
                   onPageChange={setCurrentPage}
                 />
               </Grid>
+            )}
+            {openModalConfirmReopenProject && (
+              <MMUModal
+                openModal={openModalConfirmReopenProject}
+                setOpenModal={setOpenModalConfirmReopenProject}
+                width={400}
+              >
+                <ModalProjectAlreadyOpenByUser
+                  onConfirm={handleConfirmForceOpen}
+                  onCancel={handleCancelForceOpen}
+                />
+              </MMUModal>
             )}
           </Grid>
         </Grid>

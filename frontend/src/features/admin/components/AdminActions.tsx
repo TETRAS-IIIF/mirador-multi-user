@@ -26,7 +26,6 @@ export const AdminActions = () => {
     toast.error(t('error_download_logs'));
   };
 
-
   const handleDownloadAppLogs = () => {
     downloadLogs(undefined, {
       onSuccess: handleSuccess,
@@ -39,14 +38,16 @@ export const AdminActions = () => {
       onSuccess: () => toast.success(t('success_send_mail')),
       onError: () => toast.error(t('error_send_mail')),
     });
-  }
+  };
   return (
-    <Grid item container spacing={1} flexDirection="column">
-      <Grid item>
-        <Typography variant="h6" component="div">{t('admin_action_title')}</Typography>
+    <Grid container spacing={1} flexDirection="column">
+      <Grid>
+        <Typography variant="h6" component="div">
+          {t('admin_action_title')}
+        </Typography>
       </Grid>
-      <Grid item container spacing={2}>
-        <Grid item>
+      <Grid container spacing={2}>
+        <Grid>
           <LoadingButton
             size="large"
             variant="contained"
@@ -56,7 +57,7 @@ export const AdminActions = () => {
             {t('send_test_mail')}
           </LoadingButton>
         </Grid>
-        <Grid item>
+        <Grid>
           <LoadingButton
             size="large"
             variant="contained"
@@ -68,5 +69,5 @@ export const AdminActions = () => {
         </Grid>
       </Grid>
     </Grid>
-  )
-}
+  );
+};

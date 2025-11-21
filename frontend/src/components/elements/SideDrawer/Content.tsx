@@ -76,7 +76,12 @@ export function Content({
   return (
     <Box
       component="main"
-      sx={{ flexGrow: 1, padding: 0, margin: 0, maxHeight: '100vh' }}
+      sx={{
+        flexGrow: 1,
+        padding: 0,
+        margin: 0,
+        maxHeight: '100vh',
+      }}
     >
       {selectedProjectId && projectSelected && (
         <ProjectWorkspace

@@ -15,6 +15,10 @@ export const MainContent = () => {
   >(undefined);
   const [viewer, setViewer] = useState<any>(undefined);
 
+  const handleSetProjectId = (id: number | undefined) => {
+    setSelectedProjectId(id);
+  };
+
   if (user.isError) {
     const error = user.error as { code?: string };
     if (error.code === ErrorCode.EMAIL_NOT_CONFIRMED) {
@@ -47,7 +51,7 @@ export const MainContent = () => {
         viewer={viewer}
         setViewer={setViewer}
         selectedProjectId={selectedProjectId}
-        setSelectedProjectId={setSelectedProjectId}
+        setSelectedProjectId={handleSetProjectId}
       />
     </Grid>
   );

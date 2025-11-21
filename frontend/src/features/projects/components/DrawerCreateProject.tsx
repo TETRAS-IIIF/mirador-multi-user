@@ -86,10 +86,10 @@ export const DrawerCreateProject = ({
             </AppBar>
             <form onSubmit={handleSubmit}>
               <Grid container alignItems="center" spacing={2}>
-                <Grid item>
+                <Grid>
                   <label>{t('labelProjectTitle')}</label>
                 </Grid>
-                <Grid item sx={{ width: '70%' }}>
+                <Grid sx={{ width: '70%' }}>
                   <TextField
                     inputRef={inputRef}
                     onChange={handleNameChange}
@@ -99,7 +99,7 @@ export const DrawerCreateProject = ({
                     inputProps={{ maxLength: 100 }}
                   />
                 </Grid>
-                <Grid item>
+                <Grid>
                   <LoadingButton
                     size="large"
                     variant="contained"

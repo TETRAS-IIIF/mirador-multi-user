@@ -1,4 +1,10 @@
-import { Box, Drawer, IconButton, styled } from '@mui/material';
+import {
+  Box,
+  Drawer,
+  IconButton,
+  IconButtonProps,
+  styled,
+} from '@mui/material';
 import { ReactNode, useEffect, useState } from 'react';
 import { CloseButton } from '../SideBar/CloseButton.tsx';
 import { OpenButton } from '../SideBar/OpenButton.tsx';
@@ -27,12 +33,21 @@ const ToggleMediaButton = styled(IconButton)<{ open: boolean; shift: boolean }>(
   },
 );
 
-const ToggleButton = styled(IconButton)<{ open: boolean }>(({ open }) => ({
+interface ToggleButtonProps extends IconButtonProps {
+  open: boolean;
+}
+
+export const ToggleButton = styled(IconButton, {
+  shouldForwardProp: (prop) => prop !== 'open',
+})<ToggleButtonProps>(({ theme, open }) => ({
   position: 'fixed',
-  top: '40px',
+  top: 40,
   right: open ? 400 : 0,
   zIndex: 9999,
-  transition: 'right 0.3s ease',
+  transition: theme.transitions.create('right', {
+    duration: 300,
+    easing: theme.transitions.easing.easeInOut,
+  }),
   '&:hover': {
     backgroundColor: 'transparent',
   },
@@ -197,7 +212,7 @@ export const SidePanel = ({
           flexGrow: 1,
           padding: 2,
           transition: 'margin 0.3s ease',
-          marginRight: openMedia || openManifest ? '500px' : '0px',
+          marginRight: openMedia || openManifest ? '400px' : '0px',
         }}
       >
         {children}

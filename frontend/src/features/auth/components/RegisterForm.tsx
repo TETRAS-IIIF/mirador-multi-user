@@ -62,7 +62,7 @@ export const RegisterForm = () => {
             spacing={2}
             maxWidth={'1000px'}
           >
-            <Grid item>
+            <Grid>
               <FormField
                 type="mail"
                 placeholder={t('mail')}
@@ -72,7 +72,7 @@ export const RegisterForm = () => {
                 error={errors.mail}
               />
             </Grid>
-            <Grid item>
+            <Grid>
               <FormField
                 type="text"
                 placeholder={t('name')}
@@ -82,7 +82,7 @@ export const RegisterForm = () => {
                 error={errors.name}
               />
             </Grid>
-            <Grid item>
+            <Grid>
               <FormField
                 type="password"
                 placeholder={t('password')}
@@ -92,7 +92,7 @@ export const RegisterForm = () => {
                 error={errors.password}
               />
             </Grid>
-            <Grid item>
+            <Grid>
               <FormField
                 type="password"
                 placeholder={t('confirm-password')}
@@ -102,7 +102,7 @@ export const RegisterForm = () => {
                 error={errors.confirmPassword}
               />
             </Grid>
-            <Grid item container>
+            <Grid container>
               <Button
                 type="submit"
                 variant="contained"
@@ -116,6 +116,5 @@ export const RegisterForm = () => {
         </form>
       )}
     </>
-
   );
 };

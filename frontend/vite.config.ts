@@ -1,37 +1,52 @@
-import { defineConfig, transformWithEsbuild } from "vite";
-import react from "@vitejs/plugin-react";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig, transformWithEsbuild } from 'vite';
+import react from '@vitejs/plugin-react';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { fileURLToPath } from 'node:url';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  define: {
-    global: "window",
-  },
+  define: { global: 'window' },
   plugins: [
     {
-      name: "treat-js-files-as-jsx",
+      name: 'treat-js-files-as-jsx',
       async transform(code, id) {
-        if (!id.match(/src\/.*\.js$/)) return null;
-
-        // Use the exposed transform from vite, instead of directly
-        // transforming with esbuild
+        if (!/\/src\/.*\.js$/.test(id)) return null;
         return transformWithEsbuild(code, id, {
-          loader: "jsx",
-          jsx: "automatic",
+          loader: 'jsx',
+          jsx: 'automatic',
         });
       },
     },
     tsconfigPaths(),
     react(),
   ],
-  build: {
-    commonjsOptions: { transformMixedEsModules: true },
+  resolve: {
+    alias: {
+      'mirador-mltools-plugin-mmu': fileURLToPath(
+        new URL(
+          './node_modules/mirador-mltools-plugin-mmu/dist/mirador-mltools-plugin.es.js',
+          import.meta.url,
+        ),
+      ),
+      'prop-types': 'prop-types/index.js',
+    },
+    dedupe: [
+      'react',
+      'react-dom',
+      '@mui/material',
+      '@emotion/react',
+      '@emotion/styled',
+    ],
+    mainFields: ['module', 'jsnext:main', 'browser', 'main'],
   },
   optimizeDeps: {
-    esbuildOptions: {
-      loader: {
-        ".js": "jsx",
-      },
+    include: ['react-is', 'hoist-non-react-statics', 'scheduler', 'prop-types'],
+    esbuildOptions: {},
+    exclude: ['mirador-annotation-editor'],
+  },
+  build: {
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true,
     },
   },
   server: {
@@ -39,12 +54,6 @@ export default defineConfig({
     port: 4000,
     watch: {
       usePolling: true,
-    },
-  },
-  resolve: {
-    alias: {
-      "mirador-annotation-editor/annotationAdapter/LocalStorageAdapter":
-        "path/to/mirador-annotation-editor/annotationAdapter/LocalStorageAdapter",
     },
   },
 });

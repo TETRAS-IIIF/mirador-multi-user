@@ -2,30 +2,31 @@ import {
   Dispatch,
   forwardRef,
   useEffect,
+  useId,
   useImperativeHandle,
   useRef,
   useState,
-} from "react";
-import Mirador from "mirador";
-import miradorAnnotationEditor from "mirador-annotation-editor/src/index.js";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
-import IMiradorState from "./interface/IState.ts";
-import IState from "./interface/IState.ts";
-import "./style/mirador.css";
-import { Project } from "../projects/types/types.ts";
-import MMUAdapter from "./adapter/MMUAdapter";
-import ManifestListTools from "mirador-mltools-plugin-mmu/es/index.js";
-import { User } from "../auth/types/types.ts";
+} from 'react';
+import Mirador from 'mirador';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import './style/mirador.css';
+import type IMiradorState from './interface/IState';
+import type IState from './interface/IState';
+import type { Project } from '../projects/types/types';
+import type { User } from '../auth/types/types';
+import MMUAdapter from './adapter/MMUAdapter';
+import ManifestListTools from 'mirador-mltools-plugin-mmu';
+import editorPlugins from 'mirador-annotation-editor';
 
-interface MiradorViewerHandle {
+export type MiradorViewerHandle = {
   setViewer: () => IState;
   saveProject: () => void;
-}
+};
 
-interface MiradorViewerProps {
+export interface MiradorViewerProps {
   HandleSetIsRunning: () => void;
   language: string;
   miradorState: IMiradorState;
@@ -34,7 +35,6 @@ interface MiradorViewerProps {
   setMiradorState: (state: IState) => void;
   setViewer: Dispatch<any>;
   viewer: any;
-  // Mirador use Plugin that allow to change state of Mirador
   useEditionPlugins: boolean;
   user: User;
 }
@@ -53,122 +53,106 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
       user,
     } = props;
 
-    const viewerRef = useRef<HTMLDivElement | null>(null);
-    const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
-    useImperativeHandle(ref, () => ({
-      saveProject: () => {
-        console.log(miradorViewer.store.getState());
-      },
-      setViewer: () => {
-        const viewer: IState = miradorViewer.store.getState();
-        setViewer(viewer);
-        return viewer;
-      },
-    }));
+    const hostRef = useRef<HTMLDivElement | null>(null);
+    const initializedRef = useRef(false);
+    const rid = useId();
+    const containerId = useRef(`mirador-${rid.replace(/[:]/g, '-')}`);
+
+    const [instance, setInstance] = useState<any>(undefined);
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        saveProject: () => {
+          if (instance?.store) console.log(instance.store.getState());
+        },
+        setViewer: () => {
+          const v: IState = instance.store.getState();
+          setViewer(v);
+          return v;
+        },
+      }),
+      [instance, setViewer],
+    );
 
     useEffect(() => {
-      if (viewerRef.current) {
-        HandleSetIsRunning();
-        const config = {
-          id: viewerRef.current.id,
-          tags: project.tags,
+      if (initializedRef.current) return;
+      initializedRef.current = true;
+      if (!hostRef.current) return;
+
+      hostRef.current.id = containerId.current;
+      HandleSetIsRunning();
+
+      const baseConfig = {
+        id: containerId.current,
+        tags: project.tags,
+        annotation: {
+          adapter: (canvasId: string) =>
+            new MMUAdapter(project.id, `${canvasId}/annotationPage`, user.name),
+          exportLocalStorageAnnotations: false,
+          commentTemplates: project.noteTemplate ?? [],
+          tagsSuggestions: project.tags ?? [],
+        },
+        annotations: { htmlSanitizationRuleSet: 'liberal' },
+        workspace: { isWorkspaceAddVisible: true, removeResourceButton: true },
+        language,
+        projectId: project.id,
+      };
+
+      const plugins = useEditionPlugins
+        ? [...ManifestListTools, editorPlugins]
+        : undefined;
+      const viewer = plugins
+        ? Mirador.viewer(baseConfig, plugins)
+        : Mirador.viewer(baseConfig);
+
+      if (!miradorState) {
+        saveMiradorState(viewer.store.getState(), project.title);
+      } else if (project.id) {
+        const cfgWithAdapter = {
+          ...miradorState.config,
           annotation: {
+            ...miradorState.config.annotation,
             adapter: (canvasId: string) =>
               new MMUAdapter(
                 project.id,
                 `${canvasId}/annotationPage`,
                 user.name,
               ),
-            // adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
-            exportLocalStorageAnnotations: false,
-            commentTemplates: project.noteTemplate ?? [],
-            tagsSuggestions: project.tags ?? [],
-          },
-          annotations: {
-            htmlSanitizationRuleSet: "liberal",
-          },
-          workspace: {
-            isWorkspaceAddVisible: true,
-            removeResourceButton: true,
-          },
-          language: language,
-          projectId: project.id,
-          themes: {
-            light: {
-              typography: {
-                formSectionTitle: {
-                  color: "rgb(25, 103, 210);",
-                },
-              },
-            },
-            dark: {
-              typography: {
-                formSectionTitle: {
-                  color: "rgb(25, 103, 210);",
-                },
-              },
-            },
+            commentTemplates: project.noteTemplate,
+            tagsSuggestions: project.tags,
           },
         };
-
-        let loadingMiradorViewer;
-        // First displaying of the viewer
-        if (!miradorViewer) {
-          if (useEditionPlugins) {
-            loadingMiradorViewer = Mirador.viewer(config, [
-              ...miradorAnnotationEditor,
-              ...ManifestListTools,
-            ]);
-          } else {
-            loadingMiradorViewer = Mirador.viewer(config);
-          }
-        }
-        if (!miradorState) {
-          saveMiradorState(
-            loadingMiradorViewer.store.getState(),
-            project.title,
-          );
-        }
-
-        // Load state only if it is not empty
-        if (loadingMiradorViewer && project.id && miradorState) {
-          const configWithAdapter = {
-            ...miradorState.config,
-            annotation: {
-              ...miradorState.config.annotation,
-              adapter: (canvasId: string) =>
-                new MMUAdapter(
-                  project.id,
-                  `${canvasId}/annotationPage`,
-                  user.name,
-                ),
-              commentTemplates: project.noteTemplate,
-              tagsSuggestions: project.tags,
-            },
-          };
-          const miradorStateWithAdapter = {
+        viewer.store.dispatch(
+          Mirador.actions.importMiradorState({
             ...miradorState,
-            config: {
-              ...configWithAdapter,
-            },
-          };
-          loadingMiradorViewer.store.dispatch(
-            Mirador.actions.importMiradorState(miradorStateWithAdapter),
-          );
-        }
-
-        setMiradorViewer(loadingMiradorViewer);
-        setViewer(loadingMiradorViewer);
-        setMiradorState(loadingMiradorViewer.store.getState());
+            config: cfgWithAdapter,
+          }),
+        );
       }
+
+      setInstance(viewer);
+      setViewer(viewer);
+      setMiradorState(viewer.store.getState());
+
+      return () => {
+        initializedRef.current = false;
+        try {
+          if (viewer?.unmount) viewer.unmount();
+        } catch (error) {
+          console.error(error);
+        }
+        const el = document.getElementById(containerId.current);
+        if (el) el.replaceChildren();
+      };
     }, []);
 
     return (
       <div
-        ref={viewerRef}
+        ref={hostRef}
         id="mirador"
-        style={{ height: "100%", padding: 0, margin: 0, overflow: "hidden" }}
-      ></div>
+        style={{ height: '100%', padding: 0, margin: 0, overflow: 'hidden' }}
+      />
     );
   },
 );

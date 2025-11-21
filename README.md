@@ -41,11 +41,14 @@ Main additions at (2025-06-05) :
 
 # Demo
 
-[https://mirador-multi-user.tetras-libre.fr/](https://mirador-multi-user.tetras-libre.fr/).
+[https://app.mirador-multi-user.com/](https://app.mirador-multi-user.com/).
 Contributions, issues report and feedback are welcomed.
 
 If you want custom demo (like specific Mirador plugins or config) please contact us at
 mirador-multi-user@tetras-libre.fr
+
+# Presentation website
+[https://www.mirador-multi-user.com/](https://www.mirador-multi-user.com/).
 
 # Features
 

@@ -7,18 +7,9 @@ import {
   useMemo,
   useState,
 } from 'react';
-import {
-  LinkUserGroup,
-  UserGroup,
-  UserGroupTypes,
-} from '../../user-group/types/types.ts';
+import { LinkUserGroup, UserGroup } from '../../user-group/types/types.ts';
 import { User } from '../../auth/types/types.ts';
-import {
-  Manifest,
-  ManifestCanvases,
-  ManifestGroupRights,
-  manifestOrigin,
-} from '../types/types.ts';
+import { Manifest, ManifestCanvases } from '../types/types.ts';
 import { uploadManifest } from '../api/uploadManifest.ts';
 import MMUCard from '../../../components/elements/MMUCard.tsx';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
@@ -43,7 +34,6 @@ import { grantAccessToManifest } from '../api/grantAccessToManifest.ts';
 import { getAllManifestGroups } from '../api/getAllManifestGroups.ts';
 import { ListItem } from '../../../components/types.ts';
 import { updateAccessToManifest } from '../api/updateAccessToManifest.ts';
-import { ObjectTypes } from '../../tag/type.ts';
 import { useTranslation } from 'react-i18next';
 import { SortItemSelector } from '../../../components/elements/sortItemSelector.tsx';
 import { IIIFResource, ManifestResource } from 'manifesto.js';
@@ -65,6 +55,12 @@ import {
   SettingKeys,
 } from '../../../utils/utils.ts';
 import { useLinkManifest } from '../hooks/useLinkManifest.ts';
+import {
+  ITEM_RIGHTS,
+  OBJECT_ORIGIN,
+  OBJECT_TYPES,
+  USER_GROUP_TYPES,
+} from '../../../utils/mmu_types.ts';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -225,7 +221,7 @@ export const AllManifests = ({
 
         await mutateAsync({
           url: path,
-          rights: ManifestGroupRights.ADMIN,
+          rights: ITEM_RIGHTS.ADMIN,
           idCreator: user.id,
           path,
           title: manifestLabel ? manifestLabel : 'new manifest',
@@ -288,7 +284,7 @@ export const AllManifests = ({
 
   const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
     try {
-      if (manifestToUpdate.origin === manifestOrigin.LINK) {
+      if (manifestToUpdate.origin === OBJECT_ORIGIN.LINK) {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { json, rights, personalOwnerGroupId, ...manifestDto } =
           manifestToUpdate;
@@ -328,7 +324,7 @@ export const AllManifests = ({
   };
 
   const getGroupByOption = (option: UserGroup): string => {
-    if (option.type === UserGroupTypes.MULTI_USER) {
+    if (option.type === USER_GROUP_TYPES.MULTI_USER) {
       return 'Groups';
     } else {
       return 'Users';
@@ -353,7 +349,7 @@ export const AllManifests = ({
     const newRights = await updateAccessToManifest(
       manifestId,
       group.id,
-      eventValue as ManifestGroupRights,
+      eventValue as ITEM_RIGHTS,
     );
     if (newRights.error) {
       toast.error(t('not_allowed_to_modify_rights'));
@@ -390,14 +386,12 @@ export const AllManifests = ({
         display={!!openModalManifestId}
       >
         <Grid
-          item
           container
           flexDirection="column"
           spacing={1}
           sx={{ paddingTop: 0 }}
         >
           <Grid
-            item
             container
             direction="row-reverse"
             alignItems="center"
@@ -412,26 +406,25 @@ export const AllManifests = ({
           >
             {!createManifestIsOpen && (
               <Grid
-                item
                 container
                 justifyContent="flex-end"
                 spacing={2}
                 alignItems="center"
               >
-                <Grid item>
+                <Grid>
                   <SearchBar
                     label={t('filterManifest')}
                     setFilter={setManifestFilter}
                   />
                 </Grid>
-                <Grid item>
+                <Grid>
                   <SortItemSelector<Manifest>
                     sortField={sortField}
                     setSortField={setSortField}
                     fields={[TITLE, UPDATED_AT]}
                   />
                 </Grid>
-                <Grid item>
+                <Grid>
                   <Tooltip
                     title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}
                   >
@@ -446,10 +439,9 @@ export const AllManifests = ({
                 </Grid>
               </Grid>
             )}
-            <Grid item container spacing={2}>
+            <Grid container spacing={2}>
               {!createManifestIsOpen && (
                 <Grid
-                  item
                   sx={{
                     position: 'fixed',
                     right: '10px',
@@ -460,7 +452,7 @@ export const AllManifests = ({
                   <SpeedDialTooltipOpen actions={actions} />
                 </Grid>
               )}
-              <Grid item>
+              <Grid>
                 <VisuallyHiddenInput
                   id="hiddenFileInput"
                   type="file"
@@ -480,27 +472,25 @@ export const AllManifests = ({
             manifests.length > 0 &&
             (currentPageData.length > 0 ? (
               <Grid
-                item
                 container
                 spacing={1}
                 flexDirection="column"
                 sx={{ marginBottom: '70px' }}
               >
                 {currentPageData.map((manifest: Manifest) => (
-                  <Grid item key={manifest.id}>
+                  <Grid key={manifest.id}>
                     <MMUCard
                       ownerId={manifest.idCreator}
-                      objectTypes={ObjectTypes.MANIFEST}
+                      objectTypes={OBJECT_TYPES.MANIFEST}
                       AddAccessListItemFunction={handleGrantAccess}
                       DefaultButton={
                         <Grid
-                          item
                           container
-                          spacing={1}
+                          spacing={2}
                           flexDirection={'row'}
                           wrap="nowrap"
                         >
-                          <Grid item>
+                          <Grid>
                             <ModalButton
                               tooltipButton={t('tooltipButtonCopy')}
                               onClickFunction={
@@ -515,7 +505,7 @@ export const AllManifests = ({
                               icon={<ContentCopyIcon />}
                             />
                           </Grid>
-                          <Grid item>
+                          <Grid>
                             <ModalButton
                               tooltipButton={t('OpenInMirador')}
                               onClickFunction={
@@ -576,7 +566,7 @@ export const AllManifests = ({
                 ))}
               </Grid>
             ) : (
-              <Grid item container justifyContent="center" alignItems="center">
+              <Grid container justifyContent="center" alignItems="center">
                 <Typography variant="h6" component="h2">
                   {t('noMatchingManifestFilter')}
                 </Typography>
@@ -584,7 +574,6 @@ export const AllManifests = ({
             ))}
           {createManifestIsOpen && (
             <Grid
-              item
               container
               spacing={2}
               flexDirection="column"

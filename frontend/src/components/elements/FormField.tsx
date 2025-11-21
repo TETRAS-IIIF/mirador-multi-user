@@ -27,7 +27,7 @@ const FormField: React.FC<FormFieldProps> = ({
       spacing={2}
       justifyContent="space-between"
     >
-      <Grid item>
+      <Grid>
         <TextField
           type={type}
           inputProps={{
@@ -40,7 +40,7 @@ const FormField: React.FC<FormFieldProps> = ({
         />
       </Grid>
       {error && (
-        <Grid item width={200}>
+        <Grid width={200}>
           <FormLabel error={true}>{error.message}</FormLabel>
         </Grid>
       )}

@@ -36,7 +36,7 @@ export const ValidateTerms = () => {
         alignItems="center"
         spacing={3}
       >
-        <Grid item>
+        <Grid>
           <FormControlLabel
             required
             control={
@@ -55,7 +55,7 @@ export const ValidateTerms = () => {
             }
           />
         </Grid>
-        <Grid item>
+        <Grid>
           <LoadingButton
             variant="contained"
             color="primary"

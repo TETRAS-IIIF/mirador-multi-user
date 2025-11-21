@@ -1,12 +1,12 @@
-import { Button, ButtonProps, Tooltip } from "@mui/material";
-import { ReactElement } from "react";
+import { Button, ButtonProps, Tooltip } from '@mui/material';
+import { ReactElement } from 'react';
 
 interface IModalButtonProps {
   onClickFunction: () => void;
   disabled: boolean;
   icon: ReactElement;
   tooltipButton: string;
-  color?: ButtonProps["color"];
+  color?: ButtonProps['color'];
 }
 
 export const ModalButton = ({
@@ -24,7 +24,7 @@ export const ModalButton = ({
           disabled={disabled}
           onClick={onClickFunction}
           variant="contained"
-          color={color ? color : "primary"}
+          color={color ? color : 'primary'}
         >
           {icon}
         </Button>

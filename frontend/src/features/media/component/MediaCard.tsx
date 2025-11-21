@@ -1,6 +1,6 @@
 import { Media } from '../types/types.ts';
 import MMUCard from '../../../components/elements/MMUCard.tsx';
-import { ObjectTypes } from '../../tag/type.ts';
+import { OBJECT_TYPES } from '../../../utils/mmu_types.ts';
 import { ModalButton } from '../../../components/elements/ModalButton.tsx';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
@@ -44,17 +44,24 @@ interface IMediaCardProps {
     share: string | undefined,
   ) => void;
   ownerId: number;
+  handleReplaceItem: (
+    file: File,
+    itemId: number,
+    itemName: string,
+    hash: string,
+  ) => Promise<void>;
+  thumbnailRefreshKey: number;
 }
 
 export const MediaCard = ({
-  HandleCopyToClipBoard,
-  HandleDeleteMedia,
-  HandleOpenModal,
-  HandleUpdateMedia,
   caddyUrl,
   getGroupByOption,
   getAccessToMedia,
   getOptionLabel,
+  HandleCopyToClipBoard,
+  HandleDeleteMedia,
+  HandleOpenModal,
+  HandleUpdateMedia,
   handleChangeRights,
   handleGrantAccess,
   handleLookingForUserGroups,
@@ -66,17 +73,17 @@ export const MediaCard = ({
   ownerId,
   setGroupList,
   setUserToAdd,
+  thumbnailRefreshKey,
+  handleReplaceItem,
 }: IMediaCardProps) => {
   const { t } = useTranslation();
 
   return (
     <MMUCard
-      ownerId={ownerId}
-      objectTypes={ObjectTypes.MEDIA}
       AddAccessListItemFunction={handleGrantAccess}
       DefaultButton={
-        <Grid item container spacing={1} flexDirection={'row'} wrap="nowrap">
-          <Grid item>
+        <Grid container spacing={2} flexDirection={'row'} wrap="nowrap">
+          <Grid>
             <ModalButton
               tooltipButton={t('tooltipMediaLink')}
               onClickFunction={
@@ -91,7 +98,7 @@ export const MediaCard = ({
               icon={<ContentCopyIcon />}
             />
           </Grid>
-          <Grid item>
+          <Grid>
             <ModalButton
               tooltipButton={t('openInNewTab')}
               onClickFunction={
@@ -117,33 +124,37 @@ export const MediaCard = ({
           disabled={false}
         />
       }
+      handleReplaceItem={handleReplaceItem}
       HandleOpenModal={() => HandleOpenModal(media.id)}
       deleteItem={() => HandleDeleteMedia(media.id)}
       description={media.description}
       getAccessToItem={getAccessToMedia}
-      getOptionLabel={getOptionLabel}
-      id={media.id}
-      item={media}
-      itemLabel={media.title}
-      listOfItem={listOfGroup}
-      metadata={media.metadata}
-      openModal={openModalMediaId === media.id}
-      removeAccessListItemFunction={handleRemoveAccessToMedia}
-      rights={media.rights}
-      searchBarLabel={t('search')}
-      searchModalEditItem={handleLookingForUserGroups}
-      setItemList={setGroupList}
-      setItemToAdd={setUserToAdd}
-      updateItem={HandleUpdateMedia}
-      handleSelectorChange={handleChangeRights}
       getGroupByOption={getGroupByOption}
+      getOptionLabel={getOptionLabel}
       handleRemoveFromList={() =>
         handleRemoveMediaFromList(
           media.id,
           media.share ? media.share : undefined,
         )
       }
+      handleSelectorChange={handleChangeRights}
+      id={media.id}
+      item={media}
+      itemLabel={media.title}
+      listOfItem={listOfGroup}
+      metadata={media.metadata}
+      objectTypes={OBJECT_TYPES.MEDIA}
+      openModal={openModalMediaId === media.id}
+      ownerId={ownerId}
+      removeAccessListItemFunction={handleRemoveAccessToMedia}
+      rights={media.rights}
+      searchBarLabel={t('search')}
+      searchModalEditItem={handleLookingForUserGroups}
+      setItemList={setGroupList}
+      setItemToAdd={setUserToAdd}
+      thumbnailRefreshKey={thumbnailRefreshKey}
       thumbnailUrl={media.thumbnailUrl ? media.thumbnailUrl : placeholder}
+      updateItem={HandleUpdateMedia}
     />
   );
 };

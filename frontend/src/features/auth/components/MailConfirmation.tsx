@@ -61,13 +61,12 @@ export const MailConfirmation = () => {
           </SuccessCard>
         ) : (
           <Grid
-            item
             container
             flexDirection="column"
             justifyContent="center"
             alignItems="center"
           >
-            <Grid item>
+            <Grid>
               <FormControlLabel
                 required
                 control={<Checkbox onChange={handleCheckBox} />}
@@ -81,7 +80,7 @@ export const MailConfirmation = () => {
                 }
               />
             </Grid>
-            <Grid item>
+            <Grid>
               <Button
                 variant="contained"
                 color="primary"

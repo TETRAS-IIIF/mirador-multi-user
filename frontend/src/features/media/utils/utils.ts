@@ -1,5 +1,8 @@
 import { YoutubeVideoJson } from '../types/types.ts';
 
+import { Media } from '../types/types';
+import { MEDIA_TYPES, OBJECT_ORIGIN } from '../../../utils/mmu_types.ts';
+
 /*************************************************************
  * IMPORTANT: The functions need to be the same as their clones in backend    *
  * src/utils/Custom_pipes/utils.ts
@@ -80,3 +83,50 @@ export const getYoutubeJson = async (
     console.error(`Error getYoutubeJson: ${error.message}`);
   }
 };
+
+export const getEditorLanguageFromMedia = (url: string): string => {
+  if (!url) return 'plaintext';
+
+  const clean = url.split('?')[0].split('#')[0];
+  const ext = clean.split('.').pop()?.toLowerCase();
+  switch (ext) {
+    case 'html':
+    case 'htm':
+      return 'html';
+    case 'json':
+      return 'json';
+    case 'xml':
+      return 'xml';
+    case 'md':
+    case 'markdown':
+      return 'markdown';
+    case 'yml':
+    case 'yaml':
+      return 'yaml';
+    case 'js':
+      return 'javascript';
+    case 'ts':
+      return 'typescript';
+    case 'css':
+    case 'scss':
+      return 'css';
+    case 'csv':
+      return 'plaintext';
+    case 'txt':
+    default:
+      return 'plaintext';
+  }
+};
+
+export function isHTMLMediaFile(media: Media): boolean {
+  if (
+    media.mediaTypes === MEDIA_TYPES.OTHER &&
+    media.origin === OBJECT_ORIGIN.UPLOAD &&
+    media.title
+  ) {
+    const extension = media.title.split('.').pop()?.toLowerCase();
+    const htmlExtensions = ['html', 'htm', 'xhtml'];
+    return extension ? htmlExtensions.includes(extension) : false;
+  }
+  return false;
+}

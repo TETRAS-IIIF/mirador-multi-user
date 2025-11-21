@@ -89,6 +89,7 @@ services:
       SWAGGER_TITLE: ${SWAGGER_TITLE}
       SWAGGER_VERSION: ${SWAGGER_VERSION}
       YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
+      HOST: ${HOST}
     depends_on:
       - db
     restart: ${RESTART}
@@ -107,6 +108,7 @@ services:
     volumes:
       - $HTTP_FOLDER:/srv
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/public:/srv/public
     networks:
       - app-network
   prometheus:

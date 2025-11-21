@@ -92,13 +92,13 @@ export const DrawerLinkManifest = ({
         </AppBar>
         <form onSubmit={handleLinkingManifest}>
           <Grid container alignItems="center" spacing={2}>
-            <Grid item>
+            <Grid>
               <label>{t('manifestLink')} :</label>
             </Grid>
-            <Grid item sx={{ width: '70%' }}>
+            <Grid sx={{ width: '70%' }}>
               <TextField
-                inputProps={{
-                  maxLength: 255,
+                slotProps={{
+                  htmlInput: { maxLength: 255 },
                 }}
                 inputRef={inputRef}
                 onChange={handleNameChange}
@@ -106,7 +106,7 @@ export const DrawerLinkManifest = ({
                 placeholder={t('validURLToManifest')}
               ></TextField>
             </Grid>
-            <Grid item>
+            <Grid>
               <LoadingButton
                 size="large"
                 variant="contained"

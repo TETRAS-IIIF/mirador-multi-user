@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { Manifest, ManifestGroupRights } from '../types/types.ts';
+import { Manifest } from '../types/types.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
 import { UserGroup } from '../../user-group/types/types.ts';
 import { User } from '../../auth/types/types.ts';
@@ -23,10 +23,12 @@ import { useFetchThumbnails } from '../customHooks/useFetchManifestThumbnails.ts
 import { isValidUrl } from '../../../utils/utils.ts';
 import placeholder from '../../../assets/Placeholder.svg';
 import { useLinkManifest } from '../hooks/useLinkManifest.ts';
+import { useItemsPerPage } from '../../../utils/customHooks/useItemsPerPage.ts';
+import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 
 const CustomButton = styled(Button)({
   position: 'absolute',
-  top: '40%',
+  top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   textAlign: 'center',
@@ -59,10 +61,10 @@ export const ContentSidePanelManifest = ({
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const { mutateAsync, isPending } = useLinkManifest();
-  const itemsPerPage = 6;
   const [manifestFilter, setManifestFilter] = useState<string | null>(null);
 
   const { t } = useTranslation();
+  const itemsPerPage = useItemsPerPage(2);
 
   const isInFilter = (manifest: Manifest) => {
     if (manifestFilter) {
@@ -73,12 +75,17 @@ export const ContentSidePanelManifest = ({
   };
 
   const currentPageData = useMemo(() => {
-    const filteredAndSortedItems = [...manifests].filter((manifest) =>
-      isInFilter(manifest),
-    );
+    const filtered = manifests.filter((m) => isInFilter(m));
+
+    filtered.sort((a, b) => {
+      const tA = a.updated_at?.valueOf() ?? 0;
+      const tB = b.updated_at?.valueOf() ?? 0;
+      return tB - tA;
+    });
+
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return filteredAndSortedItems.slice(start, end);
+    return filtered.slice(start, end);
   }, [currentPage, itemsPerPage, manifests, manifestFilter]);
 
   const { thumbnailUrls, fetchThumbnails } =
@@ -127,7 +134,7 @@ export const ContentSidePanelManifest = ({
 
         await mutateAsync({
           url: path,
-          rights: ManifestGroupRights.ADMIN,
+          rights: ITEM_RIGHTS.ADMIN,
           idCreator: user.id,
           user_group: userPersonalGroup!,
           path: path,
@@ -159,17 +166,19 @@ export const ContentSidePanelManifest = ({
   return (
     <>
       <Grid
-        item
         container
         spacing={1}
-        sx={{ padding: '20px' }}
+        sx={{ padding: '20px', width: '400px', border: 'solid red' }}
         alignItems="center"
       >
-        <Grid item>
+        <Grid>
           <SearchBar label={t('search')} setFilter={setManifestFilter} />
         </Grid>
-        <Grid item>
-          <Tooltip title={t('linkManifest')}>
+        <Grid>
+          <Tooltip
+            title={t('linkManifest')}
+            slotProps={{ popper: { sx: { zIndex: 9999 } } }}
+          >
             <Button
               variant="contained"
               onClick={() =>
@@ -182,55 +191,65 @@ export const ContentSidePanelManifest = ({
         </Grid>
       </Grid>
       {currentPageData.length > 0 ? (
-        <ImageList
-          sx={{ minWidth: 400, padding: 1, width: 400 }}
-          cols={2}
-          rowHeight={200}
+        <Grid
+          sx={{
+            height: '100%',
+            border: 'solid blue',
+          }}
         >
-          {currentPageData.map((manifest, index) => (
-            <>
-              <StyledImageListItem key={manifest.id}>
-                <Box
-                  component="img"
-                  src={
-                    isValidUrl(thumbnailUrls[index])
-                      ? `${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`
-                      : placeholder
-                  }
-                  alt={manifest.title}
-                  loading="lazy"
-                  sx={{
-                    width: '100%',
-                    height: '100%',
-                    objectFit: 'cover',
-                    '@media(min-resolution: 2dppx)': {
+          <ImageList
+            sx={{
+              padding: 1,
+              width: 400,
+              border: 'solid green',
+            }}
+            cols={2}
+            rowHeight={200}
+          >
+            {currentPageData.map((manifest, index) => (
+              <>
+                <StyledImageListItem key={manifest.id}>
+                  <Box
+                    component="img"
+                    src={
+                      isValidUrl(thumbnailUrls[index])
+                        ? `${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`
+                        : placeholder
+                    }
+                    alt={manifest.title}
+                    loading="lazy"
+                    sx={{
                       width: '100%',
                       height: '100%',
-                    },
-                  }}
-                />
-                <ImageListItemBar
-                  title={manifest.title}
-                  sx={{
-                    position: 'absolute',
-                    bottom: 0,
-                    color: 'white',
-                  }}
-                />
-                <CustomButton
-                  className="overlayButton"
-                  disableRipple
-                  onClick={() => handleCopyToClipBoard(manifest!)}
-                >
-                  {t('copyPathToClipboard')}
-                </CustomButton>
-              </StyledImageListItem>
-            </>
-          ))}
-        </ImageList>
+                      objectFit: 'cover',
+                      '@media(min-resolution: 2dppx)': {
+                        width: '100%',
+                        height: '100%',
+                      },
+                    }}
+                  />
+                  <ImageListItemBar
+                    title={manifest.title}
+                    sx={{
+                      position: 'absolute',
+                      bottom: 0,
+                      color: 'white',
+                    }}
+                  />
+                  <CustomButton
+                    className="overlayButton"
+                    disableRipple
+                    onClick={() => handleCopyToClipBoard(manifest!)}
+                  >
+                    {t('copyPathToClipboard')}
+                  </CustomButton>
+                </StyledImageListItem>
+              </>
+            ))}
+          </ImageList>
+        </Grid>
       ) : (
         <Grid
-          item
           container
           sx={{ minWidth: 400, padding: 1, width: 400, minHeight: 400 }}
           alignItems={'center'}
@@ -239,11 +258,13 @@ export const ContentSidePanelManifest = ({
           <Typography>{t('noMatchingManifestFilter')}</Typography>
         </Grid>
       )}
-      <PaginationControls
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-      />
+      <Grid sx={{ margin: 1 }}>
+        <PaginationControls
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+      </Grid>
       <Grid>
         <DrawerLinkManifest
           modalCreateManifestIsOpen={modalLinkManifestIsOpen}

@@ -1,4 +1,4 @@
-import { CircularProgress, Grid } from "@mui/material";
+import { CircularProgress, Grid } from '@mui/material';
 
 export const Loading = () => {
   return (
@@ -6,7 +6,7 @@ export const Loading = () => {
       container
       justifyContent="center"
       alignItems="center"
-      sx={{ height: "100vh", width: "100vw" }}
+      sx={{ height: '100vh', width: '100vw' }}
     >
       <CircularProgress />
     </Grid>

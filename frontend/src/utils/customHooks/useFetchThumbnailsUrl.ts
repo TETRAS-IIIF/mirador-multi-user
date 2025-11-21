@@ -1,84 +1,131 @@
-import { useEffect, useState } from "react";
-import { manifestOrigin } from "../../features/manifest/types/types.ts";
-import placeholder from "../../assets/Placeholder.svg";
-import { Dayjs } from "dayjs";
-import { mediaOrigin, MediaTypes } from "../../features/media/types/types.ts";
+import { useEffect, useState } from 'react';
+import { Dayjs } from 'dayjs';
+import placeholder from '../../assets/Placeholder.svg';
+import { MEDIA_TYPES, OBJECT_ORIGIN } from '../mmu_types.ts';
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL;
 
-interface IUseFetchThumbnailsUrlParams {
-  item: {
-    id: number;
-    created_at: Dayjs;
-    mediaTypes?: MediaTypes;
-    origin?: manifestOrigin | mediaOrigin;
-    snapShotHash?: string;
-    title?: string;
-    share?: string;
-    shared?: boolean;
-    thumbnailUrl?: string;
-    hash?: string;
-    path?: string;
-  };
+interface Item {
+  id: number;
+  created_at: Dayjs;
+  mediaTypes?: MEDIA_TYPES;
+  origin?: OBJECT_ORIGIN;
+  snapShotHash?: string;
+  title?: string;
+  share?: string;
+  shared?: boolean;
+  thumbnailUrl?: string;
+  hash?: string;
+  path?: string;
 }
 
-export default function useFetchThumbnailsUrl({ item }: IUseFetchThumbnailsUrlParams) {
+interface UseFetchThumbnailsUrlParams {
+  item: Item;
+  refreshKey?: number;
+}
+
+type UseFetchThumbnailsUrlResult = [isLoading: boolean, url: string];
+
+export default function useFetchThumbnailsUrl({
+  item,
+  refreshKey,
+}: UseFetchThumbnailsUrlParams): UseFetchThumbnailsUrlResult {
   const [state, setState] = useState<{ url: string; isLoading: boolean }>({
-    url: "",
+    url: placeholder,
     isLoading: true,
   });
 
   useEffect(() => {
-    const fetchThumbnail = async () => {
-      setState({ url: "", isLoading: true });
+    let cancelled = false;
 
-      if (item.thumbnailUrl) {
-        setState({ url: item.thumbnailUrl, isLoading: false });
-        return;
+    const isDataSvg = (url?: string) =>
+      typeof url === 'string' && url.trim().startsWith('data:image/svg+xml');
+
+    const setSafe = (url: string, isLoading: boolean) => {
+      if (!cancelled) setState({ url, isLoading });
+    };
+
+    const addCacheBuster = (url: string): string => {
+      if (!refreshKey) return url;
+      if (url.startsWith('data:')) return url;
+      const sep = url.includes('?') ? '&' : '?';
+      return `${url}${sep}v=${refreshKey}`;
+    };
+
+    const buildManifestUrl = (): string | null => {
+      let base: string | null = null;
+
+      if (item.origin === OBJECT_ORIGIN.UPLOAD && item.hash && item.title) {
+        base = `${caddyUrl}/${item.hash}/${item.title}`;
+      } else if (item.origin === OBJECT_ORIGIN.LINK && item.path) {
+        base = item.path;
+      } else if (
+        item.origin === OBJECT_ORIGIN.CREATE &&
+        item.hash &&
+        item.path
+      ) {
+        base = `${caddyUrl}/${item.hash}/${item.path}`;
       }
 
-      let manifestUrl = "";
-      if (item.origin === manifestOrigin.UPLOAD && item.hash && item.title) {
-        manifestUrl = `${caddyUrl}/${item.hash}/${item.title}`;
-      } else if (item.origin === manifestOrigin.LINK && item.path) {
-        manifestUrl = item.path;
-      } else if (item.origin === manifestOrigin.CREATE && item.hash && item.path) {
-        manifestUrl = `${caddyUrl}/${item.hash}/${item.path}`;
-      } else {
-        setState({ url: placeholder, isLoading: false });
-        return;
-      }
+      return base ? addCacheBuster(base) : null;
+    };
+
+    const tryToFetchThumbnail = async () => {
+      setSafe(placeholder, true);
+
+      let nextUrl: string = placeholder;
 
       try {
-        const response = await fetch(manifestUrl);
-        const data = await response.json();
-
-        if (data.thumbnail && !isEmpty(data.thumbnail)) {
-          setState({ url: data.thumbnail["@id"], isLoading: false });
-        } else if (data.items?.[0]?.thumbnail?.[0]?.id && !isEmpty(data.items?.[0]?.thumbnail?.[0])) {
-          setState({ url: data.items[0].thumbnail[0].id, isLoading: false });
+        if (item.thumbnailUrl) {
+          nextUrl = item.thumbnailUrl;
         } else {
-          setState({ url: placeholder, isLoading: false });
+          // 2. Manifest-based resolve
+          const manifestUrl = buildManifestUrl();
+          if (!manifestUrl) {
+            nextUrl = placeholder;
+          } else {
+            const response = await fetch(manifestUrl);
+            if (!response.ok) {
+              nextUrl = placeholder;
+            } else {
+              const data = await response.json();
+
+              const v2Thumb = data?.thumbnail?.['@id'] as string | undefined;
+              const v3Thumb = data?.items?.[0]?.thumbnail?.[0]?.id as
+                | string
+                | undefined;
+
+              nextUrl = v2Thumb || v3Thumb || placeholder;
+            }
+          }
         }
-      } catch (error) {
-        console.error("Error fetching manifest:", error);
-        setState({ url: placeholder, isLoading: false });
+      } catch (err) {
+        nextUrl = placeholder;
+      } finally {
+        if (!nextUrl || isDataSvg(nextUrl)) {
+          nextUrl = placeholder;
+        } else {
+          nextUrl = addCacheBuster(nextUrl);
+        }
+
+        setSafe(nextUrl, false);
       }
     };
 
-    fetchThumbnail();
-  }, [item]);
+    tryToFetchThumbnail();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    item.id,
+    item.origin,
+    item.hash,
+    item.title,
+    item.path,
+    item.thumbnailUrl,
+    refreshKey,
+  ]);
 
   return [state.isLoading, state.url];
-}
-
-
-function isEmpty(obj:any) {
-  for (const prop in obj) {
-    if (Object.hasOwn(obj, prop)) {
-      return false;
-    }
-  }
-
-  return true;
 }

@@ -2,7 +2,6 @@ import {
   Box,
   Grid,
   IconButton,
-  styled,
   Tab,
   Tabs,
   Tooltip,
@@ -21,12 +20,8 @@ import {
 } from 'react';
 import { createMedia } from '../api/createMedia.ts';
 import { User } from '../../auth/types/types.ts';
-import {
-  LinkUserGroup,
-  UserGroup,
-  UserGroupTypes,
-} from '../../user-group/types/types.ts';
-import { Media, MediaGroupRights, MediaTypes } from '../types/types.ts';
+import { LinkUserGroup, UserGroup } from '../../user-group/types/types.ts';
+import { Media } from '../types/types.ts';
 import toast from 'react-hot-toast';
 import { deleteMedia } from '../api/deleteMedia.ts';
 import { updateMedia } from '../api/updateMedia.ts';
@@ -51,6 +46,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { removeMediaFromList } from '../api/removeManifestFromList.ts';
 import { MediaFooter } from '../../../../customAssets/MediaFooter.tsx';
 import {
+  caddyUrl,
   getSettingValue,
   isFileSizeOverLimit,
   isValidFileForUpload,
@@ -64,18 +60,14 @@ import {
 import { useCreateMediaLink } from '../hooks/useCreateMediaLink.ts';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 import { getAccessToMedia } from '../api/getAccessToMedia.ts';
-
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
+import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
+import {
+  ITEM_RIGHTS,
+  MEDIA_TYPES,
+  MEDIA_TYPES_TABS,
+  USER_GROUP_TYPES,
+} from '../../../utils/mmu_types.ts';
+import { reuploadMedia } from '../api/reuploadMedia.ts';
 
 interface IAllMediasProps {
   user: User;
@@ -84,15 +76,6 @@ interface IAllMediasProps {
   fetchMediaForUser: () => void;
   setMedias: Dispatch<SetStateAction<Media[]>>;
 }
-
-const caddyUrl = import.meta.env.VITE_CADDY_URL;
-
-const MEDIA_TYPES_TABS = {
-  ALL: 0,
-  VIDEO: 1,
-  IMAGE: 2,
-  OTHER: 3,
-};
 
 export const AllMedias = ({
   user,
@@ -112,6 +95,8 @@ export const AllMedias = ({
   const [sortOrder, setSortOrder] = useState('desc');
   const { mutateAsync, isPending } = useCreateMediaLink();
   const { data: settings } = useAdminSettings();
+  const [thumbRefreshKey, setThumbRefreshKey] = useState(0);
+
   const [MAX_UPLOAD_SIZE] = useState<number | undefined>(
     Number(getSettingValue(SettingKeys.MAX_UPLOAD_SIZE, settings)),
   );
@@ -135,11 +120,11 @@ export const AllMedias = ({
 
   const filterByMediaType = (medias: Media[]) => {
     if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-      return medias.filter((media) => media.mediaTypes === MediaTypes.VIDEO);
+      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.VIDEO);
     } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-      return medias.filter((media) => media.mediaTypes === MediaTypes.IMAGE);
+      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.IMAGE);
     } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
-      return medias.filter((media) => media.mediaTypes === MediaTypes.OTHER);
+      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.OTHER);
     } else if (mediaTabShown === MEDIA_TYPES_TABS.ALL) {
       return medias;
     }
@@ -159,11 +144,11 @@ export const AllMedias = ({
   const totalPages = Math.ceil(
     medias.filter((media) => {
       if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-        return media.mediaTypes === MediaTypes.VIDEO;
+        return media.mediaTypes === MEDIA_TYPES.VIDEO;
       } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-        return media.mediaTypes === MediaTypes.IMAGE;
+        return media.mediaTypes === MEDIA_TYPES.IMAGE;
       } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
-        return media.mediaTypes === MediaTypes.OTHER;
+        return media.mediaTypes === MEDIA_TYPES.OTHER;
       }
       return true;
     }).length / itemsPerPage,
@@ -294,7 +279,7 @@ export const AllMedias = ({
     const newRights = await updateAccessToMedia(
       mediaId,
       group.id,
-      eventValue as MediaGroupRights,
+      eventValue as ITEM_RIGHTS,
     );
 
     if (newRights.error) {
@@ -343,11 +328,33 @@ export const AllMedias = ({
   };
 
   const getGroupByOption = (option: UserGroup): string => {
-    if (option.type === UserGroupTypes.MULTI_USER) {
+    if (option.type === USER_GROUP_TYPES.MULTI_USER) {
       return 'Groups';
     } else {
       return 'Users';
     }
+  };
+
+  const handleReplaceItem = async (
+    file: File,
+    itemId: number,
+    itemName: string,
+    hash: string,
+  ) => {
+    try {
+      const result = await reuploadMedia(file, itemId, itemName, hash);
+
+      if (!result.ok) {
+        toast.error(t('unmatchingExtensionError'));
+        return;
+      }
+
+      toast.success(t('mediaReplaced'));
+      setThumbRefreshKey((k) => k + 1);
+    } catch {
+      toast.error(t('uploadFailed'));
+    }
+    return fetchMediaForUser();
   };
 
   const handleRemoveMediaFromList = async (
@@ -365,7 +372,7 @@ export const AllMedias = ({
 
   return (
     <Box sx={{ padding: 2 }}>
-      <Grid item container flexDirection="column" spacing={1}>
+      <Grid container flexDirection="column" spacing={1}>
         <Grid
           container
           alignItems="center"
@@ -378,7 +385,7 @@ export const AllMedias = ({
             paddingBottom: '10px',
           }}
         >
-          <Grid item>
+          <Grid>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
               <Tabs
                 value={mediaTabShown}
@@ -392,7 +399,7 @@ export const AllMedias = ({
               </Tabs>
             </Box>
           </Grid>
-          <Grid item>
+          <Grid>
             <VisuallyHiddenInput
               id="file-upload"
               type="file"
@@ -400,24 +407,23 @@ export const AllMedias = ({
             />
           </Grid>
           <Grid
-            item
             container
             spacing={2}
             sx={{ width: 'auto', paddingTop: 1, paddingBottom: 1 }}
             alignItems="center"
             justifyContent="flex-end"
           >
-            <Grid item>
+            <Grid>
               <SearchBar setFilter={setMediaFilter} label={t('filterMedia')} />
             </Grid>
-            <Grid item>
+            <Grid>
               <SortItemSelector<Media>
                 sortField={sortField}
                 setSortField={setSortField}
                 fields={[TITLE, UPDATED_AT]}
               />
             </Grid>
-            <Grid item>
+            <Grid>
               <Tooltip title={t(sortOrder === 'asc' ? 'sortAsc' : 'sortDesc')}>
                 <IconButton onClick={toggleSortOrder}>
                   {sortOrder === 'asc' ? (
@@ -438,25 +444,25 @@ export const AllMedias = ({
           </Grid>
         )}
         <Grid
-          item
           container
           spacing={1}
           flexDirection="column"
           sx={{ marginBottom: '70px' }}
         >
-          <Grid container spacing={2} direction="column">
+          <Grid container spacing={1} direction="column">
             {medias.length > 0 &&
               (currentPageData.length > 0 ? (
                 currentPageData.map((media: Media) => (
-                  <Grid item key={media.id}>
+                  <Grid key={media.id}>
                     <MediaCard
                       media={{
                         ...media,
                         thumbnailUrl:
-                          media.hash && media.mediaTypes === MediaTypes.IMAGE
+                          media.hash && media.mediaTypes === MEDIA_TYPES.IMAGE
                             ? `${caddyUrl}/${media.hash}/thumbnail.webp`
                             : undefined,
                       }}
+                      thumbnailRefreshKey={thumbRefreshKey}
                       ownerId={media.idCreator}
                       getAccessToMedia={getAccessToMedia}
                       getOptionLabel={getOptionLabel}
@@ -465,6 +471,7 @@ export const AllMedias = ({
                       HandleDeleteMedia={HandleDeleteMedia}
                       handleGrantAccess={handleGrantAccess}
                       HandleCopyToClipBoard={HandleCopyToClipBoard}
+                      handleReplaceItem={handleReplaceItem}
                       HandleUpdateMedia={HandleUpdateMedia}
                       caddyUrl={caddyUrl}
                       handleChangeRights={handleChangeRights}
@@ -479,12 +486,7 @@ export const AllMedias = ({
                   </Grid>
                 ))
               ) : (
-                <Grid
-                  item
-                  container
-                  justifyContent="center"
-                  alignItems="center"
-                >
+                <Grid container justifyContent="center" alignItems="center">
                   <Typography variant="h6" component="h2">
                     {t('noMatchingMediaFilter')}
                   </Typography>
@@ -508,13 +510,12 @@ export const AllMedias = ({
           />
         </Grid>
         <Grid
-          item
           sx={{ position: 'fixed', right: '10px', bottom: '3px', zIndex: 999 }}
         >
           <SpeedDialTooltipOpen actions={actions} />
         </Grid>
       </Grid>
-      <Grid item width={'100%'} height={'100%'}>
+      <Grid width={'100%'} height={'100%'}>
         <MediaFooter />
       </Grid>
     </Box>

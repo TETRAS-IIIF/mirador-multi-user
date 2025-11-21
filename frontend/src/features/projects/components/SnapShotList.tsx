@@ -17,12 +17,12 @@ interface ISnapShopListProps {
 }
 
 export const SnapShotList = ({
-                               snapShots,
-                               itemId,
-                               updateSnapshot,
-                               handleDeleteSnapshot,
-                               handleCreateSnapshot,
-                             }: ISnapShopListProps) => {
+  snapShots,
+  itemId,
+  updateSnapshot,
+  handleDeleteSnapshot,
+  handleCreateSnapshot,
+}: ISnapShopListProps) => {
   const { t, i18n } = useTranslation();
   const createRowData = (
     value: string,

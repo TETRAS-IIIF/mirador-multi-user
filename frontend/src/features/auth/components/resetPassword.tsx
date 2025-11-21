@@ -12,6 +12,7 @@ import { Layout } from './layout.tsx';
 import { resetPassword } from '../api/resetPassword.ts';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { PASSWORD_MINIMUM_LENGTH } from '../../../utils/utils.ts';
 
 export const ResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -22,26 +23,28 @@ export const ResetPassword = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const url = window.location.href;
-    const match = url.match(/\/reset-password\/(.+)/);
-    if (match) {
-      setToken(match[1]);
-    } else {
+    try {
+      if (!globalThis?.location?.href) {
+        setError(t('errorToken'));
+        return;
+      }
+      const url = new URL(globalThis.location.href);
+      const match = /\/reset-password\/([^/]+)/.exec(url.pathname);
+      if (match) setToken(match[1]);
+      else setError(t('errorToken'));
+    } catch {
       setError(t('errorToken'));
     }
-  }, []);
+  }, [t]);
 
   const handlePasswordReset = async () => {
     setError('');
     setSuccess('');
-    setError('');
-    setSuccess('');
 
-    if (password.length < 8) {
+    if (password.length < PASSWORD_MINIMUM_LENGTH) {
       setError(t('passwordTooShort'));
       return;
     }
-
     if (password !== confirmPassword) {
       setError(t('passwordMismatch'));
       return;
@@ -50,15 +53,16 @@ export const ResetPassword = () => {
       setError(t('invalidToken'));
       return;
     }
-    if (token) {
-      const response = await resetPassword(token, password);
-      if (response) {
-        setSuccess(t("passwordResetSuccess"));
-      } else {
-        setSuccess(t("passwordResetError"));
-      }
-    }
+
+    const ok = await resetPassword(token, password);
+    if (ok) setSuccess(t('passwordResetSuccess'));
+    else setError(t('passwordResetError'));
   };
+
+  const isCompleted = Boolean(success);
+  const canSubmit =
+    password.length >= PASSWORD_MINIMUM_LENGTH && confirmPassword.length > 0;
+
   return (
     <Layout
       title={t('reset-password-title')}
@@ -72,31 +76,35 @@ export const ResetPassword = () => {
     >
       <Container maxWidth="sm">
         <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3 }}>
-          <Typography variant="h5" align="center" gutterBottom>
+          <Typography variant="h5" alignItems="center" gutterBottom>
             {t('reset-password')}
           </Typography>
+
           <TextField
-            inputProps={{
-              maxLength: 255,
-            }}
+            inputProps={{ maxLength: 255 }}
             label={t('new-password')}
             type="password"
+            autoComplete="new-password"
             fullWidth
             margin="normal"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            disabled={isCompleted}
           />
+
           <TextField
             inputProps={{ maxLength: 255 }}
             label={t('confirm-new-password')}
             type="password"
+            autoComplete="new-password"
             fullWidth
-            margin="normal"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
+            disabled={isCompleted}
           />
+
           {error && (
             <Alert severity="error" sx={{ mt: 2 }}>
               {error}
@@ -107,16 +115,30 @@ export const ResetPassword = () => {
               {success}
             </Alert>
           )}
-          <Button
-            variant="contained"
-            color="primary"
-            fullWidth
-            disabled={!password || !confirmPassword}
-            sx={{ mt: 3 }}
-            onClick={handlePasswordReset}
-          >
-            {t('reset-password')}
-          </Button>
+
+          {isCompleted ? (
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              component={NavLink}
+              to="/auth/login"
+              sx={{ mt: 3 }}
+            >
+              {t('login')}
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={!canSubmit}
+              sx={{ mt: 3 }}
+              onClick={handlePasswordReset}
+            >
+              {t('reset-password')}
+            </Button>
+          )}
         </Box>
       </Container>
     </Layout>

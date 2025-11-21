@@ -13,7 +13,9 @@ interface ICreateUserFormProps {
   setopenAddUserModal: Dispatch<SetStateAction<boolean>>;
 }
 
-export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) => {
+export const CreateUserForm = ({
+  setopenAddUserModal,
+}: ICreateUserFormProps) => {
   const { t } = useTranslation();
   const { mutateAsync: createUser } = useRegister();
   const {
@@ -24,13 +26,12 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
     resolver: zodResolver(UserSchema),
   });
 
-
   const onSubmit = async (data: RegisterCredentialsDTO) => {
     try {
       await createUser(data, {
         onSuccess: () => {
           toast.success(t('accountCreated'));
-          setopenAddUserModal(false)
+          setopenAddUserModal(false);
         },
       });
     } catch (error: any) {
@@ -47,10 +48,8 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
 
   return (
     <Grid container wrap="nowrap" spacing={2} flexDirection="column">
-      <Grid item>
-        <Typography variant="h6">
-          {t('create_user_form')}
-        </Typography>
+      <Grid>
+        <Typography variant="h6">{t('create_user_form')}</Typography>
       </Grid>
       <form>
         <Grid
@@ -60,7 +59,7 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
           spacing={2}
           maxWidth={'1000px'}
         >
-          <Grid item>
+          <Grid>
             <FormField
               type="mail"
               placeholder={t('mail')}
@@ -70,7 +69,7 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
               error={errors.mail}
             />
           </Grid>
-          <Grid item>
+          <Grid>
             <FormField
               type="text"
               placeholder={t('name')}
@@ -80,7 +79,7 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
               error={errors.name}
             />
           </Grid>
-          <Grid item>
+          <Grid>
             <FormField
               type="password"
               placeholder={t('password')}
@@ -90,7 +89,7 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
               error={errors.password}
             />
           </Grid>
-          <Grid item>
+          <Grid>
             <FormField
               type="password"
               placeholder={t('confirm-password')}
@@ -100,7 +99,7 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
               error={errors.confirmPassword}
             />
           </Grid>
-          <Grid item container>
+          <Grid container>
             <Button
               type="submit"
               variant="contained"
@@ -113,5 +112,5 @@ export const CreateUserForm = ({ setopenAddUserModal }: ICreateUserFormProps) =>
         </Grid>
       </form>
     </Grid>
-  )
-}
+  );
+};

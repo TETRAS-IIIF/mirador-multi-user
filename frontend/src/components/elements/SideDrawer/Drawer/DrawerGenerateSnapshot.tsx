@@ -1,8 +1,8 @@
-import { ListItem, Tooltip } from "@mui/material";
-import { ItemButton } from "../../SideBar/ItemButton";
-import UpdateIcon from "@mui/icons-material/Update";
-import { useTranslation } from "react-i18next";
-import { Project } from "../../../../features/projects/types/types.ts";
+import { ListItem, Tooltip } from '@mui/material';
+import { ItemButton } from '../../SideBar/ItemButton';
+import UpdateIcon from '@mui/icons-material/Update';
+import { useTranslation } from 'react-i18next';
+import { Project } from '../../../../features/projects/types/types.ts';
 
 interface IDrawerGenerateSnapshotProps {
   open: boolean;
@@ -19,11 +19,11 @@ export function DrawerGenerateSnapshot({
 
   return (
     <>
-      <Tooltip title={projectSelected!.title} placement="left">
+      <Tooltip title={t('generate_snapshot_tooltip')} placement="left">
         <ListItem sx={{ padding: 0 }}>
           <ItemButton
             icon={<UpdateIcon />}
-            text={t("generate_snapshot")}
+            text={t('generate_snapshot')}
             open={open}
             selected={false}
             action={() => handleGenerateSnapshot(projectSelected.id)}

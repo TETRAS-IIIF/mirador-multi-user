@@ -95,10 +95,10 @@ export const DrawerLinkMedia = ({
             </AppBar>
             <form onSubmit={handleLinkingMedia}>
               <Grid container alignItems="center" spacing={2}>
-                <Grid item>
+                <Grid>
                   <label>{t('mediaLink')}:</label>
                 </Grid>
-                <Grid item sx={{ width: '70%' }}>
+                <Grid sx={{ width: '70%' }}>
                   <TextField
                     inputProps={{
                       maxLength: 255,
@@ -109,7 +109,7 @@ export const DrawerLinkMedia = ({
                     placeholder={t('validURLToMedia')}
                   ></TextField>
                 </Grid>
-                <Grid item>
+                <Grid>
                   <LoadingButton
                     size="large"
                     variant="contained"

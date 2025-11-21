@@ -1,24 +1,39 @@
-import { ReactNode } from "react";
+import { ComponentPropsWithoutRef, ReactNode } from 'react';
+import { Box, SxProps } from '@mui/material';
 
-interface TabPanelProps {
+type CustomTabPanelProps = {
   children?: ReactNode;
   index: number;
   value: number;
-}
+  sx?: SxProps;
+} & ComponentPropsWithoutRef<'div'>;
 
-export function CustomTabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
+export function CustomTabPanel({
+  children,
+  value,
+  index,
+  sx,
+  ...other
+}: CustomTabPanelProps) {
+  const isActive = value === index;
 
   return (
-    <div
+    <Box
       role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
+      hidden={!isActive}
+      id={`tab-panel-${index}`}
+      aria-labelledby={`tab-${index}`}
+      sx={{
+        height: '85%',
+        ...sx,
+        position: 'relative',
+        isolation: 'isolate',
+        zIndex: 1,
+        overflow: 'hidden',
+      }}
       {...other}
-      style={{ height: "85%" }}
     >
-      {value === index && <>{children}</>}
-    </div>
+      {isActive ? children : null}
+    </Box>
   );
 }

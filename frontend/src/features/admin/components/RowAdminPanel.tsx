@@ -17,10 +17,7 @@ interface SingleRowProps {
   row: RowProps;
 }
 
-export function RowAdminPanel(
-  {
-    row,
-  }: SingleRowProps) {
+export function RowAdminPanel({ row }: SingleRowProps) {
   const [open, setOpen] = React.useState(false);
 
   return (

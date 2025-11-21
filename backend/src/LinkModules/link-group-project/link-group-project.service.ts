@@ -709,6 +709,7 @@ export class LinkGroupProjectService {
     projectId: number,
     userId: number,
   ): Promise<boolean | number> {
+    const SELF_LOCK = -1;
     try {
       const project = await this.projectService.findOne(projectId);
       if (!project) {
@@ -716,6 +717,10 @@ export class LinkGroupProjectService {
       }
       if (project.lockedByUserId === null && project.lockedAt === null) {
         return false;
+      }
+      // user is the one who locked the project → return an explicit signal
+      if (userId === project.lockedByUserId) {
+        return SELF_LOCK;
       }
       const now = Date.now();
       const isLockRelevant =

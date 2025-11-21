@@ -1,13 +1,13 @@
-import { Autocomplete, Button, Grid, TextField } from "@mui/material";
-import { useDebounceCallback } from "usehooks-ts";
+import { Autocomplete, Button, Grid, TextField } from '@mui/material';
+import { useDebounceCallback } from 'usehooks-ts';
 import {
   ChangeEvent,
   Dispatch,
   SetStateAction,
   SyntheticEvent,
   useState,
-} from "react";
-import { useTranslation } from "react-i18next";
+} from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface IUsersSearchBarProps {
   handleAdd?: () => void;
@@ -38,7 +38,7 @@ export const SearchBar = ({
 }: IUsersSearchBarProps) => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const { t } = useTranslation();
-  const [searchValue, setSearchValue] = useState<string>("");
+  const [searchValue, setSearchValue] = useState<string>('');
   const handleFetchData = async (partialDataName: string) => {
     try {
       if (fetchFunction) {
@@ -48,7 +48,7 @@ export const SearchBar = ({
         }
       }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error('Error fetching data:', error);
     }
   };
 
@@ -95,11 +95,11 @@ export const SearchBar = ({
     <Grid container flexDirection="column">
       <Grid container spacing={2} alignItems="center">
         {fetchFunction ? (
-          <Grid item>
+          <Grid>
             <Autocomplete
               disablePortal
               onInputChange={handleInputChange}
-              sx={{ width: "250px" }}
+              sx={{ width: '250px' }}
               onChange={handleChange}
               id="combo-box-demo"
               options={suggestions}
@@ -107,26 +107,25 @@ export const SearchBar = ({
               renderInput={(params) => <TextField {...params} label={label} />}
               getOptionLabel={getOptionLabel}
               groupBy={groupByOption}
-              noOptionsText={t("noOptions")}
+              noOptionsText={t('noOptions')}
             />
           </Grid>
         ) : (
-          <Grid item>
+          <Grid>
             <TextField
-              inputProps={{
-                maxLength: 255,
-                type: "search",
+              slotProps={{
+                htmlInput: { maxLength: 255 },
               }}
               label={label}
               variant="outlined"
               value={searchValue}
               onChange={handleTextFieldChange}
-              sx={{ width: "250px" }}
+              sx={{ width: '250px' }}
             />
           </Grid>
         )}
         {actionButtonLabel && (
-          <Grid item>
+          <Grid>
             <Button variant="contained" onClick={handleAdd}>
               {actionButtonLabel}
             </Button>

@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import "@fontsource/roboto/300.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/roboto/500.css";
-import "@fontsource/roboto/700.css";
-import "./style/mirador.css";
-import { Grid } from "@mui/material";
-import Mirador from "mirador";
+import { useEffect, useRef, useState } from 'react';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import './style/mirador.css';
+import { Grid } from '@mui/material';
+import Mirador from 'mirador';
 
 export const MiradorManifestExposed = () => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
@@ -26,7 +26,7 @@ export const MiradorManifestExposed = () => {
           },
         ],
         annotations: {
-          htmlSanitizationRuleSet: "liberal",
+          htmlSanitizationRuleSet: 'liberal',
         },
       };
       let loadingMiradorViewer;
@@ -41,13 +41,13 @@ export const MiradorManifestExposed = () => {
 
   useEffect(() => {
     const url = window.location.href;
-    const miradorIndex = url.indexOf("/manifest/");
+    const miradorIndex = url.indexOf('/manifest/');
     if (miradorIndex !== -1) {
       const urlSuffix = url.substring(miradorIndex + 10); // 10 is the length of '/manifest/'
 
       // TODO This code is a temporary solution
       // This code must be improved also than AllManifests.tsx
-      if (urlSuffix.startsWith("https")) {
+      if (urlSuffix.startsWith('https')) {
         // In this case it's a manifest linked to MMU
         loadMirador(urlSuffix);
       } else {
@@ -59,7 +59,7 @@ export const MiradorManifestExposed = () => {
   }, []);
 
   return (
-    <Grid item>
+    <Grid>
       <div ref={viewerRef} id="mirador"></div>
     </Grid>
   );

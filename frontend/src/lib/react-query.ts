@@ -1,10 +1,10 @@
-import { PromiseValue } from "type-fest";
+import { PromiseValue } from 'type-fest';
 import {
   DefaultOptions,
   QueryClient,
   UseMutationOptions,
   UseQueryOptions,
-} from "@tanstack/react-query";
+} from '@tanstack/react-query';
 
 const queryConfig: DefaultOptions = {
   queries: {
@@ -20,7 +20,7 @@ export type ExtractFnReturnType<FnType extends (...args: any) => any> =
 
 export type QueryConfig<QueryFnType extends (...args: any) => any> = Omit<
   UseQueryOptions<ExtractFnReturnType<QueryFnType>>,
-  "queryKey" | "queryFn"
+  'queryKey' | 'queryFn'
 >;
 
 export type MutationConfig<MutationFnType extends (...args: any) => any> =
