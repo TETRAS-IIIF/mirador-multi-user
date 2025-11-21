@@ -68,7 +68,6 @@ export const AdvancedTextEditor = ({
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // Full document content
   const [localValue, setLocalValue] = useState<string>(value);
   const [lastSavedValue, setLastSavedValue] = useState<string>(value);
   const [isDirty, setIsDirty] = useState(false);
@@ -101,41 +100,43 @@ export const AdvancedTextEditor = ({
     updateValue(v ?? '');
   };
 
-  // Extract <body> innerHTML from the full document
   const extractBodyHtml = (html: string): string => {
-    try {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      if (doc.body && doc.body.innerHTML.trim() !== '') {
-        return doc.body.innerHTML;
-      }
-      return html;
-    } catch {
-      return html;
-    }
+    const lower = html.toLowerCase();
+    const bodyOpen = lower.indexOf('<body');
+    if (bodyOpen === -1) return html;
+
+    const openTagEnd = html.indexOf('>', bodyOpen);
+    if (openTagEnd === -1) return html;
+
+    const bodyClose = lower.lastIndexOf('</body>');
+    if (bodyClose === -1 || bodyClose <= openTagEnd) return html;
+
+    return html.slice(openTagEnd + 1, bodyClose);
   };
 
   // Merge edited body HTML back into the full document,
   // preserving <head>, <meta>, <script>, etc.
   const mergeBodyHtml = (fullHtml: string, newBodyHtml: string): string => {
-    try {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(fullHtml, 'text/html');
-      if (!doc.body) return fullHtml;
-
-      doc.body.innerHTML = newBodyHtml;
-
-      const serializer = new XMLSerializer();
-      const htmlElement = doc.documentElement;
-      const htmlString = serializer.serializeToString(htmlElement);
-
-      const hasDoctype = /^<!doctype html>/i.test(fullHtml.trim());
-      const doctype = hasDoctype ? '' : '<!DOCTYPE html>\n';
-
-      return `${doctype}${htmlString}`;
-    } catch {
-      return fullHtml;
+    const lower = fullHtml.toLowerCase();
+    const bodyOpen = lower.indexOf('<body');
+    if (bodyOpen === -1) {
+      return `<!DOCTYPE html>
+    <html>
+      <head><meta charset="utf-8" /></head>
+      <body>${newBodyHtml}</body>
+    </html>`;
     }
+
+    const openTagEnd = fullHtml.indexOf('>', bodyOpen);
+    if (openTagEnd === -1) return fullHtml;
+
+    const bodyClose = lower.lastIndexOf('</body>');
+    if (bodyClose === -1 || bodyClose <= openTagEnd) return fullHtml;
+
+    const before = fullHtml.slice(0, openTagEnd + 1);
+    const after = fullHtml.slice(bodyClose);
+
+    return `${before}\n${newBodyHtml}\n${after}`;
   };
 
   const bodyHtml = useMemo(() => extractBodyHtml(localValue), [localValue]);
