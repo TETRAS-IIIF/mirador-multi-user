@@ -1,6 +1,9 @@
+import type React from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
 import type * as monaco from 'monaco-editor';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import {
   AppBar,
   Box,
@@ -8,6 +11,8 @@ import {
   GlobalStyles,
   IconButton,
   Stack,
+  ToggleButton,
+  ToggleButtonGroup,
   Toolbar,
   Typography,
 } from '@mui/material';
@@ -43,6 +48,10 @@ export const AdvancedTextEditor = ({
   const savedValueRef = useRef<string>(value);
   const [isDirty, setIsDirty] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editorMode, setEditorMode] = useState<'code' | 'rich'>('code');
+
+  const isHtml =
+    language.toLowerCase() === 'html' || language.toLowerCase() === 'htm';
 
   const handleMount: OnMount = (editor) => {
     editorRef.current = editor;
@@ -54,11 +63,9 @@ export const AdvancedTextEditor = ({
   const replace = () =>
     editorRef.current?.getAction('editor.action.startFindReplaceAction')?.run();
 
-  // Auto-format document
   const format = () =>
     editorRef.current?.getAction('editor.action.formatDocument')?.run();
 
-  // Track dirty vs last saved value, but allow parent to load new content
   useEffect(() => {
     if (value === savedValueRef.current) {
       setIsDirty(false);
@@ -74,6 +81,10 @@ export const AdvancedTextEditor = ({
     const next = v ?? '';
     onChange(next);
     setIsDirty(next !== savedValueRef.current);
+  };
+
+  const handleQuillChange = (content: string) => {
+    handleEditorChange(content);
   };
 
   const handleSave = async () => {
@@ -113,43 +124,101 @@ export const AdvancedTextEditor = ({
     [fullscreenMode, dialogOpen],
   );
 
+  const handleModeChange = (
+    _event: React.MouseEvent<HTMLElement>,
+    newMode: 'code' | 'rich' | null,
+  ) => {
+    if (!newMode) return;
+    setEditorMode(newMode);
+  };
+
   const Controls = () => (
-    <Stack direction="row" spacing={0.5} alignItems="center">
-      <IconButton size="small" onClick={undo} title="Undo">
-        <UndoIcon fontSize="small" />
-      </IconButton>
-      <IconButton size="small" onClick={redo} title="Redo">
-        <RedoIcon fontSize="small" />
-      </IconButton>
-      <IconButton size="small" onClick={search} title="Search">
-        <SearchIcon fontSize="small" />
-      </IconButton>
-      <IconButton size="small" onClick={replace} title="Replace">
-        <FindReplaceIcon fontSize="small" />
-      </IconButton>
-      <IconButton size="small" onClick={format} title="Format code">
-        <AutoFixHighIcon fontSize="small" />
-      </IconButton>
-      <IconButton
-        size="small"
-        onClick={handleSave}
-        title={isDirty ? 'Save (unsaved changes)' : 'Save'}
-        disabled={!isDirty}
-      >
-        <SaveIcon fontSize="small" />
-      </IconButton>
-      {isDirty && (
-        <Box
-          sx={{
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
-            bgcolor: 'error.main',
-          }}
-          title="Unsaved changes"
-        />
+    <Stack direction="row" spacing={1} alignItems="center">
+      {isHtml && (
+        <ToggleButtonGroup
+          size="small"
+          value={editorMode}
+          exclusive
+          onChange={handleModeChange}
+        >
+          <ToggleButton value="code">Monaco</ToggleButton>
+          <ToggleButton value="rich">Quill</ToggleButton>
+        </ToggleButtonGroup>
       )}
+
+      <Stack direction="row" spacing={0.5} alignItems="center">
+        <IconButton size="small" onClick={undo} title="Undo">
+          <UndoIcon fontSize="small" />
+        </IconButton>
+        <IconButton size="small" onClick={redo} title="Redo">
+          <RedoIcon fontSize="small" />
+        </IconButton>
+        <IconButton size="small" onClick={search} title="Search">
+          <SearchIcon fontSize="small" />
+        </IconButton>
+        <IconButton size="small" onClick={replace} title="Replace">
+          <FindReplaceIcon fontSize="small" />
+        </IconButton>
+        <IconButton
+          size="small"
+          onClick={format}
+          title="Format code"
+          disabled={!editorRef.current}
+        >
+          <AutoFixHighIcon fontSize="small" />
+        </IconButton>
+        <IconButton
+          size="small"
+          onClick={handleSave}
+          title={isDirty ? 'Save (unsaved changes)' : 'Save'}
+          disabled={!isDirty}
+        >
+          <SaveIcon fontSize="small" />
+        </IconButton>
+        {isDirty && (
+          <Box
+            sx={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              bgcolor: 'error.main',
+            }}
+            title="Unsaved changes"
+          />
+        )}
+      </Stack>
     </Stack>
+  );
+
+  const monacoEditor = (
+    <Editor
+      value={value}
+      language={language}
+      onChange={handleEditorChange}
+      onMount={handleMount}
+      theme="vs"
+      options={{
+        lineNumbers: 'on',
+        minimap: { enabled: false },
+        automaticLayout: true,
+        wordWrap: 'on',
+        smoothScrolling: true,
+        renderLineHighlight: 'all',
+        folding: true,
+        contextmenu: true,
+        tabSize: 2,
+        insertSpaces: true,
+      }}
+    />
+  );
+
+  const quillEditor = (
+    <ReactQuill
+      theme="snow"
+      value={value}
+      onChange={handleQuillChange}
+      style={{ width: '100%', height: '100%' }}
+    />
   );
 
   const editor = (
@@ -161,27 +230,14 @@ export const AdvancedTextEditor = ({
         width: '100%',
         overflow: 'hidden',
         display: 'flex',
+        '& .ql-container': {
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+        },
       }}
     >
-      <Editor
-        value={value}
-        language={language}
-        onChange={handleEditorChange}
-        onMount={handleMount}
-        theme="vs"
-        options={{
-          lineNumbers: 'on',
-          minimap: { enabled: false },
-          automaticLayout: true,
-          wordWrap: 'on',
-          smoothScrolling: true,
-          renderLineHighlight: 'all',
-          folding: true,
-          contextmenu: true,
-          tabSize: 2,
-          insertSpaces: true,
-        }}
-      />
+      {isHtml && editorMode === 'rich' ? quillEditor : monacoEditor}
     </Box>
   );
 
