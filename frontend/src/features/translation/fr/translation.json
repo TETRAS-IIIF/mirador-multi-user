@@ -217,7 +217,7 @@
   "openid_connection_tooltip": "Mettez en place un fournisseur OpenID pour activer cette fonctionnalité",
   "openProject": "Ouvrir le projet",
   "openProjectTooltip": "Ouvrir le projet",
-  "other": "Autres",
+  "other": "Fichiers",
   "password": "Mot de passe",
   "passwordIsEmpty": "Le mot de passe est vide",
   "passwordMismatch": "Les mots de passe ne correspondent pas",

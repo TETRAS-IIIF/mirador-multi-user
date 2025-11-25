@@ -82,7 +82,7 @@ export const MediaCard = ({
     <MMUCard
       AddAccessListItemFunction={handleGrantAccess}
       DefaultButton={
-        <Grid container spacing={2} flexDirection={'row'} wrap="nowrap">
+        <Grid container spacing={1} flexDirection={'row'} wrap="nowrap">
           <Grid>
             <ModalButton
               tooltipButton={t('tooltipMediaLink')}
