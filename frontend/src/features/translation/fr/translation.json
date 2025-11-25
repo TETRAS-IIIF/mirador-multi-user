@@ -150,7 +150,7 @@
   "linkedMedia": "Lien externe",
   "loadingImpersonate": "Chargement de l'usurpation...",
   "login": "Connexion",
-  "loginTitle": "Connectez-vous à votre compte",
+  "loginTitle": "Se connecter",
   "login-with-openid": "Connexion avec le fournisseur OpenID",
   "mb": "Mo",
   "mail": "Courriel",
@@ -350,5 +350,6 @@
   "validURLToMedia": "URL valide vers un média",
   "copyToClipboard": "Copier dans le presse-papier",
   "openPreview": "Ouvrir l'aperçu",
-  "preview": "Aperçu"
+  "preview": "Aperçu",
+  "validate-terms-title": "Valider les conditions d'utilisation"
 }
