@@ -360,14 +360,16 @@ const MMUCard = <
                 </Grid>
               )}
 
-              <Grid>
-                <ModalButton
-                  tooltipButton={t('downloadMedia')}
-                  onClickFunction={handleDownloadClick}
-                  disabled={!downloadUrl}
-                  icon={<DownloadIcon />}
-                />
-              </Grid>
+              {objectTypes === OBJECT_TYPES.MEDIA && (
+                <Grid>
+                  <ModalButton
+                    tooltipButton={t('downloadMedia')}
+                    onClickFunction={handleDownloadClick}
+                    disabled={!downloadUrl}
+                    icon={<DownloadIcon />}
+                  />
+                </Grid>
+              )}
 
               {DefaultButton && (
                 <Grid display="flex" alignItems="center">
