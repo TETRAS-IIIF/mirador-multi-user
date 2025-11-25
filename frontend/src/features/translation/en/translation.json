@@ -215,7 +215,7 @@
   "openProjectTooltip": "Open Project",
   "openid_connection": "Login with OpenID provider",
   "openid_connection_tooltip": "Set up an OpenID provider before activate this feature",
-  "other": "Others",
+  "other": "Files",
   "password": "Password",
   "passwordIsEmpty": "Password is empty",
   "passwordMismatch": "Passwords don't match",
