@@ -149,7 +149,7 @@
   "linkedManifest": "External link",
   "linkedMedia": "External link",
   "login": "Login",
-  "loginTitle": "Log in to your account",
+  "loginTitle": "Log in",
   "login-with-openid": "Login with OpenID provider",
   "mail": "Mail",
   "mb": "MB",
@@ -348,5 +348,6 @@
   "validURLToMedia": "Valid URL to a media",
   "copyToClipboard": "Copy to clipboard",
   "openPreview": "Open Preview",
-  "preview": "Preview document"
+  "preview": "Preview document",
+  "validate-terms-title": "Validate terms of use"
 }

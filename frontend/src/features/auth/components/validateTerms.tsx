@@ -1,5 +1,5 @@
 import { Checkbox, FormControlLabel, Grid, Link } from '@mui/material';
-import { Layout } from './layout.tsx';
+import { Layout } from './Layout.tsx';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
