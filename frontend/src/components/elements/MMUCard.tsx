@@ -345,17 +345,6 @@ const MMUCard = <
         >
           <CardActions sx={{ p: 2 }}>
             <Grid container wrap="nowrap" spacing={1} alignItems="center">
-              {downloadUrl && (
-                <Grid>
-                  <ModalButton
-                    tooltipButton={t('downloadMedia')}
-                    onClickFunction={handleDownloadClick}
-                    disabled={false}
-                    icon={<DownloadIcon />}
-                  />
-                </Grid>
-              )}
-
               {Boolean(id) && (
                 <Grid display="flex" alignItems="center">
                   {rights === ITEM_RIGHTS.READER ? (
@@ -368,6 +357,17 @@ const MMUCard = <
                   ) : (
                     EditorButton
                   )}
+                </Grid>
+              )}
+
+              {downloadUrl && (
+                <Grid>
+                  <ModalButton
+                    tooltipButton={t('downloadMedia')}
+                    onClickFunction={handleDownloadClick}
+                    disabled={false}
+                    icon={<DownloadIcon />}
+                  />
                 </Grid>
               )}
 
