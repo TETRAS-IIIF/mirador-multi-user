@@ -44,7 +44,7 @@ const ForgotPassword = () => {
     >
       <Container maxWidth="sm">
         <Box display="flex" justifyContent="center" alignItems="center">
-          <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3, width: '100%' }}>
+          <Box sx={{ p: 4, width: '100%' }}>
             <Typography variant="h5" alignItems="center" gutterBottom>
               {t('forgot-password')}
             </Typography>
