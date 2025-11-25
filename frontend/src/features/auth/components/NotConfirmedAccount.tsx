@@ -1,7 +1,7 @@
 import { Button, CircularProgress, Grid, Typography } from '@mui/material';
 import { ResendConfirmationMail } from '../api/resendConfirmationMail.ts';
 import { useState } from 'react';
-import { Layout } from './layout.tsx';
+import { Layout } from './Layout.tsx';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import storage from '../../../utils/storage.ts';

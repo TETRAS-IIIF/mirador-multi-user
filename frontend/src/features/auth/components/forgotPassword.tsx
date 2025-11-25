@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Layout } from './layout.tsx';
+import { Layout } from './Layout.tsx';
 import { forgotPassword } from '../api/forgotPassword.ts';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
