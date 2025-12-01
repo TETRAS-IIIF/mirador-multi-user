@@ -93,7 +93,7 @@ export class MetricsService implements OnModuleInit {
       registers: [this.registry],
       collect: async () => {
         try {
-          const { stdout } = await execFileAsync('du', ['-sb', UPLOAD_FOLDER], {
+          const { stdout } = await execFileAsync('du', ['-sb', '/upload'], {
             timeout: 10_000,
           });
           const bytes = parseInt(stdout.split(/\s+/)[0], 10);
