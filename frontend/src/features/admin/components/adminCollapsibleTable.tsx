@@ -107,8 +107,10 @@ export function AdminCollapsibleTable({
         <Grid size={12}>
           <TextField
             fullWidth
-            inputProps={{
-              maxLength: 255,
+            slotProps={{
+              htmlInput: {
+                maxLength: 255,
+              },
             }}
             label={t('filter')}
             variant="outlined"
