@@ -45,26 +45,24 @@ export const LoginForm = () => {
             error={errors.mail}
           />
         </Grid>
-        <Grid container alignItems="center" spacing={2}>
-          <Grid>
-            <FormField
-              type="password"
-              placeholder={t('password')}
-              name="password"
-              register={register}
-              required={true}
-              error={errors.password}
-            />
-          </Grid>
-          <Grid>
-            <Button
-              variant="text"
-              color="primary"
-              onClick={() => (window.location.href = '/forgot-password')}
-            >
-              {t('forgot-password')}
-            </Button>
-          </Grid>
+        <Grid>
+          <FormField
+            type="password"
+            placeholder={t('password')}
+            name="password"
+            register={register}
+            required={true}
+            error={errors.password}
+          />
+        </Grid>
+        <Grid>
+          <Button
+            variant="text"
+            color="primary"
+            onClick={() => (window.location.href = '/forgot-password')}
+          >
+            {t('forgot-password')}
+          </Button>
         </Grid>
         <Grid container>
           <Button

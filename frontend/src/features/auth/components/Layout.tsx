@@ -16,7 +16,6 @@ export const Layout = ({ children, title, rightButton }: LayoutProps) => {
     <Grid
       container
       direction="column"
-      min-height="100vh"
       sx={{
         height: '100vh',
       }}

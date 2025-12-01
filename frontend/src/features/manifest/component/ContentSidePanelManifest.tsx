@@ -168,7 +168,7 @@ export const ContentSidePanelManifest = ({
       <Grid
         container
         spacing={1}
-        sx={{ padding: '20px', width: '400px', border: 'solid red' }}
+        sx={{ padding: '20px', width: '400px' }}
         alignItems="center"
       >
         <Grid>
@@ -194,14 +194,12 @@ export const ContentSidePanelManifest = ({
         <Grid
           sx={{
             height: '100%',
-            border: 'solid blue',
           }}
         >
           <ImageList
             sx={{
               padding: 1,
               width: 400,
-              border: 'solid green',
             }}
             cols={2}
             rowHeight={200}

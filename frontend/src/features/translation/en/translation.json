@@ -84,6 +84,7 @@
   "disconnect_error": "You had been disconnect",
   "duplicate": "Duplicate",
   "duplicateMAJ": "DUPLICATE",
+  "downloadMedia": "Download media",
   "download_logs": "Download logs",
   "editGroupTooltip": "Edit group",
   "editMedia": "Edit media",
@@ -148,7 +149,7 @@
   "linkedManifest": "External link",
   "linkedMedia": "External link",
   "login": "Login",
-  "loginTitle": "Log in to your account",
+  "loginTitle": "Log in",
   "login-with-openid": "Login with OpenID provider",
   "mail": "Mail",
   "mb": "MB",
@@ -214,7 +215,7 @@
   "openProjectTooltip": "Open Project",
   "openid_connection": "Login with OpenID provider",
   "openid_connection_tooltip": "Set up an OpenID provider before activate this feature",
-  "other": "Others",
+  "other": "Files",
   "password": "Password",
   "passwordIsEmpty": "Password is empty",
   "passwordMismatch": "Passwords don't match",
@@ -347,5 +348,6 @@
   "validURLToMedia": "Valid URL to a media",
   "copyToClipboard": "Copy to clipboard",
   "openPreview": "Open Preview",
-  "preview": "Preview document"
+  "preview": "Preview document",
+  "validate-terms-title": "Validate terms of use"
 }

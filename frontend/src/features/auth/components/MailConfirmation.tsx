@@ -9,7 +9,7 @@ import {
 import { confirmationMail } from '../api/confirmationMail.ts';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Layout } from './layout.tsx';
+import { Layout } from './Layout.tsx';
 import { useTranslation } from 'react-i18next';
 import storage from '../../../utils/storage.ts';
 import { useState } from 'react';

@@ -82,6 +82,7 @@
   "display_user_inscription_page_tooltip": "Si activé, les utilisateurs peuvent créer un compte via la page d'inscription.",
   "disconnect": "Déconnexion",
   "disconnect_error": "Vous avez été déconnecté",
+  "downloadMedia": "Télécharger le média",
   "duplicate": "Dupliquer",
   "duplicateMAJ": "DUPLIQUER",
   "editGroupTooltip": "Modifier le groupe",
@@ -149,7 +150,7 @@
   "linkedMedia": "Lien externe",
   "loadingImpersonate": "Chargement de l'usurpation...",
   "login": "Connexion",
-  "loginTitle": "Connectez-vous à votre compte",
+  "loginTitle": "Se connecter",
   "login-with-openid": "Connexion avec le fournisseur OpenID",
   "mb": "Mo",
   "mail": "Courriel",
@@ -216,7 +217,7 @@
   "openid_connection_tooltip": "Mettez en place un fournisseur OpenID pour activer cette fonctionnalité",
   "openProject": "Ouvrir le projet",
   "openProjectTooltip": "Ouvrir le projet",
-  "other": "Autres",
+  "other": "Fichiers",
   "password": "Mot de passe",
   "passwordIsEmpty": "Le mot de passe est vide",
   "passwordMismatch": "Les mots de passe ne correspondent pas",
@@ -349,5 +350,6 @@
   "validURLToMedia": "URL valide vers un média",
   "copyToClipboard": "Copier dans le presse-papier",
   "openPreview": "Ouvrir l'aperçu",
-  "preview": "Aperçu"
+  "preview": "Aperçu",
+  "validate-terms-title": "Valider les conditions d'utilisation"
 }

@@ -486,7 +486,7 @@ export const AllManifests = ({
                       DefaultButton={
                         <Grid
                           container
-                          spacing={2}
+                          spacing={1}
                           flexDirection={'row'}
                           wrap="nowrap"
                         >

@@ -1,22 +1,37 @@
-import { Card, CardActions, SelectChangeEvent, Tooltip, Typography, } from '@mui/material';
+import {
+  Card,
+  CardActions,
+  SelectChangeEvent,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { MMUModal } from './modal.tsx';
-import { Dispatch, ReactNode, SetStateAction, useCallback, useState, } from 'react';
+import {
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useCallback,
+  useState,
+} from 'react';
 import { MMUModalEdit } from './MMUModalEdit.tsx';
-import { ITEM_RIGHTS, MEDIA_TYPES, OBJECT_ORIGIN, OBJECT_TYPES, } from '../../utils/mmu_types.ts';
-
+import {
+  ITEM_RIGHTS,
+  MEDIA_TYPES,
+  OBJECT_ORIGIN,
+  OBJECT_TYPES,
+} from '../../utils/mmu_types.ts';
 import dayjs, { Dayjs } from 'dayjs';
-
 import { useTranslation } from 'react-i18next';
 import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
 import { ModalButton } from './ModalButton.tsx';
 import CancelIcon from '@mui/icons-material/Cancel';
-
 import useFetchThumbnailsUrl from '../../utils/customHooks/useFetchThumbnailsUrl.ts';
 import { LoadingSpinner } from './loadingSpinner.tsx';
 import { Snapshot } from '../../features/projects/types/types.ts';
 import { MMUCardIcon } from './MMUCardIcon.tsx';
 import { ListItem } from 'components/types.ts';
+import DownloadIcon from '@mui/icons-material/Download';
 
 interface IMMUCardProps<T, X> {
   id: number;
@@ -76,6 +91,7 @@ const MMUCard = <
     mediaTypes?: MEDIA_TYPES;
     origin?: OBJECT_ORIGIN;
     path?: string;
+    hash?: string;
     share?: string;
     shared?: boolean;
     snapshots?: Snapshot[];
@@ -126,6 +142,7 @@ const MMUCard = <
     refreshKey: thumbnailRefreshKey,
   });
   const { t, i18n } = useTranslation();
+  const caddyUrl = import.meta.env.VITE_CADDY_URL as string | undefined;
 
   const fetchData = useCallback(async () => {
     if (getAccessToItem && setItemList) {
@@ -164,6 +181,48 @@ const MMUCard = <
     setOpenRemoveItemFromListModal((prev) => !prev);
   };
 
+  const getDownloadUrl = (): string | undefined => {
+    if (item.path && caddyUrl) {
+      return `${caddyUrl}/${item.hash}/${item.path}`;
+    }
+    if (item.path && !caddyUrl) {
+      return item.path;
+    }
+    return item.url;
+  };
+
+  const downloadUrl =
+    objectTypes === OBJECT_TYPES.MEDIA && item.origin !== OBJECT_ORIGIN.LINK
+      ? getDownloadUrl()
+      : undefined;
+
+  const getDownloadFilename = (): string => {
+    if (item.path) {
+      const last = item.path.split('/').pop();
+      if (last) return last;
+    }
+    if (item.title) return item.title;
+    return 'media';
+  };
+
+  const handleDownloadClick = async (): Promise<void> => {
+    if (!downloadUrl) return;
+
+    const response = await fetch(downloadUrl, {});
+    if (!response.ok) return;
+
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = getDownloadFilename();
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  };
+
   return (
     <Card>
       <Grid container wrap="nowrap" alignItems="center" sx={{ height: 100 }}>
@@ -172,10 +231,11 @@ const MMUCard = <
           alignItems="center"
           wrap="nowrap"
           spacing={1}
-          size={12}
-          sx={{ flex: 1, minWidth: 0 }}
+          sx={{
+            width: '100%',
+          }}
         >
-          <Grid size={{ xs: 4, sm: 1 }}>
+          <Grid size={{ xs: 2, sm: 1 }} sx={{ flexShrink: 0 }}>
             {isLoading ? (
               <Grid sx={{ ml: 2 }}>
                 <LoadingSpinner />
@@ -197,15 +257,15 @@ const MMUCard = <
           </Grid>
 
           <Grid
-            size={{ xs: 3, sm: 2 }}
             display="flex"
             alignItems="center"
             gap={0.5}
+            sx={{ flexShrink: 0 }}
           >
             <MMUCardIcon item={item} objectTypes={objectTypes} />
           </Grid>
 
-          <Grid size={{ xs: 5, sm: 3 }}>
+          <Grid size={{ sm: 4 }} sx={{ minWidth: 0 }}>
             <Tooltip title={itemLabel} placement="bottom-start">
               <Typography
                 variant="subtitle1"
@@ -221,7 +281,7 @@ const MMUCard = <
             </Tooltip>
           </Grid>
 
-          <Grid size={{ xs: 3, sm: 5 }}>
+          <Grid size={{ sm: 4 }} sx={{ minWidth: 0 }}>
             <Tooltip title={description}>
               <Typography
                 variant="subtitle1"
@@ -237,7 +297,16 @@ const MMUCard = <
             </Tooltip>
           </Grid>
 
-          <Grid>
+          <Grid
+            size={{ xs: 1, sm: 1 }}
+            sx={{
+              flexShrink: 0,
+              flexBasis: 100,
+              maxWidth: 100,
+              minWidth: 100,
+              textAlign: 'right',
+            }}
+          >
             {item.updated_at && (
               <Tooltip
                 title={t('lastEdited', {
@@ -252,7 +321,6 @@ const MMUCard = <
                     textOverflow: 'ellipsis',
                     overflow: 'hidden',
                     whiteSpace: 'nowrap',
-                    maxWidth: 100,
                   }}
                 >
                   {dayjs(item.updated_at)
@@ -264,9 +332,19 @@ const MMUCard = <
           </Grid>
         </Grid>
 
-        <Grid alignSelf="center" sx={{ ml: 1 }}>
+        <Grid
+          alignSelf="center"
+          sx={{
+            ml: 1,
+            flexShrink: 0,
+            flexBasis: 300,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'end',
+          }}
+        >
           <CardActions sx={{ p: 2 }}>
-            <Grid container wrap="nowrap" spacing={1}>
+            <Grid container wrap="nowrap" spacing={1} alignItems="center">
               {Boolean(id) && (
                 <Grid display="flex" alignItems="center">
                   {rights === ITEM_RIGHTS.READER ? (
@@ -281,7 +359,21 @@ const MMUCard = <
                   )}
                 </Grid>
               )}
-              {DefaultButton && <Grid>{DefaultButton}</Grid>}
+
+              <Grid>
+                <ModalButton
+                  tooltipButton={t('downloadMedia')}
+                  onClickFunction={handleDownloadClick}
+                  disabled={!downloadUrl}
+                  icon={<DownloadIcon />}
+                />
+              </Grid>
+
+              {DefaultButton && (
+                <Grid display="flex" alignItems="center">
+                  {DefaultButton}
+                </Grid>
+              )}
             </Grid>
           </CardActions>
 
