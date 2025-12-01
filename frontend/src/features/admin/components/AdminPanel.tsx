@@ -55,7 +55,7 @@ export const AdminPanel = () => {
           value: user.termsValidatedAt
             ? new Date(user.termsValidatedAt).toLocaleDateString('fr-FR')
             : '-',
-          align: 'left' as const,
+          align: 'center' as const,
         },
         {
           value: new Date(user.createdAt).toLocaleString(),
