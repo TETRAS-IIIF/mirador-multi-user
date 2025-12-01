@@ -1,26 +1,9 @@
-import {
-  Card,
-  CardActions,
-  SelectChangeEvent,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Card, CardActions, SelectChangeEvent, Tooltip, Typography, } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { MMUModal } from './modal.tsx';
-import {
-  Dispatch,
-  ReactNode,
-  SetStateAction,
-  useCallback,
-  useState,
-} from 'react';
+import { Dispatch, ReactNode, SetStateAction, useCallback, useState, } from 'react';
 import { MMUModalEdit } from './MMUModalEdit.tsx';
-import {
-  ITEM_RIGHTS,
-  MEDIA_TYPES,
-  OBJECT_ORIGIN,
-  OBJECT_TYPES,
-} from '../../utils/mmu_types.ts';
+import { ITEM_RIGHTS, MEDIA_TYPES, OBJECT_ORIGIN, OBJECT_TYPES, } from '../../utils/mmu_types.ts';
 import dayjs, { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { ModalConfirmDelete } from '../../features/projects/components/ModalConfirmDelete.tsx';
@@ -359,16 +342,16 @@ const MMUCard = <
                   )}
                 </Grid>
               )}
-
-              <Grid>
-                <ModalButton
-                  tooltipButton={t('downloadMedia')}
-                  onClickFunction={handleDownloadClick}
-                  disabled={!downloadUrl}
-                  icon={<DownloadIcon />}
-                />
-              </Grid>
-
+              {downloadUrl && (
+                <Grid>
+                  <ModalButton
+                    tooltipButton={t('downloadMedia')}
+                    onClickFunction={handleDownloadClick}
+                    disabled={!downloadUrl}
+                    icon={<DownloadIcon />}
+                  />
+                </Grid>
+              )}
               {DefaultButton && (
                 <Grid display="flex" alignItems="center">
                   {DefaultButton}
