@@ -10,6 +10,7 @@ export type User = {
   userGroups: UserGroup[];
   _isAdmin: boolean;
   isEmailConfirmed: boolean;
+  lastConnectedAt: Date;
   createdAt: Date;
   preferredLanguage: string;
   termsValidatedAt: Date;
@@ -51,7 +52,9 @@ export const UserSchema: ZodType<RegisterFormData> = z
       required_error: 'Name is required',
       invalid_type_error: 'Name must be a string',
     }),
-    password: z.string().min(PASSWORD_MINIMUM_LENGTH, { message: 'Password is too short' }),
+    password: z
+      .string()
+      .min(PASSWORD_MINIMUM_LENGTH, { message: 'Password is too short' }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {

@@ -34,6 +34,11 @@ export const AdminPanel = () => {
       sortKey: 'terms_validated_at',
     },
     { label: t('createdAt'), align: 'left' as const, sortKey: 'createdAt' },
+    {
+      label: t('last_contected_at'),
+      align: 'center' as const,
+      sortKey: 'last_contected_at',
+    },
   ];
   useEffect(() => {
     fetchUsers();
@@ -61,18 +66,19 @@ export const AdminPanel = () => {
           value: new Date(user.createdAt).toLocaleString(),
           align: 'left' as const,
         },
+        { value: new Date(user.lastConnectedAt).toLocaleString() },
       ],
     }));
   }, [users]);
 
   return (
-    <Grid container flexDirection="column" sx={{ padding: 2 }} spacing={2}>
-      <Grid>
+    <Grid>
+      <Grid sx={{ margin: 1 }}>
         <AdminSettings />
       </Grid>
       <Grid container flexDirection="column" spacing={1}>
         <Grid container>
-          <Grid container flexDirection="column" spacing={1}>
+          <Grid container flexDirection="column" spacing={1} sx={{ margin: 1 }}>
             <Grid>
               <Typography variant="h6" gutterBottom>
                 Users
