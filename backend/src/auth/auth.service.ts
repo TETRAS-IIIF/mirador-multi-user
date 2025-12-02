@@ -72,7 +72,7 @@ export class AuthService {
       }
       await this.usersService.updateUser(user.id, {
         lastConnectedAt: new Date(),
-        loginCounter: user.loginCounter++,
+        loginCounter: user.loginCounter + 1,
       });
       const payload = {
         sub: user.id,
