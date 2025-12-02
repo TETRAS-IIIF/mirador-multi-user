@@ -124,28 +124,53 @@ export function AdminCollapsibleTable({
           <TableHead>
             <TableRow>
               <TableCell />
-              {columns.map((column) => (
-                <TableCell
-                  key={column.sortKey || column.label}
-                  align={column.align || 'left'}
-                >
-                  {column.sortKey ? (
-                    <TableSortLabel
-                      active={sortKey === column.sortKey}
-                      direction={
-                        sortKey === column.sortKey ? sortDirection : 'asc'
-                      }
-                      onClick={() => handleSort(column.sortKey)}
-                    >
-                      {column.label}
-                    </TableSortLabel>
-                  ) : (
-                    column.label
-                  )}
-                </TableCell>
-              ))}
+              {columns.map((column) => {
+                const isActive = sortKey === column.sortKey;
+
+                return (
+                  <TableCell
+                    key={column.sortKey || column.label}
+                    align={column.align || 'left'}
+                    style={{
+                      maxWidth: 200,
+                      whiteSpace: 'normal',
+                    }}
+                  >
+                    {column.sortKey ? (
+                      <TableSortLabel
+                        active={isActive}
+                        direction={isActive ? sortDirection : 'asc'}
+                        onClick={() => handleSort(column.sortKey)}
+                        style={{ whiteSpace: 'normal' }}
+                      >
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            whiteSpace: 'normal',
+                            lineHeight: 1.2,
+                            wordBreak: 'break-word',
+                          }}
+                        >
+                          {column.label}
+                        </span>
+                      </TableSortLabel>
+                    ) : (
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          whiteSpace: 'normal',
+                          lineHeight: 1.2,
+                          wordBreak: 'break-word',
+                        }}
+                      >
+                        {column.label}
+                      </span>
+                    )}
+                  </TableCell>
+                );
+              })}
             </TableRow>
-          </TableHead>
+          </TableHead>{' '}
           <TableBody>
             {paginatedRows.map((row) => (
               <RowAdminPanel key={row.id} row={row} />

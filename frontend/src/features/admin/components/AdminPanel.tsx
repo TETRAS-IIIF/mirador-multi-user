@@ -22,22 +22,27 @@ export const AdminPanel = () => {
     { label: 'ID', align: 'left' as const, sortKey: 'id' },
     { label: t('mail'), align: 'left' as const, sortKey: 'mail' },
     { label: t('name'), align: 'left' as const, sortKey: 'name' },
-    { label: t('admin'), align: 'center' as const, sortKey: '_isAdmin' },
+    { label: t('admin'), align: 'left' as const, sortKey: '_isAdmin' },
     {
       label: t('emailConfirmed'),
-      align: 'center' as const,
+      align: 'left' as const,
       sortKey: 'isEmailConfirmed',
     },
     {
       label: t('terms_validated_at'),
-      align: 'center' as const,
+      align: 'left' as const,
       sortKey: 'terms_validated_at',
     },
     { label: t('createdAt'), align: 'left' as const, sortKey: 'createdAt' },
     {
       label: t('last_contected_at'),
-      align: 'center' as const,
+      align: 'left' as const,
       sortKey: 'last_contected_at',
+    },
+    {
+      label: t('login_count'),
+      align: 'left' as const,
+      sortKey: 'login_count',
     },
   ];
   useEffect(() => {
@@ -51,25 +56,27 @@ export const AdminPanel = () => {
         { value: String(user.id), align: 'left' as const },
         { value: user.mail, align: 'left' as const },
         { value: user.name, align: 'left' as const },
-        { value: user._isAdmin ? 'Yes' : 'No', align: 'center' as const },
+        { value: user._isAdmin ? 'Yes' : 'No', align: 'left' as const },
         {
           value: user.isEmailConfirmed ? 'Yes' : 'No',
-          align: 'center' as const,
+          align: 'left' as const,
         },
         {
           value: user.termsValidatedAt
             ? new Date(user.termsValidatedAt).toLocaleDateString('fr-FR')
             : '-',
-          align: 'center' as const,
+          align: 'left' as const,
         },
         {
           value: new Date(user.createdAt).toLocaleString(),
           align: 'left' as const,
         },
         { value: new Date(user.lastConnectedAt).toLocaleString() },
+        { value: user.loginCounter, align: 'left' as const },
       ],
     }));
   }, [users]);
+  console.log(users);
 
   return (
     <Grid>

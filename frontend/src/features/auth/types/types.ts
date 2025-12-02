@@ -14,6 +14,7 @@ export type User = {
   createdAt: Date;
   preferredLanguage: string;
   termsValidatedAt: Date;
+  loginCounter: number;
 };
 
 export type UpdateUserDto = {

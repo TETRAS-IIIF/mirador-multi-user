@@ -11,4 +11,5 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   preferredLanguage?: Language;
   isEmailConfirmed?: boolean;
   termsValidatedAt?: Date;
+  loginCounter?: number;
 }
