@@ -1,30 +1,6 @@
-import type React from 'react';
 import { useMemo, useRef, useState } from 'react';
 import Editor, { OnMount } from '@monaco-editor/react';
 import type * as monaco from 'monaco-editor';
-
-import { Editor as TinyMCEEditor } from '@tinymce/tinymce-react';
-
-// TinyMCE core, theme, icons, model (self-hosted, no external calls)
-import 'tinymce/tinymce';
-import 'tinymce/icons/default';
-import 'tinymce/themes/silver';
-import 'tinymce/models/dom';
-
-// TinyMCE plugins that exist in the npm tinymce package
-import 'tinymce/plugins/code';
-import 'tinymce/plugins/link';
-import 'tinymce/plugins/lists';
-import 'tinymce/plugins/table';
-import 'tinymce/plugins/advlist';
-import 'tinymce/plugins/charmap';
-import 'tinymce/plugins/anchor';
-import 'tinymce/plugins/searchreplace';
-import 'tinymce/plugins/visualblocks';
-
-// TinyMCE styles bundled locally
-import 'tinymce/skins/ui/oxide/skin.min.css';
-import 'tinymce/skins/ui/oxide/content.min.css';
 
 import {
   AppBar,
@@ -33,8 +9,6 @@ import {
   GlobalStyles,
   IconButton,
   Stack,
-  ToggleButton,
-  ToggleButtonGroup,
   Toolbar,
   Typography,
 } from '@mui/material';
@@ -48,7 +22,6 @@ import SaveIcon from '@mui/icons-material/Save';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 
 interface IAdvancedTextEditorProps {
-  /** Initial content for this file. Change the component `key` when you load another file. */
   value: string;
   onChange: (value: string) => void;
   language: string;
@@ -69,14 +42,7 @@ export const AdvancedTextEditor = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [localValue, setLocalValue] = useState<string>(value);
-  const [lastSavedValue, setLastSavedValue] = useState<string>(value);
-  const [isDirty, setIsDirty] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editorMode, setEditorMode] = useState<'code' | 'rich'>('code');
-
-  const isHtml =
-    language.toLowerCase() === 'html' || language.toLowerCase() === 'htm';
-  const isCodeMode = !isHtml || editorMode === 'code';
 
   const handleMount: OnMount = (editor) => {
     editorRef.current = editor;
@@ -93,64 +59,15 @@ export const AdvancedTextEditor = ({
   const updateValue = (next: string) => {
     setLocalValue(next);
     onChange(next);
-    setIsDirty(next !== lastSavedValue);
   };
 
   const handleEditorChange = (v?: string) => {
     updateValue(v ?? '');
   };
 
-  const extractBodyHtml = (html: string): string => {
-    const lower = html.toLowerCase();
-    const bodyOpen = lower.indexOf('<body');
-    if (bodyOpen === -1) return html;
-
-    const openTagEnd = html.indexOf('>', bodyOpen);
-    if (openTagEnd === -1) return html;
-
-    const bodyClose = lower.lastIndexOf('</body>');
-    if (bodyClose === -1 || bodyClose <= openTagEnd) return html;
-
-    return html.slice(openTagEnd + 1, bodyClose);
-  };
-
-  // Merge edited body HTML back into the full document,
-  // preserving <head>, <meta>, <script>, etc.
-  const mergeBodyHtml = (fullHtml: string, newBodyHtml: string): string => {
-    const lower = fullHtml.toLowerCase();
-    const bodyOpen = lower.indexOf('<body');
-    if (bodyOpen === -1) {
-      return `<!DOCTYPE html>
-    <html>
-      <head><meta charset="utf-8" /></head>
-      <body>${newBodyHtml}</body>
-    </html>`;
-    }
-
-    const openTagEnd = fullHtml.indexOf('>', bodyOpen);
-    if (openTagEnd === -1) return fullHtml;
-
-    const bodyClose = lower.lastIndexOf('</body>');
-    if (bodyClose === -1 || bodyClose <= openTagEnd) return fullHtml;
-
-    const before = fullHtml.slice(0, openTagEnd + 1);
-    const after = fullHtml.slice(bodyClose);
-
-    return `${before}\n${newBodyHtml}\n${after}`;
-  };
-
-  const bodyHtml = useMemo(() => extractBodyHtml(localValue), [localValue]);
-
-  const handleTinyChange = (bodyContent: string) => {
-    const nextFull = mergeBodyHtml(localValue, bodyContent);
-    updateValue(nextFull);
-  };
-
   const handleSave = async () => {
     const current = localValue;
     await onSave(current);
-    setLastSavedValue(current);
-    setIsDirty(false);
   };
 
   const toggleFullscreen = async () => {
@@ -182,93 +99,29 @@ export const AdvancedTextEditor = ({
     [fullscreenMode, dialogOpen],
   );
 
-  const handleModeChange = (
-    _event: React.MouseEvent<HTMLElement>,
-    newMode: 'code' | 'rich' | null,
-  ) => {
-    if (!newMode) return;
-    setEditorMode(newMode);
-  };
-
   const Controls = () => (
-    <Stack direction="row" spacing={1} alignItems="center">
-      {isHtml && (
-        <ToggleButtonGroup
-          size="small"
-          value={editorMode}
-          exclusive
-          onChange={handleModeChange}
-        >
-          {/*// TODO: This editor sanitize body html and remove <scipt></scipt>, this cause issue on some html medias.*/}
-          {/*<ToggleButton value="rich">Simple</ToggleButton>*/}
-          <ToggleButton value="code">Avancé</ToggleButton>
-        </ToggleButtonGroup>
-      )}
+    <Stack direction="row" spacing={0.5} alignItems="center">
+      <IconButton size="small" onClick={undo} title="Undo">
+        <UndoIcon fontSize="small" />
+      </IconButton>
+      <IconButton size="small" onClick={redo} title="Redo">
+        <RedoIcon fontSize="small" />
+      </IconButton>
+      <IconButton size="small" onClick={search} title="Search">
+        <SearchIcon fontSize="small" />
+      </IconButton>
+      <IconButton size="small" onClick={replace} title="Replace">
+        <FindReplaceIcon fontSize="small" />
+      </IconButton>
+      <IconButton size="small" onClick={format} title="Format code">
+        <AutoFixHighIcon fontSize="small" />
+      </IconButton>
 
-      {isCodeMode ? (
-        <Stack direction="row" spacing={0.5} alignItems="center">
-          <IconButton size="small" onClick={undo} title="Undo">
-            <UndoIcon fontSize="small" />
-          </IconButton>
-          <IconButton size="small" onClick={redo} title="Redo">
-            <RedoIcon fontSize="small" />
-          </IconButton>
-          <IconButton size="small" onClick={search} title="Search">
-            <SearchIcon fontSize="small" />
-          </IconButton>
-          <IconButton size="small" onClick={replace} title="Replace">
-            <FindReplaceIcon fontSize="small" />
-          </IconButton>
-          <IconButton size="small" onClick={format} title="Format code">
-            <AutoFixHighIcon fontSize="small" />
-          </IconButton>
-
-          <Stack direction="row" spacing={0.5} alignItems="center">
-            <IconButton
-              size="small"
-              onClick={handleSave}
-              title={isDirty ? 'Save (unsaved changes)' : 'Save'}
-              disabled={!isDirty}
-            >
-              <SaveIcon fontSize="small" />
-            </IconButton>
-            {isDirty && (
-              <Box
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  bgcolor: 'error.main',
-                }}
-                title="Unsaved changes"
-              />
-            )}
-          </Stack>
-        </Stack>
-      ) : (
-        // TinyMCE mode: only Save + dirty dot
-        <Stack direction="row" spacing={0.5} alignItems="center">
-          <IconButton
-            size="small"
-            onClick={handleSave}
-            title={isDirty ? 'Save (unsaved changes)' : 'Save'}
-            disabled={!isDirty}
-          >
-            <SaveIcon fontSize="small" />
-          </IconButton>
-          {isDirty && (
-            <Box
-              sx={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                bgcolor: 'error.main',
-              }}
-              title="Unsaved changes"
-            />
-          )}
-        </Stack>
-      )}
+      <Stack direction="row" spacing={0.5} alignItems="center">
+        <IconButton size="small" onClick={handleSave} title="Save">
+          <SaveIcon fontSize="small" />
+        </IconButton>
+      </Stack>
     </Stack>
   );
 
@@ -294,26 +147,6 @@ export const AdvancedTextEditor = ({
     />
   );
 
-  const tinyEditor = (
-    <TinyMCEEditor
-      value={bodyHtml}
-      onEditorChange={handleTinyChange}
-      init={{
-        height: '100%',
-        // @ts-expect-error-next-line
-        license_key: 'gpl', // TODO Give error but fix proposed dont work
-        menubar: true,
-        plugins:
-          'code link lists table advlist charmap anchor searchreplace visualblocks',
-        toolbar:
-          'undo redo | formatselect | bold italic underline | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link | code',
-        skin: false,
-        content_css: false,
-        promotion: false,
-      }}
-    />
-  );
-
   const editor = (
     <Box
       sx={{
@@ -323,14 +156,9 @@ export const AdvancedTextEditor = ({
         width: '100%',
         overflow: 'hidden',
         display: 'flex',
-        '& .tox-tinymce': {
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-        },
       }}
     >
-      {isHtml && editorMode === 'rich' ? tinyEditor : monacoEditor}
+      {monacoEditor}
     </Box>
   );
 
