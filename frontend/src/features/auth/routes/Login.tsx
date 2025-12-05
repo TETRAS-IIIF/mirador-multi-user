@@ -1,5 +1,5 @@
 import { Layout } from '../components/Layout.tsx';
-import { Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
@@ -12,22 +12,21 @@ export const Login = () => {
 
   const showInscription =
     getSettingValue(SettingKeys.ALLOW_NEW_USER, settings) === 'true';
+
   return (
     <Layout
       title={t('loginTitle')}
       rightButton={
         showInscription && (
-          <Grid>
+          <Box>
             <NavLink to="/auth/signin">
               <Typography variant="button">{t('register')}</Typography>
             </NavLink>
-          </Grid>
+          </Box>
         )
       }
     >
-      <Grid>
-        <LoginPage />
-      </Grid>
+      <LoginPage />
     </Layout>
   );
 };
