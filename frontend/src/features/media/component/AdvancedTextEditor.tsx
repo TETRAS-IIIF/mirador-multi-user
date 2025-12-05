@@ -42,7 +42,11 @@ export const AdvancedTextEditor = ({
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const [localValue, setLocalValue] = useState<string>(value);
+  const [lastSavedValue, setLastSavedValue] = useState<string>(value);
+  
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const [isDirty, setIsDirty] = useState(false);
 
   const handleMount: OnMount = (editor) => {
     editorRef.current = editor;
@@ -59,6 +63,7 @@ export const AdvancedTextEditor = ({
   const updateValue = (next: string) => {
     setLocalValue(next);
     onChange(next);
+    setIsDirty(next !== lastSavedValue);
   };
 
   const handleEditorChange = (v?: string) => {
@@ -68,6 +73,8 @@ export const AdvancedTextEditor = ({
   const handleSave = async () => {
     const current = localValue;
     await onSave(current);
+    setLastSavedValue(current);
+    setIsDirty(false);
   };
 
   const toggleFullscreen = async () => {
@@ -118,9 +125,25 @@ export const AdvancedTextEditor = ({
       </IconButton>
 
       <Stack direction="row" spacing={0.5} alignItems="center">
-        <IconButton size="small" onClick={handleSave} title="Save">
+        <IconButton
+          size="small"
+          onClick={handleSave}
+          title={isDirty ? 'Save (unsaved changes)' : 'Save'}
+          disabled={!isDirty}
+        >
           <SaveIcon fontSize="small" />
         </IconButton>
+        {isDirty && (
+          <Box
+            sx={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              bgcolor: 'error.main',
+            }}
+            title="Unsaved changes"
+          />
+        )}
       </Stack>
     </Stack>
   );
