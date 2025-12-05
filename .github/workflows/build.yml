@@ -1,10 +1,10 @@
-name: Frontend Build Check
+name: Frontend & Backend Build Check
 
 on:
   push:
     branches:
       - main
-      - dev  # Add any other branches you want to check
+      - dev
   pull_request:
 
 jobs:
@@ -12,24 +12,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Node.js
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20  # Specify your project's Node.js version
+          node-version: 20
 
-      # Navigate to frontend folder and install dependencies
-      - name: Install dependencies
+      # FRONTEND
+      - name: Install frontend dependencies
         run: |
           cd frontend
           npm install
 
-      # Run TypeScript build in the frontend folder
-      - name: Build project
+      - name: Audit frontend dependencies (non-blocking)
         run: |
           cd frontend
+          npm audit || echo "::warning::npm audit found vulnerabilities in frontend (see logs above)"
+
+      - name: Build frontend
+        run: |
+          cd frontend
+          npm run build
+
+      # BACKEND
+      - name: Install backend dependencies
+        run: |
+          cd backend
+          npm install
+
+      - name: Audit backend dependencies (non-blocking)
+        run: |
+          cd backend
+          npm audit || echo "::warning::npm audit found vulnerabilities in backend (see logs above)"
+
+      - name: Build backend
+        run: |
+          cd backend
           npm run build
