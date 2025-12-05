@@ -35,9 +35,9 @@ export const AdminPanel = () => {
     },
     { label: t('createdAt'), align: 'left' as const, sortKey: 'createdAt' },
     {
-      label: t('last_contected_at'),
+      label: t('last_connected_at'),
       align: 'left' as const,
-      sortKey: 'last_contected_at',
+      sortKey: 'last_connected_at',
     },
     {
       label: t('login_count'),
@@ -88,7 +88,7 @@ export const AdminPanel = () => {
           <Grid container flexDirection="column" spacing={1} sx={{ margin: 1 }}>
             <Grid>
               <Typography variant="h6" gutterBottom>
-                Users
+                {t('users')}
               </Typography>
             </Grid>
             <Grid>
@@ -101,7 +101,7 @@ export const AdminPanel = () => {
             </Grid>
           </Grid>
         </Grid>
-        <Grid>
+        <Grid sx={{ margin: 1 }}>
           <AdminCollapsibleTable columns={columns} rows={rows} />
         </Grid>
       </Grid>
