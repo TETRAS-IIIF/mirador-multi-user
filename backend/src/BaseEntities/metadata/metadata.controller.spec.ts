@@ -3,10 +3,15 @@ import { MetadataController } from './metadata.controller';
 import { MetadataService } from './metadata.service';
 import { CreateMetadataDto } from './dto/create-metadata.dto';
 import { ObjectTypes } from '../../enum/ObjectTypes';
+import { AuthGuard } from '../../auth/auth.guard';
 
 describe('MetadataController', () => {
   let controller: MetadataController;
   let service: jest.Mocked<MetadataService>;
+
+  const authGuardMock = {
+    canActivate: jest.fn().mockReturnValue(true),
+  };
 
   beforeEach(async () => {
     const serviceMock: Partial<jest.Mocked<MetadataService>> = {
@@ -22,7 +27,10 @@ describe('MetadataController', () => {
           useValue: serviceMock,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(AuthGuard)
+      .useValue(authGuardMock)
+      .compile();
 
     controller = module.get(MetadataController);
     service = module.get(MetadataService) as jest.Mocked<MetadataService>;

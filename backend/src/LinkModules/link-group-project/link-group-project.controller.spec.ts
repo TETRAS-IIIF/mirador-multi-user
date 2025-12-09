@@ -41,12 +41,11 @@ describe('LinkGroupProjectController', () => {
           provide: LinkGroupProjectService,
           useValue: mockLinkGroupProjectService,
         },
-        {
-          provide: AuthGuard,
-          useValue: mockAuthGuard,
-        },
       ],
-    }).compile();
+    })
+      .overrideGuard(AuthGuard)
+      .useValue(mockAuthGuard)
+      .compile();
 
     controller = module.get<LinkGroupProjectController>(
       LinkGroupProjectController,

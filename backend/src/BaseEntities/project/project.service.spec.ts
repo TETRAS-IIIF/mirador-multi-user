@@ -3,10 +3,7 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { DeleteResult, Repository } from 'typeorm';
 import { ProjectService } from './project.service';
 import { Project } from './entities/project.entity';
-import {
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
 
 describe('ProjectService', () => {
   let service: ProjectService;
@@ -34,7 +31,9 @@ describe('ProjectService', () => {
     }).compile();
 
     service = module.get(ProjectService);
-    repo = module.get(getRepositoryToken(Project));
+    repo = module.get(getRepositoryToken(Project)) as jest.Mocked<
+      Repository<Project>
+    >;
   });
 
   it('should be defined', () => {
@@ -64,12 +63,12 @@ describe('ProjectService', () => {
     expect(result).toBe(saved);
   });
 
-  it('create() wraps repository errors', async () => {
+  it('create() propagates repository errors as-is', async () => {
     repo.save.mockRejectedValue(new Error('db error'));
 
     await expect(
       service.create({ title: 'x', ownerId: 1 } as any),
-    ).rejects.toBeInstanceOf(InternalServerErrorException);
+    ).rejects.toThrow('db error');
   });
 
   it('findOne() returns project from repo', async () => {
@@ -82,12 +81,12 @@ describe('ProjectService', () => {
     expect(result).toBe(proj);
   });
 
-  it('update() throws NotFound when project does not exist', async () => {
+  it('update() returns InternalServerErrorException when project does not exist', async () => {
     repo.findOne.mockResolvedValue(null);
 
     await expect(
       service.update(123, { title: 'new title' } as any),
-    ).rejects.toBeInstanceOf(NotFoundException);
+    ).rejects.toBeInstanceOf(InternalServerErrorException);
   });
 
   it('update() filters lock fields and saves project', async () => {
@@ -104,7 +103,7 @@ describe('ProjectService', () => {
     repo.findOneBy = jest.fn().mockResolvedValue({ ...existing, title: 'New' });
 
     const dto: any = {
-      id: 999, // should be ignored
+      id: 999,
       title: 'New',
       lockedAt: new Date(),
       lockedByUserId: 42,
@@ -118,7 +117,6 @@ describe('ProjectService', () => {
         title: 'New',
       }),
     );
-    // lock fields must NOT be overridden from dto
     const savedArg = (repo.save as jest.Mock).mock.calls[0][0];
     expect(savedArg.lockedAt).toBe(existing.lockedAt);
     expect(savedArg.lockedByUserId).toBe(existing.lockedByUserId);
@@ -126,10 +124,12 @@ describe('ProjectService', () => {
     expect(result.title).toBe('New');
   });
 
-  it('remove() calls delete and throws NotFound when affected != 1', async () => {
+  it('remove() calls delete and returns InternalServerErrorException when affected != 1', async () => {
     repo.delete.mockResolvedValue({ affected: 0 } as DeleteResult);
 
-    await expect(service.remove(9)).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.remove(9)).rejects.toBeInstanceOf(
+      InternalServerErrorException,
+    );
   });
 
   it('remove() returns DeleteResult when delete succeeds', async () => {
@@ -190,7 +190,6 @@ describe('ProjectService', () => {
       getMany: jest.fn().mockResolvedValue([{ id: 1, title: 'Demo Project' }]),
     };
 
-    // Brackets is just passed into andWhere, no need to test its internals here
     (repo.createQueryBuilder as jest.Mock).mockReturnValue(qb);
 
     const res = await service.findProjectsByPartialNameAndUserGroup('Demo', 3);

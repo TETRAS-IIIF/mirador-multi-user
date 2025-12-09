@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AnnotationPageController } from './annotation-page.controller';
 import { AnnotationPageService } from './annotation-page.service';
 import { CreateAnnotationPageDto } from './dto/create-annotation-page.dto';
+import { JwtService } from '@nestjs/jwt';
 
 describe('AnnotationPageController', () => {
   let controller: AnnotationPageController;
@@ -22,6 +23,13 @@ describe('AnnotationPageController', () => {
           provide: AnnotationPageService,
           useValue: serviceMock,
         },
+        {
+          provide: JwtService,
+          useValue: {
+            signAsync: jest.fn(),
+            verifyAsync: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -36,10 +44,7 @@ describe('AnnotationPageController', () => {
   });
 
   it('create() forwards dto to service', async () => {
-    const dto: CreateAnnotationPageDto = {
-      // fill required fields if any
-    } as any;
-
+    const dto: CreateAnnotationPageDto = {} as any;
     const created = { id: 1, ...dto };
     service.create.mockResolvedValue(created as any);
 
@@ -52,8 +57,8 @@ describe('AnnotationPageController', () => {
   it('findAll() forwards params to service', async () => {
     const projectId = 42;
     const annotPageId = 'page-123';
-
     const expected = [{ id: 'a' }, { id: 'b' }];
+
     service.findAll.mockResolvedValue(expected as any);
 
     const result = await controller.findAll(projectId as any, annotPageId);
@@ -66,8 +71,8 @@ describe('AnnotationPageController', () => {
     const projectId = 42;
     const encoded = encodeURIComponent('http://example.com/anno/1');
     const decoded = 'http://example.com/anno/1';
-
     const expected = { id: 'anno-1' };
+
     service.findOne.mockResolvedValue(expected as any);
 
     const result = await controller.findOne(encoded, projectId as any);
@@ -80,8 +85,8 @@ describe('AnnotationPageController', () => {
     const projectId = 42;
     const encoded = encodeURIComponent('http://example.com/anno/2');
     const decoded = 'http://example.com/anno/2';
-
     const expected = { success: true };
+
     service.deleteAnnotationPage.mockResolvedValue(expected as any);
 
     const result = await controller.delete(projectId as any, encoded);

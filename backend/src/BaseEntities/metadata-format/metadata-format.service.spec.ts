@@ -109,9 +109,7 @@ describe('MetadataFormatService', () => {
     it('throws InternalServerErrorException if repository throws', async () => {
       const userId = 10;
 
-      repo.find.mockImplementation(() => {
-        throw new Error('DB error');
-      });
+      repo.find.mockRejectedValue(new Error('DB error'));
 
       await expect(
         service.findAllMetadataFormatsForUser(userId),

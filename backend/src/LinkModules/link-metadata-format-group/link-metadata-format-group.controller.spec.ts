@@ -1,13 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
-
 import { LinkMetadataFormatGroupController } from './link-metadata-format-group.controller';
 import { LinkMetadataFormatGroupService } from './link-metadata-format-group.service';
 import { CreateLinkMetadataFormatGroupDto } from './dto/create-link-metadata-format-group.dto';
+import { AuthGuard } from '../../auth/auth.guard';
 
 describe('LinkMetadataFormatGroupController', () => {
   let controller: LinkMetadataFormatGroupController;
   let service: jest.Mocked<LinkMetadataFormatGroupService>;
+
+  const authGuardMock = {
+    canActivate: jest.fn().mockReturnValue(true),
+  };
 
   beforeEach(async () => {
     const serviceMock: Partial<jest.Mocked<LinkMetadataFormatGroupService>> = {
@@ -23,7 +27,10 @@ describe('LinkMetadataFormatGroupController', () => {
           useValue: serviceMock,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(AuthGuard)
+      .useValue(authGuardMock)
+      .compile();
 
     controller = module.get(LinkMetadataFormatGroupController);
     service = module.get(

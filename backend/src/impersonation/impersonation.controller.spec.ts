@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ImpersonationController } from './impersonation.controller';
 import { ImpersonationService } from './impersonation.service';
 import { ImpersonateDto } from './dto/impersonateDto';
+import { AuthGuard } from '../auth/auth.guard'; // adjust path if needed
 
 describe('ImpersonationController', () => {
   let controller: ImpersonationController;
@@ -22,7 +23,10 @@ describe('ImpersonationController', () => {
           useValue: mockImpersonationService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(AuthGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .compile();
 
     controller = module.get<ImpersonationController>(ImpersonationController);
     impersonationService = module.get(
@@ -46,7 +50,7 @@ describe('ImpersonationController', () => {
     const json = jest.fn();
     const res = { json } as any;
 
-    await controller.impersonateUser(2, req, res);
+    await controller.impersonateUser(2 as any, req, res);
 
     expect(impersonationService.initiateImpersonation).toHaveBeenCalledWith(
       1, // adminUserId
