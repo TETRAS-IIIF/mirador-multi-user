@@ -4,7 +4,9 @@ import { UnauthorizedException } from '@nestjs/common';
 import { SettingsController } from './setting.controller';
 import { SettingsService } from './setting.service';
 import { SetSettingDto } from './dto/setSetting.dto';
-import { AuthGuard } from '../../auth/auth.guard'; // <- import your guard
+import { AuthGuard } from '../../auth/auth.guard';
+import { JwtService } from '@nestjs/jwt';
+import { Reflector } from '@nestjs/core';
 
 describe('SettingsController', () => {
   let controller: SettingsController;
@@ -24,6 +26,21 @@ describe('SettingsController', () => {
         {
           provide: SettingsService,
           useValue: serviceMock,
+        },
+        {
+          provide: JwtService,
+          useValue: {
+            verifyAsync: jest.fn(),
+            signAsync: jest.fn(),
+          },
+        },
+        {
+          provide: Reflector,
+          useValue: {
+            get: jest.fn(),
+            getAllAndOverride: jest.fn(),
+            getAllAndMerge: jest.fn(),
+          },
         },
         {
           provide: AuthGuard,

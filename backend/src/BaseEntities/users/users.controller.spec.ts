@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthGuard } from '../../auth/auth.guard';
+import { JwtService } from '@nestjs/jwt';
+import { Reflector } from '@nestjs/core';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -21,6 +24,26 @@ describe('UsersController', () => {
           provide: UsersService,
           useValue: serviceMock,
         },
+        // deps of AuthGuard
+        {
+          provide: JwtService,
+          useValue: {
+            verifyAsync: jest.fn(),
+            signAsync: jest.fn(),
+          },
+        },
+        {
+          provide: Reflector,
+          useValue: {
+            get: jest.fn(),
+            getAllAndOverride: jest.fn(),
+            getAllAndMerge: jest.fn(),
+          },
+        },
+        {
+          provide: AuthGuard,
+          useValue: { canActivate: jest.fn(() => true) },
+        },
       ],
     }).compile();
 
@@ -33,10 +56,7 @@ describe('UsersController', () => {
   });
 
   it('updateUser() calls UsersService.updateUser with sub and dto', async () => {
-    const dto: UpdateUserDto = {
-      // fill mandatory fields if any
-    } as any;
-
+    const dto: UpdateUserDto = {} as any;
     const req = { user: { sub: 123 } } as any;
     const updatedUser = { id: 123, mail: 'user@test.com' };
 
