@@ -61,6 +61,7 @@ export class AnnotationPageService {
   }
 
   async findAll(annotPageId: string, projectId: number) {
+    this.logger.error('Finding all annotation pages', 'TRACE');
     try {
       return await this.annotationPageRepository.find({
         where: { annotationPageId: annotPageId, projectId: projectId },
