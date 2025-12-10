@@ -1,6 +1,19 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
+// Remove act() warning , act is deprecated and should not be used, to remove when test lib is updated
+const originalError = console.error;
+
+vi.spyOn(console, 'error').mockImplementation((...args: unknown[]) => {
+  const [first] = args;
+
+  if (typeof first === 'string' && first.includes('not wrapped in act(')) {
+    return;
+  }
+
+  originalError(...(args as Parameters<typeof console.error>));
+});
+
 Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
   value: vi.fn(() => {
     return {
@@ -47,3 +60,8 @@ if (!window.matchMedia) {
     })),
   });
 }
+
+vi.mock('react-transition-group', () => ({
+  CSSTransition: ({ children }: { children: React.ReactNode }) => children,
+  TransitionGroup: ({ children }: { children: React.ReactNode }) => children,
+}));
