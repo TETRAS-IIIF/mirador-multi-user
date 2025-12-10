@@ -56,4 +56,15 @@ export default defineConfig({
       usePolling: true,
     },
   },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/test/setupTests.ts',
+    css: true,
+    coverage: {
+      provider: 'v8',
+      reportsDirectory: './coverage',
+      reporter: ['text', 'lcov'],
+    },
+  },
 });
