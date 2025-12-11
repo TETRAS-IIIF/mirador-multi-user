@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - dev
+      - 699-create-integration-tests
   pull_request:
 
 jobs:

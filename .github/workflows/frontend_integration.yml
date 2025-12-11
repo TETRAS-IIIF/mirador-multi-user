@@ -10,6 +10,7 @@ on:
     branches:
       - main
       - develop
+      - 699-create-integration-tests
 
 jobs:
   frontend-tests:
