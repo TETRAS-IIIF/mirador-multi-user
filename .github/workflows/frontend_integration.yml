@@ -1,0 +1,38 @@
+name: Frontend Vitest
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - 699-create-integration-tests
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  frontend-tests:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: |
+            frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Vitest in CI mode
+        run: npm run test:ci
