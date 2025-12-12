@@ -343,6 +343,7 @@ export const AllProjects = ({
     }
   };
 
+  //TEST
   const handleDuplicateProject = async (projectId: number) => {
     await duplicateProject(projectId);
     setOpenModalProjectId(null);
