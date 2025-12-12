@@ -1,4 +1,5 @@
-import { defineConfig, transformWithEsbuild } from 'vite';
+import { defineConfig } from 'vitest/config';
+import { transformWithEsbuild } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { fileURLToPath } from 'node:url';
@@ -54,6 +55,17 @@ export default defineConfig({
     port: 4000,
     watch: {
       usePolling: true,
+    },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/test/setupTests.ts',
+    css: true,
+    coverage: {
+      provider: 'v8',
+      reportsDirectory: './coverage',
+      reporter: ['text', 'lcov'],
     },
   },
 });

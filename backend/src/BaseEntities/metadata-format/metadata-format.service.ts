@@ -17,33 +17,35 @@ export class MetadataFormatService {
     @InjectRepository(MetadataFormat)
     private readonly metadataFormatRepository: Repository<MetadataFormat>,
   ) {}
+
   async create(createMetadataFormatDto: CreateMetadataFormatDto) {
     try {
       return await this.metadataFormatRepository.save(createMetadataFormatDto);
-    } catch (error) {
-      if (error.code === 'ER_DUP_ENTRY') {
+    } catch (error: any) {
+      if (error?.code === 'ER_DUP_ENTRY') {
         throw new ConflictException(
           'metadata format with the given title and creatorId already exists.',
         );
-      } else {
-        this.logger.error(error.message, error.stack);
-        throw new InternalServerErrorException(
-          'An error occurred while creating the metadata format.',
-        );
       }
+
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'An error occurred while creating the metadata format.',
+      );
     }
   }
 
-  findAllMetadataFormatsForUser(userId: number) {
+  async findAllMetadataFormatsForUser(
+    userId: number,
+  ): Promise<MetadataFormat[]> {
     try {
-      return this.metadataFormatRepository.find({
+      return await this.metadataFormatRepository.find({
         where: { creatorId: userId },
       });
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while finding the metadata format for user with id : ${userId}.`,
-        error,
       );
     }
   }

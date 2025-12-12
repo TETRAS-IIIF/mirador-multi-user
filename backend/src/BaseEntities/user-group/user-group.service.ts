@@ -2,13 +2,11 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserGroup } from './entities/user-group.entity';
 import { Repository } from 'typeorm';
-import { User_UserGroupRights } from '../../enum/rights';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UserGroupTypes } from '../../enum/user-group-types';

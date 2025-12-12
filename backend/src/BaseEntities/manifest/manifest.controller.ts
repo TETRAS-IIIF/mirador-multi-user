@@ -1,12 +1,8 @@
-import {
-  Controller,
-  Get,
-  Param,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ManifestService } from './manifest.service';
 import { AuthGuard } from '../../auth/auth.guard';
-import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+
 @ApiBearerAuth()
 @Controller('manifest')
 export class ManifestController {
@@ -38,7 +34,9 @@ export class ManifestController {
   // remove(@Param('id') id: string) {
   //   return this.manifestService.remove(+id);
   // }
-  @ApiOperation({ summary: 'looking for a manifest a specific group can access' })
+  @ApiOperation({
+    summary: 'looking for a manifest a specific group can access',
+  })
   @UseGuards(AuthGuard)
   @Get('/search/:UserGroupId/:partialString')
   lookingForManifest(
