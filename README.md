@@ -48,6 +48,7 @@ If you want custom demo (like specific Mirador plugins or config) please contact
 mirador-multi-user@tetras-libre.fr
 
 # Presentation website
+
 [https://www.mirador-multi-user.com/](https://www.mirador-multi-user.com/).
 
 # Features
@@ -262,36 +263,34 @@ tail -f ./logs/error.log
 
 You can customize Caddy logging further by editing the Caddyfile in the root project.
 
-# Documentation
+# Testing
 
-## Wiki
+Mirador Multi User utilise :
 
-https://github.com/TETRAS-IIIF/mirador-multi-user/wiki
+- [Playwright](https://playwright.dev/) pour les tests end-to-end (E2E)
+- [Vitest](https://vitest.dev/) pour les tests unitaires et d'intégration
 
-## Roadmap 
+### Commandes disponibles
 
-https://github.com/TETRAS-IIIF/mirador-multi-user/wiki/Roadmap
+#### Tests Unitaires (Vitest)
 
-## Changelog
+| Commande             | Description                                                              |
+|----------------------|--------------------------------------------------------------------------|
+| `npm test`           | Exécute les tests unitaires avec Vitest (mode watch)                     |
+| `npm run test:ci`    | Exécute les tests unitaires avec couverture de code (mode CI)            |
+| `npm run test:watch` | Exécute les tests unitaires en mode watch (rafraîchissement automatique) |
 
-Check the [CHANGELOG.md](CHANGELOG.md) file for the latest changes.
+#### Tests End-to-End (Playwright)
 
-Changelog can be updated automatically by running the command `./cli.sh changelog`.
-The command generates a new changelog entry based on the latest git commits. It's possible to rewrite message or
-grouping commit on same line (keep parenthesis around commit revision ID).
-
-## Contributing
-
-# CLI Tool helper (experimental)
-
-You can use the CLI tool to help you with some tasks. The CLI tool is located in the `cli.sh` file.
-To see the available commands, run:
-
-```bash
-./cli.sh help
-```
-
-The CLI Tools are always experimental and has not been tested extensively. Use at your own risk.
+| Commande                 | Description                                                             |
+|--------------------------|-------------------------------------------------------------------------|
+| `npm run test:e2e`       | Exécute les tests E2E en mode **light** (Firefox uniquement)            |
+| `npm run test:e2e:full`  | Exécute les tests E2E en mode **full** (Chromium, Firefox, WebKit)      |
+| `npm run test:e2e:ci`    | Exécute les tests E2E optimisés pour la CI (mode light par défaut)      |
+| `npm run test:e2e:ui`    | Lance l'interface graphique Playwright pour exécuter/déboguer les tests |
+| `npm run test:report`    | Ouvre le rapport HTML des tests E2E dans le navigateur                  |
+| `npm run test:e2e:debug` | Exécute les tests E2E en mode debug (avec interface graphique)          |
+| `npm run test:e2e:trace` | Exécute les tests E2E avec traçage activé (pour analyse approfondie)    |
 
 # Maintainers
 
