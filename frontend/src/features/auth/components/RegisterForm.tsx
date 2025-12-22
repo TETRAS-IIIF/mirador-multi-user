@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { Button, Grid, Snackbar, Typography } from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
-
 import FormField from 'components/elements/FormField.tsx';
 import { RegisterFormData, UserSchema } from '../types/types.ts';
 import { useRegister } from '../../../utils/auth.tsx';

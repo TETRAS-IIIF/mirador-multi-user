@@ -12,8 +12,13 @@
     "test": "vitest",
     "test:ci": "vitest run --coverage",
     "test:e2e": "playwright test",
+    "test:e2e:full": "TEST_MODE=full playwright test",
+    "test:e2e:ci": "CI=true playwright test",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "test:report": "npx playwright show-report",
+    "test:e2e:debug": "PWDEBUG=1 playwright test --headed",
+    "test:e2e:trace": "playwright test --trace on"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
