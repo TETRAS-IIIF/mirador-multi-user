@@ -29,9 +29,9 @@ async function loginFn(data: LoginCredentialsDTO) {
 }
 
 async function registerFn(data: RegisterCredentialsDTO) {
+  console.log(data);
   const response = await register(data);
-  const user = await handleTokenResponse(response);
-  return user;
+  return await handleTokenResponse(response);
 }
 
 async function logoutFn() {
