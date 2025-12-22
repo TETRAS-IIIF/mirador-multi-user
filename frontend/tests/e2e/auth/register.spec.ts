@@ -10,7 +10,7 @@ const isRegisterEndpoint = (url: string) => {
   }
 };
 
-test.describe('Auth / signup (backend validation)', () => {
+test.describe('Auth / register (backend validation)', () => {
   test('success shows success card', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('i18nextLng', 'fr'));
 
@@ -59,7 +59,7 @@ test.describe('Auth / signup (backend validation)', () => {
       return route.fulfill({
         status: 409,
         contentType: 'application/json',
-        body: JSON.stringify({}), // body irrelevant; your code throws by status
+        body: JSON.stringify({}),
       });
     });
 
@@ -72,7 +72,6 @@ test.describe('Auth / signup (backend validation)', () => {
 
     await page.locator('button[type="submit"]').click();
 
-    // This matches what register() actually throws
     await expect(
       page.getByText(/a user with this email or username already exists/i),
     ).toBeVisible({ timeout: 30_000 });
