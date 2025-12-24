@@ -44,6 +44,7 @@
     "crypto": "^1.0.1",
     "express-basic-auth": "^1.2.1",
     "express-session": "^1.18.1",
+    "glob": "^11.1.0",
     "jsdom": "^27.2.0",
     "mjml-core": "^4.15.3",
     "multer": "^2.0.2",
@@ -108,6 +109,9 @@
     "testEnvironment": "node"
   },
   "overrides": {
-    "html-minifier": "npm:html-minifier-next@latest"
+    "html-minifier": "npm:html-minifier-next@latest",
+    "glob": "^11.1.0",
+    "mjml": "^4.18.1",
+    "nodemailer": "^7.0.11"
   }
 }
