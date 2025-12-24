@@ -352,5 +352,6 @@
   "validate-terms-title": "Validate terms of use",
   "last_connected_at": "Last login",
   "login_count": "Login count",
-  "filter": "filter"
+  "filter": "filter",
+  "validateTerms": "Validate Terms of Use"
 }
