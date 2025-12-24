@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@casl/ability": "^6.7.1",
-    "@nestjs-modules/mailer": "^1.8.1",
+    "@nestjs-modules/mailer": "^1.11.2",
     "@nestjs/common": "^11.1.9",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.9",
@@ -108,6 +108,9 @@
     "testEnvironment": "node"
   },
   "overrides": {
-    "html-minifier": "npm:html-minifier-next@latest"
+    "html-minifier": "npm:html-minifier-next@latest",
+    "glob": "^11.1.0",
+    "mjml": "^4.18.0",
+    "nodemailer": "^7.0.11"
   }
 }

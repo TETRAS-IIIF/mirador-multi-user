@@ -108,6 +108,7 @@ export const RegisterForm = () => {
                 variant="contained"
                 color="primary"
                 onClick={handleSubmit(onSubmit)}
+                fullWidth
               >
                 {t('submit')}
               </Button>

@@ -27,8 +27,9 @@ describe('SignInPage integration', () => {
     const mailInput = await screen.findByLabelText(/mail/i);
     const nameInput = screen.getByLabelText(/name/i);
 
-    const passwordInput = screen.getByLabelText(/^password$/i);
-    const confirmPasswordInput = screen.getByLabelText(/confirm password/i);
+    const passwordInput = await screen.getByLabelText(/^password/i);
+    const confirmPasswordInput =
+      await screen.getByLabelText(/confirm password/i);
 
     await user.type(mailInput, 'new-user@example.com');
     await user.type(nameInput, 'New User');
