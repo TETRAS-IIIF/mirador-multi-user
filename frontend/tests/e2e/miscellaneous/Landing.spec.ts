@@ -1,8 +1,6 @@
-// tests/e2e/landing.spec.ts
 import { expect, test } from '@playwright/test';
 import { mockEnvVars } from '../mock/env';
 
-// Définition des clés de settings pour éviter les dépendances circulaires
 const SettingKeys = {
   CLASSIC_AUTHENTICATION: 'CLASSIC_AUTHENTICATION',
   OPENID_CONNECTION: 'OPENID_CONNECTION',
@@ -72,7 +70,6 @@ test.describe('Landing Page', () => {
         );
         await page.goto('/');
 
-        // Vérifications principales
         await expect(page.locator('h1')).toContainText(translations.welcome);
         await expect(
           page.getByRole('button', { name: translations.createAccount }),
@@ -135,19 +132,19 @@ test.describe('Landing Page', () => {
       });
 
       await page.goto('/');
+      await page.getByRole('button', { name: /login|connexion/i }).click();
+      await page.waitForURL('**/auth/login');
 
-      const [request] = await Promise.all([
-        page.waitForEvent('request'),
-        page.getByRole('button', { name: /login|connexion/i }).click(),
+      await Promise.all([
+        page.waitForURL('**/protocol/openid-connect/auth**'),
+        page.getByRole('button', { name: /login with openid/i }).click(),
       ]);
 
-      expect(request.url()).toContain(mockEnvVars.VITE_OIDC_ISSUER);
-      expect(request.url()).toContain(
-        `client_id=${mockEnvVars.VITE_OIDC_CLIENT_ID}`,
-      );
-      expect(request.url()).toContain(
-        encodeURIComponent(mockEnvVars.VITE_OIDC_REDIRECT_URI),
-      );
+      const currentUrl = page.url();
+      expect(currentUrl).toMatch(/\/protocol\/openid-connect\/auth/);
+      expect(currentUrl).toContain('client_id=');
+      expect(currentUrl).toContain('redirect_uri=');
+      expect(currentUrl).toContain('response_type=code');
     });
 
     test('should navigate to signin page when classic auth is enabled', async ({

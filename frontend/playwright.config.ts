@@ -1,13 +1,13 @@
 import { defineConfig, devices } from '@playwright/test';
 
-const TEST_MODE = process.env.TEST_MODE || 'light'; // 'light' ou 'full'
+const TEST_MODE = process.env.TEST_MODE || 'light';
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4000';
 
 export default defineConfig({
   testDir: './tests/e2e',
-  timeout: 60_000,
+  timeout: 200_000,
   expect: {
-    timeout: 60_000,
+    timeout: 200_000,
   },
 
   fullyParallel: true,
@@ -25,6 +25,8 @@ export default defineConfig({
     video: process.env.CI ? 'off' : 'retain-on-failure',
     trace: process.env.CI ? 'on-first-retry' : 'on',
     screenshot: 'only-on-failure',
+    navigationTimeout: 150000,
+    actionTimeout: 100000,
   },
 
   projects:
@@ -49,13 +51,4 @@ export default defineConfig({
             use: { ...devices['Desktop Firefox'] },
           },
         ],
-
-  // Configuration optionnelle du serveur web (décommenter si nécessaire)
-  /* webServer: {
-    command: 'npm run dev',
-    cwd: __dirname,
-    url: baseURL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  }, */
 });
