@@ -354,5 +354,6 @@
   "validate-terms-title": "Valider les conditions d'utilisation",
   "login_count": "Nombre connexion",
   "last_connected_at": "Dernière connexion",
-  "filter": "Filtrer"
+  "filter": "Filtrer",
+  "validateTerms": "Valider les conditions d'utilisation"
 }

@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NavLink } from 'react-router-dom';
 import { ReactNode } from 'react';
@@ -13,48 +13,88 @@ type LayoutProps = {
 
 export const Layout = ({ children, title, rightButton }: LayoutProps) => {
   return (
-    <Grid
-      container
-      direction="column"
+    <Box
       sx={{
-        height: '100vh',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
-      <Grid
-        container
-        direction="row"
-        justifyContent="space-around"
-        alignItems="center"
+      <Box
+        component="header"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          px: { xs: 2, sm: 4 },
+          py: { xs: 1.5, sm: 2 },
+          gap: 2,
+        }}
       >
-        <Grid>
-          <NavLink
-            to="/"
-            onClick={() => {
-              storage.clearToken();
-            }}
-          >
-            <ArrowBackIcon />
-          </NavLink>
-        </Grid>
-        <Grid>
-          <Typography variant="h2" component="h1">
-            {title}
-          </Typography>
-        </Grid>
-        {rightButton ? rightButton : <Grid></Grid>}
-      </Grid>
-      <Grid
-        container
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="80vh"
+        <NavLink
+          to="/"
+          onClick={() => {
+            storage.clearToken();
+          }}
+          style={{ display: 'flex', alignItems: 'center' }}
+        >
+          <ArrowBackIcon />
+        </NavLink>
+        <Typography
+          variant="h2"
+          component="h1"
+          sx={{
+            flexGrow: 1,
+            textAlign: 'center',
+            fontSize: { xs: '1.5rem', sm: '2rem' },
+            px: 1,
+            whiteSpace: 'normal',
+            wordBreak: 'break-word',
+          }}
+        >
+          {title}
+        </Typography>
+
+        <Box
+          sx={{
+            minWidth: 64,
+            display: 'flex',
+            justifyContent: 'flex-end',
+          }}
+        >
+          {rightButton ?? null}
+        </Box>
+      </Box>
+
+      <Box
+        sx={{
+          flexGrow: 1,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+          px: { xs: 2, sm: 4 },
+          py: { xs: 4, sm: 6 },
+        }}
       >
-        {children}
-      </Grid>
-      <Grid container sx={{ width: '100%' }}>
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: 480,
+          }}
+        >
+          {children}
+        </Box>
+      </Box>
+
+      <Box
+        component="footer"
+        sx={{
+          width: '100%',
+          mt: 'auto',
+        }}
+      >
         <TermsFooter />
-      </Grid>
-    </Grid>
+      </Box>
+    </Box>
   );
 };
