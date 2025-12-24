@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - main
-      - develop
-      - 699-create-integration-tests
+      - prod
   pull_request:
     branches:
       - main
-      - develop
+      - prod
 
 jobs:
   frontend-tests:
