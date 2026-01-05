@@ -6,6 +6,7 @@ import {
   AppBar,
   Box,
   Dialog,
+  Divider,
   GlobalStyles,
   IconButton,
   Stack,
@@ -20,6 +21,9 @@ import SearchIcon from '@mui/icons-material/Search';
 import FindReplaceIcon from '@mui/icons-material/FindReplace';
 import SaveIcon from '@mui/icons-material/Save';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import ZoomOutIcon from '@mui/icons-material/ZoomOut';
+import { useTranslation } from 'react-i18next';
 
 interface IAdvancedTextEditorProps {
   value: string;
@@ -43,13 +47,16 @@ export const AdvancedTextEditor = ({
 
   const [localValue, setLocalValue] = useState<string>(value);
   const [lastSavedValue, setLastSavedValue] = useState<string>(value);
-  
   const [dialogOpen, setDialogOpen] = useState(false);
-
   const [isDirty, setIsDirty] = useState(false);
+  const [fontSize, setFontSize] = useState(14); // Default font size
+
+  const { t } = useTranslation();
 
   const handleMount: OnMount = (editor) => {
     editorRef.current = editor;
+    // Set initial font size
+    editor.updateOptions({ fontSize: fontSize });
   };
 
   const undo = () => editorRef.current?.trigger('toolbar', 'undo', null);
@@ -59,6 +66,22 @@ export const AdvancedTextEditor = ({
     editorRef.current?.getAction('editor.action.startFindReplaceAction')?.run();
   const format = () =>
     editorRef.current?.getAction('editor.action.formatDocument')?.run();
+
+  const zoomIn = () => {
+    setFontSize((prev) => {
+      const newSize = Math.min(prev + 1, 32); // Max zoom level
+      editorRef.current?.updateOptions({ fontSize: newSize });
+      return newSize;
+    });
+  };
+
+  const zoomOut = () => {
+    setFontSize((prev) => {
+      const newSize = Math.max(prev - 1, 6); // Min zoom level
+      editorRef.current?.updateOptions({ fontSize: newSize });
+      return newSize;
+    });
+  };
 
   const updateValue = (next: string) => {
     setLocalValue(next);
@@ -114,37 +137,45 @@ export const AdvancedTextEditor = ({
       <IconButton size="small" onClick={redo} title="Redo">
         <RedoIcon fontSize="small" />
       </IconButton>
+      <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
       <IconButton size="small" onClick={search} title="Search">
         <SearchIcon fontSize="small" />
       </IconButton>
       <IconButton size="small" onClick={replace} title="Replace">
         <FindReplaceIcon fontSize="small" />
       </IconButton>
+      <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
       <IconButton size="small" onClick={format} title="Format code">
         <AutoFixHighIcon fontSize="small" />
       </IconButton>
-
-      <Stack direction="row" spacing={0.5} alignItems="center">
-        <IconButton
-          size="small"
-          onClick={handleSave}
-          title={isDirty ? 'Save (unsaved changes)' : 'Save'}
-          disabled={!isDirty}
-        >
-          <SaveIcon fontSize="small" />
-        </IconButton>
-        {isDirty && (
-          <Box
-            sx={{
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              bgcolor: 'error.main',
-            }}
-            title="Unsaved changes"
-          />
-        )}
-      </Stack>
+      <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+      {/* Zoom controls */}
+      <IconButton size="small" onClick={zoomOut} title="Zoom Out">
+        <ZoomOutIcon fontSize="small" />
+      </IconButton>
+      <IconButton size="small" onClick={zoomIn} title="Zoom In">
+        <ZoomInIcon fontSize="small" />
+      </IconButton>
+      <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+      <IconButton
+        size="small"
+        onClick={handleSave}
+        title={isDirty ? t('saveUnsaved') : t('save')}
+        disabled={!isDirty}
+      >
+        <SaveIcon fontSize="small" />
+      </IconButton>
+      {isDirty && (
+        <Box
+          sx={{
+            width: 8,
+            height: 8,
+            borderRadius: '50%',
+            bgcolor: 'error.main',
+          }}
+          title={t('unsavedChanges')}
+        />
+      )}
     </Stack>
   );
 
@@ -166,6 +197,7 @@ export const AdvancedTextEditor = ({
         contextmenu: true,
         tabSize: 2,
         insertSpaces: true,
+        fontSize: fontSize, // Set font size from state
       }}
     />
   );

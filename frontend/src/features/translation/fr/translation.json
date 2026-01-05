@@ -355,5 +355,7 @@
   "login_count": "Nombre connexion",
   "last_connected_at": "Dernière connexion",
   "filter": "Filtrer",
-  "validateTerms": "Valider les conditions d'utilisation"
+  "validateTerms": "Valider les conditions d'utilisation",
+  "saveUnsaved": "Enregistrer (changements détectés)",
+  "unsavedChanges": "Changement detectés"
 }
