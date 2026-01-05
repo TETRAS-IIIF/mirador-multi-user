@@ -54,7 +54,7 @@ export function addScriptTagInHtmlDocument(htmlContent: string): string {
   const closingBodyTag = '</body>';
 
   // Check if script is already present
-  if (htmlContent.includes(viewerScript)) {
+  if (htmlContent.includes(script)) {
     return htmlContent; // Script already present, no need to add
   }
 
@@ -71,7 +71,8 @@ export function addScriptTagInHtmlDocument(htmlContent: string): string {
 }
 
 // Script tag to be added
-const viewerScript = '<script src="/public/htmlTreeNav.js"></script>\n';
+const script = '/public/htmlTreeNav.js';
+const viewerScript = '<script src="' + script + '"></script>\n';
 
 // Prefix for MMU element IDs
 const mmuIDPrefix = 'mmu-element-';
