@@ -69,10 +69,12 @@ export function addScriptTagInHtmlDocument(htmlContent: string): string {
     return htmlContent + viewerScript;
   }
 }
+const css =
+  '<style type="text/css">   @import url("/public/htmlTreeNav.css"); </style>';
 
 // Script tag to be added
 const script = '/public/htmlTreeNav.js';
-const viewerScript = '<script src="' + script + '"></script>\n';
+const viewerScript = '<script src="' + script + '"></script>\n' + css;
 
 // Prefix for MMU element IDs
 const mmuIDPrefix = 'mmu-element-';

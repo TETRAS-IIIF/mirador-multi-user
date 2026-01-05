@@ -9,6 +9,10 @@ import {
   Divider,
   GlobalStyles,
   IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   Stack,
   Toolbar,
   Typography,
@@ -23,6 +27,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 import ZoomOutIcon from '@mui/icons-material/ZoomOut';
+import HighlightIcon from '@mui/icons-material/Highlight';
 import { useTranslation } from 'react-i18next';
 
 interface IAdvancedTextEditorProps {
@@ -32,6 +37,7 @@ interface IAdvancedTextEditorProps {
   title?: string;
   fullscreenMode?: 'dialog' | 'browser';
   onSave: (value: string) => Promise<void>;
+  highlightColors?: Array<{ name: string; className: string; color: string }>;
 }
 
 export const AdvancedTextEditor = ({
@@ -41,6 +47,13 @@ export const AdvancedTextEditor = ({
   title = '',
   fullscreenMode = 'dialog',
   onSave,
+  highlightColors = [
+    { name: 'Yellow', className: 'highlight-yellow', color: '#ffeb3b' },
+    { name: 'Green', className: 'highlight-green', color: '#4caf50' },
+    { name: 'Blue', className: 'highlight-blue', color: '#2196f3' },
+    { name: 'Pink', className: 'highlight-pink', color: '#e91e63' },
+    { name: 'Orange', className: 'highlight-orange', color: '#ff9800' },
+  ],
 }: IAdvancedTextEditorProps) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -50,8 +63,12 @@ export const AdvancedTextEditor = ({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [fontSize, setFontSize] = useState(14);
+  const [highlightMenuAnchor, setHighlightMenuAnchor] =
+    useState<null | HTMLElement>(null);
 
   const { t } = useTranslation();
+
+  const isHtmlFile = language.toLowerCase() === 'html';
 
   const handleMount: OnMount = (editor) => {
     editorRef.current = editor;
@@ -112,6 +129,58 @@ export const AdvancedTextEditor = ({
 
   const exitDialog = () => setDialogOpen(false);
 
+  const handleHighlightClick = (event: React.MouseEvent<HTMLElement>) => {
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    const selection = editor.getSelection();
+    if (!selection || selection.isEmpty()) {
+      // No text selected
+      return;
+    }
+
+    setHighlightMenuAnchor(event.currentTarget);
+  };
+
+  const handleHighlightClose = () => {
+    setHighlightMenuAnchor(null);
+  };
+
+  const applyHighlight = (className: string) => {
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    const selection = editor.getSelection();
+    if (!selection || selection.isEmpty()) return;
+
+    const model = editor.getModel();
+    if (!model) return;
+
+    const selectedText = model.getValueInRange(selection);
+
+    // Wrap the selected text with a span tag
+    const highlightedText = `<span class="${className}">${selectedText}</span>`;
+
+    // Replace the selected text
+    editor.executeEdits('highlight', [
+      {
+        range: selection,
+        text: highlightedText,
+      },
+    ]);
+
+    // Update the cursor position after the inserted text
+    const newPosition = {
+      lineNumber: selection.endLineNumber,
+      column:
+        selection.endColumn + highlightedText.length - selectedText.length,
+    };
+    editor.setPosition(newPosition);
+    editor.focus();
+
+    handleHighlightClose();
+  };
+
   const fullscreenIcon = useMemo(
     () =>
       fullscreenMode === 'dialog' ? (
@@ -147,6 +216,18 @@ export const AdvancedTextEditor = ({
       <IconButton size="small" onClick={format} title={t('formatCode')}>
         <AutoFixHighIcon fontSize="small" />
       </IconButton>
+      {isHtmlFile && (
+        <>
+          <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+          <IconButton
+            size="small"
+            onClick={handleHighlightClick}
+            title={t('highlightText') || 'Highlight Text'}
+          >
+            <HighlightIcon fontSize="small" />
+          </IconButton>
+        </>
+      )}
       <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
       {/* Zoom controls */}
       <IconButton size="small" onClick={zoomOut} title={t('zoomOut')}>
@@ -304,6 +385,34 @@ export const AdvancedTextEditor = ({
       ) : (
         editor
       )}
+
+      {/* Highlight Color Menu */}
+      <Menu
+        anchorEl={highlightMenuAnchor}
+        open={Boolean(highlightMenuAnchor)}
+        onClose={handleHighlightClose}
+      >
+        {highlightColors.map((colorOption) => (
+          <MenuItem
+            key={colorOption.className}
+            onClick={() => applyHighlight(colorOption.className)}
+          >
+            <ListItemIcon>
+              <Box
+                sx={{
+                  width: 24,
+                  height: 24,
+                  bgcolor: colorOption.color,
+                  borderRadius: 1,
+                  border: 1,
+                  borderColor: 'divider',
+                }}
+              />
+            </ListItemIcon>
+            <ListItemText>{colorOption.name}</ListItemText>
+          </MenuItem>
+        ))}
+      </Menu>
     </Box>
   );
 };
