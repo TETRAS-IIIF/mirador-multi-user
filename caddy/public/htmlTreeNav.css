@@ -1,19 +1,19 @@
-.highlight-yellow {
+.mmu-highlight-yellow {
     background-color: #ffeb3b;
 }
 
-.highlight-green {
-    background-color: #4caf50;
+.mmu-highlight-green {
+    background-color: green;
 }
 
-.highlight-blue {
+.mmu-highlight-blue {
     background-color: #2196f3;
 }
 
-.highlight-red {
+.mmu-highlight-red {
     background-color: red;
 }
 
-.highlight-orange {
+.mmu-highlight-orange {
     background-color: #ff9800;
 }
