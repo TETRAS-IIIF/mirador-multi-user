@@ -4,20 +4,16 @@
 
 .highlight-green {
     background-color: #4caf50;
-    color: white;
 }
 
 .highlight-blue {
     background-color: #2196f3;
-    color: white;
 }
 
-.highlight-pink {
-    background-color: #e91e63;
-    color: white;
+.highlight-red {
+    background-color: red;
 }
 
 .highlight-orange {
     background-color: #ff9800;
-    color: white;
 }

@@ -3,6 +3,7 @@ import Editor, { OnMount } from '@monaco-editor/react';
 import type * as monaco from 'monaco-editor';
 
 import {
+  Alert,
   AppBar,
   Box,
   Dialog,
@@ -13,6 +14,7 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Snackbar,
   Stack,
   Toolbar,
   Typography,
@@ -51,7 +53,7 @@ export const AdvancedTextEditor = ({
     { name: 'Yellow', className: 'highlight-yellow', color: '#ffeb3b' },
     { name: 'Green', className: 'highlight-green', color: '#4caf50' },
     { name: 'Blue', className: 'highlight-blue', color: '#2196f3' },
-    { name: 'Pink', className: 'highlight-pink', color: '#e91e63' },
+    { name: 'Red', className: 'highlight-red', color: 'red' },
     { name: 'Orange', className: 'highlight-orange', color: '#ff9800' },
   ],
 }: IAdvancedTextEditorProps) => {
@@ -65,6 +67,7 @@ export const AdvancedTextEditor = ({
   const [fontSize, setFontSize] = useState(14);
   const [highlightMenuAnchor, setHighlightMenuAnchor] =
     useState<null | HTMLElement>(null);
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const { t } = useTranslation();
 
@@ -129,13 +132,128 @@ export const AdvancedTextEditor = ({
 
   const exitDialog = () => setDialogOpen(false);
 
+  /**
+   * Validates if the selected text is pure text content (not HTML tags/attributes)
+   */
+  const isValidTextSelection = (
+    selectedText: string,
+  ): { valid: boolean; reason?: string } => {
+    // Check if empty
+    if (!selectedText || selectedText.trim().length === 0) {
+      return { valid: false, reason: 'No text selected' };
+    }
+
+    // Check if selection contains HTML tags (< or >)
+    if (selectedText.includes('<') || selectedText.includes('>')) {
+      return {
+        valid: false,
+        reason:
+          'Selection contains HTML tags. Please select only text content.',
+      };
+    }
+
+    // Check if selection contains attribute-like patterns (= or quotes commonly used in attributes)
+    const attributePattern = /\s*=\s*["']/;
+    if (attributePattern.test(selectedText)) {
+      return {
+        valid: false,
+        reason: 'Selection appears to contain HTML attributes.',
+      };
+    }
+
+    // Check if the selection is already wrapped in a span (to avoid nested spans)
+    // This is a basic check - you might want to make it more sophisticated
+    if (
+      selectedText.trim().startsWith('<span') &&
+      selectedText.trim().endsWith('</span>')
+    ) {
+      return { valid: false, reason: 'Text is already highlighted.' };
+    }
+
+    return { valid: true };
+  };
+
+  /**
+   * Gets the full line context to check if selection is within tag content
+   */
+  const isSelectionInTextContent = (
+    model: monaco.editor.ITextModel,
+    selection: monaco.Selection,
+  ): { valid: boolean; reason?: string } => {
+    const startLine = selection.startLineNumber;
+
+    // Get the full context (from start to selection start, and from selection end to end)
+    const beforeSelection = model.getValueInRange({
+      startLineNumber: startLine,
+      startColumn: 1,
+      endLineNumber: selection.startLineNumber,
+      endColumn: selection.startColumn,
+    });
+
+    // Count opening and closing tags before the selection
+    const openTagsBefore = (beforeSelection.match(/</g) || []).length;
+    const closeTagsBefore = (beforeSelection.match(/>/g) || []).length;
+
+    // If we're inside a tag (more < than >), we're not in text content
+    if (openTagsBefore > closeTagsBefore) {
+      return {
+        valid: false,
+        reason:
+          'Selection is inside an HTML tag. Please select text content only.',
+      };
+    }
+
+    // Check if we're in an attribute by looking for the last < before selection
+    const lastOpenTag = beforeSelection.lastIndexOf('<');
+    const lastCloseTag = beforeSelection.lastIndexOf('>');
+
+    if (lastOpenTag > lastCloseTag) {
+      // We're potentially inside a tag
+      const tagContent = beforeSelection.substring(lastOpenTag);
+
+      // Check if there's an = sign (attribute)
+      if (tagContent.includes('=')) {
+        return { valid: false, reason: 'Selection is in an HTML attribute.' };
+      }
+
+      return { valid: false, reason: 'Selection is inside an HTML tag.' };
+    }
+
+    // Additional check: ensure we're not selecting across multiple text nodes with tags
+    const selectedText = model.getValueInRange(selection);
+    if (selectedText.includes('<') || selectedText.includes('>')) {
+      return { valid: false, reason: 'Selection spans across HTML tags.' };
+    }
+
+    return { valid: true };
+  };
+
   const handleHighlightClick = (event: React.MouseEvent<HTMLElement>) => {
     const editor = editorRef.current;
     if (!editor) return;
 
     const selection = editor.getSelection();
     if (!selection || selection.isEmpty()) {
-      // No text selected
+      setErrorMessage('Please select some text first');
+      return;
+    }
+
+    const model = editor.getModel();
+    if (!model) return;
+
+    const selectedText = model.getValueInRange(selection);
+
+    // Validate the selected text
+    const textValidation = isValidTextSelection(selectedText);
+    if (!textValidation.valid) {
+      setErrorMessage(textValidation.reason || 'Invalid selection');
+      return;
+    }
+
+    // Check context to ensure we're in text content
+    const contextValidation = isSelectionInTextContent(model, selection);
+    if (!contextValidation.valid) {
+      setErrorMessage(contextValidation.reason || 'Invalid selection context');
       return;
     }
 
@@ -158,6 +276,20 @@ export const AdvancedTextEditor = ({
 
     const selectedText = model.getValueInRange(selection);
 
+    // Final validation before applying
+    const validation = isValidTextSelection(selectedText);
+    const contextValidation = isSelectionInTextContent(model, selection);
+
+    if (!validation.valid || !contextValidation.valid) {
+      setErrorMessage(
+        validation.reason ||
+          contextValidation.reason ||
+          'Cannot highlight this selection',
+      );
+      handleHighlightClose();
+      return;
+    }
+
     // Wrap the selected text with a span tag
     const highlightedText = `<span class="${className}">${selectedText}</span>`;
 
@@ -179,6 +311,10 @@ export const AdvancedTextEditor = ({
     editor.focus();
 
     handleHighlightClose();
+  };
+
+  const handleCloseError = () => {
+    setErrorMessage('');
   };
 
   const fullscreenIcon = useMemo(
@@ -229,11 +365,10 @@ export const AdvancedTextEditor = ({
         </>
       )}
       <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-      {/* Zoom controls */}
       <IconButton size="small" onClick={zoomOut} title={t('zoomOut')}>
         <ZoomOutIcon fontSize="small" />
       </IconButton>
-      <IconButton size="small" onClick={zoomIn} title="Zoom In">
+      <IconButton size="small" onClick={zoomIn} title={t('zoomIn')}>
         <ZoomInIcon fontSize="small" />
       </IconButton>
       <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
@@ -413,6 +548,22 @@ export const AdvancedTextEditor = ({
           </MenuItem>
         ))}
       </Menu>
+
+      {/* Error Snackbar */}
+      <Snackbar
+        open={!!errorMessage}
+        autoHideDuration={4000}
+        onClose={handleCloseError}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseError}
+          severity="warning"
+          sx={{ width: '100%' }}
+        >
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
