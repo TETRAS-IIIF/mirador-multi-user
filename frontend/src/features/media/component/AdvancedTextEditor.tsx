@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import Editor, { OnMount } from '@monaco-editor/react';
 import type * as monaco from 'monaco-editor';
 
@@ -82,6 +83,27 @@ export const AdvancedTextEditor = ({
   const { t } = useTranslation();
 
   const isHtmlFile = language.toLowerCase() === 'html';
+
+  // Add this function inside your component
+  const removeHighlights = () => {
+    if (!editorRef.current) return;
+
+    const model = editorRef.current.getModel();
+    if (!model) return;
+
+    // Remove all highlight classes from the content
+    const currentValue = model.getValue();
+    const newValue = currentValue.replace(
+      /<span class="mmu-highlight-\w+">([^<]*)<\/span>/g,
+      '$1',
+    );
+
+    // Update the editor content
+    model.setValue(newValue);
+
+    // Update the local state
+    updateValue(newValue);
+  };
 
   /**
    * Validates if the selected text is pure text content (not HTML tags/attributes)
@@ -434,6 +456,9 @@ export const AdvancedTextEditor = ({
             title={t('highlightText') || 'Highlight Text'}
           >
             <HighlightIcon fontSize="small" />
+          </IconButton>{' '}
+          <IconButton onClick={removeHighlights} title="Remove all highlights">
+            <HighlightOffIcon sx={{ textDecoration: 'line-through' }} />
           </IconButton>
         </>
       )}
