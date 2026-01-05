@@ -49,13 +49,12 @@ export const AdvancedTextEditor = ({
   const [lastSavedValue, setLastSavedValue] = useState<string>(value);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const [fontSize, setFontSize] = useState(14); // Default font size
+  const [fontSize, setFontSize] = useState(14);
 
   const { t } = useTranslation();
 
   const handleMount: OnMount = (editor) => {
     editorRef.current = editor;
-    // Set initial font size
     editor.updateOptions({ fontSize: fontSize });
   };
 
@@ -69,7 +68,7 @@ export const AdvancedTextEditor = ({
 
   const zoomIn = () => {
     setFontSize((prev) => {
-      const newSize = Math.min(prev + 1, 32); // Max zoom level
+      const newSize = Math.min(prev + 1, 32);
       editorRef.current?.updateOptions({ fontSize: newSize });
       return newSize;
     });
@@ -77,7 +76,7 @@ export const AdvancedTextEditor = ({
 
   const zoomOut = () => {
     setFontSize((prev) => {
-      const newSize = Math.max(prev - 1, 6); // Min zoom level
+      const newSize = Math.max(prev - 1, 6);
       editorRef.current?.updateOptions({ fontSize: newSize });
       return newSize;
     });
@@ -131,26 +130,26 @@ export const AdvancedTextEditor = ({
 
   const Controls = () => (
     <Stack direction="row" spacing={0.5} alignItems="center">
-      <IconButton size="small" onClick={undo} title="Undo">
+      <IconButton size="small" onClick={undo} title={t('undo')}>
         <UndoIcon fontSize="small" />
       </IconButton>
-      <IconButton size="small" onClick={redo} title="Redo">
+      <IconButton size="small" onClick={redo} title={t('redo')}>
         <RedoIcon fontSize="small" />
       </IconButton>
       <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-      <IconButton size="small" onClick={search} title="Search">
+      <IconButton size="small" onClick={search} title={t('search')}>
         <SearchIcon fontSize="small" />
       </IconButton>
-      <IconButton size="small" onClick={replace} title="Replace">
+      <IconButton size="small" onClick={replace} title={t('replace')}>
         <FindReplaceIcon fontSize="small" />
       </IconButton>
       <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-      <IconButton size="small" onClick={format} title="Format code">
+      <IconButton size="small" onClick={format} title={t('formatCode')}>
         <AutoFixHighIcon fontSize="small" />
       </IconButton>
       <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
       {/* Zoom controls */}
-      <IconButton size="small" onClick={zoomOut} title="Zoom Out">
+      <IconButton size="small" onClick={zoomOut} title={t('zoomOut')}>
         <ZoomOutIcon fontSize="small" />
       </IconButton>
       <IconButton size="small" onClick={zoomIn} title="Zoom In">
@@ -197,7 +196,7 @@ export const AdvancedTextEditor = ({
         contextmenu: true,
         tabSize: 2,
         insertSpaces: true,
-        fontSize: fontSize, // Set font size from state
+        fontSize: fontSize,
       }}
     />
   );
@@ -247,12 +246,16 @@ export const AdvancedTextEditor = ({
         <AppBar position="static" color="default" elevation={0}>
           <Toolbar variant="dense" sx={{ gap: 1 }}>
             <Typography variant="subtitle2" sx={{ flex: 1, minWidth: 120 }}>
-              {title}
+              {title || t('editorTitle')}
             </Typography>
             <Controls />
             <IconButton
               onClick={toggleFullscreen}
-              title="Fullscreen"
+              title={
+                document.fullscreenElement
+                  ? t('exitFullscreen')
+                  : t('fullscreen')
+              }
               sx={{ ml: 1 }}
             >
               {fullscreenIcon}
@@ -281,14 +284,14 @@ export const AdvancedTextEditor = ({
             <AppBar position="static">
               <Toolbar variant="dense" sx={{ gap: 1 }}>
                 <Typography sx={{ flex: 1, minWidth: 120 }} variant="h6">
-                  {`${title} (Fullscreen)`}
+                  {`${title || t('editorTitle')} (${t('fullscreen')})`}
                 </Typography>
                 <Controls />
                 <IconButton
                   edge="end"
                   color="inherit"
                   onClick={exitDialog}
-                  title="Exit fullscreen"
+                  title={t('exitFullscreen')}
                   sx={{ ml: 1 }}
                 >
                   <FullscreenExitIcon />
