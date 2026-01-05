@@ -8,7 +8,9 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "clean-deps": "rm -rf node_modules && rm -rf package-lock.json"
+    "clean-deps": "rm -rf node_modules && rm -rf package-lock.json",
+    "test": "vitest",
+    "test:ci": "vitest run --coverage"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -21,15 +23,13 @@
     "@mui/material": "^7.0.0",
     "@mui/x-date-pickers": "^7.21.0",
     "@tanstack/react-query": "^5.77.2",
-    "@tinymce/tinymce-react": "^6.3.0",
-    "@types/node": "^20.12.7",
     "cron": "^3.2.1",
     "dayjs": "^1.11.13",
     "i18next": "^24.1.2",
     "json-edit-react": "^1.26.2",
     "manifesto.js": "^4.2.21",
-    "mirador": "npm:mirador-video@1.2.6",
-    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.2.9",
+    "mirador": "npm:mirador-video@1.2.8",
+    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.2.11",
     "mirador-mltools-plugin-mmu": "1.0.3",
     "monaco-editor": "^0.55.1",
     "react": "^19.2.0",
@@ -43,7 +43,6 @@
     "react-quill": "npm:react-quill-new@3.6.0",
     "react-router-dom": "^6.23.0",
     "styled-components": "^6.1.18",
-    "typescript": "^5.8.3",
     "use-undo": "^1.1.1",
     "usehooks-ts": "^3.1.1",
     "uuidv4": "^6.2.13",
@@ -51,18 +50,27 @@
     "zod": "^3.25.30"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.19.25",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@types/react-draft-wysiwyg": "^1.13.8",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.5.0",
+    "@vitest/coverage-v8": "^4.0.15",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "jsdom": "^27.3.0",
+    "msw": "^2.12.4",
     "redux": "^5.0.1",
-    "typescript": "^5.8.3",
-    "vite": "^6.4.0"
+    "typescript": "^5.9.3",
+    "vite": "^6.4.0",
+    "vitest": "^4.0.15"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.9.5"

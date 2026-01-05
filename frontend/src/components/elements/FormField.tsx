@@ -1,50 +1,55 @@
-import React from 'react';
-import { FieldError, UseFormRegister } from 'react-hook-form';
-import { FormLabel, Grid, TextField } from '@mui/material';
+import React from "react";
+import { FieldError, UseFormRegister } from "react-hook-form";
+import { Box, FormLabel, Stack, TextField } from "@mui/material";
 
 interface FormFieldProps {
-  type: string;
-  placeholder: string;
+  error?: FieldError;
+  fullWidth?: boolean;
   name: string;
+  placeholder: string;
   register: UseFormRegister<any>;
   required: boolean;
-  error?: FieldError;
+  type: string;
   valueAsNumber?: boolean;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
-  type,
-  placeholder,
-  name,
-  register,
-  error,
-  valueAsNumber,
-}) => {
+                                               error,
+                                               fullWidth = true,
+                                               name,
+                                               placeholder,
+                                               register,
+                                               required,
+                                               type,
+                                               valueAsNumber,
+                                             }) => {
   return (
-    <Grid
-      container
-      alignItems="center"
-      spacing={2}
-      justifyContent="space-between"
+    <Stack
+      spacing={1}
+      sx={{
+        width: "100%",
+      }}
     >
-      <Grid>
-        <TextField
-          type={type}
-          inputProps={{
-            maxLength: 255,
-          }}
-          label={placeholder}
-          variant="outlined"
-          {...register(name, { valueAsNumber })}
-          error={!!error}
-        />
-      </Grid>
-      {error && (
-        <Grid width={200}>
-          <FormLabel error={true}>{error.message}</FormLabel>
-        </Grid>
-      )}
-    </Grid>
+      <TextField
+        type={type}
+        label={placeholder}
+        variant="outlined"
+        required={required}
+        fullWidth={fullWidth}
+        inputProps={{ maxLength: 255 }}
+        {...register(name, { valueAsNumber })}
+        error={!!error}
+      />
+
+      {error ? (
+        <Box sx={{ minWidth: 0 }}>
+          <FormLabel error sx={{ display: "block" }}>
+            {error.message}
+          </FormLabel>
+        </Box>
+      ) : null}
+    </Stack>
   );
 };
+
 export default FormField;

@@ -351,5 +351,9 @@
   "copyToClipboard": "Copier dans le presse-papier",
   "openPreview": "Ouvrir l'aperçu",
   "preview": "Aperçu",
-  "validate-terms-title": "Valider les conditions d'utilisation"
+  "validate-terms-title": "Valider les conditions d'utilisation",
+  "login_count": "Nombre connexion",
+  "last_connected_at": "Dernière connexion",
+  "filter": "Filtrer",
+  "validateTerms": "Valider les conditions d'utilisation"
 }

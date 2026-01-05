@@ -349,5 +349,9 @@
   "copyToClipboard": "Copy to clipboard",
   "openPreview": "Open Preview",
   "preview": "Preview document",
-  "validate-terms-title": "Validate terms of use"
+  "validate-terms-title": "Validate terms of use",
+  "last_connected_at": "Last login",
+  "login_count": "Login count",
+  "filter": "filter",
+  "validateTerms": "Validate Terms of Use"
 }

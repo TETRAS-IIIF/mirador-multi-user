@@ -3,6 +3,8 @@ import { UserSubscriber } from '../utils/subscribers/user.subscriber';
 import { MARIA_DB_PORT } from '../utils/constants';
 
 export default registerAs('database', () => {
+  const isTest = process.env.NODE_ENV === 'test';
+
   return {
     type: 'mariadb',
     host: process.env.DB_HOST,
@@ -13,7 +15,9 @@ export default registerAs('database', () => {
     autoLoadEntities: true,
     cache: false,
     subscribers: [UserSubscriber],
-    migrations: ['dist/db/migrations/*.{ts,js}'],
+    migrations: ['dist/db/migrations/*.{js,ts}'],
+    migrationsRun: isTest,
+    synchronize: false,
     cli: {
       migrationsDir: 'src/migrations',
     },

@@ -34,7 +34,6 @@ import { DatabaseModule } from './BaseEntities/database/database.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: './src/config/.env.old.dev',
       load: [dbConfiguration],
     }),
     TypeOrmModule.forRootAsync({

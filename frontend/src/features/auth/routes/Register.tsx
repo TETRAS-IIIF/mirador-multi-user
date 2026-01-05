@@ -1,6 +1,6 @@
 import { RegisterForm } from '../components/RegisterForm.tsx';
 import { Layout } from '../components/Layout.tsx';
-import { Grid, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -11,11 +11,11 @@ export const Register = () => {
     <Layout
       title={t('account-creation-title')}
       rightButton={
-        <Grid>
+        <Box>
           <NavLink to="/auth/login">
             <Typography variant="button">{t('login')}</Typography>
           </NavLink>
-        </Grid>
+        </Box>
       }
     >
       <RegisterForm />

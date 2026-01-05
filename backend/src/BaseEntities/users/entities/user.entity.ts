@@ -56,7 +56,10 @@ export class User {
 
   @Index()
   @Column({ nullable: true })
-  lastConnectedAt: Date;
+  lastConnectedAt: Date | null;
+
+  @Column({ type: 'int', default: 0 })
+  loginCounter: number;
 
   @Column({ nullable: true })
   termsValidatedAt: Date;
