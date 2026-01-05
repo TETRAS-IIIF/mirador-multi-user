@@ -263,12 +263,12 @@
     function makeCopyBtn(id) {
       const btn = document.createElement("button");
       btn.textContent = "📋";
-      btn.title = "Copy link (full mode)";
+      btn.title = "Copy link";
       Object.assign(btn.style, {
         border: "none",
         background: "transparent",
         cursor: "pointer",
-        fontSize: "12px",
+        fontSize: "16px",
         flexShrink: "0",
         padding: "0 4px",
       });
