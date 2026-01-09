@@ -3,9 +3,9 @@ import { Box, Dialog, GlobalStyles } from '@mui/material';
 import Editor from '@monaco-editor/react';
 import type * as monaco from 'monaco-editor';
 import { useTranslation } from 'react-i18next';
-import { EditorToolbar } from './AdvancedTextEditorToolbar';
-import { FloatingColorPicker } from './AdvancedTextEditorFloatingColorPicker';
-import { HighlightMenu } from './AdvancedTextEditorHighlightMenu';
+import { EditorToolbar } from './AdvancedTextEditor/AdvancedTextEditorToolbar.tsx';
+import { FloatingColorPicker } from './AdvancedTextEditor/AdvancedTextEditorFloatingColorPicker.tsx';
+import { HighlightMenu } from './AdvancedTextEditor/AdvancedTextEditorHighlightMenu.tsx';
 
 interface HighlightColor {
   name: string;
