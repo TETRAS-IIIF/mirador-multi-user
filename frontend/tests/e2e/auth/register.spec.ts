@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const mockUser = { name: 'oo', mail: 'antoine.roy+t@tetras-libre.fr' };
+const mockUser = { name: 'oo', mail: 'test@example.com' };
 
 const isRegisterEndpoint = (url: string) => {
   try {
@@ -10,7 +10,7 @@ const isRegisterEndpoint = (url: string) => {
   }
 };
 
-test.describe('Auth / register (backend validation)', () => {
+test.describe('Auth / register', () => {
   test('success shows success card', async ({ page }) => {
     await page.addInitScript(() => localStorage.setItem('i18nextLng', 'fr'));
 

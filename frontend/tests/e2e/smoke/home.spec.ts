@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('Home / login flow (smoke)', () => {
+test.describe('App is up', () => {
   test('should load the application shell', async ({ page }) => {
     await page.goto('/');
 
