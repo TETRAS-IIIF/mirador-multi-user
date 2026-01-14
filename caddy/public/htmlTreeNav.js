@@ -265,31 +265,19 @@
 
       const labelEl = document.createElement("span");
       labelEl.textContent = label;
-      labelEl.style.whiteSpace = "nowrap";
-      labelEl.style.overflow = "hidden";
-      labelEl.style.textOverflow = "ellipsis";
-      labelEl.style.flex = "1";
-      labelEl.style.paddingRight = "10px";
+      labelEl.className = "mmu-node-row-label";
 
       // highlight duplicates
       if (idRaw && duplicateIdSet.has(idRaw)) {
-        labelEl.style.color = "#b91c1c"; // red text
-        labelEl.style.fontWeight = "600"; // semi-bold
+        labelEl.className =
+          labelEl.className + " mmu-node-row-panel-duplicated";
         row.title = `${tooltip || ""} (duplicate ID: ${idRaw})`.trim();
       }
 
       row.appendChild(labelEl);
-      if (idRaw) row.appendChild(makeCopyBtn(idRaw));
-
-      // Hover feedback
-      row.addEventListener(
-        "mouseenter",
-        () => (row.style.background = "#fee2e2"), // light red on hover
-      );
-      row.addEventListener(
-        "mouseleave",
-        () => (row.style.background = "transparent"),
-      );
+      if (idRaw) {
+        row.appendChild(makeCopyBtn(idRaw));
+      }
 
       return row;
     }
@@ -319,20 +307,11 @@
       details.open = pathIds ? pathIds.has(node.id) : true;
 
       const summary = document.createElement("summary");
-      summary.style.cursor = "pointer";
-      summary.style.padding = mode === "panel" ? "4px 8px" : "2px 4px";
+      summary.className = "mmu-summary";
       summary.title = tooltip;
-      if (mode === "panel") summary.style.borderBottom = "1px solid #e5e7eb";
-
-      // Hover feedback
-      summary.addEventListener(
-        "mouseenter",
-        () => (summary.style.background = "#eef2ff"),
-      );
-      summary.addEventListener(
-        "mouseleave",
-        () => (summary.style.background = "transparent"),
-      );
+      if (mode === "panel") {
+        summary.className = summary.className + " mmu-summary-panel";
+      }
 
       const wrap = document.createElement("span");
       wrap.textContent = label;

@@ -1,3 +1,16 @@
+/* Define global color */
+:root {
+    --mmu-color-yellow: #ffeb3b;
+    --mmu-color-green: green;
+    --mmu-color-blue: #2196f3;
+    --mmu-color-red: red;
+    --mmu-color-orange: #ff9800;
+    --mmu-color-highlight: lightblue;
+    --mmu-color-duplicate: #c36a6a;
+}
+
+
+/* Highlight colors for different levels of importance */
 .mmu-highlight-yellow {
     background-color: #ffeb3b;
 }
@@ -90,9 +103,41 @@
     justify-content: space-between;
     padding: 2px 4px;
     cursor: pointer;
+    background-color: transparent;
+}
+
+.mmu-node-row:hover, .mmu-summary:hover {
+    background-color: var(--mmu-color-highlight);
+    border-radius: 4px;
 }
 
 .mmu-node-row-panel {
     border-bottom: 1px solid #e5e7eb;
 }
 
+.mmu-node-row-panel {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    padding-right: 10px;
+}
+
+.mmu-node-row-panel-duplicated {
+    font-weight: bold;
+    background-color: var(--mmu-color-duplicate);
+}
+
+.mmu-summary {
+    cursor: pointer;
+    padding: 2px 4px;
+}
+
+/*.mmu-summary:hover {*/
+/*    background-color: var(--mmu-color-highlight);*/
+/*    border-radius: 4px;*/
+/*}*/
+
+.mmu-summary-panel {
+    border-bottom: 1px solid #e5e7eb;
+}
