@@ -183,40 +183,10 @@
     // Panel layout depends on mode
     if (mode === "panel") {
       // Full-width centered (for iframe embedding)
-      Object.assign(panel.style, {
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        background: "#f7f7f9",
-        overflowY: "auto",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        padding: "20px 0",
-        fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
-        fontSize: "13px",
-        lineHeight: "1.4",
-      });
+      panel.className = "mmu-sidebar-fullwidth";
     } else {
       // Fixed left sidebar (for full/debug)
-      Object.assign(panel.style, {
-        position: "fixed",
-        top: "0",
-        left: "0",
-        width: "300px",
-        height: "100%",
-        background: "#f7f7f9",
-        overflowY: "auto",
-        zIndex: "2147483646",
-        padding: "60px 12px 10px 12px",
-        boxShadow: "2px 0 6px rgba(0,0,0,.2)",
-        fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
-        fontSize: "13px",
-        lineHeight: "1.4",
-        borderRight: "1px solid #e5e7eb",
-        display: "block",
-      });
+      panel.className = "mmu-sidebar-left-fixed";
       // Make room for the sidebar
       if (!document.body.style.marginLeft)
         document.body.style.marginLeft = "340px";
@@ -236,18 +206,7 @@
         duplicateIds.join(", ") +
         ". " +
         "Annotations using these elements can be impacted, edit your media to remove duplicates.";
-      Object.assign(info.style, {
-        width: "90%",
-        maxWidth: "600px",
-        marginBottom: "12px",
-        padding: "6px 8px",
-        borderRadius: "4px",
-        background: "#fef2f2",
-        color: "#991b1b",
-        fontSize: "12px",
-        border: "1px solid #fecaca",
-        boxSizing: "border-box",
-      });
+      info.className = "mmu-info-duplicate";
       panel.appendChild(info);
     }
 
@@ -260,28 +219,15 @@
       const img = document.createElement("img");
       img.src = "/public/copy-icon.png";
       img.alt = "Copy";
-      Object.assign(img.style, {
-        width: "16px",
-        height: "16px",
-        display: "block",
-      });
+      img.className = "mmu-img-copy-button";
 
       btn.title = "Copy link";
       btn.setAttribute("aria-label", "Copy link");
-      Object.assign(btn.style, {
-        border: "none",
-        background: "transparent",
-        cursor: "pointer",
-        fontSize: "16px",
-        flexShrink: "0",
-        padding: "0 4px",
-        display: "flex",
-        alignItems: "center",
-      });
+      btn.className = "mmu-copy-button";
 
       const status = document.createElement("span");
       status.textContent = "";
-      status.style.cssText = "margin-left:4px;font-size:12px;";
+      status.className = "mmu-copy-status";
 
       btn.appendChild(img);
       btn.appendChild(status);
@@ -311,13 +257,11 @@
     function nodeRow(el, idRaw) {
       const { label, tooltip } = labelAndTooltipFor(el);
       const row = document.createElement("div");
-      row.style.display = "flex";
-      row.style.alignItems = "center";
-      row.style.justifyContent = "space-between";
-      row.style.cursor = "pointer";
-      row.style.padding = mode === "panel" ? "4px 8px" : "2px 4px";
+      row.className = "mmu-node-row";
       row.title = tooltip;
-      if (mode === "panel") row.style.borderBottom = "1px solid #e5e7eb";
+      if (mode === "panel") {
+        row.className = row.className + " mmu-node-row-panel";
+      }
 
       const labelEl = document.createElement("span");
       labelEl.textContent = label;
