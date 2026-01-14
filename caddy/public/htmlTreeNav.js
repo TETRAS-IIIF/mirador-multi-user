@@ -94,7 +94,7 @@
     if (selectedId) {
       const target = document.getElementById(selectedId);
       if (target) {
-        target.style.backgroundColor = "rgba(255, 0, 0, 0.12)";
+        target.classList.add("mmu-highlighted");
         const ancestorSet = new Set();
         let p = target;
         while (p && p !== document.body) {
@@ -315,16 +315,11 @@
 
       const wrap = document.createElement("span");
       wrap.textContent = label;
-      wrap.style.whiteSpace = "nowrap";
-      wrap.style.overflow = "hidden";
-      wrap.style.textOverflow = "ellipsis";
-      wrap.style.flex = "1";
-      wrap.style.paddingRight = "10px";
+      wrap.className = "mmu-summary-label";
 
       // highlight duplicates
       if (node.id && duplicateIdSet.has(node.id)) {
-        wrap.style.color = "#b91c1c";
-        wrap.style.fontWeight = "600";
+        wrap.className = wrap.className + " mmu-summary-label-duplicated";
         summary.title = `${tooltip || ""} (duplicate ID: ${node.id})`.trim();
       }
 
@@ -358,9 +353,7 @@
       Array.from(document.body.children).forEach((child) => {
         if (child !== panel) child.style.display = "none";
       });
-      panel.style.position = "absolute";
-      panel.style.left = "50%";
-      panel.style.transform = "translateX(-50%)";
+      panel.className = panel.className + " mmu-sidebar-panel-only";
     }
   }
 })();
