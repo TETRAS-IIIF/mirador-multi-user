@@ -257,7 +257,6 @@
 
     function makeCopyBtn(id) {
       const btn = document.createElement("button");
-      // use image icon instead of emoji
       const img = document.createElement("img");
       img.src = "/public/copy-icon.png";
       img.alt = "Copy";
@@ -266,6 +265,7 @@
         height: "16px",
         display: "block",
       });
+
       btn.title = "Copy link";
       btn.setAttribute("aria-label", "Copy link");
       Object.assign(btn.style, {
@@ -275,19 +275,30 @@
         fontSize: "16px",
         flexShrink: "0",
         padding: "0 4px",
+        display: "flex",
+        alignItems: "center",
       });
+
+      const status = document.createElement("span");
+      status.textContent = "";
+      status.style.cssText = "margin-left:4px;font-size:12px;";
+
       btn.appendChild(img);
-      btn.onclick = (e) => {
+      btn.appendChild(status);
+
+      btn.onclick = async (e) => {
         e.stopPropagation();
         e.preventDefault();
-        const u = new URL(window.location.origin + window.location.pathname);
-        u.searchParams.set("mode", "full");
-        u.searchParams.set("id", id);
-        navigator.clipboard?.writeText(u.toString());
-        // Send message to parent to close the popover (if any)
+        const url = new URL(window.location);
+        url.searchParams.set("mode", "full");
+        url.searchParams.set("id", id);
+        await navigator.clipboard?.writeText(url.toString());
+        status.textContent = "Copied!";
+        setTimeout(() => (status.textContent = ""), 1500);
         window.parent.postMessage("close-annotation-popover", "*");
         console.log("Close html viewer");
       };
+
       return btn;
     }
 
