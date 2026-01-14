@@ -255,15 +255,19 @@
 
     panel.appendChild(treeContainer);
 
-    /**
-     * Make a "copy link" button for an element ID
-     * @param id
-     * @returns {HTMLButtonElement}
-     */
     function makeCopyBtn(id) {
       const btn = document.createElement("button");
-      btn.textContent = "📋";
+      // use image icon instead of emoji
+      const img = document.createElement("img");
+      img.src = "/public/copy-icon.png";
+      img.alt = "Copy";
+      Object.assign(img.style, {
+        width: "16px",
+        height: "16px",
+        display: "block",
+      });
       btn.title = "Copy link";
+      btn.setAttribute("aria-label", "Copy link");
       Object.assign(btn.style, {
         border: "none",
         background: "transparent",
@@ -272,6 +276,7 @@
         flexShrink: "0",
         padding: "0 4px",
       });
+      btn.appendChild(img);
       btn.onclick = (e) => {
         e.stopPropagation();
         e.preventDefault();
