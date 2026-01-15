@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  IconButton,
-  InputAdornment,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Box, Button, IconButton, InputAdornment, TextField, Typography, } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../../utils/auth.tsx';
 import { useUpdateUser } from '../../utils/customHooks/useUpdateProfile.ts';
-import { PASSWORD_MINIMUM_LENGTH } from '../../utils/utils.ts';
+import { getSettingValue, PASSWORD_MINIMUM_LENGTH, SettingKeys, } from '../../utils/utils.ts';
+import { useAdminSettings } from '../../utils/customHooks/useAdminSettings.ts';
 
 export const ProfileUpdateForm = () => {
   const user = useUser();
+  const { data: settings } = useAdminSettings();
+  console.log(settings);
+
+  const allowClassic =
+    getSettingValue(SettingKeys.CLASSIC_AUTHENTICATION, settings) === 'true';
   const { t } = useTranslation();
   const [formValues, setFormValues] = useState({
     name: '',
@@ -170,85 +169,96 @@ export const ProfileUpdateForm = () => {
         fullWidth
         sx={{ mb: 2 }}
       />
+      {allowClassic && (
+        <>
+          <TextField
+            label={t('oldPassword')}
+            name="oldPassword"
+            type={showPassword.oldPassword ? 'text' : 'password'}
+            value={formValues.oldPassword}
+            onChange={handleChange}
+            error={!!errors.oldPassword}
+            helperText={errors.oldPassword}
+            fullWidth
+            sx={{ mb: 2 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => togglePasswordVisibility('oldPassword')}
+                    edge="end"
+                  >
+                    {showPassword.oldPassword ? (
+                      <VisibilityOff />
+                    ) : (
+                      <Visibility />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            inputProps={{ maxLength: 255 }}
+          />
 
-      <TextField
-        label={t('oldPassword')}
-        name="oldPassword"
-        type={showPassword.oldPassword ? 'text' : 'password'}
-        value={formValues.oldPassword}
-        onChange={handleChange}
-        error={!!errors.oldPassword}
-        helperText={errors.oldPassword}
-        fullWidth
-        sx={{ mb: 2 }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={() => togglePasswordVisibility('oldPassword')}
-                edge="end"
-              >
-                {showPassword.oldPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        inputProps={{ maxLength: 255 }}
-      />
+          <TextField
+            label={t('newPassword')}
+            name="newPassword"
+            type={showPassword.newPassword ? 'text' : 'password'}
+            value={formValues.newPassword}
+            onChange={handleChange}
+            error={!!errors.newPassword}
+            helperText={errors.newPassword}
+            fullWidth
+            sx={{ mb: 2 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => togglePasswordVisibility('newPassword')}
+                    edge="end"
+                  >
+                    {showPassword.newPassword ? (
+                      <VisibilityOff />
+                    ) : (
+                      <Visibility />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            inputProps={{ maxLength: 255 }}
+          />
 
-      <TextField
-        label={t('newPassword')}
-        name="newPassword"
-        type={showPassword.newPassword ? 'text' : 'password'}
-        value={formValues.newPassword}
-        onChange={handleChange}
-        error={!!errors.newPassword}
-        helperText={errors.newPassword}
-        fullWidth
-        sx={{ mb: 2 }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={() => togglePasswordVisibility('newPassword')}
-                edge="end"
-              >
-                {showPassword.newPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        inputProps={{ maxLength: 255 }}
-      />
-
-      <TextField
-        label={t('confirmPassword')}
-        name="confirmPassword"
-        type={showPassword.confirmPassword ? 'text' : 'password'}
-        value={formValues.confirmPassword}
-        onChange={handleChange}
-        error={!!errors.confirmPassword}
-        helperText={errors.confirmPassword}
-        fullWidth
-        sx={{ mb: 2 }}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={() => togglePasswordVisibility('confirmPassword')}
-                edge="end"
-              >
-                {showPassword.confirmPassword ? (
-                  <VisibilityOff />
-                ) : (
-                  <Visibility />
-                )}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        inputProps={{ maxLength: 255 }}
-      />
+          <TextField
+            label={t('confirmPassword')}
+            name="confirmPassword"
+            type={showPassword.confirmPassword ? 'text' : 'password'}
+            value={formValues.confirmPassword}
+            onChange={handleChange}
+            error={!!errors.confirmPassword}
+            helperText={errors.confirmPassword}
+            fullWidth
+            sx={{ mb: 2 }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => togglePasswordVisibility('confirmPassword')}
+                    edge="end"
+                  >
+                    {showPassword.confirmPassword ? (
+                      <VisibilityOff />
+                    ) : (
+                      <Visibility />
+                    )}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+            inputProps={{ maxLength: 255 }}
+          />
+        </>
+      )}
 
       <Button
         type="submit"
