@@ -42,7 +42,15 @@
     "impossibleToHighlight": "Impossible to highlight the selected text.",
     "selectionIsInsideHTMLTAG" : "The selection is inside an HTML tag.",
     "highlightText": "Highlight selected text",
-    "removeAllHighlights": "Remove all highlights"
+    "removeAllHighlights": "Remove all highlights",
+    "validateHtml": "Validate HTML",
+    "validateWithW3C": "Validate with W3C",
+    "valid": "Valid",
+    "invalid": "Invalid",
+    "htmlValidationFailed": "HTML validation failed",
+    "unclosedTagsDetected": "Unclosed tags detected",
+    "htmlIsValid": "HTML is valid",
+    "validationError": "Validation error"
   },
   "allow_create_user": "Allow user creation",
   "allow_peertube_media": "Allow PeerTube média",

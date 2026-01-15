@@ -1,10 +1,11 @@
 import {
   AppBar,
-  Box,
+  Box, Chip, CircularProgress,
   Divider,
   IconButton,
   Stack,
   Toolbar,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
@@ -19,6 +20,8 @@ import ZoomOutIcon from '@mui/icons-material/ZoomOut';
 import SaveIcon from '@mui/icons-material/Save';
 import HighlightIcon from '@mui/icons-material/Highlight';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import CheckIcon from '@mui/icons-material/Check';
+import PublicIcon from '@mui/icons-material/Public';
 
 type ToolbarProps = {
   title: string;
@@ -36,6 +39,11 @@ type ToolbarProps = {
   onToggleFullscreen: () => void;
   onHighlightClick?: (e: React.MouseEvent<HTMLElement>) => void;
   onRemoveHighlights?: () => void;
+  isHtmlFile: boolean;
+  onValidateHtml: (e: React.MouseEvent<HTMLElement>) => void;
+  onOpenW3CValidator: () => void;
+  validationResult?: { isValid: boolean | null ; message?: string } ;
+  isValidating: boolean;
   color?: 'default' | 'primary';
   dense?: boolean;
 };
@@ -56,6 +64,11 @@ export const EditorToolbar = ({
   onToggleFullscreen,
   onHighlightClick,
   onRemoveHighlights,
+  isHtmlFile,
+  onValidateHtml,
+  onOpenW3CValidator,
+  validationResult,
+  isValidating,
   color = 'default',
   dense = false,
 }: ToolbarProps) => (
@@ -97,6 +110,35 @@ export const EditorToolbar = ({
             </IconButton>
           </>
         )}
+        {isHtmlFile && (
+          <>
+            <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+            <IconButton
+              title={t('advancedEditor.validateHtml')}
+              onClick={onValidateHtml}
+              disabled={isValidating}
+              color={validationResult?.isValid ? 'success' : validationResult?.isValid === false ? 'error' : 'default'}
+            >
+              {isValidating ? <CircularProgress size={24} /> : <CheckIcon/>}
+            </IconButton>
+            <IconButton
+              title={t('advancedEditor.validateWithW3C')}
+              onClick={onOpenW3CValidator}
+              color="primary">
+              <PublicIcon />
+            </IconButton>
+
+            {validationResult?.message && (
+                <Chip
+                  label={validationResult.isValid ? t('advancedEditor.valid') : t('advancedEditor.invalid')}
+                  color={validationResult.isValid ? 'success' : 'error'}
+                  size="small"
+                  sx={{ ml: 1 }}
+                  title={validationResult.message}
+                />
+            )}
+          </>)
+        }
         <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
         <IconButton size="small" onClick={onZoomOut} title={t('zoomOut')}>
           <ZoomOutIcon fontSize="small" />
@@ -135,3 +177,5 @@ export const EditorToolbar = ({
     </Toolbar>
   </AppBar>
 );
+
+
