@@ -21,6 +21,7 @@ interface IAdvancedTextEditorProps {
   fullscreenMode?: 'dialog' | 'browser';
   onSave: (value: string) => Promise<void>;
   highlightColors?: HighlightColor[];
+  url?: string | null;
 }
 
 export const AdvancedTextEditor = ({
@@ -37,6 +38,7 @@ export const AdvancedTextEditor = ({
     { name: 'Red', className: 'mmu-highlight-red', color: 'red' },
     { name: 'Orange', className: 'mmu-highlight-orange', color: '#ff9800' },
   ],
+  url,
 }: IAdvancedTextEditorProps) => {
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -62,23 +64,16 @@ export const AdvancedTextEditor = ({
 
 
   const openW3CValidator = () => {
-    if (!isHtmlFile) return;
+    console.log(url)
+    if (!isHtmlFile || !url) return;
 
-    const validatorUrl = `https://validator.w3.org/#validate_by_input`;
-    const form = document.createElement('form');
-    form.method = 'POST';
-    form.action = validatorUrl;
-    form.target = '_blank';
+    // save file before redirecting
 
-    const input = document.createElement('textarea');
-    input.name = 'fragment';
-    input.value = localValue;
-    input.style.display = 'none';
-    form.appendChild(input);
 
-    document.body.appendChild(form);
-    form.submit();
-    document.body.removeChild(form);
+    const validatorUrl = `https://validator.w3.org/nu/?doc=` + encodeURIComponent(url);
+
+    // Open the W3C Validator in a new tab
+    window.open(validatorUrl, '_blank', 'noopener,noreferrer');
   };
 
 
