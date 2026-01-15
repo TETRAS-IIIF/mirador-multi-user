@@ -68,8 +68,6 @@ export const AdvancedTextEditor = ({
     if (!isHtmlFile || !url) return;
 
     // save file before redirecting
-
-
     const validatorUrl = `https://validator.w3.org/nu/?doc=` + encodeURIComponent(url);
 
     // Open the W3C Validator in a new tab
