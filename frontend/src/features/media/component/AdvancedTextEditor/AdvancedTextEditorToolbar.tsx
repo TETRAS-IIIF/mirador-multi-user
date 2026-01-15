@@ -20,6 +20,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import HighlightIcon from '@mui/icons-material/Highlight';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import PublicIcon from '@mui/icons-material/Public';
+import PreviewIcon from '@mui/icons-material/Preview';
 
 type ToolbarProps = {
   title: string;
@@ -41,7 +42,10 @@ type ToolbarProps = {
   onOpenW3CValidator: () => void;
   color?: 'default' | 'primary';
   dense?: boolean;
+  fileURL : string | null;
 };
+
+
 
 export const EditorToolbar = ({
   title,
@@ -61,9 +65,18 @@ export const EditorToolbar = ({
   onRemoveHighlights,
   isHtmlFile,
   onOpenW3CValidator,
+  fileURL,
   color = 'default',
   dense = false,
-}: ToolbarProps) => (
+}: ToolbarProps) => {
+
+  const openPreview = () => {
+    if(fileURL){
+      window.open(fileURL + "?mode=full", '_blank', 'noopener,noreferrer');
+    }
+  }
+
+  return (
   <AppBar position="static" color={color} elevation={0}>
     <Toolbar variant={dense ? 'dense' : 'regular'} sx={{ gap: 1 }}>
       <Typography variant={dense ? 'subtitle2' : 'h6'} sx={{ flex: 1, minWidth: 120 }}>
@@ -87,7 +100,8 @@ export const EditorToolbar = ({
         <IconButton size="small" onClick={onFormat} title={t('formatCode')}>
           <AutoFixHighIcon fontSize="small" />
         </IconButton>
-        {onHighlightClick && onRemoveHighlights && (
+        {
+          isHtmlFile && (
           <>
             <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
             <IconButton
@@ -100,18 +114,26 @@ export const EditorToolbar = ({
             <IconButton onClick={onRemoveHighlights} title={t('advancedEditor.removeAllHighlights')}>
               <HighlightOffIcon sx={{ textDecoration: 'line-through' }} />
             </IconButton>
-          </>
-        )}
-        {isHtmlFile && (
-          <>
             <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
             <IconButton
               title={t('advancedEditor.validateWithW3C')}
               onClick={onOpenW3CValidator}
-              color="primary">
+              >
               <PublicIcon />
             </IconButton>
-          </>)
+            {
+              fileURL && (
+                <>
+                  <IconButton
+                    title={t('advancedEditor.openPreview')}
+                    onClick={openPreview}
+                  >
+                    <PreviewIcon />
+                  </IconButton>
+                </>
+              )}
+            </>
+          )
         }
         <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
         <IconButton size="small" onClick={onZoomOut} title={t('zoomOut')}>
@@ -150,6 +172,7 @@ export const EditorToolbar = ({
       </IconButton>
     </Toolbar>
   </AppBar>
-);
+  );
+}
 
 

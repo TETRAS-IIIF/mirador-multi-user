@@ -50,7 +50,8 @@
     "htmlValidationFailed": "HTML validation failed",
     "unclosedTagsDetected": "Unclosed tags detected",
     "htmlIsValid": "HTML is valid",
-    "validationError": "Validation error"
+    "validationError": "Validation error",
+    "openPreview": "Preview"
   },
   "allow_create_user": "Allow user creation",
   "allow_peertube_media": "Allow PeerTube média",

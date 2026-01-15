@@ -377,6 +377,7 @@ export const AdvancedTextEditor = ({
           onRemoveHighlights={isHtmlFile ? removeHighlights : undefined}
           isHtmlFile={isHtmlFile}
           onOpenW3CValidator={openW3CValidator}
+          fileURL={url ?? ''}
         />
       )}
 
@@ -411,6 +412,7 @@ export const AdvancedTextEditor = ({
               onOpenW3CValidator={openW3CValidator}
               color="primary"
               dense
+              fileURL={url ?? ''}
             />
             <Box sx={{ flex: 1, minHeight: 0, display: 'flex' }}>{editor}</Box>
           </Dialog>

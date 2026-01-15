@@ -50,7 +50,8 @@
     "htmlValidationFailed": "Échec de la validation HTML",
     "unclosedTagsDetected": "Balises non fermées détectées",
     "htmlIsValid": "Le code HTML est valide",
-    "validationError": "Erreur de validation"
+    "validationError": "Erreur de validation",
+    "openPreview": "Prévisualiser le rendu"
   },
   "allow_create_user": "Autoriser la création d’utilisateur",
   "allow_peertube_media": "Autoriser les médias PeerTube",
