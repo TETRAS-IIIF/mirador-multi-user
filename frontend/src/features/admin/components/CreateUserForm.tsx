@@ -92,7 +92,7 @@ export const CreateUserForm = ({
           <Grid>
             <FormField
               type="password"
-              placeholder={t('confirm-password')}
+              placeholder={t('confirmPassword')}
               name="confirmPassword"
               register={register}
               required={true}

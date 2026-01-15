@@ -94,7 +94,7 @@
     if (selectedId) {
       const target = document.getElementById(selectedId);
       if (target) {
-        target.style.backgroundColor = "rgba(255, 0, 0, 0.12)";
+        target.classList.add("mmu-highlighted");
         const ancestorSet = new Set();
         let p = target;
         while (p && p !== document.body) {
@@ -183,40 +183,10 @@
     // Panel layout depends on mode
     if (mode === "panel") {
       // Full-width centered (for iframe embedding)
-      Object.assign(panel.style, {
-        position: "relative",
-        width: "100%",
-        height: "100%",
-        background: "#f7f7f9",
-        overflowY: "auto",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "flex-start",
-        padding: "20px 0",
-        fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
-        fontSize: "13px",
-        lineHeight: "1.4",
-      });
+      panel.className = "mmu-sidebar-fullwidth";
     } else {
       // Fixed left sidebar (for full/debug)
-      Object.assign(panel.style, {
-        position: "fixed",
-        top: "0",
-        left: "0",
-        width: "300px",
-        height: "100%",
-        background: "#f7f7f9",
-        overflowY: "auto",
-        zIndex: "2147483646",
-        padding: "60px 12px 10px 12px",
-        boxShadow: "2px 0 6px rgba(0,0,0,.2)",
-        fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
-        fontSize: "13px",
-        lineHeight: "1.4",
-        borderRight: "1px solid #e5e7eb",
-        display: "block",
-      });
+      panel.className = "mmu-sidebar-left-fixed";
       // Make room for the sidebar
       if (!document.body.style.marginLeft)
         document.body.style.marginLeft = "340px";
@@ -236,18 +206,7 @@
         duplicateIds.join(", ") +
         ". " +
         "Annotations using these elements can be impacted, edit your media to remove duplicates.";
-      Object.assign(info.style, {
-        width: "90%",
-        maxWidth: "600px",
-        marginBottom: "12px",
-        padding: "6px 8px",
-        borderRadius: "4px",
-        background: "#fef2f2",
-        color: "#991b1b",
-        fontSize: "12px",
-        border: "1px solid #fecaca",
-        boxSizing: "border-box",
-      });
+      info.className = "mmu-info-duplicate";
       panel.appendChild(info);
     }
 
@@ -255,34 +214,37 @@
 
     panel.appendChild(treeContainer);
 
-    /**
-     * Make a "copy link" button for an element ID
-     * @param id
-     * @returns {HTMLButtonElement}
-     */
     function makeCopyBtn(id) {
       const btn = document.createElement("button");
-      btn.textContent = "📋";
-      btn.title = "Copy link (full mode)";
-      Object.assign(btn.style, {
-        border: "none",
-        background: "transparent",
-        cursor: "pointer",
-        fontSize: "12px",
-        flexShrink: "0",
-        padding: "0 4px",
-      });
-      btn.onclick = (e) => {
+      const img = document.createElement("img");
+      img.src = "/public/copy-icon.png";
+      img.alt = "Copy";
+      img.className = "mmu-img-copy-button";
+
+      btn.title = "Copy link";
+      btn.setAttribute("aria-label", "Copy link");
+      btn.className = "mmu-copy-button";
+
+      const status = document.createElement("span");
+      status.textContent = "";
+      status.className = "mmu-copy-status";
+
+      btn.appendChild(img);
+      btn.appendChild(status);
+
+      btn.onclick = async (e) => {
         e.stopPropagation();
         e.preventDefault();
-        const u = new URL(window.location.origin + window.location.pathname);
-        u.searchParams.set("mode", "full");
-        u.searchParams.set("id", id);
-        navigator.clipboard?.writeText(u.toString());
-        // Send message to parent to close the popover (if any)
+        const url = new URL(window.location);
+        url.searchParams.set("mode", "full");
+        url.searchParams.set("id", id);
+        await navigator.clipboard?.writeText(url.toString());
+        status.textContent = "Copied!";
+        setTimeout(() => (status.textContent = ""), 1500);
         window.parent.postMessage("close-annotation-popover", "*");
         console.log("Close html viewer");
       };
+
       return btn;
     }
 
@@ -295,41 +257,27 @@
     function nodeRow(el, idRaw) {
       const { label, tooltip } = labelAndTooltipFor(el);
       const row = document.createElement("div");
-      row.style.display = "flex";
-      row.style.alignItems = "center";
-      row.style.justifyContent = "space-between";
-      row.style.cursor = "pointer";
-      row.style.padding = mode === "panel" ? "4px 8px" : "2px 4px";
+      row.className = "mmu-node-row";
       row.title = tooltip;
-      if (mode === "panel") row.style.borderBottom = "1px solid #e5e7eb";
+      if (mode === "panel") {
+        row.className = row.className + " mmu-node-row-panel";
+      }
 
       const labelEl = document.createElement("span");
       labelEl.textContent = label;
-      labelEl.style.whiteSpace = "nowrap";
-      labelEl.style.overflow = "hidden";
-      labelEl.style.textOverflow = "ellipsis";
-      labelEl.style.flex = "1";
-      labelEl.style.paddingRight = "10px";
+      labelEl.className = "mmu-node-row-label";
 
       // highlight duplicates
       if (idRaw && duplicateIdSet.has(idRaw)) {
-        labelEl.style.color = "#b91c1c"; // red text
-        labelEl.style.fontWeight = "600"; // semi-bold
+        labelEl.className =
+          labelEl.className + " mmu-node-row-panel-duplicated";
         row.title = `${tooltip || ""} (duplicate ID: ${idRaw})`.trim();
       }
 
       row.appendChild(labelEl);
-      if (idRaw) row.appendChild(makeCopyBtn(idRaw));
-
-      // Hover feedback
-      row.addEventListener(
-        "mouseenter",
-        () => (row.style.background = "#fee2e2"), // light red on hover
-      );
-      row.addEventListener(
-        "mouseleave",
-        () => (row.style.background = "transparent"),
-      );
+      if (idRaw) {
+        row.appendChild(makeCopyBtn(idRaw));
+      }
 
       return row;
     }
@@ -359,33 +307,19 @@
       details.open = pathIds ? pathIds.has(node.id) : true;
 
       const summary = document.createElement("summary");
-      summary.style.cursor = "pointer";
-      summary.style.padding = mode === "panel" ? "4px 8px" : "2px 4px";
+      summary.className = "mmu-summary";
       summary.title = tooltip;
-      if (mode === "panel") summary.style.borderBottom = "1px solid #e5e7eb";
-
-      // Hover feedback
-      summary.addEventListener(
-        "mouseenter",
-        () => (summary.style.background = "#eef2ff"),
-      );
-      summary.addEventListener(
-        "mouseleave",
-        () => (summary.style.background = "transparent"),
-      );
+      if (mode === "panel") {
+        summary.className = summary.className + " mmu-summary-panel";
+      }
 
       const wrap = document.createElement("span");
       wrap.textContent = label;
-      wrap.style.whiteSpace = "nowrap";
-      wrap.style.overflow = "hidden";
-      wrap.style.textOverflow = "ellipsis";
-      wrap.style.flex = "1";
-      wrap.style.paddingRight = "10px";
+      wrap.className = "mmu-summary-label";
 
       // highlight duplicates
       if (node.id && duplicateIdSet.has(node.id)) {
-        wrap.style.color = "#b91c1c";
-        wrap.style.fontWeight = "600";
+        wrap.className = wrap.className + " mmu-summary-label-duplicated";
         summary.title = `${tooltip || ""} (duplicate ID: ${node.id})`.trim();
       }
 
@@ -419,9 +353,7 @@
       Array.from(document.body.children).forEach((child) => {
         if (child !== panel) child.style.display = "none";
       });
-      panel.style.position = "absolute";
-      panel.style.left = "50%";
-      panel.style.transform = "translateX(-50%)";
+      panel.className = panel.className + " mmu-sidebar-panel-only";
     }
   }
 })();
