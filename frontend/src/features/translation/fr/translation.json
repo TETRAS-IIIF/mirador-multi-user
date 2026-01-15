@@ -33,6 +33,17 @@
   "advanced_edit_disabled": "Ouvrez le projet une première fois pour accéder à l'édition avancer",
   "advanced_edit_disabled_manifest": "Ce manifest provient d'un lien, vous ne pouvez pas l'éditer",
   "advanced_edit_disabled_project": "Ouvrez le projet une première fois pour accéder à l'édition avancer",
+  "advancedEditor": {
+    "noTextSelected": "Aucun texte sélectionné",
+    "invalidSelection": "Sélection invalide",
+    "selectionContainHTMLElements": "La sélection ne doit pas contenir d'éléments HTML",
+    "selectionContainHTMLAttributes": "La sélection ne doit pas contenir d'attributs HTML",
+    "textAlreadyHighlighted": "Le texte est déjà mis en évidence",
+    "impossibleToHighlight": "Impossible de mettre en évidence le texte",
+    "selectionIsInsideHTMLTAG" : "La sélection est à l'intérieur d'une balise HTML",
+    "highlightText": "Mettre en évidence le texte sélectionné",
+    "removeAllHighlights": "Supprimer toutes les mises en évidence"
+  },
   "allow_create_user": "Autoriser la création d’utilisateur",
   "allow_peertube_media": "Autoriser les médias PeerTube",
   "allow_peertube_media_tooltip": "Active l'ajout de vidéos PeerTube comme médias.",

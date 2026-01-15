@@ -88,11 +88,11 @@ export const EditorToolbar = ({
             <IconButton
               size="small"
               onClick={onHighlightClick}
-              title={t('highlightText') || 'Highlight Text'}
+              title={t('advancedEditor.highlightText')}
             >
               <HighlightIcon fontSize="small" />
             </IconButton>
-            <IconButton onClick={onRemoveHighlights} title="Remove all highlights">
+            <IconButton onClick={onRemoveHighlights} title={t('advancedEditor.removeAllHighlights')}>
               <HighlightOffIcon sx={{ textDecoration: 'line-through' }} />
             </IconButton>
           </>

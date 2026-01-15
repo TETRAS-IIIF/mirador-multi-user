@@ -61,19 +61,19 @@ export const AdvancedTextEditor = ({
 
   const isValidTextSelection = useCallback((selectedText: string) => {
     if (!selectedText || selectedText.trim().length === 0)
-      return { valid: false, reason: 'No text selected' };
+      return { valid: false, reason: t("advancedEditor.noTextSelected") };
     if (selectedText.includes('<') || selectedText.includes('>'))
       return {
         valid: false,
-        reason: 'Selection contains HTML tags. Please select only text content.',
+        reason: t("advancedEditor.selectionContainHTMLElements"),
       };
     if (/\s*=\s*["']/.test(selectedText))
-      return { valid: false, reason: 'Selection appears to contain HTML attributes.' };
+      return { valid: false, reason: t('advancedEditor.selectionContainHTMLAttributes') };
     if (
       selectedText.trim().startsWith('<span') &&
       selectedText.trim().endsWith('</span>')
     )
-      return { valid: false, reason: 'Text is already highlighted.' };
+      return { valid: false, reason: t('advancedEditor.textAlreadyHighlighted') };
     return { valid: true };
   }, []);
 
@@ -90,7 +90,7 @@ export const AdvancedTextEditor = ({
       if (openTagsBefore > closeTagsBefore)
         return {
           valid: false,
-          reason: 'Selection is inside an HTML tag. Please select text content only.',
+          reason: t('advancedEditor.selectionIsInsideHTMLTAG'),
         };
 
       const lastOpenTag = beforeSelection.lastIndexOf('<');
@@ -98,13 +98,13 @@ export const AdvancedTextEditor = ({
       if (lastOpenTag > lastCloseTag) {
         const tagContent = beforeSelection.substring(lastOpenTag);
         if (tagContent.includes('='))
-          return { valid: false, reason: 'Selection is in an HTML attribute.' };
-        return { valid: false, reason: 'Selection is inside an HTML tag.' };
+          return { valid: false, reason: t('advancedEditor.selectionContainHTMLAttributes')};
+        return { valid: false, reason: t("advancedEditor.selectionContainHTMLElements")}
       }
 
       const selectedText = model.getValueInRange(selection);
       if (selectedText.includes('<') || selectedText.includes('>'))
-        return { valid: false, reason: 'Selection spans across HTML tags.' };
+        return { valid: false, reason: t("advancedEditor.selectionContainHTMLElements")};
       return { valid: true };
     },
     [],
@@ -215,7 +215,7 @@ export const AdvancedTextEditor = ({
     if (!editor) return;
     const selection = editor.getSelection();
     if (!selection || selection.isEmpty())
-      return setErrorMessage('Please select some text first');
+      return setErrorMessage(t("advancedEditor.noTextSelected"));
 
     const model = editor.getModel();
     if (!model) return;
@@ -223,11 +223,11 @@ export const AdvancedTextEditor = ({
 
     const textValidation = isValidTextSelection(selectedText);
     if (!textValidation.valid)
-      return setErrorMessage(textValidation.reason || 'Invalid selection');
+      return setErrorMessage(textValidation.reason || t("advancedEditor.invalidSelection"));
 
     const contextValidation = isSelectionInTextContent(model, selection);
     if (!contextValidation.valid)
-      return setErrorMessage(contextValidation.reason || 'Invalid selection context');
+      return setErrorMessage(contextValidation.reason || t("advancedEditor.invalidSelection"));
 
     setHighlightMenuAnchor(event.currentTarget);
   };
@@ -248,7 +248,7 @@ export const AdvancedTextEditor = ({
       setErrorMessage(
         validation.reason ||
         contextValidation.reason ||
-        'Cannot highlight this selection',
+        t("advancedEditor.impossibleToHighlight"),
       );
       setHighlightMenuAnchor(null);
       setShowColorPicker(false);

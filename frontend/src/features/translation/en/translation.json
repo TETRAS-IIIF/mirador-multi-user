@@ -33,6 +33,17 @@
   "advanced_edit_disabled": "Open project a first time to access advanced edit mode",
   "advanced_edit_disabled_manifest": "This manifest come from a link and can't be edited",
   "advanced_edit_disabled_project": "Open project a first time to access advanced edit mode",
+  "advancedEditor": {
+    "noTextSelected": "No text selected",
+    "invalidSelection": "Invalid selection",
+    "selectionContainHTMLElements": "Selection contains HTML tags. Please select only text content.",
+    "selectionContainHTMLAttributes": "Selection appears to contain HTML attributes.",
+    "textAlreadyHighlighted": "Selection appears to contain HTML attributes.",
+    "impossibleToHighlight": "Impossible to highlight the selected text.",
+    "selectionIsInsideHTMLTAG" : "The selection is inside an HTML tag.",
+    "highlightText": "Highlight selected text",
+    "removeAllHighlights": "Remove all highlights"
+  },
   "allow_create_user": "Allow user creation",
   "allow_peertube_media": "Allow PeerTube média",
   "allow_peertube_media_tooltip": "Enable to allow adding PeerTube videos as media.",
