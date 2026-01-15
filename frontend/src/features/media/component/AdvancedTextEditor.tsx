@@ -56,85 +56,10 @@ export const AdvancedTextEditor = ({
     left: number;
   } | null>(null);
 
-  // Add to your existing state declarations
-  const [isValidating, setIsValidating] = useState(false);
-  const [validationResult, setValidationResult] = useState<{
-    isValid: boolean | null;
-    message: string;
-  }>({ isValid: null, message: '' });
-
-
   const { t } = useTranslation();
   const isHtmlFile = language.toLowerCase() === 'html';
   console.log("IsHtmlFile", isHtmlFile);
 
-  const validateHtml = async () => {
-    if (!isHtmlFile) return;
-
-    setIsValidating(true);
-    setValidationResult({ isValid: null, message: '' });
-
-    try {
-      // Create a simple parser to check basic HTML validity
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(localValue, 'text/html');
-
-      // Check for parser errors
-      const parserErrors = doc.querySelector('parsererror');
-      if (parserErrors) {
-        setValidationResult({
-          isValid: false,
-          message: t('advancedEditor.htmlValidationFailed')
-        });
-        return;
-      }
-
-      // Additional checks can be added here
-      // For example, check for unclosed tags
-      const stack = [];
-      const tags = doc.getElementsByTagName('*');
-
-      for (let i = 0; i < tags.length; i++) {
-        const tag = tags[i];
-        if (tag.tagName === 'HTML') continue;
-
-        if (tag.tagName === 'BR' || tag.tagName === 'IMG' || tag.tagName === 'INPUT') {
-          // Self-closing tags
-          continue;
-        }
-
-        if (!tag.hasChildNodes() || tag.childNodes.length === 0) {
-          stack.push(tag.tagName);
-        } else {
-          const last = stack[stack.length - 1];
-          if (last === tag.tagName) {
-            stack.pop();
-          } else {
-            stack.push(tag.tagName);
-          }
-        }
-      }
-
-      if (stack.length > 0) {
-        setValidationResult({
-          isValid: false,
-          message: t('advancedEditor.unclosedTagsDetected', { tags: stack.join(', ') })
-        });
-      } else {
-        setValidationResult({
-          isValid: true,
-          message: t('advancedEditor.htmlIsValid')
-        });
-      }
-    } catch (error) {
-      setValidationResult({
-        isValid: false,
-        message: t('advancedEditor.validationError')
-      });
-    } finally {
-      setIsValidating(false);
-    }
-  };
 
   const openW3CValidator = () => {
     if (!isHtmlFile) return;
@@ -155,7 +80,6 @@ export const AdvancedTextEditor = ({
     form.submit();
     document.body.removeChild(form);
   };
-
 
 
   const isValidTextSelection = useCallback((selectedText: string) => {
@@ -459,10 +383,7 @@ export const AdvancedTextEditor = ({
           onHighlightClick={isHtmlFile ? handleHighlightClick : undefined}
           onRemoveHighlights={isHtmlFile ? removeHighlights : undefined}
           isHtmlFile={isHtmlFile}
-          onValidateHtml={validateHtml}
           onOpenW3CValidator={openW3CValidator}
-          validationResult={validationResult}
-          isValidating={isValidating}
         />
       )}
 
@@ -494,10 +415,7 @@ export const AdvancedTextEditor = ({
               onHighlightClick={isHtmlFile ? handleHighlightClick : undefined}
               onRemoveHighlights={isHtmlFile ? removeHighlights : undefined}
               isHtmlFile={isHtmlFile}
-              onValidateHtml={validateHtml}
               onOpenW3CValidator={openW3CValidator}
-              validationResult={validationResult}
-              isValidating={isValidating}
               color="primary"
               dense
             />
