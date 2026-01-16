@@ -54,9 +54,12 @@ export const constructSnapshotWorkspace = (
     manifests?: ManifestsMap;
   },
 ): Record<string, ManifestEntry> => {
+  if (miradorWorkspace === null) {
+    return;
+  }
   const manifests: ManifestsMap =
     (miradorWorkspace as any).manifests ?? (miradorWorkspace as ManifestsMap);
-
+  console.log('manifests', manifests);
   for (const page of annotationPages) {
     const pageItems = page?.content?.items;
     if (!Array.isArray(pageItems)) continue;

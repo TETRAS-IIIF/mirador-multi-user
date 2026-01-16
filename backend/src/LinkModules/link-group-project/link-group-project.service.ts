@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
@@ -611,12 +612,20 @@ export class LinkGroupProjectService {
         createSnapshotDto.projectId,
       );
       const creator = await this.groupService.findUserPersonalGroup(creatorId);
+
       const projectAnnotationPages =
         await this.annotationPageService.findAllProjectAnnotation(project.id);
+      console.log('projectAnnotationPages', projectAnnotationPages);
+
       const snapshotWorkspace = constructSnapshotWorkspace(
         projectAnnotationPages,
         project.userWorkspace,
       );
+      if (!snapshotWorkspace) {
+        throw new BadRequestException(
+          'No workspace found for snapshot. Please ensure the project has valid workspace data.',
+        );
+      }
 
       const hash = generateAlphanumericSHA1Hash(
         `${createSnapshotDto.title}${Date.now().toString()}`,
@@ -628,25 +637,53 @@ export class LinkGroupProjectService {
         hash: hash,
         creator: creator.title,
       });
+
       const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 
       fs.mkdirSync(uploadPath, { recursive: true });
+
       const workspaceData = {
         generated_at: Date.now(),
         workspace: snapshotWorkspace,
       };
+
       const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
       fs.writeFileSync(
         workspaceJsonPath,
         JSON.stringify(workspaceData, null, 2),
         'utf-8',
       );
+
       return snapShot;
     } catch (error) {
-      this.logger.error(error.message, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      // Handle file system errors
+      if (
+        error.message?.includes('ENOENT') ||
+        error.message?.includes('mkdir')
+      ) {
+        this.logger.error(`File system error: ${error.message}`, error.stack);
+        throw new InternalServerErrorException(
+          'Failed to create snapshot directory. Please check server configuration.',
+        );
+      }
+
+      if (error.name === 'EntityNotFoundError' || error.status === 404) {
+        throw new NotFoundException(
+          'Project or user not found. Please verify the project exists.',
+        );
+      }
+
+      this.logger.error(
+        `Unexpected error creating snapshot: ${error.message}`,
+        error.stack,
+      );
+
       throw new InternalServerErrorException(
-        `an error occurred while creating snapshot`,
-        error,
+        'An unexpected error occurred while creating snapshot. Please try again later.',
       );
     }
   }
