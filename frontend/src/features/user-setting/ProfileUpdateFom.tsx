@@ -11,7 +11,6 @@ import { useAdminSettings } from '../../utils/customHooks/useAdminSettings.ts';
 export const ProfileUpdateForm = () => {
   const user = useUser();
   const { data: settings } = useAdminSettings();
-  console.log(settings);
 
   const allowClassic =
     getSettingValue(SettingKeys.CLASSIC_AUTHENTICATION, settings) === 'true';
