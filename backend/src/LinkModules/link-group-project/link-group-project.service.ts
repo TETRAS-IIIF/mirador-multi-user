@@ -615,7 +615,6 @@ export class LinkGroupProjectService {
 
       const projectAnnotationPages =
         await this.annotationPageService.findAllProjectAnnotation(project.id);
-      console.log('projectAnnotationPages', projectAnnotationPages);
 
       const snapshotWorkspace = constructSnapshotWorkspace(
         projectAnnotationPages,
