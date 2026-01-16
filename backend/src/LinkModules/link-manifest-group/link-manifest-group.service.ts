@@ -55,9 +55,10 @@ export class LinkManifestGroupService {
           }
           manifestData = await response.json();
           if (
-            !manifestData?.['@context'] ||
-            !(manifestData?.['@id'] || manifestData?.id) ||
-            manifestData?.type !== 'Manifest'
+            createManifestDto.origin === manifestOrigin.CREATE &&
+            (!manifestData?.['@context'] ||
+              !(manifestData?.['@id'] || manifestData?.id) ||
+              manifestData?.type !== 'Manifest')
           ) {
             throw new BadRequestException(
               'URL does not point to a valid IIIF manifest.',

@@ -12,7 +12,9 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../../utils/auth.tsx';
 import { useUpdateUser } from '../../utils/customHooks/useUpdateProfile.ts';
-import { PASSWORD_MINIMUM_LENGTH } from '../../utils/utils.ts';
+import {
+  PASSWORD_MINIMUM_LENGTH,
+} from '../../utils/utils.ts';
 
 export const ProfileUpdateForm = () => {
   const user = useUser();
