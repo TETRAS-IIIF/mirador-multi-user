@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { generateSnapshot } from '../../features/projects/api/snapshot/generateProjectSnapShot.ts';
 import { deleteSnapshot } from '../../features/projects/api/snapshot/deleteSnapshot.ts';
 import { updateSnapshot } from '../../features/projects/api/snapshot/updateSnapshot.ts';
+import toast from 'react-hot-toast';
 
 interface ISnapshotFactoryProps<T> {
   item: T;
@@ -25,10 +26,13 @@ export const SnapshotFactory = <
   const { t } = useTranslation();
 
   const handleCreateSnapshot = async () => {
-    await generateSnapshot({
+    const snapshot = await generateSnapshot({
       title: t('new_snapshot'),
       projectId: item.id,
     });
+    if (snapshot === undefined) {
+      toast.error(t('Error_generate_snapshot'));
+    }
     fetchItems();
   };
 

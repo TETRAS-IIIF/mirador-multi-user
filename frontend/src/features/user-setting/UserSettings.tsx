@@ -11,6 +11,8 @@ import { ModalConfirmDelete } from '../projects/components/ModalConfirmDelete.ts
 import { MMUModal } from '../../components/elements/modal.tsx';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '../translation/LanguageSelector.tsx';
+import { useAdminSettings } from '../../utils/customHooks/useAdminSettings.ts';
+import { getSettingValue, SettingKeys } from '../../utils/utils.ts';
 
 interface IUserSettingsProps {
   user: User;
@@ -18,6 +20,10 @@ interface IUserSettingsProps {
 
 export const UserSettings = ({ user }: IUserSettingsProps) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const { data: settings } = useAdminSettings();
+
+  const oidcConnect =
+    getSettingValue(SettingKeys.OPENID_CONNECTION, settings) === 'true';
   const { t } = useTranslation();
 
   const token = storage.getToken();
@@ -40,6 +46,9 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
 
   const redirectToSubscriptionDashboard = () => {
     window.open(import.meta.env.VITE_EXTERNAL_DASHBOARD_URL, '_blank');
+  };
+  const redirectToAccountManagement = () => {
+    window.open(import.meta.env.VITE_ACCOUNT_MANAGEMENT_URL, '_blank');
   };
 
   return (
@@ -90,14 +99,28 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
           justifyContent: 'center',
         }}
       >
-        {import.meta.env.VITE_EXTERNAL_DASHBOARD_URL && (
-          <Grid>
-            <Button
-              variant={'contained'}
-              onClick={redirectToSubscriptionDashboard}
-            >
-              {t('subscription_dashboard')}
-            </Button>
+        {oidcConnect && (
+          <Grid container>
+            {import.meta.env.VITE_EXTERNAL_DASHBOARD_URL && (
+              <Grid>
+                <Button
+                  variant={'contained'}
+                  onClick={redirectToSubscriptionDashboard}
+                >
+                  {t('subscription_dashboard')}
+                </Button>
+              </Grid>
+            )}
+            {import.meta.env.VITE_ACCOUNT_MANAGEMENT_URL && (
+              <Grid>
+                <Button
+                  variant={'contained'}
+                  onClick={redirectToAccountManagement}
+                >
+                  {t('account_management')}
+                </Button>
+              </Grid>
+            )}
           </Grid>
         )}
         <Grid>
