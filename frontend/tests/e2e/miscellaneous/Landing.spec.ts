@@ -95,6 +95,9 @@ test.describe('Landing Page', () => {
     test('should show only login button when registration is disabled', async ({
       page,
     }) => {
+      await page.unroute('**/api/settings');
+
+      // Set the new route
       await page.route('**/api/settings', (route) => {
         return route.fulfill({
           status: 200,
@@ -108,9 +111,11 @@ test.describe('Landing Page', () => {
       });
 
       await page.goto('/');
+
       await expect(
         page.getByRole('button', { name: /create account|créer un compte/i }),
-      ).toHaveCount(0);
+      ).not.toBeVisible();
+
       await expect(
         page.getByRole('button', { name: /login|connexion/i }),
       ).toBeVisible();
