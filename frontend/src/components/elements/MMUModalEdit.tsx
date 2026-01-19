@@ -869,6 +869,7 @@ export const MMUModalEdit = <
                     ? item.url
                     : `${caddyUrl}/${item.hash}/${item.path}`,
                 )}
+                url={item.url || `${caddyUrl}/${item.hash}/${item.path}`}
                 onSave={handleSaveText}
               />
             </Grid>

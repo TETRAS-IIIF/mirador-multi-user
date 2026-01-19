@@ -105,7 +105,7 @@ export const RegisterForm = () => {
             <Grid>
               <FormField
                 type="password"
-                placeholder={t('confirm-password')}
+                placeholder={t('confirmPassword')}
                 name="confirmPassword"
                 required
                 register={register}
@@ -114,7 +114,13 @@ export const RegisterForm = () => {
             </Grid>
 
             <Grid container>
-              <Button type="submit" variant="contained" color="primary">
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                onClick={handleSubmit(onSubmit)}
+                fullWidth
+              >
                 {t('submit')}
               </Button>
             </Grid>

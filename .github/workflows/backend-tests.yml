@@ -4,10 +4,12 @@ on:
   push:
     branches:
       - main
+      - prod
       - 699-create-integration-tests
   pull_request:
     branches:
       - main
+      - prod
       - 699-create-integration-tests
 
 jobs:

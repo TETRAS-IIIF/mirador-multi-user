@@ -54,6 +54,9 @@ export const constructSnapshotWorkspace = (
     manifests?: ManifestsMap;
   },
 ): Record<string, ManifestEntry> => {
+  if (miradorWorkspace === null) {
+    return;
+  }
   const manifests: ManifestsMap =
     (miradorWorkspace as any).manifests ?? (miradorWorkspace as ManifestsMap);
 
