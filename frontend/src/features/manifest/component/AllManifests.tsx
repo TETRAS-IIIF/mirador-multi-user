@@ -1,12 +1,5 @@
 import { Grid, IconButton, styled, Tooltip, Typography } from '@mui/material';
-import {
-  ChangeEvent,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState, } from 'react';
 import { LinkUserGroup, UserGroup } from '../../user-group/types/types.ts';
 import { User } from '../../auth/types/types.ts';
 import { Manifest, ManifestCanvases } from '../types/types.ts';
@@ -41,26 +34,13 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { removeManifestFromList } from '../api/removeManifestFromList.ts';
-import {
-  TITLE,
-  UPDATED_AT,
-  useCurrentPageData,
-} from '../../../utils/customHooks/filterHook.ts';
+import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHooks/filterHook.ts';
 import { removeManifestToGroup } from '../api/removeManifestToGroup.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
-import {
-  getSettingValue,
-  isFileSizeOverLimit,
-  SettingKeys,
-} from '../../../utils/utils.ts';
+import { getSettingValue, isFileSizeOverLimit, SettingKeys, } from '../../../utils/utils.ts';
 import { useLinkManifest } from '../hooks/useLinkManifest.ts';
-import {
-  ITEM_RIGHTS,
-  OBJECT_ORIGIN,
-  OBJECT_TYPES,
-  USER_GROUP_TYPES,
-} from '../../../utils/mmu_types.ts';
+import { ITEM_RIGHTS, OBJECT_ORIGIN, OBJECT_TYPES, USER_GROUP_TYPES, } from '../../../utils/mmu_types.ts';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -202,12 +182,7 @@ export const AllManifests = ({
         }
 
         const manifest = await response.json();
-
-        if (
-          !manifest?.['@context'] ||
-          !(manifest?.['@id'] || manifest?.id) ||
-          manifest?.type !== 'Manifest'
-        ) {
+        if (!manifest?.['@context'] || !manifest?.['@id']) {
           throw new Error('Invalid IIIF manifest structure');
         }
         const resource = new ManifestResource(manifest, {
