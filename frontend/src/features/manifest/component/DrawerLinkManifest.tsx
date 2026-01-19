@@ -52,7 +52,6 @@ export const DrawerLinkManifest = ({
   };
 
   const { t } = useTranslation();
-  //Test
 
   return (
     <Drawer
