@@ -109,7 +109,6 @@ If you're seeing this, then your mail service is working properly ✅
     //     userName: 'Antoine',
     //   });
   }
-
   async sendInternalServerErrorNotification(details: {
     message: string;
     url: string;
@@ -127,41 +126,45 @@ If you're seeing this, then your mail service is working properly ✅
       return;
     }
 
-    const FILTERED = 'FILTERED_DATA';
+    try {
+      const FILTERED = 'FILTERED_DATA';
 
-    // Hide sensitive fields
-    if (details.body?.password) {
-      details.body.password = FILTERED;
-    }
+      // Hide sensitive fields
+      if (details.body?.password) {
+        details.body.password = FILTERED;
+      }
 
-    if (details.body?.confirmPassword) {
-      details.body.confirmPassword = FILTERED;
-    }
+      if (details.body?.confirmPassword) {
+        details.body.confirmPassword = FILTERED;
+      }
 
-    console.log('Send mail internal server error');
+      console.log('Send mail internal server error');
 
-    const subject = `🚨 Internal Server Error: ${details.url}`;
+      const subject = `🚨 Internal Server Error: ${details.url}`;
 
-    const formattedBody = JSON.stringify(details.body, null, 2)
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;');
+      const formattedBody = JSON.stringify(details.body, null, 2)
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
 
-    const formattedStack = details.stack
-      ? `<pre style="background: #fee; padding: 10px; border-radius: 5px; white-space: pre-wrap; color: darkred;">${details.stack
-          .replaceAll('<', '&lt;')
-          .replaceAll('>', '&gt;')}</pre>`
-      : '<p>No stack trace available</p>';
+      // FIX: Check if stack exists and is a string before calling replaceAll
+      const stackTrace = details.stack || 'No stack trace available';
+      const formattedStack =
+        typeof stackTrace === 'string' && stackTrace.trim()
+          ? `<pre style="background: #fee; padding: 10px; border-radius: 5px; white-space: pre-wrap; color: darkred;">${stackTrace
+              .replaceAll('<', '&lt;')
+              .replaceAll('>', '&gt;')}</pre>`
+          : '<p>No stack trace available</p>';
 
-    const mailBody = `
+      const mailBody = `
     <h2 style="color: red;">🚨 Internal Server Error</h2>
-    <p><strong>Host:</strong> ${process.env.HOST}</p>
+    <p><strong>Host:</strong> ${process.env.HOST || 'N/A'}</p>
     <p><strong>URL:</strong> ${details.url}</p>
     <p><strong>Method:</strong> ${details.method}</p>
-    <p><strong>Message:</strong> ${details.message}</p>
+    <p><strong>Message:</strong> ${details.message || 'No error message'}</p>
     <h3>User Details</h3>
-    <p><strong>ID:</strong> ${details.user.id}</p>
-    <p><strong>Email:</strong> ${details.user.email}</p>
-    <p><strong>Name:</strong> ${details.user.name}</p>
+    <p><strong>ID:</strong> ${details.user?.id || 'N/A'}</p>
+    <p><strong>Email:</strong> ${details.user?.email || 'N/A'}</p>
+    <p><strong>Name:</strong> ${details.user?.name || 'N/A'}</p>
     <h3>Request Body</h3>
     <pre style="background: #f4f4f4; padding: 10px; border-radius: 5px; white-space: pre-wrap;">${formattedBody}</pre>
     <p><strong>Timestamp:</strong> ${details.timestamp}</p>
@@ -169,12 +172,18 @@ If you're seeing this, then your mail service is working properly ✅
     ${formattedStack}
   `;
 
-    await this.sendMail({
-      to: process.env.ADMIN_MAIL,
-      subject: subject,
-      body: mailBody,
-      text: mailBody,
-    });
+      await this.sendMail({
+        to: process.env.ADMIN_MAIL,
+        subject: subject,
+        body: mailBody,
+        text: mailBody,
+      });
+    } catch (error) {
+      console.error(
+        'Failed to send internal server error notification:',
+        error,
+      );
+    }
   }
 
   async sendConfirmationEmail(email: ConfirmationEmailDto): Promise<string> {

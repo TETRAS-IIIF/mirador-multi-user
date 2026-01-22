@@ -36,7 +36,7 @@ const ForgotPassword = () => {
       title={t('titleForgotPassword')}
       rightButton={
         <Grid>
-          <NavLink to="/auth/login">
+          <NavLink to="/auth/login" data-testid="login-link">
             <Typography variant="button">{t('login')}</Typography>
           </NavLink>
         </Grid>
@@ -52,6 +52,7 @@ const ForgotPassword = () => {
               inputProps={{
                 maxLength: 255,
               }}
+              data-testid="email-input"
               label={t('mail')}
               type="email"
               fullWidth
@@ -61,12 +62,12 @@ const ForgotPassword = () => {
               required
             />
             {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {userFeedBack}
+              <Alert severity="error" sx={{ mt: 2 }} data-testid="error-alert">
+                {error}
               </Alert>
             )}
             {userFeedBack && (
-              <Alert severity="info" sx={{ mt: 2 }}>
+              <Alert severity="info" sx={{ mt: 2 }} data-testid="success-alert">
                 {userFeedBack}
               </Alert>
             )}
@@ -77,6 +78,7 @@ const ForgotPassword = () => {
               fullWidth
               sx={{ mt: 3 }}
               onClick={handleForgotPassword}
+              data-testid="submit-button"
             >
               {t('submit')}
             </Button>

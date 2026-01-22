@@ -1,18 +1,18 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, Grid, Snackbar, Typography } from '@mui/material';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import FormField from 'components/elements/FormField.tsx';
 import { RegisterFormData, UserSchema } from '../types/types.ts';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useRegister } from '../../../utils/auth.tsx';
 import { RegisterCredentialsDTO } from '../api/register.ts';
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { SuccessCard } from './SuccesCard.tsx';
 
 export const RegisterForm = () => {
   const { t } = useTranslation();
-
   const { mutateAsync: createUser } = useRegister();
+
   const {
     register,
     handleSubmit,
@@ -21,21 +21,27 @@ export const RegisterForm = () => {
     resolver: zodResolver(UserSchema),
   });
 
-  const [open, setOpen] = React.useState(false);
-  const [message, setMessage] = React.useState('');
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState('');
   const [successRegister, setSuccessRegister] = useState(false);
 
   const onSubmit = async (data: RegisterCredentialsDTO) => {
+    setOpen(false);
+    setMessage('');
+
     await createUser(data, {
       onSuccess: () => {
         setSuccessRegister(true);
       },
       onError: (error: any) => {
-        if (error.status === 409) {
-          return setMessage(t('user_already_exists'));
-        }
         setOpen(true);
-        setMessage(error.toString());
+
+        if (error?.status === 409) {
+          setMessage(t('user_already_exists'));
+          return;
+        }
+
+        setMessage(error?.toString?.() ?? String(error));
         console.error('error creation', error);
       },
     });
@@ -53,55 +59,60 @@ export const RegisterForm = () => {
           </Typography>
         </SuccessCard>
       ) : (
-        <form>
-          <Snackbar open={open} message={message} autoHideDuration={10} />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Snackbar open={open} message={message} autoHideDuration={10_000} />
+
           <Grid
             container
             direction="column"
             justifyContent="center"
             spacing={2}
-            maxWidth={'1000px'}
+            maxWidth="1000px"
           >
             <Grid>
               <FormField
                 type="mail"
                 placeholder={t('mail')}
                 name="mail"
-                required={true}
+                required
                 register={register}
                 error={errors.mail}
               />
             </Grid>
+
             <Grid>
               <FormField
                 type="text"
                 placeholder={t('name')}
                 name="name"
-                required={true}
+                required
                 register={register}
                 error={errors.name}
               />
             </Grid>
+
             <Grid>
               <FormField
                 type="password"
                 placeholder={t('password')}
                 name="password"
+                required
                 register={register}
-                required={true}
                 error={errors.password}
               />
             </Grid>
+
             <Grid>
               <FormField
                 type="password"
                 placeholder={t('confirmPassword')}
                 name="confirmPassword"
+                required
                 register={register}
-                required={true}
                 error={errors.confirmPassword}
               />
             </Grid>
+
             <Grid container>
               <Button
                 type="submit"
