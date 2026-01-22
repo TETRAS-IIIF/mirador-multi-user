@@ -1,11 +1,11 @@
 import { useLogout, useUser } from '../../utils/auth.tsx';
-import { Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { SideDrawer } from '../../components/elements/SideDrawer.tsx';
 import { useState } from 'react';
-import { Loading } from '../../components/elements/Loading.tsx';
 import { NotConfirmedAccount } from '../auth/components/NotConfirmedAccount.tsx';
 import { ErrorCode } from '../../utils/error.code.ts';
 import { ValidateTerms } from '../auth/components/validateTerms.tsx';
+import { LoadingSpinner } from '../../components/elements/loadingSpinner.tsx';
 
 export const MainContent = () => {
   const user = useUser();
@@ -26,7 +26,18 @@ export const MainContent = () => {
     }
   }
   if (!user?.data) {
-    return <Loading />;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '100vh',
+        }}
+      >
+        <LoadingSpinner />
+      </Box>
+    );
   }
   if (!user.data.termsValidatedAt) {
     return <ValidateTerms />;
