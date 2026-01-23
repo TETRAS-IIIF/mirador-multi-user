@@ -245,10 +245,9 @@ export class AuthService {
               : Language.ENGLISH,
           Projects: null,
           isEmailConfirmed: true,
+          oidcCreation: true,
         });
       }
-
-      await this.maybeSendConfirmationLink(user);
 
       return this.jwtService.sign({
         sub: user.id,
@@ -269,17 +268,5 @@ export class AuthService {
 , code : ${code}`,
       });
     }
-  }
-
-  private async maybeSendConfirmationLink(
-    user: any,
-  ): Promise<string | undefined> {
-    if (!user.termsValidatedAt) {
-      return await this.linkUserGroupService.sendConfirmationLink(
-        user.mail,
-        user.preferredLanguage,
-      );
-    }
-    return undefined;
   }
 }
