@@ -20,4 +20,6 @@ export class CreateUserDto {
   preferredLanguage: Language;
 
   isEmailConfirmed?: boolean;
+
+  oidcCreation?: boolean;
 }

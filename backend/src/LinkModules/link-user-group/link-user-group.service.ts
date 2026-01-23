@@ -137,11 +137,12 @@ export class LinkUserGroupService {
         creatorId: savedUser.id,
         metadata: dublinCoreSample,
       });
-
-      await this.sendConfirmationLink(
-        savedUser.mail,
-        savedUser.preferredLanguage,
-      );
+      if (!createUserDto.oidcCreation) {
+        await this.sendConfirmationLink(
+          savedUser.mail,
+          savedUser.preferredLanguage,
+        );
+      }
 
       return savedUser;
     } catch (error) {
