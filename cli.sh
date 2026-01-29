@@ -175,6 +175,70 @@ case $action in
     "up")
             $cmdup $@
             ;;
+    "update_prod")
+            NOW=`date '+%F_%H:%M:%S'`;
+
+            # File logging
+            echo "********************************" >> deploy-history.md
+            echo "Check for production update at $NOW" >> deploy-history.md
+            echo "Current branch: $(git branch --show-current)" >> deploy-history.md
+            echo "Last commit before update:" $(git log -1 >> deploy-history.md) >> deploy-history.md
+
+            # User feedback
+            echo "Current branch: $(git branch --show-current)"
+            echo "Last commit before update:"
+            git log -1
+            echo "Checking for updates..."
+
+
+
+            git fetch origin main
+            LOCAL=$(git rev-parse @)
+            REMOTE=$(git rev-parse origin/main)
+            if [ $LOCAL != $REMOTE ]; then
+                echo "Updates found".
+                echo "Updates found". >> deploy-history.md
+                echo "Confirm update? (y/n)"
+                read answer
+                if [ "$answer" != "${answer#[Yy]}" ] ;then
+                    echo "Updating..."
+                    git pull
+                    # Files logging
+                    echo "Update complete. Last commit after update:" >> deploy-history.md
+                    echo "$(git log -1 >> deploy-history.md)" >> deploy-history.md
+                     # User feedback
+                    echo "Update complete. Last commit after update:"
+                    git log -1
+
+                    echo "Stop, rebuilding and restarting services? (y/n)"
+                    if [ "$answer" != "${answer#[Yy]}" ] ;then
+                        echo "Rebuilding and restarting services..."
+                        echo "Rebuilding and restarting services..."   >> deploy-history.md
+                        $cmddown && $cmdup --build -d
+                        # how to check if last command was successful ?
+                        if [ $? -eq 0 ]; then
+                            echo "Services restarted successfully."
+                            echo "Services restarted successfully." >> deploy-history.md
+                        else
+                            echo "Error restarting services!"
+                            echo "Error restarting services!" >> deploy-history.md
+                        fi
+                    else
+                        echo "Skipping rebuild and restart of services."
+                        echo "Skipping rebuild and restart of services." >> deploy-history.md
+                    fi
+                else
+                    echo "Update cancelled by user"
+                    echo "Update cancelled by user" >> deploy-history.md
+                    exit 0
+                fi
+
+            else
+                echo "No updates found. Exiting."
+                echo "No updates found." >> deploy-history.md
+                exit 0
+            fi
+            ;;
     *)
         echo "Unknown command: $action"
         usage
