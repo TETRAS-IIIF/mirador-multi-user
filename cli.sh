@@ -180,7 +180,7 @@ case $action in
 
             # File logging
             echo "********************************" >> deploy-history.md
-            echo "Check for production update at $NOW" >> deploy-history.md
+            echo "Check for update at $NOW" >> deploy-history.md
             echo "Current branch: $(git branch --show-current)" >> deploy-history.md
             echo "Last commit before update:" $(git log -1 >> deploy-history.md) >> deploy-history.md
 
