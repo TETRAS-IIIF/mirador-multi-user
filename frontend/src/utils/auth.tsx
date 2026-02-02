@@ -10,6 +10,7 @@ import {
 } from '../features/auth/export.ts';
 import { configureAuth } from 'react-query-auth';
 import { CircularProgress, Grid } from '@mui/material';
+import { logoutUser } from '../features/auth/api/logoutUser.ts';
 
 export async function handleTokenResponse(data: UserResponse) {
   const { access_token, user } = data;
@@ -19,7 +20,6 @@ export async function handleTokenResponse(data: UserResponse) {
 
 async function loadUser(): Promise<User | null> {
   if (!storage.getToken()) return null;
-
   return await getUser();
 }
 
@@ -34,7 +34,7 @@ async function registerFn(data: RegisterCredentialsDTO) {
 }
 
 async function logoutFn() {
-  storage.clearToken();
+  await logoutUser();
 }
 
 const authConfig = {

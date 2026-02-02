@@ -1,4 +1,6 @@
 import {
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   OnModuleInit,
@@ -32,6 +34,7 @@ export class SettingsService implements OnModuleInit {
   constructor(
     @InjectRepository(Setting)
     private readonly settingsRepository: Repository<Setting>,
+    @Inject(forwardRef(() => AuthService))
     private readonly authService: AuthService,
     private readonly databaseService: DatabaseService,
   ) {}

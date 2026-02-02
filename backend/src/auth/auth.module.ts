@@ -1,5 +1,5 @@
 // auth.module.ts
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -10,6 +10,7 @@ import { EmailServerService } from '../utils/email/email.service';
 import { ImpersonationModule } from '../impersonation/impersonation.module';
 import { LinkUserGroupModule } from '../LinkModules/link-user-group/link-user-group.module';
 import { JwtStrategy } from './jwt.strategy';
+import { SettingsModule } from '../BaseEntities/setting/setting.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { JwtStrategy } from './jwt.strategy';
     UsersModule,
     ImpersonationModule,
     LinkUserGroupModule,
+    forwardRef(() => SettingsModule),
   ],
   controllers: [AuthController],
   providers: [AuthService, EmailServerService, JwtStrategy],

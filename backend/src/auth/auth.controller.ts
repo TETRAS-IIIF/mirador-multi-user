@@ -51,6 +51,13 @@ export class AuthController {
   ): Promise<void> {
     return this.authService.resetPassword(token, password);
   }
+  @ApiOperation({ summary: 'get oidc logout url' })
+  @Get('/logout-url')
+  @UseGuards(AuthGuard)
+  @HttpCode(200)
+  getLogoutUrl() {
+    return this.authService.gettingOidcDisconnectUrl();
+  }
 
   @Post('openid-exchange')
   async exchangeCode(@Body() body: { code: string; redirectUri: string }) {

@@ -1,10 +1,3 @@
-export type ImpersonateUserData = {
-  id: number;
-  name: string;
-  isEmailConfirmed: string;
-};
-
-
 export type Setting = {
   id: number;
   key: string;
