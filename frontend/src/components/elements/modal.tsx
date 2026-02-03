@@ -31,7 +31,7 @@ export const MMUModal = ({
 }: IOpenModalProps) => {
   return (
     <Modal
-      open={openModal}
+      open={openModal as boolean}
       onClose={() => setOpenModal(false)}
       disableEnforceFocus
       aria-labelledby="child-modal-title"
