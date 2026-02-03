@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 
 interface IOpenModalProps {
-  openModal: boolean;
+  openModal: boolean | number;
   setOpenModal: (open: boolean) => void;
   children: ReactNode;
   width: number;
