@@ -76,7 +76,6 @@ export const AdminPanel = () => {
       ],
     }));
   }, [users]);
-  console.log(users);
 
   return (
     <Grid>
@@ -102,7 +101,11 @@ export const AdminPanel = () => {
           </Grid>
         </Grid>
         <Grid sx={{ margin: 1 }}>
-          <AdminCollapsibleTable columns={columns} rows={rows} />
+          <AdminCollapsibleTable
+            columns={columns}
+            rows={rows}
+            fetchUsers={fetchUsers}
+          />
         </Grid>
       </Grid>
       <MMUModal

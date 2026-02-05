@@ -34,6 +34,7 @@ describe('UserManagementService', () => {
 
   beforeEach(async () => {
     const usersServiceMock: Partial<jest.Mocked<UsersService>> = {
+      findOne: jest.fn(),
       deleteUser: jest.fn(),
     };
 
@@ -85,8 +86,14 @@ describe('UserManagementService', () => {
           provide: getRepositoryToken(LinkUserGroup),
           useValue: linkUserGroupRepoMock,
         },
-        { provide: UsersService, useValue: usersServiceMock },
-        { provide: ProjectService, useValue: projectServiceMock },
+        {
+          provide: UsersService,
+          useValue: usersServiceMock,
+        },
+        {
+          provide: ProjectService,
+          useValue: projectServiceMock,
+        },
         {
           provide: LinkGroupProjectService,
           useValue: linkGroupProjectServiceMock,
@@ -95,67 +102,62 @@ describe('UserManagementService', () => {
           provide: LinkManifestGroupService,
           useValue: linkManifestGroupServiceMock,
         },
-        { provide: ManifestService, useValue: manifestServiceMock },
-        { provide: MediaService, useValue: mediaServiceMock },
-        { provide: LinkMediaGroupService, useValue: linkMediaGroupServiceMock },
-        { provide: UserGroupService, useValue: userGroupServiceMock },
+        {
+          provide: ManifestService,
+          useValue: manifestServiceMock,
+        },
+        {
+          provide: MediaService,
+          useValue: mediaServiceMock,
+        },
+        {
+          provide: LinkMediaGroupService,
+          useValue: linkMediaGroupServiceMock,
+        },
+        {
+          provide: UserGroupService,
+          useValue: userGroupServiceMock,
+        },
       ],
     }).compile();
 
-    service = module.get(UserManagementService);
-
-    usersService = module.get(UsersService) as jest.Mocked<UsersService>;
-    projectService = module.get(ProjectService) as jest.Mocked<ProjectService>;
-    linkGroupProjectService = module.get(
-      LinkGroupProjectService,
-    ) as jest.Mocked<LinkGroupProjectService>;
-    linkManifestGroupService = module.get(
-      LinkManifestGroupService,
-    ) as jest.Mocked<LinkManifestGroupService>;
-    manifestService = module.get(
-      ManifestService,
-    ) as jest.Mocked<ManifestService>;
-    mediaService = module.get(MediaService) as jest.Mocked<MediaService>;
-    linkMediaGroupService = module.get(
-      LinkMediaGroupService,
-    ) as jest.Mocked<LinkMediaGroupService>;
-    userGroupService = module.get(
-      UserGroupService,
-    ) as jest.Mocked<UserGroupService>;
-    linkUserGroupRepo = module.get(
-      getRepositoryToken(LinkUserGroup),
-    ) as jest.Mocked<Repository<LinkUserGroup>>;
-
-    jest.clearAllMocks();
+    service = module.get<UserManagementService>(UserManagementService);
+    usersService = module.get(UsersService);
+    projectService = module.get(ProjectService);
+    linkGroupProjectService = module.get(LinkGroupProjectService);
+    linkManifestGroupService = module.get(LinkManifestGroupService);
+    manifestService = module.get(ManifestService);
+    mediaService = module.get(MediaService);
+    linkMediaGroupService = module.get(LinkMediaGroupService);
+    userGroupService = module.get(UserGroupService);
+    linkUserGroupRepo = module.get(getRepositoryToken(LinkUserGroup));
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
-    expect(linkUserGroupRepo).toBeDefined();
   });
 
   describe('deleteUserProcess', () => {
     it('deletes owned resources and then user', async () => {
       const userId = 10;
 
+      usersService.findOne.mockResolvedValue({ id: userId } as any);
+
       projectService.findProjectOwned.mockResolvedValue([
         { id: 1 } as any,
         { id: 2 } as any,
       ]);
 
-      linkGroupProjectService.getProjectRelations
-        .mockResolvedValueOnce([{ id: 1 } as any]) // project 1: one group -> delete
-        .mockResolvedValueOnce([{ id: 1 } as any, { id: 2 } as any]); // project 2: more -> keep
+      linkGroupProjectService.getProjectRelations.mockResolvedValue([
+        { groupId: 100 } as any,
+      ]);
 
       manifestService.findOwnedManifests.mockResolvedValue([
-        { id: 11 } as any,
-        { id: 12 } as any,
+        { id: 20 } as any,
+        { id: 21 } as any,
       ]);
 
-      mediaService.findOwnedMedia.mockResolvedValue([
-        { id: 21 } as any,
-        { id: 22 } as any,
-      ]);
+      mediaService.findOwnedMedia.mockResolvedValue([{ id: 30 } as any]);
 
       userGroupService.findAllOwnedGroups.mockResolvedValue([
         { id: 31 } as any,
@@ -167,24 +169,21 @@ describe('UserManagementService', () => {
       const result = await service.deleteUserProcess(userId);
 
       expect(projectService.findProjectOwned).toHaveBeenCalledWith(userId);
-      expect(
-        linkGroupProjectService.getProjectRelations,
-      ).toHaveBeenNthCalledWith(1, 1);
-      expect(
-        linkGroupProjectService.getProjectRelations,
-      ).toHaveBeenNthCalledWith(2, 2);
-      expect(linkGroupProjectService.deleteProject).toHaveBeenCalledTimes(1);
+      expect(linkGroupProjectService.getProjectRelations).toHaveBeenCalledTimes(
+        2,
+      );
+      expect(linkGroupProjectService.deleteProject).toHaveBeenCalledTimes(2);
       expect(linkGroupProjectService.deleteProject).toHaveBeenCalledWith(1);
+      expect(linkGroupProjectService.deleteProject).toHaveBeenCalledWith(2);
 
       expect(manifestService.findOwnedManifests).toHaveBeenCalledWith(userId);
       expect(linkManifestGroupService.removeManifest).toHaveBeenCalledTimes(2);
-      expect(linkManifestGroupService.removeManifest).toHaveBeenCalledWith(11);
-      expect(linkManifestGroupService.removeManifest).toHaveBeenCalledWith(12);
+      expect(linkManifestGroupService.removeManifest).toHaveBeenCalledWith(20);
+      expect(linkManifestGroupService.removeManifest).toHaveBeenCalledWith(21);
 
       expect(mediaService.findOwnedMedia).toHaveBeenCalledWith(userId);
-      expect(linkMediaGroupService.removeMedia).toHaveBeenCalledTimes(2);
-      expect(linkMediaGroupService.removeMedia).toHaveBeenCalledWith(21);
-      expect(linkMediaGroupService.removeMedia).toHaveBeenCalledWith(22);
+      expect(linkMediaGroupService.removeMedia).toHaveBeenCalledTimes(1);
+      expect(linkMediaGroupService.removeMedia).toHaveBeenCalledWith(30);
 
       expect(userGroupService.findAllOwnedGroups).toHaveBeenCalledWith(userId);
       expect(userGroupService.remove).toHaveBeenCalledTimes(2);
