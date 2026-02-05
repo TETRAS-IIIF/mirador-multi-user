@@ -193,9 +193,7 @@ export const AllMedias = ({
 
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
-      console.log('mediaToUpdate :', mediaToUpdate);
       const mediaUpdated = await updateMedia(mediaToUpdate);
-      console.log('mediaUpdated :', mediaUpdated);
       const updatedListOfMedias = medias.filter(function (media) {
         return media.id != mediaToUpdate.id;
       });
