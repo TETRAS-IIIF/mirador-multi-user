@@ -1,4 +1,12 @@
-import { Box, Grid, IconButton, Tab, Tabs, Tooltip, Typography, } from '@mui/material';
+import {
+  Box,
+  Grid,
+  IconButton,
+  Tab,
+  Tabs,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import {
   ChangeEvent,
   Dispatch,
@@ -44,12 +52,21 @@ import {
   isValidFileForUpload,
   SettingKeys,
 } from '../../../utils/utils.ts';
-import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHooks/filterHook.ts';
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from '../../../utils/customHooks/filterHook.ts';
 import { useCreateMediaLink } from '../hooks/useCreateMediaLink.ts';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 import { getAccessToMedia } from '../api/getAccessToMedia.ts';
 import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
-import { ITEM_RIGHTS, MEDIA_TYPES, MEDIA_TYPES_TABS, USER_GROUP_TYPES, } from '../../../utils/mmu_types.ts';
+import {
+  ITEM_RIGHTS,
+  MEDIA_TYPES,
+  MEDIA_TYPES_TABS,
+  USER_GROUP_TYPES,
+} from '../../../utils/mmu_types.ts';
 import { reuploadMedia } from '../api/reuploadMedia.ts';
 
 interface IAllMediasProps {
@@ -193,7 +210,6 @@ export const AllMedias = ({
 
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
-      const mediaUpdated = await updateMedia(mediaToUpdate);
       const updatedListOfMedias = medias.filter(function (media) {
         return media.id != mediaToUpdate.id;
       });
