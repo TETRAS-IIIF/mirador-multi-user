@@ -1,12 +1,4 @@
-import {
-  Box,
-  Grid,
-  IconButton,
-  Tab,
-  Tabs,
-  Tooltip,
-  Typography,
-} from '@mui/material';
+import { Box, Grid, IconButton, Tab, Tabs, Tooltip, Typography, } from '@mui/material';
 import {
   ChangeEvent,
   Dispatch,
@@ -24,7 +16,6 @@ import { LinkUserGroup, UserGroup } from '../../user-group/types/types.ts';
 import { Media } from '../types/types.ts';
 import toast from 'react-hot-toast';
 import { deleteMedia } from '../api/deleteMedia.ts';
-import { updateMedia } from '../api/updateMedia.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
 import { lookingForUserGroups } from '../../user-group/api/lookingForUserGroups.ts';
 import { addMediaToGroup } from '../api/AddMediaToGroup.ts';
@@ -52,21 +43,12 @@ import {
   isValidFileForUpload,
   SettingKeys,
 } from '../../../utils/utils.ts';
-import {
-  TITLE,
-  UPDATED_AT,
-  useCurrentPageData,
-} from '../../../utils/customHooks/filterHook.ts';
+import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHooks/filterHook.ts';
 import { useCreateMediaLink } from '../hooks/useCreateMediaLink.ts';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 import { getAccessToMedia } from '../api/getAccessToMedia.ts';
 import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
-import {
-  ITEM_RIGHTS,
-  MEDIA_TYPES,
-  MEDIA_TYPES_TABS,
-  USER_GROUP_TYPES,
-} from '../../../utils/mmu_types.ts';
+import { ITEM_RIGHTS, MEDIA_TYPES, MEDIA_TYPES_TABS, USER_GROUP_TYPES, } from '../../../utils/mmu_types.ts';
 import { reuploadMedia } from '../api/reuploadMedia.ts';
 
 interface IAllMediasProps {
@@ -210,7 +192,6 @@ export const AllMedias = ({
 
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
-      await updateMedia(mediaToUpdate);
       const updatedListOfMedias = medias.filter(function (media) {
         return media.id != mediaToUpdate.id;
       });
@@ -457,8 +438,9 @@ export const AllMedias = ({
                     <MediaCard
                       media={{
                         ...media,
-                        thumbnailUrl:
-                          media.hash && media.mediaTypes === MEDIA_TYPES.IMAGE
+                        thumbnailUrl: media.thumbnailUrl
+                          ? media.thumbnailUrl
+                          : media.hash && media.mediaTypes === MEDIA_TYPES.IMAGE
                             ? `${caddyUrl}/${media.hash}/thumbnail.webp`
                             : undefined,
                       }}
