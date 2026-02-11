@@ -39,9 +39,9 @@ services:
       VITE_OIDC_REDIRECT_URI: ${OIDC_REDIRECT_URI}
       VITE_EXTERNAL_DASHBOARD_URL: ${EXTERNAL_DASHBOARD_URL}
       VITE_ACCOUNT_MANAGEMENT_URL: ${ACCOUNT_MANAGEMENT_URL}
+    restart: ${RESTART}
     depends_on:
       - backend
-    restart: always
     networks:
       - app-network
 

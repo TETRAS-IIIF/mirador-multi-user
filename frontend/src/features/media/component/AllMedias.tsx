@@ -1,4 +1,12 @@
-import { Box, Grid, IconButton, Tab, Tabs, Tooltip, Typography, } from '@mui/material';
+import {
+  Box,
+  Grid,
+  IconButton,
+  Tab,
+  Tabs,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import {
   ChangeEvent,
   Dispatch,
@@ -16,7 +24,6 @@ import { LinkUserGroup, UserGroup } from '../../user-group/types/types.ts';
 import { Media } from '../types/types.ts';
 import toast from 'react-hot-toast';
 import { deleteMedia } from '../api/deleteMedia.ts';
-import { updateMedia } from '../api/updateMedia.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
 import { lookingForUserGroups } from '../../user-group/api/lookingForUserGroups.ts';
 import { addMediaToGroup } from '../api/AddMediaToGroup.ts';
@@ -193,9 +200,6 @@ export const AllMedias = ({
 
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
-      console.log('mediaToUpdate :', mediaToUpdate);
-      const mediaUpdated = await updateMedia(mediaToUpdate);
-      console.log('mediaUpdated :', mediaUpdated);
       const updatedListOfMedias = medias.filter(function (media) {
         return media.id != mediaToUpdate.id;
       });
