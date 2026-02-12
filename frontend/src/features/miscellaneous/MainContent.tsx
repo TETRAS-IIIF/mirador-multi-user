@@ -48,11 +48,7 @@ export const MainContent = () => {
   }
 
   const handleDisconnect = () => {
-    logout.mutate(undefined, {
-      onSuccess: () => {
-        window.location.assign(window.location.origin);
-      },
-    });
+    logout.mutate({});
   };
   return (
     <Grid container direction="row" sx={{ padding: 0 }}>

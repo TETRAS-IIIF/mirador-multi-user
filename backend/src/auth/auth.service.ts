@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   ForbiddenException,
+  forwardRef,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -16,6 +18,8 @@ import { PASSWORD_MINIMUM_LENGTH } from './utils';
 import { Language } from '../utils/email/utils';
 import { LinkUserGroupService } from '../LinkModules/link-user-group/link-user-group.service';
 import { Issuer, TokenSet } from 'openid-client';
+import { SettingsService } from '../BaseEntities/setting/setting.service';
+import { SettingKeys } from '../BaseEntities/setting/utils.setting';
 
 @Injectable()
 export class AuthService {
@@ -27,6 +31,8 @@ export class AuthService {
     private readonly emailService: EmailServerService,
     private readonly impersonationService: ImpersonationService,
     private readonly linkUserGroupService: LinkUserGroupService,
+    @Inject(forwardRef(() => SettingsService))
+    private readonly settingsService: SettingsService,
   ) {}
 
   async signIn(
@@ -267,6 +273,24 @@ export class AuthService {
         message: `an error occured while creating or login user with openIdConnect protocol with OIDC_CLIENT_ID : ${process.env.OIDC_CLIENT_ID}, redirectUri : ${redirectUri}
 , code : ${code}`,
       });
+    }
+  }
+
+  async gettingOidcDisconnectUrl() {
+    try {
+      const settingOIDC = await this.settingsService.get(
+        SettingKeys.OPENID_CONNECTION,
+      );
+      const isEnabled = settingOIDC === 'true';
+      if (isEnabled) {
+        return {
+          url: `${process.env.OIDC_ISSUER}/protocol/openid-connect/logout`,
+        };
+      } else {
+        return false;
+      }
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
     }
   }
 }
