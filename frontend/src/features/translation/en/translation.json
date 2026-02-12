@@ -96,6 +96,7 @@
   "creator": "Creator",
   "customization": "Customization",
   "db_size": "Database Size",
+  "DELETE_OIDC_ACCOUNT_ON_ACCOUNT_DELETE": "Delete OIDC account on account deletion",
   "defaultProjectTitle": "new project",
   "delete": "DELETE",
   "delete_user": "Delete user",
