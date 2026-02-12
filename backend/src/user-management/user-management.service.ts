@@ -18,6 +18,8 @@ import { Repository } from 'typeorm';
 import { CustomLogger } from '../utils/Logger/CustomLogger.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Issuer } from 'openid-client';
+import { SettingsService } from '../BaseEntities/setting/setting.service';
+import { SettingKeys } from '../BaseEntities/setting/utils.setting';
 
 @Injectable()
 export class UserManagementService {
@@ -34,6 +36,7 @@ export class UserManagementService {
     private readonly mediaService: MediaService,
     private readonly linkMediaGroupService: LinkMediaGroupService,
     private readonly groupService: UserGroupService,
+    private readonly settingService: SettingsService,
   ) {}
 
   async deleteUserProcess(userId: number) {
@@ -62,8 +65,12 @@ export class UserManagementService {
       for (const group of userOwnedGroups) {
         await this.groupService.remove(group.id);
       }
-      console.log(user.mail);
-      await this.deleteOidcAccount(user.mail);
+      const shouldDeleteOIDC = await this.settingService.get(
+        SettingKeys.DELETE_OIDC_ACCOUNT_ON_ACCOUNT_DELETE,
+      );
+      if (shouldDeleteOIDC) {
+        await this.deleteOidcAccount(user.mail);
+      }
       return await this.userService.deleteUser(userId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
