@@ -1,4 +1,4 @@
-import storage from "../../../utils/storage.ts";
+import storage from '../../../utils/storage.ts';
 
 export const deleteAccount = async (userId: number) => {
   try {
@@ -6,7 +6,7 @@ export const deleteAccount = async (userId: number) => {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/user-management/delete/${userId}`,
       {
-        method: "DELETE",
+        method: 'DELETE',
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -17,6 +17,9 @@ import { User_UserGroupRights } from '../enum/rights';
 import { Repository } from 'typeorm';
 import { CustomLogger } from '../utils/Logger/CustomLogger.service';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Issuer } from 'openid-client';
+import { SettingsService } from '../BaseEntities/setting/setting.service';
+import { SettingKeys } from '../BaseEntities/setting/utils.setting';
 
 @Injectable()
 export class UserManagementService {
@@ -33,10 +36,12 @@ export class UserManagementService {
     private readonly mediaService: MediaService,
     private readonly linkMediaGroupService: LinkMediaGroupService,
     private readonly groupService: UserGroupService,
+    private readonly settingService: SettingsService,
   ) {}
 
   async deleteUserProcess(userId: number) {
     try {
+      const user = await this.userService.findOne(userId);
       const projectsOwned = await this.projectService.findProjectOwned(userId);
       for (const project of projectsOwned) {
         const linkedGroups =
@@ -60,6 +65,12 @@ export class UserManagementService {
       for (const group of userOwnedGroups) {
         await this.groupService.remove(group.id);
       }
+      const shouldDeleteOIDC = await this.settingService.get(
+        SettingKeys.DELETE_OIDC_ACCOUNT_ON_ACCOUNT_DELETE,
+      );
+      if (shouldDeleteOIDC) {
+        await this.deleteOidcAccount(user.mail);
+      }
       return await this.userService.deleteUser(userId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -67,6 +78,98 @@ export class UserManagementService {
     }
   }
 
+  private async deleteOidcAccount(userEmail: string) {
+    try {
+      this.logger.warn(`Attempting to delete OIDC account for: ${userEmail}`);
+      const issuerUrl = process.env.OIDC_ISSUER;
+      if (!issuerUrl) {
+        throw new Error('OIDC_ISSUER is not defined');
+      }
+
+      const issuer = await Issuer.discover(issuerUrl);
+
+      const client = new issuer.Client({
+        client_id: process.env.OIDC_CLIENT_ID!,
+        client_secret: process.env.OIDC_CLIENT_SECRET!,
+      });
+
+      this.logger.warn(`OIDC client: ${process.env.OIDC_CLIENT_ID}`);
+
+      const tokenSet = await client.grant({
+        grant_type: 'client_credentials',
+      });
+
+      if (!tokenSet.access_token) {
+        throw new Error('No access token returned by OIDC provider');
+      }
+
+      this.logger.warn(
+        `Admin token obtained (expires in ${tokenSet.expires_in}s)`,
+      );
+
+      const issuerString: string = String(issuer.issuer);
+
+      const realmMatch = issuerString.match(/\/realms\/([^/]+)$/);
+      if (!realmMatch) {
+        throw new Error(
+          `Unable to determine realm from issuer: ${issuerString}`,
+        );
+      }
+      const realm = realmMatch[1];
+
+      const adminBaseUrl = issuerString
+        .replace(/\/realms\/[^/]+$/, '')
+        .replace(/\/$/, '');
+
+      const searchUrl =
+        `${adminBaseUrl}/admin/realms/${realm}/users` +
+        `?email=${encodeURIComponent(userEmail)}&exact=true`;
+
+      const usersResponse = await fetch(searchUrl, {
+        headers: {
+          Authorization: `Bearer ${tokenSet.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!usersResponse.ok) {
+        const errorText = await usersResponse.text();
+        this.logger.warn(
+          `Failed to search OIDC user: ${usersResponse.status} - ${errorText}`,
+        );
+        return;
+      }
+
+      const users = await usersResponse.json();
+
+      if (!Array.isArray(users) || users.length === 0) {
+        this.logger.warn(`No OIDC account found for email: ${userEmail}`);
+        return;
+      }
+      const oidcUserId = users[0].id;
+
+      const deleteUrl = `${adminBaseUrl}/admin/realms/${realm}/users/${oidcUserId}`;
+
+      const deleteResponse = await fetch(deleteUrl, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${tokenSet.access_token}`,
+        },
+      });
+
+      if (deleteResponse.status !== 204) {
+        const errorText = await deleteResponse.text();
+        this.logger.warn(
+          `Failed to delete OIDC account: ${deleteResponse.status} - ${errorText}`,
+        );
+      }
+    } catch (error: any) {
+      this.logger.warn(
+        `Error deleting OIDC account for ${userEmail}: ${error.message}`,
+      );
+      this.logger.warn(error.stack);
+    }
+  }
   async isUserAllowed(userId: number) {
     const userPersonalGroup =
       await this.groupService.findUserPersonalGroup(userId);

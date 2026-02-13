@@ -12,9 +12,14 @@ interface RowData {
 interface RowProps {
   id: number;
   data: RowData[];
+  setConfirmDeleteUserModal: (userId: number) => void;
 }
 
-export function AdminExpandableContent({ id, data }: RowProps) {
+export function AdminExpandableContent({
+  id,
+  data,
+  setConfirmDeleteUserModal,
+}: RowProps) {
   const { t } = useTranslation();
 
   async function impersonateUser() {
@@ -40,6 +45,15 @@ export function AdminExpandableContent({ id, data }: RowProps) {
           disabled={data[5].value !== 'No' || data[4].value !== 'No'}
         >
           {t('validate_user')}
+        </Button>
+      </Grid>
+      <Grid>
+        <Button
+          color="error"
+          variant="contained"
+          onClick={() => setConfirmDeleteUserModal(id)}
+        >
+          {t('delete_user')}
         </Button>
       </Grid>
     </Grid>

@@ -14,6 +14,10 @@ import { ReactNode, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RowAdminPanel } from './RowAdminPanel.tsx';
 import { PaginationControls } from '../../../components/elements/Pagination.tsx';
+import { ModalConfirmDelete } from '../../projects/components/ModalConfirmDelete.tsx';
+import { MMUModal } from '../../../components/elements/modal.tsx';
+import { deleteAccount } from '../../auth/api/deleteAccount.ts';
+import toast from 'react-hot-toast';
 
 interface RowData {
   value: ReactNode;
@@ -34,15 +38,20 @@ interface Column {
 interface CollapsibleTableProps {
   columns: Column[];
   rows: RowProps[];
+  fetchUsers: () => Promise<void>;
 }
 
 export function AdminCollapsibleTable({
   columns,
   rows,
+  fetchUsers,
 }: CollapsibleTableProps) {
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [currentPage, setCurrentPage] = useState(1);
+  const [confirmDeleteUserModal, setConfirmDeleteUserModal] = useState<
+    number | undefined
+  >(undefined);
   const rowsPerPage = 10;
   const [filter, setFilter] = useState('');
   const { t } = useTranslation();
@@ -101,6 +110,17 @@ export function AdminCollapsibleTable({
   }, [sortedRows, currentPage]);
 
   const totalPages = Math.ceil(sortedRows.length / rowsPerPage);
+
+  const handleDeleteAccount = async () => {
+    if (confirmDeleteUserModal) {
+      const responseDelete = await deleteAccount(confirmDeleteUserModal);
+      if (responseDelete) {
+        toast.success(t('confirm_delete_account'));
+      }
+      setConfirmDeleteUserModal(undefined);
+      fetchUsers();
+    }
+  };
   return (
     <>
       <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
@@ -173,7 +193,11 @@ export function AdminCollapsibleTable({
           </TableHead>{' '}
           <TableBody>
             {paginatedRows.map((row) => (
-              <RowAdminPanel key={row.id} row={row} />
+              <RowAdminPanel
+                key={row.id}
+                row={row}
+                setConfirmDeleteUserModal={setConfirmDeleteUserModal}
+              />
             ))}
           </TableBody>
         </Table>
@@ -184,6 +208,20 @@ export function AdminCollapsibleTable({
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
+      )}
+      {confirmDeleteUserModal != undefined && (
+        <MMUModal
+          width={400}
+          openModal={confirmDeleteUserModal}
+          setOpenModal={() => setConfirmDeleteUserModal(undefined)}
+        >
+          <ModalConfirmDelete
+            deleteItem={handleDeleteAccount}
+            content={t('admin_delete_Confirmation')}
+            buttonLabel={t('deleteDefinitely')}
+            itemId={confirmDeleteUserModal}
+          />
+        </MMUModal>
       )}
     </>
   );

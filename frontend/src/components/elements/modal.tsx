@@ -4,7 +4,7 @@ import { ReactNode } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 
 interface IOpenModalProps {
-  openModal: boolean;
+  openModal: boolean | number;
   setOpenModal: (open: boolean) => void;
   children: ReactNode;
   width: number;
@@ -31,7 +31,7 @@ export const MMUModal = ({
 }: IOpenModalProps) => {
   return (
     <Modal
-      open={openModal}
+      open={openModal as boolean}
       onClose={() => setOpenModal(false)}
       disableEnforceFocus
       aria-labelledby="child-modal-title"
