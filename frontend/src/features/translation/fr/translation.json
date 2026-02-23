@@ -343,6 +343,8 @@
   "terms": "conditions d'utilisation",
   "termsValidationFailed": "Échec de la validation des conditions. Veuillez réessayer.",
   "terms_validated_at": "Date d'acceptation des conditions générales",
+  "TEST_FEATURES": "Fonctionnalités test",
+  "test_features": "Fonctionnalités test",
   "thumbnailMissing": "Aperçu manquant",
   "thumbnailUrl": "URL de l'aperçu",
   "title": "Titre",

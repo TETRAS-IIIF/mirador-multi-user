@@ -12,6 +12,7 @@ export const requiredSettings = {
   DELETE_OIDC_ACCOUNT_ON_ACCOUNT_DELETE: 'false',
   MAX_UPLOAD_SIZE: process.env.MAX_UPLOAD_SIZE,
   OPENID_CONNECTION: process.env.OPENID_CONNECTION,
+  TEST_FEATURES: 'false',
 };
 
 export const unMutableSettings = new Map<string, string | undefined>([
@@ -38,6 +39,7 @@ export enum SettingKeys {
   MAX_UPLOAD_SIZE = 'MAX_UPLOAD_SIZE',
   OPENID_CONNECTION = 'OPENID_CONNECTION',
   SWAGGER_URL = 'SWAGGER_URL',
+  TEST_FEATURES = 'TEST_FEATURES',
 }
 
 export const parseHumanSizeToMB = (humanSize: string): number => {
