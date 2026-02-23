@@ -1,10 +1,4 @@
-import {
-  Column,
-  Entity,
-  Index,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, } from 'typeorm';
 import { LinkUserGroup } from '../../../LinkModules/link-user-group/entities/link-user-group.entity';
 import { Impersonation } from '../../../impersonation/entities/impersonation.entity';
 import { Language } from '../../../utils/email/utils';
@@ -13,6 +7,10 @@ import { Language } from '../../../utils/email/utils';
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @Index()
+  @Column({ nullable: true })
+  oidcId: number;
 
   @Index({ unique: true })
   @Column({ length: 300 })
