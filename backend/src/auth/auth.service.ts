@@ -239,6 +239,7 @@ export class AuthService {
 
       const tokenSet: TokenSet = await client.callback(redirectUri, params);
       const userinfo = await client.userinfo(tokenSet.access_token);
+     
       let user = await this.usersService.findOneByMail(userinfo.email);
       if (!user) {
         user = await this.linkUserGroupService.createUser({
