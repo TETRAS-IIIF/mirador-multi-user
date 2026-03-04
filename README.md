@@ -75,10 +75,10 @@ mirador-multi-user@tetras-libre.fr
 
 In another terminal, run following commands to generate the database
 
-- `docker-compose exec backend npm run typeorm:generate-migration --name=db-init`
-- `docker-compose exec backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
+- `./cli.sh migration create init `
+- `./cli.sh migration run`
 
-Now you can access :
+Now you can access (all ports can be customized in the .env file) :
 
 - frontend to [http://localhost:4000](http://localhost:4000)
 - backend to [http://localhost:3000](http://localhost:3000)

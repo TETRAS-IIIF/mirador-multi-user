@@ -23,22 +23,23 @@ is_docker() {
 usage(){
     echo -e "Usage: $0 <command> [args]\n"
     echo "Commands:"
-    echo "  backend_bash       → Open bash in backend container"
-    echo "  frontend_bash      → Open bash in frontend container"
-    echo "  backend_logs       → Show logs for backend"
-    echo "  frontend_logs      → Show logs for frontend"
-    echo "  db_bash            → Open bash in database container"
-    echo "  db_logs            → Show logs for database"
-    echo "  create_migration   → Generate a new TypeORM migration"
-    echo "  run_migration      → Run pending migrations"
-    echo "  mysql              → Open MySQL shell"
-    echo "  mysql_dump         → Dump the database (compressed)"
-    echo "  mysql_restore <file> → Restore the database from a dump"
-    echo "  up [services...]   → Start Docker services"
-    echo "  down               → Stop all Docker services"
-    echo "  restart [services] → Restart specified Docker services"
-    echo "  rmi <image>        → Remove Docker image"
-    echo "  changelog          → Update changelog"
+    echo "  backend_bash                → Open bash in backend container"
+    echo "  frontend_bash               → Open bash in frontend container"
+    echo "  backend_logs                → Show logs for backend"
+    echo "  frontend_logs               → Show logs for frontend"
+    echo "  db_bash                     → Open bash in database container"
+    echo "  db_logs                     → Show logs for database"
+    echo "  migration create            → Generate a new TypeORM migration"
+    echo "  migration create <name>     → Generate a new TypeORM migration"
+    echo "  migration run               → Run pending migrations"
+    echo "  mysql                       → Open MySQL shell"
+    echo "  mysql_dump                  → Dump the database (compressed)"
+    echo "  mysql_restore <file>        → Restore the database from a dump"
+    echo "  up [services...]            → Start Docker services"
+    echo "  down                        → Stop all Docker services"
+    echo "  restart [services]          → Restart specified Docker services"
+    echo "  rmi <image>                 → Remove Docker image"
+    echo "  changelog                   → Update changelog"
 }
 
 
@@ -116,14 +117,26 @@ case $action in
       fi
 
       ;;
-    "create_migration")
-        # Check if $1 is provided, if not set it to "migrate-$(date +%Y%m%d-%H%M%S)"
-        if [ -z "$1" ]; then
-            name="migrate-$(date +%Y%m%d-%H%M%S)"
-        else
-            name="$1"
-        fi
-        $cmd_backend npm run typeorm:generate-migration --name="$name"
+    "migration")
+        case $1 in
+            "create")
+                # Check if $2 is provided, if not set it to "migrate-$(date +%Y%m%d-%H%M%S)"
+                if [ -z "$2" ]; then
+                  name="migrate-$(date +%Y%m%d-%H%M%S)"
+                else
+                  name="$2"
+                fi
+                $cmd_backend npm run typeorm:generate-migration --name="$name"
+                ;;
+            "run")
+                $cmd_backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts
+                ;;
+            *)
+                echo "Unknown migration command: $1"
+                usage
+                exit 1
+                ;;
+        esac
         ;;
     "frontend_bash")
         $cmd_frontend /bin/sh
@@ -175,9 +188,7 @@ case $action in
     "rmi")
             $cmdrmi $@
             ;;
-    "run_migration")
-            $cmd_backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts
-            ;;
+
     "up")
             $cmdup $@
             ;;
