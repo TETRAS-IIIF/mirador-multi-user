@@ -117,7 +117,13 @@ case $action in
 
       ;;
     "create_migration")
-        $cmd_backend npm run typeorm:generate-migration --name="$1"
+        # Check if $1 is provided, if not set it to "migrate-$(date +%Y%m%d-%H%M%S)"
+        if [ -z "$1" ]; then
+            name="migrate-$(date +%Y%m%d-%H%M%S)"
+        else
+            name="$1"
+        fi
+        $cmd_backend npm run typeorm:generate-migration --name="$name"
         ;;
     "frontend_bash")
         $cmd_frontend /bin/sh
