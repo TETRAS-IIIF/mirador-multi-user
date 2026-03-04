@@ -91,10 +91,7 @@ Now you can access (all ports can be customized in the .env file) :
 1. `git clone git@github.com:TETRAS-IIIF/mirador-multi-user.git`
 2. `cd mirador-multi-user`
 3. `cp .env.prod.sample .env`.
-4. You must set the env variables listed bellow :
-
-
-See [ENVIRONMENT.md](ENVIRONMENT.md) for a complete list of environment variables and their descriptions.
+4. Set the required environment variables in the `.env` file. See [ENVIRONMENT.md](ENVIRONMENT.md) for a complete list of environment variables and their descriptions.
 
 
 5. `docker-compose up --build`

@@ -2,131 +2,183 @@
 
 Available environment variables for Mirador Multi User. These can be set in the `.env` file before launching the application.
 
-We provide suitabe dev config in `.env.dev.sample` and production config in `.env.prod.sample`. You can copy the one you need and customize it with your own values.
-
-# Table of Contents
-
-
-
-### 🔐 Required Environment Variables
-
-These **must be set manually** before launching in production:
-
-| Key                                   | Description                                   |
-|---------------------------------------|-----------------------------------------------|
-| `JWT_SECRET`                          | Secret used to sign authentication tokens     |
-| `JWT_EMAIL_VERIFICATION_TOKEN_SECRET` | Secret used to sign email verification tokens |
-| `DB_PASS`                             | Password for the database user                |
+We provide suitable dev config in `.env.dev.sample` and production config in `.env.prod.sample`. You can copy the one you need and customize it with your own values. Do NOT commit secrets to the repository.
 
 ---
 
-### 🛠️ Core Application Settings
+## Quick checklist
 
-| Key                   | Description                             | Default / Example             |
-|-----------------------|-----------------------------------------|-------------------------------|
-| `NAME`                | Instance name used in Traefik config    | `mmu`                         |
-| `HOST`                | Public URL of the frontend              | `mmu.your-domain.com`         |
-| `BACKEND_NAME`        | Internal name for the backend container | `mmu-backend`                 |
-| `BACKEND_HOST`        | Public URL of the backend               | `mmu-backend.your-domain.com` |
-| `CADDY_NAME`          | Internal name for the Caddy container   | `mmu-caddy`                   |
-| `CADDY_HOST`          | Public URL of Caddy                     | `mmu-caddy.your-domain.com`   |
-| `INSTANCE_SHORT_NAME` | Short name for display purposes         | `MMU`                         |
-| `INSTANCE_NAME`       | Full instance name                      | `Mirador Multi User`          |
+- Copy one of the sample files (`.env.dev.sample` or `.env.prod.sample`) to `.env` and edit values.
+- Ensure secrets (JWT, DB password, OIDC client secret, SMTP password) are set in `.env` and never committed.
+- For production, make sure `JWT_SECRET`, `JWT_EMAIL_VERIFICATION_TOKEN_SECRET`, and `DB_PASS` are set and strong.
 
 ---
 
-### 🔧 Backend Configuration
+### Docker / Compose & runtime
 
-| Key                    | Description                                | Default / Example |
-|------------------------|--------------------------------------------|-------------------|
-| `LOG_LEVEL`            | 0=ERROR, 1=WARN, 2=DEBUG, 3=LOG, 4=VERBOSE | `0`               |
-| `MAX_API_PAYLOAD_SIZE` | Max JSON payload size (in MB)              | `50`              |
-| `SALT`                 | Bcrypt salt rounds for password hashing    | `10`              |
-| `MAX_UPLOAD_SIZE`      | Max file upload size (in MB)               | `5`               |
-| `ALLOW_CREATE_USER`    | Enable/disable account creation            | `true`            |
-| `ALLOW_YOUTUBE_MEDIA`  | Allow adding YouTube videos as media       | `true`            |
-| `ALLOW_PEERTUBE_MEDIA` | Allow adding PeerTube videos as media      | `true`            |
+These variables control how the project is launched and what ports are used in local (non-Traefik) setups.
 
----
-
-### 📧 SMTP Configuration (for email verification)
-
-These are required for email-based account confirmation and password reset:
-
-| Key               | Description                          | Example                 |
-|-------------------|--------------------------------------|-------------------------|
-| `SMTP_DOMAIN`     | SMTP server hostname                 | `smtp.mailprovider.com` |
-| `SMTP_USER`       | SMTP username                        | `mmu@your-domain.fr`    |
-| `SMTP_PASSWORD`   | SMTP password                        | `********`              |
-| `SMTP_PORT`       | SMTP port (usually 587 or 465)       | `587`                   |
-| `SMTP_IGNORE_TLS` | Set to `true` to skip TLS            | `false`                 |
-| `SMTP_SSL`        | Set to `true` to use SSL             | `true`                  |
-| `FROM_MAIL`       | Email used as the sender             | `mmu@your-domain.fr`    |
-| `NAME_MAIL`       | Display name for sender emails       | `Mirador Multi User`    |
-| `ADMIN_MAIL`      | Admin email to receive notifications | `mmu@your-domain.fr`    |
+| Key | Description | Example / Default |
+|---|---:|---|
+| `COMPOSE_FILE` | Which compose files to load (dev/prod variants) | `docker-compose.yml:dev.yml:port.yml` (dev) |
+| `RESTART` | Docker restart policy for containers | `no` (dev) / `always` (prod) |
+| `PORT` | Frontend port (only used without Traefik) | `4000` |
+| `BACKEND_PORT` | Backend port (only used without Traefik) | `3000` |
+| `CADDY_PORT` | Local Caddy port (only used without Traefik) | `9000` |
 
 ---
 
-### 🔐 Authentication Modes
+### HTTP / Hosting
 
-You can enable one or both:
-
-| Key                      | Description                         | Values         |
-|--------------------------|-------------------------------------|----------------|
-| `OPENID_CONNECTION`      | Enable OpenID Connect login         | `true`/`false` |
-| `CLASSIC_AUTHENTICATION` | Enable classic email/password login | `true`/`false` |
-
-If using OpenID Connect, the following must also be set:
-
-| Key                  | Description                            |
-|----------------------|----------------------------------------|
-| `OIDC_ISSUER`        | The URL of your OIDC identity provider |
-| `OIDC_CLIENT_ID`     | OIDC client ID                         |
-| `OIDC_CLIENT_SECRET` | OIDC client secret                     |
-| `OIDC_REDIRECT_URI`  | The redirect URI for login callback    |
-| `SESSION_SECRET`     | Used to secure sessions                |
+| Key | Description | Default / Example |
+|---|---:|---|
+| `HTTP_PROTOCOL` | Protocol used by services when not behind Traefik | `http` (dev) / `https` (prod) |
+| `NAME` | Instance short name (used with Traefik) | `mmu` (prod sample) |
+| `HOST` | Public URL of the frontend | `localhost:4000` (dev) / `mmu.your-domain.com` (prod) |
+| `BACKEND_NAME` | Internal name for the backend container | `mmu-backend` (prod sample) |
+| `BACKEND_HOST` | Public URL of backend | `localhost:3000` (dev) / `mmu-backend.your-domain.com` (prod) |
+| `CADDY_NAME` | Internal name for the Caddy container | `mmu-caddy` (prod sample) |
+| `CADDY_HOST` | Public URL of Caddy | `localhost:9000` (dev) / `mmu-caddy.your-domain.com` (prod) |
 
 ---
 
-### 🗃️ Database Configuration
+### Shared / Platform info
 
-| Key              | Description                         | Example        |
-|------------------|-------------------------------------|----------------|
-| `DB_USER`        | Database username                   | `mirador`      |
-| `DB_PASS`        | Database password                   | `yourpassword` |
-| `DB_DATABASE`    | Database name                       | `multiUsers`   |
-| `DB_HOST`        | Hostname of the database container  | `db`           |
-| `DB_EXPOSE_PORT` | Exposed DB port (for DBeaver, etc.) | `3306`         |
+| Key | Description | Default / Example |
+|---|---:|---|
+| `INSTANCE_SHORT_NAME` | Short name for display purposes | `MMU` |
+| `INSTANCE_NAME` | Full instance name | `Mirador Multi User` |
 
 ---
 
-### 🌐 Caddy Server (Static File Hosting)
+### Backend configuration
 
-| Key                   | Description                                 | Default    |
-|-----------------------|---------------------------------------------|------------|
-| `HTTP_FOLDER`         | Path to public files served by Caddy        | `./upload` |
-| `LOG_FOLDER`          | Path to Caddy logs                          | `./logs`   |
-| `CADDY_PORT`          | Port used for Caddy (for local access only) | `9000`     |
-| `CADDY_HTTP_PROTOCOL` | HTTP or HTTPS                               | `https`    |
-| `CORS_ALLOWED_HOSTS`  | Whitelisted origins for static file access  | `*`        |
+| Key | Description | Default / Example |
+|---|---:|---|
+| `LOG_LEVEL` | 0=ERROR, 1=WARN, 2=DEBUG, 3=LOG, 4=VERBOSE | `2` (dev), `0` (prod) |
+| `MAX_API_PAYLOAD_SIZE` | Max JSON payload size (in MB) | `50` |
+| `SALT` | Bcrypt salt rounds for password hashing | `10` |
+| `MAX_UPLOAD_SIZE` | Max file upload size (in MB) | `5` |
+| `ALLOW_CREATE_USER` | Enable/disable account creation | `true` |
+| `ALLOW_YOUTUBE_MEDIA` | Allow adding YouTube videos as media | `true` |
+| `ALLOW_PEERTUBE_MEDIA` | Allow adding PeerTube videos as media | `true` |
+
+Security / auth-related variables (secrets) — do NOT commit these:
+
+| Key | Description | Notes |
+|---|---:|---|
+| `JWT_SECRET` | Secret used to sign authentication tokens | REQUIRED for production; set a strong secret in `.env` (masked in docs) |
+| `JWT_EMAIL_VERIFICATION_TOKEN_SECRET` | Secret used to sign email verification tokens | REQUIRED for production |
+| `SESSION_SECRET` | Session secret (used for OIDC/session security) | Set when using sessions / OIDC |
 
 ---
 
-### 📊 Swagger (API Docs)
+### SMTP (Email) configuration — used for account confirmation and password reset
 
-| Key                     | Description                       | Default                  |
-|-------------------------|-----------------------------------|--------------------------|
-| `SWAGGER_RELATIVE_PATH` | Path where Swagger UI is served   | `api`                    |
-| `SWAGGER_TITLE`         | Title of the API docs             | `Mirador MultiUsers API` |
-| `SWAGGER_DESCRIPTION`   | Description of the API docs       | `API Documentation...`   |
-| `SWAGGER_VERSION`       | API version    external-dashboard | `0.1`                    |
+These settings are required if you want email verification / password reset to work. 
+
+| Key | Description | Example / Notes |
+|---|---:|---|
+| `SMTP_DOMAIN` | SMTP server hostname | `mail.gandi.net` (example) |
+| `SMTP_USER` | SMTP username | `mmu@your-domain.fr` or your SMTP login |
+| `SMTP_PASSWORD` | SMTP password | Set in `.env` (secret — do NOT commit) |
+| `SMTP_PORT` | SMTP port (often 587 or 465) | `587` |
+| `SMTP_IGNORE_TLS` | Set to `true` to skip TLS when connecting | `false` |
+| `SMTP_SSL` | Use SSL for SMTP | `false` or `true` depending on provider |
+| `FROM_MAIL` | Email used as the sender | `mmu@your-domain.fr` |
+| `NAME_MAIL` | Display name for sender emails | `Mirador Multi User` |
+| `ADMIN_MAIL` | Admin email that receives notifications | `mmu@your-domain.fr` |
+
+Note: The dev sample has SMTP values empty by default to avoid accidental email sending.
 
 ---
 
-### 📈 External 
+### Swagger (API docs)
 
-| Key                      | Description                                |
-|--------------------------|--------------------------------------------|
+| Key | Description | Default |
+|---|---:|---|
+| `SWAGGER_RELATIVE_PATH` | Path where Swagger UI is served | `api` |
+| `SWAGGER_TITLE` | Title of the API docs | `Mirador MultiUsers API` |
+| `SWAGGER_DESCRIPTION` | Description shown in Swagger | `API Documentation for Mirador MultiUsers (MMU)` |
+| `SWAGGER_VERSION` | API version | `0.1` |
+
+---
+
+### External / UI links
+
+| Key | Description |
+|---|---:|
 | `EXTERNAL_DASHBOARD_URL` | Optional link to external dashboards/tools |
 | `ACCOUNT_MANAGEMENT_URL` | Optional link to account management page (e.g., password reset) |
+
+---
+
+### YouTube / media
+
+| Key | Description | Example |
+|---|---:|---|
+| `YOUTUBE_API_KEY` | API key needed to add YouTube videos as media | (optional) |
+
+---
+
+### Authentication modes
+
+You can enable one or both authentication methods.
+
+| Key | Description | Values |
+|---|---:|---|
+| `OPENID_CONNECTION` | Enable OpenID Connect login | `true`/`false` |
+| `CLASSIC_AUTHENTICATION` | Enable classic email/password login | `true`/`false` |
+
+If using OpenID Connect, set these (OIDC values often differ between dev and prod):
+
+| Key | Description |
+|---|---:|
+| `OIDC_ISSUER` | URL of your OIDC identity provider |
+| `OIDC_CLIENT_ID` | OIDC client ID |
+| `OIDC_CLIENT_SECRET` | OIDC client secret (secret — do NOT commit) |
+| `OIDC_REDIRECT_URI` | Redirect URI for the OIDC callback |
+
+The repository dev `.env` contains a test Keycloak issuer and client id for local testing; replace these when deploying to production.
+
+---
+
+### Database
+
+| Key | Description | Default / Example |
+|---|---:|---|
+| `DB_USER` | Database username | `mirador` |
+| `DB_PASS` | Database password | REQUIRED (set in `.env`; do NOT commit) |
+| `DB_DATABASE` | Database name | `multiUsers` |
+| `DB_HOST` | Hostname of the database container | `db` |
+| `DB_EXPOSE_PORT` | Exposed DB port (for DBeaver, etc.) | `3306` |
+
+---
+
+### Caddy (static file server used for uploads)
+
+| Key | Description | Default / Example |
+|---|---:|---|
+| `HTTP_FOLDER` | Path to public files served by Caddy | `./backend/upload` (dev), `./upload` (prod sample) |
+| `LOG_FOLDER` | Path to Caddy logs | `./logs` |
+| `CORS_ALLOWED_HOSTS` | Whitelisted origins for static file access | `*` (accept all) |
+| `CADDY_HTTP_PROTOCOL` | HTTP or HTTPS for Caddy | `http` (dev) / `https` (prod) |
+
+---
+
+### Custom Assets
+
+Place custom UI assets in the `customAssets/` folder (frontend). Typical files:
+- `favicon.svg`
+- `landing-background.webp`
+- `CustomTerms.tsx`
+- `Consent.tsx`
+
+---
+
+### Notes & Best practices
+
+- Never commit `.env` to source control. Add `.env` to `.gitignore` if not already ignored.
+- Treat `JWT_SECRET`, `JWT_EMAIL_VERIFICATION_TOKEN_SECRET`, `SESSION_SECRET`, `OIDC_CLIENT_SECRET`, `SMTP_PASSWORD`, and `DB_PASS` as secret values and rotate them when needed.
+- Use the provided `.env.dev.sample` for local development. Use `.env.prod.sample` as a starting point for production and adapt values for Traefik / your domain.
 
