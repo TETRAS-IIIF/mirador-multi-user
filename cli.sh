@@ -73,6 +73,13 @@ pass=$(get_conf_val DB_PASS)
 mysql="mariadb -u $DB_USER $DATABASE -p$pass"
 DIR="$(dirname $0)"
 
+# Helper to echo to stdout and append to deploy-history.md
+echo_log_deploy (){
+  # Accepts a single argument (string). Preserve newlines if present.
+  printf "%s\n" "$1"
+  printf "%s\n" "$1" >> deploy-history.md
+}
+
 action=$1
 shift
 # Keep actions sorted
@@ -168,16 +175,16 @@ case $action in
         $cmdmy $mysql
         set +x
         ;;
-	      "mysql_dump")
-	      mkdir -p "$DUMP_PATH"
+	  "mysql_dump")
+	  mkdir -p "$DUMP_PATH"
         $cmdmy mariadb-dump --databases $DATABASE -u $DB_USER -p$pass | gzip > ./$DUMP_PATH/${DATABASE}_$(date +%Y%m%d_%H%M%S).sql.gz
-		    ;;
-	      "mysql_restore")
-		          if [ -z "$1" ]; then
-			            echo "Usage $0 mysql_restore <file>"
-			            exit 1
-		          fi
-		              read -p "Do you want to restore your database from file '$1' ? This command will erase your current data. (y/n). " yn
+		;;
+	  "mysql_restore")
+		  if [ -z "$1" ]; then
+			    echo "Usage $0 mysql_restore <file>"
+			    exit 1
+		  fi
+		      read -p "Do you want to restore your database from file '$1' ? This command will erase your current data. (y/n). " yn
         case $yn in
             [Yy]* )
                 zcat $1 | grep -v '/\*M' | $cmdmyInput $mysql
@@ -188,7 +195,7 @@ case $action in
             * )
                 echo "Please answer yes or no.";;
         esac
-		          ;;
+		  ;;
 		"restart")
             $cmdrestart $@
             ;;
@@ -203,10 +210,11 @@ case $action in
             NOW=`date '+%F_%H:%M:%S'`;
 
             # File logging
-            echo "********************************" >> deploy-history.md
-            echo "Check for update at $NOW" >> deploy-history.md
-            echo "Current branch: $(git branch --show-current)" >> deploy-history.md
-            echo "Last commit before update:" $(git log -1 >> deploy-history.md) >> deploy-history.md
+            echo_log_deploy "********************************"
+            echo_log_deploy "Check for update at $NOW"
+            echo_log_deploy "Current branch: $(git branch --show-current)"
+            echo_log_deploy "Last commit before update:"
+            echo_log_deploy "$(git log -1)"
 
             # User feedback
             echo "Current branch: $(git branch --show-current)"
@@ -220,48 +228,53 @@ case $action in
             LOCAL=$(git rev-parse @)
             REMOTE=$(git rev-parse origin/main)
             if [ $LOCAL != $REMOTE ]; then
-                echo "Updates found".
-                echo "Updates found". >> deploy-history.md
+                echo_log_deploy "Updates found"
                 echo "Confirm update? (y/n)"
                 read answer
                 if [ "$answer" != "${answer#[Yy]}" ] ;then
                     echo "Updating..."
                     git pull
                     # Files logging
-                    echo "Update complete. Last commit after update:" >> deploy-history.md
-                    echo "$(git log -1 >> deploy-history.md)" >> deploy-history.md
+                    echo_log_deploy "Update complete. Last commit after update:"
+                    echo_log_deploy "$(git log -1)"
                      # User feedback
                     echo "Update complete. Last commit after update:"
                     git log -1
 
                     echo "Stop, rebuilding and restarting services? (y/n)"
                     if [ "$answer" != "${answer#[Yy]}" ] ;then
-                        echo "Rebuilding and restarting services..."
-                        echo "Rebuilding and restarting services..."   >> deploy-history.md
+                        echo_log_deploy "Rebuilding and restarting services..."
                         $cmddown && $cmdup --build -d
                         # how to check if last command was successful ?
                         if [ $? -eq 0 ]; then
-                            echo "Services restarted successfully."
-                            echo "Services restarted successfully." >> deploy-history.md
+                            echo_log_deploy "Services restarted successfully."
                         else
-                            echo "Error restarting services!"
-                            echo "Error restarting services!" >> deploy-history.md
+                            echo_log_deploy "Error restarting services!"
                         fi
                     else
-                        echo "Skipping rebuild and restart of services."
-                        echo "Skipping rebuild and restart of services." >> deploy-history.md
+                        echo_log_deploy "Skipping rebuild and restart of services."
+                    fi
+                    echo_log_deploy "Update process completed."
+                    echo "Try to generate and run migrations if needed? (y/n)"
+                    if [ "$answer" != "${answer#[Yy]}" ] ;then
+                        echo "Generating migrations..."
+                        echo
+                        $cmd_backend npm run typeorm:generate-migration --name="auto-migration-$(date +%Y%m%d-%H%M%S)"
+                        echo_log_deploy "Migrations generated."
+                        echo "Running migrations..."
+                        $cmd_backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts
+                        echo_log_deploy "Migrations run."
                     fi
                 else
-                    echo "Update cancelled by user"
-                    echo "Update cancelled by user" >> deploy-history.md
+                    echo_log_deploy "Update cancelled by user"
                     exit 0
                 fi
 
             else
-                echo "No updates found. Exiting."
-                echo "No updates found." >> deploy-history.md
+                echo_log_deploy "No updates found. Exiting"
                 exit 0
             fi
+
             ;;
     *)
         echo "Unknown command: $action"
@@ -269,3 +282,4 @@ case $action in
         exit 1
         ;;
 esac
+
