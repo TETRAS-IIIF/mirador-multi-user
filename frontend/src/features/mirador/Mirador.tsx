@@ -1,4 +1,12 @@
-import { Dispatch, forwardRef, useEffect, useId, useImperativeHandle, useRef, useState, } from 'react';
+import {
+  Dispatch,
+  forwardRef,
+  useEffect,
+  useId,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import Mirador from 'mirador';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';

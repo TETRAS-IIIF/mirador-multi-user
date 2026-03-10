@@ -6,19 +6,16 @@ import { Project } from 'features/projects/types/types';
 import { User } from 'features/auth/export';
 import Mirador from 'mirador';
 
+/**
+ * This file gather all stuff related to Mirador configuration and plugins management, to avoid having this logic spread in the codebase and make it easier to maintain and update Mirador and its plugins versions in the future
+ */
+
 function getViewPlugins() {
   return [miradorImageToolsPlugin];
 }
 
 function getEditionPlugins() {
   return [...editorPlugins, ManifestListTools, miradorImageToolsPlugin];
-}
-
-export function getPlugins(mode: MiradorMode) {
-  if (mode === MiradorMode.EDITOR) {
-    return getEditionPlugins();
-  }
-  return getViewPlugins();
 }
 
 export enum MiradorMode {
@@ -31,8 +28,12 @@ export enum MiradorMode {
 /**
  * Get the default Mirador config to show a manifest from a project snapshot
  * @param refId the id of the div hosting the Mirador viewer
+ * @param language
  */
-export function getDefaultMiradorSnapshotConfig(refId: string) {
+export function getDefaultMiradorSnapshotConfig(
+  refId: string,
+  language: string = 'en',
+) {
   return {
     id: refId,
     annotation: {
@@ -41,6 +42,7 @@ export function getDefaultMiradorSnapshotConfig(refId: string) {
     annotations: {
       htmlSanitizationRuleSet: 'liberal',
     },
+    language: language,
   };
 }
 
@@ -49,10 +51,12 @@ export function getDefaultMiradorSnapshotConfig(refId: string) {
  * Design to be used with READER mode plugins
  * @param refId the id of the div hosting the Mirador viewer
  * @param manifestURL url of the manifest to display in the viewer
+ * @param language
  */
 export function getDefaultMiradorManifestConfig(
   refId: string,
   manifestURL: string,
+  language: string = 'en',
 ) {
   return {
     id: refId,
@@ -71,6 +75,7 @@ export function getDefaultMiradorManifestConfig(
     annotations: {
       htmlSanitizationRuleSet: 'liberal',
     },
+    language: language,
   };
 }
 
@@ -120,13 +125,18 @@ export function getMiradorViewer(
   switch (mode) {
     case MiradorMode.MANIFEST:
       return Mirador.viewer(
-        getDefaultMiradorManifestConfig(containerId, params!.manifestURL!),
+        getDefaultMiradorManifestConfig(
+          containerId,
+          params!.manifestURL!,
+          language,
+        ),
         [...getViewPlugins()],
       );
     case MiradorMode.SNAPSHOT:
-      return Mirador.viewer(getDefaultMiradorSnapshotConfig(containerId), [
-        ...getViewPlugins(),
-      ]);
+      return Mirador.viewer(
+        getDefaultMiradorSnapshotConfig(containerId, language),
+        [...getViewPlugins()],
+      );
     case MiradorMode.WORKSPACE_EDITOR:
       return Mirador.viewer(
         getDefaultMiradorWorkspaceConfig(

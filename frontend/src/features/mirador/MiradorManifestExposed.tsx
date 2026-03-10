@@ -22,8 +22,8 @@ export const MiradorManifestExposed = () => {
       if (!viewer) {
         loadingMiradorViewer = getMiradorViewer(
           MiradorMode.MANIFEST,
-          language,
           viewerRef.current.id,
+          language,
           {
             manifestURL,
           },
