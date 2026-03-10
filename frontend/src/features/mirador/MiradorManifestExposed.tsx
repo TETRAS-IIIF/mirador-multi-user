@@ -6,6 +6,11 @@ import '@fontsource/roboto/700.css';
 import './style/mirador.css';
 import { Grid } from '@mui/material';
 import Mirador from 'mirador';
+import {
+  getDefaultMiradorManifestConfig,
+  getPlugins,
+  MiradorMode,
+} from './MiradorUtils';
 
 export const MiradorManifestExposed = () => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
@@ -13,31 +18,14 @@ export const MiradorManifestExposed = () => {
 
   const loadMirador = (manifestURL: string) => {
     if (viewerRef.current) {
-      const config = {
-        id: viewerRef.current.id,
-        catalog: [
-          {
-            manifestId: manifestURL,
-          },
-        ],
-        windows: [
-          {
-            imageToolsEnabled: true,
-            imageToolsOpen: true,
-            manifestId: manifestURL,
-          },
-        ],
-        annotations: {
-          htmlSanitizationRuleSet: 'liberal',
-        },
-      };
       let loadingMiradorViewer;
 
       // First displaying of the viewer
       if (!viewer) {
-        loadingMiradorViewer = Mirador.viewer(config, [
-          miradorImageToolsPlugin,
-        ]);
+        loadingMiradorViewer = Mirador.viewer(
+          getDefaultMiradorManifestConfig(viewerRef.current.id, manifestURL),
+          [...getPlugins(MiradorMode.READER)],
+        );
       }
       setViewer(loadingMiradorViewer);
     }

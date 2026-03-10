@@ -6,7 +6,11 @@ import '@fontsource/roboto/700.css';
 import './style/mirador.css';
 import { Grid } from '@mui/material';
 import Mirador from 'mirador';
-import { miradorImageToolsPlugin } from 'mirador-image-tools';
+import {
+  getDefaultMiradorSnapshotConfig,
+  getPlugins,
+  MiradorMode,
+} from './MiradorUtils.ts';
 
 export const MiradorPublicExposed = () => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
@@ -25,32 +29,13 @@ export const MiradorPublicExposed = () => {
         const response = await fetch(updatedUrl, { method: 'GET' });
         const miradorWorkspace = await response.json();
         if (viewerRef.current) {
-          const config = {
-            id: viewerRef.current.id,
-            annotation: {
-              exportLocalStorageAnnotations: false, // display annotation JSON export button
-            },
-            annotations: {
-              htmlSanitizationRuleSet: 'liberal',
-            },
-            windows: [
-              {
-                imageToolsEnabled: true,
-                imageToolsOpen: true,
-                manifestId:
-                  'https://purl.stanford.edu/sn904cj3429/iiif/manifest',
-              },
-            ],
-          };
-
-          console.log(miradorImageToolsPlugin);
-
           let loadingMiradorViewer;
           // First displaying of the viewer
           if (!viewer) {
-            loadingMiradorViewer = Mirador.viewer(config, [
-              miradorImageToolsPlugin,
-            ]);
+            loadingMiradorViewer = Mirador.viewer(
+              getDefaultMiradorSnapshotConfig(viewerRef.current.id),
+              [...getPlugins(MiradorMode.READER)],
+            );
           }
 
           if (loadingMiradorViewer && miradorWorkspace) {

@@ -18,8 +18,13 @@ import type IState from './interface/IState';
 import type { Project } from '../projects/types/types';
 import type { User } from '../auth/types/types';
 import MMUAdapter from './adapter/MMUAdapter';
-import ManifestListTools from 'mirador-mltools-plugin-mmu';
-import editorPlugins from 'mirador-annotation-editor';
+import {
+  getDefaultMiradorWorkspaceConfig,
+  getEditionPlugins,
+  getPlugins,
+  getViewPlugins,
+  MiradorMode,
+} from './MiradorUtils.ts';
 
 export type MiradorViewerHandle = {
   setViewer: () => IState;
@@ -83,25 +88,16 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
       hostRef.current.id = containerId.current;
       HandleSetIsRunning();
 
-      const baseConfig = {
-        id: containerId.current,
-        tags: project.tags,
-        annotation: {
-          adapter: (canvasId: string) =>
-            new MMUAdapter(project.id, `${canvasId}/annotationPage`, user.name),
-          exportLocalStorageAnnotations: false,
-          commentTemplates: project.noteTemplate ?? [],
-          tagsSuggestions: project.tags ?? [],
-        },
-        annotations: { htmlSanitizationRuleSet: 'liberal' },
-        workspace: { isWorkspaceAddVisible: true, removeResourceButton: true },
+      const baseConfig = getDefaultMiradorWorkspaceConfig(
+        containerId.current,
+        project,
         language,
-        projectId: project.id,
-      };
+        user.name,
+      );
 
-      const plugins = useEditionPlugins
-        ? [...ManifestListTools, editorPlugins]
-        : undefined;
+      const plugins = getPlugins(
+        useEditionPlugins ? MiradorMode.EDITOR : MiradorMode.READER,
+      );
       const viewer = plugins
         ? Mirador.viewer(baseConfig, plugins)
         : Mirador.viewer(baseConfig);
