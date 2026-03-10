@@ -22,6 +22,8 @@ export const MiradorManifestExposed = () => {
         ],
         windows: [
           {
+            imageToolsEnabled: true,
+            imageToolsOpen: true,
             manifestId: manifestURL,
           },
         ],
@@ -33,7 +35,9 @@ export const MiradorManifestExposed = () => {
 
       // First displaying of the viewer
       if (!viewer) {
-        loadingMiradorViewer = Mirador.viewer(config, []);
+        loadingMiradorViewer = Mirador.viewer(config, [
+          miradorImageToolsPlugin,
+        ]);
       }
       setViewer(loadingMiradorViewer);
     }

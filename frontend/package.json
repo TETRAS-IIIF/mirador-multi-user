@@ -39,6 +39,7 @@
     "mirador": "npm:mirador-video@1.2.12",
     "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.2.15",
     "mirador-mltools-plugin-mmu": "1.0.4",
+    "mirador-image-tools": "1.0.0",
     "monaco-editor": "^0.55.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
