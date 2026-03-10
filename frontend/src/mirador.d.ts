@@ -19,12 +19,10 @@ declare module 'mirador-mltools-plugin-mmu/*' {
   export default _default;
 }
 
-/*
-declare module 'mirador-image-tools/!*' {
+declare module 'mirador-image-tools/*' {
   const _default: any;
   export default _default;
 }
-*/
 
 declare module 'mirador/dist/*' {
   const _default: any;

@@ -1,3 +1,4 @@
+// @ts-expect-error \- package has no bundled TypeScript declarations
 import { miradorImageToolsPlugin } from 'mirador-image-tools';
 import ManifestListTools from 'mirador-mltools-plugin-mmu';
 import editorPlugins from 'mirador-annotation-editor';

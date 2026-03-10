@@ -15,7 +15,6 @@ export const MiradorManifestExposed = () => {
     if (viewerRef.current) {
       let loadingMiradorViewer;
 
-      // TODO temporary solution to set the language of the viewer, it should be improved
       const language = navigator.language.split('-')[0];
 
       // First displaying of the viewer
