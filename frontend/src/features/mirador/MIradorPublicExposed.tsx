@@ -6,11 +6,7 @@ import '@fontsource/roboto/700.css';
 import './style/mirador.css';
 import { Grid } from '@mui/material';
 import Mirador from 'mirador';
-import {
-  getDefaultMiradorSnapshotConfig,
-  getPlugins,
-  MiradorMode,
-} from './MiradorUtils.ts';
+import { getMiradorViewer, MiradorMode } from './MiradorUtils.ts';
 
 export const MiradorPublicExposed = () => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
@@ -32,9 +28,11 @@ export const MiradorPublicExposed = () => {
           let loadingMiradorViewer;
           // First displaying of the viewer
           if (!viewer) {
-            loadingMiradorViewer = Mirador.viewer(
-              getDefaultMiradorSnapshotConfig(viewerRef.current.id),
-              [...getPlugins(MiradorMode.READER)],
+            loadingMiradorViewer = getMiradorViewer(
+              MiradorMode.SNAPSHOT,
+              viewerRef.current.id,
+              navigator.language.split('-')[0],
+              undefined,
             );
           }
 

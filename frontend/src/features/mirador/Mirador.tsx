@@ -19,9 +19,8 @@ import type { Project } from '../projects/types/types';
 import type { User } from '../auth/types/types';
 import MMUAdapter from './adapter/MMUAdapter';
 import {
-  getDefaultMiradorWorkspaceConfig,
   getEditionPlugins,
-  getPlugins,
+  getMiradorViewer,
   getViewPlugins,
   MiradorMode,
 } from './MiradorUtils.ts';
@@ -88,23 +87,21 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
       hostRef.current.id = containerId.current;
       HandleSetIsRunning();
 
-      const baseConfig = getDefaultMiradorWorkspaceConfig(
+      // init viewer config
+      const viewer = getMiradorViewer(
+        useEditionPlugins
+          ? MiradorMode.WORKSPACE_EDITOR
+          : MiradorMode.WORKSPACE_READER,
         containerId.current,
-        project,
         language,
-        user.name,
+        { project, user },
       );
-
-      const plugins = getPlugins(
-        useEditionPlugins ? MiradorMode.EDITOR : MiradorMode.READER,
-      );
-      const viewer = plugins
-        ? Mirador.viewer(baseConfig, plugins)
-        : Mirador.viewer(baseConfig);
 
       if (!miradorState) {
         saveMiradorState(viewer.store.getState(), project.title);
       } else if (project.id) {
+        // we overide existing config with latest database values for annotation adapter, comment template and tags suggestions
+        // TODO Why we dont use useEditionPlugins ?
         const cfgWithAdapter = {
           ...miradorState.config,
           annotation: {

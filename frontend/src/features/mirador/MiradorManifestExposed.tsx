@@ -5,12 +5,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import './style/mirador.css';
 import { Grid } from '@mui/material';
-import Mirador from 'mirador';
-import {
-  getDefaultMiradorManifestConfig,
-  getPlugins,
-  MiradorMode,
-} from './MiradorUtils';
+import { getMiradorViewer, MiradorMode } from './MiradorUtils';
 
 export const MiradorManifestExposed = () => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
@@ -20,11 +15,18 @@ export const MiradorManifestExposed = () => {
     if (viewerRef.current) {
       let loadingMiradorViewer;
 
+      // TODO temporary solution to set the language of the viewer, it should be improved
+      const language = navigator.language.split('-')[0];
+
       // First displaying of the viewer
       if (!viewer) {
-        loadingMiradorViewer = Mirador.viewer(
-          getDefaultMiradorManifestConfig(viewerRef.current.id, manifestURL),
-          [...getPlugins(MiradorMode.READER)],
+        loadingMiradorViewer = getMiradorViewer(
+          MiradorMode.MANIFEST,
+          language,
+          viewerRef.current.id,
+          {
+            manifestURL,
+          },
         );
       }
       setViewer(loadingMiradorViewer);

@@ -3,6 +3,8 @@ import ManifestListTools from 'mirador-mltools-plugin-mmu';
 import editorPlugins from 'mirador-annotation-editor';
 import MMUAdapter from './adapter/MMUAdapter';
 import { Project } from 'features/projects/types/types';
+import { User } from 'features/auth/export';
+import Mirador from 'mirador';
 
 function getViewPlugins() {
   return [miradorImageToolsPlugin];
@@ -76,8 +78,8 @@ export function getDefaultMiradorManifestConfig(
 
 export function getDefaultMiradorWorkspaceConfig(
   refId: string,
-  project: Project,
   language: string,
+  project: Project,
   userName: string,
 ) {
   return {
@@ -95,4 +97,51 @@ export function getDefaultMiradorWorkspaceConfig(
     language,
     projectId: project.id,
   };
+}
+
+export type MiradorViewerAdditionalProps = {
+  project?: Project;
+  user?: User;
+  manifestURL?: string;
+};
+
+export function getMiradorViewer(
+  mode: MiradorMode,
+  containerId: string,
+  language: string,
+  params: MiradorViewerAdditionalProps | undefined,
+): any {
+  switch (mode) {
+    case MiradorMode.MANIFEST:
+      return Mirador.viewer(
+        getDefaultMiradorManifestConfig(containerId, params!.manifestURL!),
+        [...getViewPlugins()],
+      );
+    case MiradorMode.SNAPSHOT:
+      return Mirador.viewer(getDefaultMiradorSnapshotConfig(containerId), [
+        ...getViewPlugins(),
+      ]);
+    case MiradorMode.WORKSPACE_EDITOR:
+      return Mirador.viewer(
+        getDefaultMiradorWorkspaceConfig(
+          containerId,
+          language,
+          params!.project!,
+          params!.user!.name,
+        ),
+        getEditionPlugins(),
+      );
+    case MiradorMode.WORKSPACE_READER:
+      return Mirador.viewer(
+        getDefaultMiradorWorkspaceConfig(
+          containerId,
+          language,
+          params!.project!,
+          params!.user!.name,
+        ),
+        getViewPlugins(),
+      );
+    default:
+      throw new Error(`Unknown Mirador mode: ${mode}`);
+  }
 }
