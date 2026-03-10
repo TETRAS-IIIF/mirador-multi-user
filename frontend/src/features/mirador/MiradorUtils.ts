@@ -75,7 +75,6 @@ export function getDefaultMiradorManifestConfig(
 }
 
 // TODO not perfect to use username and not userid
-
 export function getDefaultMiradorWorkspaceConfig(
   refId: string,
   language: string,
@@ -105,6 +104,13 @@ export type MiradorViewerAdditionalProps = {
   manifestURL?: string;
 };
 
+/**
+ * Get a Mirador viewer instance with the right config and plugins according to the mode
+ * @param mode
+ * @param containerId
+ * @param language
+ * @param params
+ */
 export function getMiradorViewer(
   mode: MiradorMode,
   containerId: string,

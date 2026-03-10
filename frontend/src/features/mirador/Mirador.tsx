@@ -1,12 +1,4 @@
-import {
-  Dispatch,
-  forwardRef,
-  useEffect,
-  useId,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import { Dispatch, forwardRef, useEffect, useId, useImperativeHandle, useRef, useState, } from 'react';
 import Mirador from 'mirador';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -18,12 +10,7 @@ import type IState from './interface/IState';
 import type { Project } from '../projects/types/types';
 import type { User } from '../auth/types/types';
 import MMUAdapter from './adapter/MMUAdapter';
-import {
-  getEditionPlugins,
-  getMiradorViewer,
-  getViewPlugins,
-  MiradorMode,
-} from './MiradorUtils.ts';
+import { getMiradorViewer, MiradorMode } from './MiradorUtils.ts';
 
 export type MiradorViewerHandle = {
   setViewer: () => IState;
