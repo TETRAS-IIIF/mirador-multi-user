@@ -11,6 +11,7 @@ import { UserGroupModule } from '../BaseEntities/user-group/user-group.module';
 import { UserManagementController } from './user-management.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LinkUserGroup } from '../LinkModules/link-user-group/entities/link-user-group.entity';
+import { EmailServerService } from '../utils/email/email.service';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { LinkUserGroup } from '../LinkModules/link-user-group/entities/link-user
     LinkMediaGroupModule,
     UserGroupModule,
   ],
-  providers: [UserManagementService],
+  providers: [UserManagementService, EmailServerService],
   exports: [UserManagementService],
   controllers: [UserManagementController],
 })

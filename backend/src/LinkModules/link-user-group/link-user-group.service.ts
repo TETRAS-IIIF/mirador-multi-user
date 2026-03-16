@@ -27,6 +27,8 @@ import { LinkMetadataFormatGroupService } from '../link-metadata-format-group/li
 import { dublinCoreSample } from '../../utils/metadataSample/dublinCoreSample';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { Language } from '../../utils/email/utils';
+import { SettingsService } from '../../BaseEntities/setting/setting.service';
+import { SettingKeys } from '../../BaseEntities/setting/utils.setting';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -39,6 +41,7 @@ export class LinkUserGroupService {
     private readonly userService: UsersService,
     private readonly emailService: EmailServerService,
     private readonly metadataFormatGroupService: LinkMetadataFormatGroupService,
+    private readonly settingService: SettingsService,
   ) {}
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
@@ -144,6 +147,25 @@ export class LinkUserGroupService {
         );
       }
 
+      const BUSINESS_ALERT_ACTIVATED = await this.settingService.get(
+        SettingKeys.BUSINESS_ALERT_ACTIVATED,
+      );
+
+      if (BUSINESS_ALERT_ACTIVATED == 'true') {
+        await this.emailService.sendMail({
+          subject: 'New user created',
+          to: process.env.ADMIN_MAIL,
+          text: `A new user has been created: ${savedUser.name} (${savedUser.mail})`,
+          body: `
+      <p>A new user has been created.</p>
+      <ul>
+        <li><strong>Name:</strong> ${savedUser.name}</li>
+        <li><strong>Email:</strong> ${savedUser.mail}</li>
+        <li><strong>User ID:</strong> ${savedUser.id}</li>
+      </ul>
+    `,
+        });
+      }
       return savedUser;
     } catch (error) {
       this.logger.error(error.message, error.stack);
