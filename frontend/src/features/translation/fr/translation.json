@@ -63,6 +63,8 @@
   "api_url": "URL de l'API",
   "areYouSureDuplicate": "Êtes-vous sûr de vouloir dupliquer",
   "backend_log_lvl": "Niveau de log du backend",
+  "BUSINESS_ALERT_ACTIVATED": "Email pour les alertes métier",
+  "business_alert_activated": "Email pour les alertes métier",
   "caddy_url": "Caddy URL",
   "cancel": "ANNULER",
   "canvasRemoving": "Supprimer le canevas {{index}}",
