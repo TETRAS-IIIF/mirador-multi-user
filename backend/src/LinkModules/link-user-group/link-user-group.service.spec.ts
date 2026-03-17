@@ -91,7 +91,7 @@ describe('LinkUserGroupService', () => {
         },
         {
           provide: SettingsService,
-          useValue: settingsServiceMock, // ✅ FIX
+          useValue: settingsServiceMock,
         },
       ],
     }).compile();
