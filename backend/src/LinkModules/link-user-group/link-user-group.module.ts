@@ -8,6 +8,7 @@ import { UsersModule } from '../../BaseEntities/users/users.module';
 import { EmailServerController } from '../../utils/email/email.controller';
 import { EmailServerService } from '../../utils/email/email.service';
 import { LinkMetadataFormatGroupModule } from '../link-metadata-format-group/link-metadata-format-group.module';
+import { SettingsModule } from '../../BaseEntities/setting/setting.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { LinkMetadataFormatGroupModule } from '../link-metadata-format-group/lin
     UserGroupModule,
     UsersModule,
     LinkMetadataFormatGroupModule,
+    SettingsModule,
   ],
   providers: [LinkUserGroupService, EmailServerService],
   controllers: [LinkUserGroupController, EmailServerController],

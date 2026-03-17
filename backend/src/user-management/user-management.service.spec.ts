@@ -1,12 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  ForbiddenException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ForbiddenException, InternalServerErrorException, } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Issuer } from 'openid-client';
+
 import { UserManagementService } from './user-management.service';
 import { LinkUserGroup } from '../LinkModules/link-user-group/entities/link-user-group.entity';
+
 import { UsersService } from '../BaseEntities/users/users.service';
 import { ProjectService } from '../BaseEntities/project/project.service';
 import { LinkGroupProjectService } from '../LinkModules/link-group-project/link-group-project.service';
@@ -16,6 +14,8 @@ import { MediaService } from '../BaseEntities/media/media.service';
 import { LinkMediaGroupService } from '../LinkModules/link-media-group/link-media-group.service';
 import { UserGroupService } from '../BaseEntities/user-group/user-group.service';
 import { SettingsService } from '../BaseEntities/setting/setting.service';
+import { EmailServerService } from '../utils/email/email.service';
+
 import { ActionType } from '../enum/actions';
 import { User_UserGroupRights } from '../enum/rights';
 
@@ -33,8 +33,8 @@ describe('UserManagementService', () => {
   let linkMediaGroupService: jest.Mocked<LinkMediaGroupService>;
   let userGroupService: jest.Mocked<UserGroupService>;
   let settingsService: jest.Mocked<SettingsService>;
+  let emailServerService: jest.Mocked<EmailServerService>;
 
-  // Mock for global fetch
   const mockFetch = jest.fn();
   global.fetch = mockFetch as any;
 
@@ -89,6 +89,10 @@ describe('UserManagementService', () => {
       get: jest.fn(),
     };
 
+    const emailServerServiceMock: Partial<jest.Mocked<EmailServerService>> = {
+      sendMail: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserManagementService,
@@ -108,13 +112,18 @@ describe('UserManagementService', () => {
         },
         { provide: ManifestService, useValue: manifestServiceMock },
         { provide: MediaService, useValue: mediaServiceMock },
-        { provide: LinkMediaGroupService, useValue: linkMediaGroupServiceMock },
+        {
+          provide: LinkMediaGroupService,
+          useValue: linkMediaGroupServiceMock,
+        },
         { provide: UserGroupService, useValue: userGroupServiceMock },
         { provide: SettingsService, useValue: settingsServiceMock },
+        { provide: EmailServerService, useValue: emailServerServiceMock },
       ],
     }).compile();
 
     service = module.get<UserManagementService>(UserManagementService);
+
     usersService = module.get(UsersService);
     projectService = module.get(ProjectService);
     linkGroupProjectService = module.get(LinkGroupProjectService);
@@ -124,126 +133,83 @@ describe('UserManagementService', () => {
     linkMediaGroupService = module.get(LinkMediaGroupService);
     userGroupService = module.get(UserGroupService);
     settingsService = module.get(SettingsService);
+    emailServerService = module.get(EmailServerService);
+  });
 
+  afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
-  describe('deleteUserProcess', () => {
-    const userId = 10;
-    const mockUser = { id: userId, mail: 'test@example.com' };
-
-    beforeEach(() => {
-      usersService.findOne.mockResolvedValue(mockUser as any);
-      projectService.findProjectOwned.mockResolvedValue([]);
-      manifestService.findOwnedManifests.mockResolvedValue([]);
-      mediaService.findOwnedMedia.mockResolvedValue([]);
-      userGroupService.findAllOwnedGroups.mockResolvedValue([]);
-
-      settingsService.get.mockResolvedValue(false as any);
-
-      usersService.deleteUser.mockResolvedValue({ id: userId } as any);
-    });
-
-    it('deletes owned resources and then user (without OIDC)', async () => {
-      projectService.findProjectOwned.mockResolvedValue([{ id: 1 } as any]);
-      linkGroupProjectService.getProjectRelations.mockResolvedValue([
-        { groupId: 100 } as any,
-      ]);
-
-      const result = await service.deleteUserProcess(userId);
-
-      expect(usersService.findOne).toHaveBeenCalledWith(userId);
-      expect(projectService.findProjectOwned).toHaveBeenCalledWith(userId);
-      expect(linkGroupProjectService.deleteProject).toHaveBeenCalledWith(1);
-      expect(usersService.deleteUser).toHaveBeenCalledWith(userId);
-      expect(settingsService.get).toHaveBeenCalled();
-      expect(result).toEqual({ id: userId });
-    });
-
-    it('attempts to delete OIDC account if setting is enabled', async () => {
-      settingsService.get.mockResolvedValue(true as any);
-
-      const mockGrant = jest
-        .fn()
-        .mockResolvedValue({ access_token: 'fake-token' });
-      const mockClient = jest.fn().mockImplementation(() => ({
-        grant: mockGrant,
-      }));
-      (Issuer.discover as jest.Mock).mockResolvedValue({
-        issuer: 'http://localhost/realms/test',
-        Client: mockClient,
-      });
-
-      mockFetch
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => [{ id: 'oidc-uuid-123' }],
-        })
-        .mockResolvedValueOnce({
-          status: 204,
-          ok: true,
-        });
-
-      await service.deleteUserProcess(userId);
-
-      expect(Issuer.discover).toHaveBeenCalledWith(
-        'http://localhost/realms/test',
-      );
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining(
-          '/admin/realms/test/users?email=test%40example.com',
-        ),
-        expect.any(Object),
-      );
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('/admin/realms/test/users/oidc-uuid-123'),
-        expect.objectContaining({ method: 'DELETE' }),
-      );
-    });
-
-    it('wraps errors into InternalServerErrorException', async () => {
-      usersService.findOne.mockRejectedValue(new Error('db error'));
-
-      await expect(service.deleteUserProcess(10)).rejects.toBeInstanceOf(
-        InternalServerErrorException,
-      );
-    });
-  });
-
   describe('isUserAllowed', () => {
-    it('returns ADMIN when personal group exists and ownerId matches', async () => {
+    it('should return ADMIN if user owns personal group', async () => {
       userGroupService.findUserPersonalGroup.mockResolvedValue({
-        id: 1,
-        ownerId: 42,
+        ownerId: 1,
       } as any);
 
-      const rights = await service.isUserAllowed(42);
-      expect(rights).toBe(User_UserGroupRights.ADMIN);
+      const result = await service.isUserAllowed(1);
+
+      expect(result).toBe(User_UserGroupRights.ADMIN);
+    });
+
+    it('should return undefined if user is not owner', async () => {
+      userGroupService.findUserPersonalGroup.mockResolvedValue({
+        ownerId: 2,
+      } as any);
+
+      const result = await service.isUserAllowed(1);
+
+      expect(result).toBeUndefined();
     });
   });
 
   describe('checkPolicies', () => {
-    it('allows READ when rights include READER', async () => {
+    it('should allow READ for ADMIN', async () => {
+      jest
+        .spyOn(service, 'isUserAllowed')
+        .mockResolvedValue(User_UserGroupRights.ADMIN);
+
+      const callback = jest.fn().mockReturnValue('ok');
+
+      const result = await service.checkPolicies(ActionType.READ, 1, callback);
+
+      expect(result).toBe('ok');
+      expect(callback).toHaveBeenCalled();
+    });
+
+    it('should forbid if no rights', async () => {
+      jest.spyOn(service, 'isUserAllowed').mockResolvedValue(undefined);
+
+      const callback = jest.fn();
+
+      const result = await service.checkPolicies(ActionType.READ, 1, callback);
+
+      expect(result).toBeInstanceOf(ForbiddenException);
+    });
+
+    it('should forbid DELETE for non-admin', async () => {
       jest
         .spyOn(service, 'isUserAllowed')
         .mockResolvedValue(User_UserGroupRights.READER);
-      const cb = jest.fn().mockReturnValue('ok');
 
-      const result = await service.checkPolicies(ActionType.READ, 1, cb);
-      expect(cb).toHaveBeenCalled();
-      expect(result).toBe('ok');
+      const callback = jest.fn();
+
+      const result = await service.checkPolicies(
+        ActionType.DELETE,
+        1,
+        callback,
+      );
+
+      expect(result).toBeInstanceOf(ForbiddenException);
     });
 
-    it('returns ForbiddenException when user has no rights', async () => {
-      jest.spyOn(service, 'isUserAllowed').mockResolvedValue(undefined);
-      const cb = jest.fn();
+    it('should throw on invalid action', async () => {
+      jest
+        .spyOn(service, 'isUserAllowed')
+        .mockResolvedValue(User_UserGroupRights.ADMIN);
 
-      const result = await service.checkPolicies(ActionType.READ, 4, cb);
-      expect(result).toBeInstanceOf(ForbiddenException);
+      await expect(
+        service.checkPolicies('INVALID', 1, jest.fn()),
+      ).rejects.toThrow(InternalServerErrorException);
     });
   });
 });

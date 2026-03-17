@@ -20,6 +20,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Issuer } from 'openid-client';
 import { SettingsService } from '../BaseEntities/setting/setting.service';
 import { SettingKeys } from '../BaseEntities/setting/utils.setting';
+import { EmailServerService } from '../utils/email/email.service';
 
 @Injectable()
 export class UserManagementService {
@@ -37,6 +38,7 @@ export class UserManagementService {
     private readonly linkMediaGroupService: LinkMediaGroupService,
     private readonly groupService: UserGroupService,
     private readonly settingService: SettingsService,
+    private readonly emailService: EmailServerService,
   ) {}
 
   async deleteUserProcess(userId: number) {
@@ -71,7 +73,27 @@ export class UserManagementService {
       if (shouldDeleteOIDC) {
         await this.deleteOidcAccount(user.mail);
       }
-      return await this.userService.deleteUser(userId);
+      const deletedUser = await this.userService.deleteUser(userId);
+      const BUSINESS_ALERT_ACTIVATED = await this.settingService.get(
+        SettingKeys.BUSINESS_ALERT_ACTIVATED,
+      );
+      if (BUSINESS_ALERT_ACTIVATED == 'true') {
+        await this.emailService.sendMail({
+          subject: 'Deleted User',
+          to: process.env.ADMIN_MAIL,
+          text: `A user has been deleted: ${user.name} (${user.mail})`,
+          body: `
+      <p>A new user has been created.</p>
+      <ul>
+     
+        <li><strong>Name:</strong> ${user.name}</li>
+        <li><strong>Email:</strong> ${user.mail}</li>
+        <li><strong>User ID:</strong> ${user.id}</li>
+      </ul>
+    `,
+        });
+      }
+      return deletedUser;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);

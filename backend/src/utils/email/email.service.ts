@@ -142,7 +142,11 @@ If you're seeing this, then your mail service is working properly ✅
 
       const subject = `🚨 Internal Server Error: ${details.url}`;
 
-      const formattedBody = JSON.stringify(details.body || 'No body content', null, 2)
+      const formattedBody = JSON.stringify(
+        details.body || 'No body content',
+        null,
+        2,
+      )
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;');
 
@@ -183,21 +187,21 @@ If you're seeing this, then your mail service is working properly ✅
         'Failed to send internal server error notification:',
         error,
       );
-      console.error("Retry to send error mail ...");
+      console.error('Retry to send error mail ...');
 
       // Try to send the simplest error mail
       try {
         await this.sendMail({
           to: process.env.ADMIN_MAIL,
-          subject: "Error occurred on " + process.env.INSTANCE_NAME,
-          body: "An error occurred while sending classic error mail, check the logs for more details",
-          text: "An error occurred while sending classic error mail, check the logs for more details",
+          subject: 'Error occurred on ' + process.env.INSTANCE_NAME,
+          body: 'An error occurred while sending classic error mail, check the logs for more details',
+          text: 'An error occurred while sending classic error mail, check the logs for more details',
         });
       } catch (error) {
         console.error('Failed to send second error email', error);
       }
 
-      console.error("Error mail sent, check the logs for more details");
+      console.error('Error mail sent, check the logs for more details');
     }
   }
 

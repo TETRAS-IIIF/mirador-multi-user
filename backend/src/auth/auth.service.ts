@@ -86,7 +86,24 @@ export class AuthService {
         isEmailConfirmed: user.isEmailConfirmed,
         termsValidatedAt: user.termsValidatedAt,
       };
-
+      const BUSINESS_ALERT_ACTIVATED = await this.settingsService.get(
+        SettingKeys.BUSINESS_ALERT_ACTIVATED,
+      );
+      if (BUSINESS_ALERT_ACTIVATED == 'true') {
+        await this.emailService.sendMail({
+          subject: 'New user logged',
+          to: process.env.ADMIN_MAIL,
+          text: `A new user has logged in : ${user.name} (${user.mail})`,
+          body: `
+      <p>A new user has been created.</p>
+      <ul>
+        <li><strong>Name:</strong> ${user.name}</li>
+        <li><strong>Email:</strong> ${user.mail}</li>
+        <li><strong>User ID:</strong> ${user.id}</li>
+      </ul>
+    `,
+        });
+      }
       return {
         access_token: await this.jwtService.signAsync(payload),
       };
@@ -239,8 +256,9 @@ export class AuthService {
 
       const tokenSet: TokenSet = await client.callback(redirectUri, params);
       const userinfo = await client.userinfo(tokenSet.access_token);
-     
+
       let user = await this.usersService.findOneByMail(userinfo.email);
+
       if (!user) {
         user = await this.linkUserGroupService.createUser({
           mail: userinfo.email,
@@ -253,6 +271,25 @@ export class AuthService {
           Projects: null,
           isEmailConfirmed: true,
           oidcCreation: true,
+        });
+      }
+      const BUSINESS_ALERT_ACTIVATED = await this.settingsService.get(
+        SettingKeys.BUSINESS_ALERT_ACTIVATED,
+      );
+
+      if (BUSINESS_ALERT_ACTIVATED == 'true') {
+        await this.emailService.sendMail({
+          subject: 'New user logged in OIDC',
+          to: process.env.ADMIN_MAIL,
+          text: `A new user has logged in with oidc provider: ${user.name} (${user.mail})`,
+          body: `
+      <p>A new user has been created.</p>
+      <ul>
+        <li><strong>Name:</strong> ${user.name}</li>
+        <li><strong>Email:</strong> ${user.mail}</li>
+        <li><strong>User ID:</strong> ${user.id}</li>
+      </ul>
+    `,
         });
       }
 
