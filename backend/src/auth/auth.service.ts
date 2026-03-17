@@ -309,7 +309,7 @@ export class AuthService {
         url: '',
         user: { email: '', id: 0, name: '' },
         message: `an error occured while creating or login user with openIdConnect protocol with OIDC_CLIENT_ID : ${process.env.OIDC_CLIENT_ID}, redirectUri : ${redirectUri}
-, code : ${code}`,
+, error : ${error}`,
       });
     }
   }
