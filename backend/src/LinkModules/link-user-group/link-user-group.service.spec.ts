@@ -8,20 +8,17 @@ import { UserGroupService } from '../../BaseEntities/user-group/user-group.servi
 import { UsersService } from '../../BaseEntities/users/users.service';
 import { EmailServerService } from '../../utils/email/email.service';
 import { LinkMetadataFormatGroupService } from '../link-metadata-format-group/link-metadata-format-group.service';
+import { SettingsService } from '../../BaseEntities/setting/setting.service';
 
 describe('LinkUserGroupService', () => {
   let service: LinkUserGroupService;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let repo: jest.Mocked<Repository<LinkUserGroup>>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let userGroupService: jest.Mocked<UserGroupService>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let usersService: jest.Mocked<UsersService>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let emailService: jest.Mocked<EmailServerService>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let linkMetadataFormatGroupService: jest.Mocked<LinkMetadataFormatGroupService>;
+  let settingsService: jest.Mocked<SettingsService>;
 
   beforeEach(async () => {
     const repoMock: Partial<jest.Mocked<Repository<LinkUserGroup>>> = {
@@ -55,6 +52,7 @@ describe('LinkUserGroupService', () => {
       sendConfirmationEmail: jest.fn(),
       sendResetPasswordLink: jest.fn() as any,
       sendInternalServerErrorNotification: jest.fn() as any,
+      sendMail: jest.fn(),
     };
 
     const linkMetadataFormatGroupServiceMock: Partial<
@@ -62,6 +60,10 @@ describe('LinkUserGroupService', () => {
     > = {
       createMetadataFormat: jest.fn(),
       getMetadataFormatForUser: jest.fn(),
+    };
+
+    const settingsServiceMock: Partial<jest.Mocked<SettingsService>> = {
+      get: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -87,6 +89,10 @@ describe('LinkUserGroupService', () => {
           provide: LinkMetadataFormatGroupService,
           useValue: linkMetadataFormatGroupServiceMock,
         },
+        {
+          provide: SettingsService,
+          useValue: settingsServiceMock, // ✅ FIX
+        },
       ],
     }).compile();
 
@@ -96,6 +102,11 @@ describe('LinkUserGroupService', () => {
     usersService = module.get(UsersService);
     emailService = module.get(EmailServerService);
     linkMetadataFormatGroupService = module.get(LinkMetadataFormatGroupService);
+    settingsService = module.get(SettingsService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {

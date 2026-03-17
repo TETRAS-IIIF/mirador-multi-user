@@ -104,7 +104,6 @@ export class UserManagementService {
   private async deleteOidcAccount(userEmail: string) {
     try {
       this.logger.warn(`Attempting to delete OIDC account for: ${userEmail}`);
-      console.log(process.env.OIDC_ISSUER);
       const issuerUrl = process.env.OIDC_ISSUER;
       if (!issuerUrl) {
         throw new Error('OIDC_ISSUER is not defined');
