@@ -21,7 +21,6 @@ import { Issuer } from 'openid-client';
 import { SettingsService } from '../BaseEntities/setting/setting.service';
 import { SettingKeys } from '../BaseEntities/setting/utils.setting';
 import { EmailServerService } from '../utils/email/email.service';
-import process from 'process';
 
 @Injectable()
 export class UserManagementService {
