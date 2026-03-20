@@ -74,10 +74,12 @@ export class UserManagementService {
         SettingKeys.BUSINESS_ALERT_ACTIVATED,
       );
       if (BUSINESS_ALERT_ACTIVATED == 'true') {
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleString();
         await this.emailService.sendMail({
-          subject: `Deleted User at ${Date.now}`,
+          subject: `Deleted User at ${formattedDate}`,
           to: process.env.ADMIN_MAIL,
-          text: `A user has been deleted: ${user.name} (${user.mail}) at ${Date.now}`,
+          text: `A user has been deleted: ${user.name} (${user.mail}) at ${formattedDate}`,
           body: `
       <p>A new user has been created.</p>
       <ul>
@@ -85,7 +87,7 @@ export class UserManagementService {
         <li><strong>Name:</strong> ${user.name}</li>
         <li><strong>Email:</strong> ${user.mail}</li>
         <li><strong>User ID:</strong> ${user.id}</li>
-        <li><strong>Date:</strong> ${Date.now}</li>
+        <li><strong>Date:</strong> ${formattedDate}</li>
         
       </ul>
     `,
