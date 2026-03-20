@@ -153,15 +153,16 @@ export class LinkUserGroupService {
 
       if (BUSINESS_ALERT_ACTIVATED == 'true') {
         await this.emailService.sendMail({
-          subject: 'New user created',
+          subject: `New user created at ${Date.now}`,
           to: process.env.ADMIN_MAIL,
-          text: `A new user has been created: ${savedUser.name} (${savedUser.mail})`,
+          text: `A new user has been created: ${savedUser.name} (${savedUser.mail}), at ${Date.now}`,
           body: `
       <p>A new user has been created.</p>
       <ul>
         <li><strong>Name:</strong> ${savedUser.name}</li>
         <li><strong>Email:</strong> ${savedUser.mail}</li>
         <li><strong>User ID:</strong> ${savedUser.id}</li>
+        <li><strong>Date:</strong> ${Date.now}</li>
       </ul>
     `,
         });

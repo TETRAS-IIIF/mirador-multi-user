@@ -91,9 +91,9 @@ export class AuthService {
       );
       if (BUSINESS_ALERT_ACTIVATED == 'true') {
         await this.emailService.sendMail({
-          subject: 'New user logged',
+          subject: `New user logged at ${Date.now}`,
           to: process.env.ADMIN_MAIL,
-          text: `A new user has logged in : ${user.name} (${user.mail})`,
+          text: `A new user has logged in : ${user.name} (${user.mail}) at ${Date.now}`,
           body: `
       <p>A new user has been created.</p>
       <ul>
@@ -279,15 +279,17 @@ export class AuthService {
 
       if (BUSINESS_ALERT_ACTIVATED == 'true') {
         await this.emailService.sendMail({
-          subject: 'New user logged in OIDC',
+          subject: `New user logged in OIDC at ${Date.now}`,
           to: process.env.ADMIN_MAIL,
-          text: `A new user has logged in with oidc provider: ${user.name} (${user.mail})`,
+          text: `A new user has logged in with oidc provider: ${user.name} (${user.mail}) at ${Date.now}`,
           body: `
       <p>A new user has been created.</p>
       <ul>
         <li><strong>Name:</strong> ${user.name}</li>
         <li><strong>Email:</strong> ${user.mail}</li>
         <li><strong>User ID:</strong> ${user.id}</li>
+        <li><strong>Date:</strong> ${Date.now}</li>
+        
       </ul>
     `,
         });

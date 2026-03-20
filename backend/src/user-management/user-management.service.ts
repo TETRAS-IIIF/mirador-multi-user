@@ -1,9 +1,5 @@
 import { UsersService } from '../BaseEntities/users/users.service';
-import {
-  ForbiddenException,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, } from '@nestjs/common';
 import { ProjectService } from '../BaseEntities/project/project.service';
 import { LinkGroupProjectService } from '../LinkModules/link-group-project/link-group-project.service';
 import { LinkManifestGroupService } from '../LinkModules/link-manifest-group/link-manifest-group.service';
@@ -79,9 +75,9 @@ export class UserManagementService {
       );
       if (BUSINESS_ALERT_ACTIVATED == 'true') {
         await this.emailService.sendMail({
-          subject: 'Deleted User',
+          subject: `Deleted User at ${Date.now}`,
           to: process.env.ADMIN_MAIL,
-          text: `A user has been deleted: ${user.name} (${user.mail})`,
+          text: `A user has been deleted: ${user.name} (${user.mail}) at ${Date.now}`,
           body: `
       <p>A new user has been created.</p>
       <ul>
@@ -89,6 +85,8 @@ export class UserManagementService {
         <li><strong>Name:</strong> ${user.name}</li>
         <li><strong>Email:</strong> ${user.mail}</li>
         <li><strong>User ID:</strong> ${user.id}</li>
+        <li><strong>Date:</strong> ${Date.now}</li>
+        
       </ul>
     `,
         });
