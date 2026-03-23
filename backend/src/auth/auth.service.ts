@@ -90,16 +90,19 @@ export class AuthService {
         SettingKeys.BUSINESS_ALERT_ACTIVATED,
       );
       if (BUSINESS_ALERT_ACTIVATED == 'true') {
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleString();
         await this.emailService.sendMail({
-          subject: 'New user logged',
+          subject: `New user logged at ${formattedDate}`,
           to: process.env.ADMIN_MAIL,
-          text: `A new user has logged in : ${user.name} (${user.mail})`,
+          text: `A new user has logged in : ${user.name} (${user.mail}) at ${formattedDate}`,
           body: `
       <p>A new user has been created.</p>
       <ul>
         <li><strong>Name:</strong> ${user.name}</li>
         <li><strong>Email:</strong> ${user.mail}</li>
         <li><strong>User ID:</strong> ${user.id}</li>
+        <li><strong>Date:</strong> ${formattedDate}</li>
       </ul>
     `,
         });
@@ -256,9 +259,8 @@ export class AuthService {
 
       const tokenSet: TokenSet = await client.callback(redirectUri, params);
       const userinfo = await client.userinfo(tokenSet.access_token);
-
+     
       let user = await this.usersService.findOneByMail(userinfo.email);
-
       if (!user) {
         user = await this.linkUserGroupService.createUser({
           mail: userinfo.email,
@@ -278,16 +280,20 @@ export class AuthService {
       );
 
       if (BUSINESS_ALERT_ACTIVATED == 'true') {
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleString();
         await this.emailService.sendMail({
-          subject: 'New user logged in OIDC',
+          subject: `New user logged in OIDC at ${formattedDate}`,
           to: process.env.ADMIN_MAIL,
-          text: `A new user has logged in with oidc provider: ${user.name} (${user.mail})`,
+          text: `A new user has logged in with oidc provider: ${user.name} (${user.mail}) at ${formattedDate}`,
           body: `
       <p>A new user has been created.</p>
       <ul>
         <li><strong>Name:</strong> ${user.name}</li>
         <li><strong>Email:</strong> ${user.mail}</li>
         <li><strong>User ID:</strong> ${user.id}</li>
+        <li><strong>Date:</strong> ${formattedDate}</li>
+        
       </ul>
     `,
         });
