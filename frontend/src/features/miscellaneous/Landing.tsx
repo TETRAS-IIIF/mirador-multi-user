@@ -110,15 +110,24 @@ export const Landing = () => {
             justifyContent: 'center',
           }}
         >
-          {showInscription && (
-            <Button variant="contained" onClick={HandleSignIn} fullWidth>
-              {t('create-account')}
-            </Button>
+          {allowClassic && (
+            <>
+              {showInscription && (
+                <Button variant="contained" onClick={HandleSignIn} fullWidth>
+                  {t('create-account')}
+                </Button>
+              )}
+              <Button variant="contained" onClick={HandleLogin} fullWidth>
+                {t('login')}
+              </Button>
+            </>
           )}
 
-          <Button variant="contained" onClick={HandleLogin} fullWidth>
-            {t('login')}
-          </Button>
+          {allowOpenIdConnect && (
+            <Button variant="contained" onClick={HandleLogin} fullWidth>
+              {t('loginOrSignInWithOpenId')}
+            </Button>
+          )}
         </Stack>
       </Box>
 

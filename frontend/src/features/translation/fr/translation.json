@@ -190,6 +190,7 @@
   "loadingImpersonate": "Chargement de l'usurpation...",
   "login": "Connexion",
   "login-with-openid": "Connexion avec le fournisseur OpenID",
+  "loginOrSignInWithOpenId": "Se connecter ou créer un compte",
   "loginTitle": "Se connecter",
   "login_count": "Nombre connexion",
   "mail": "Courriel",

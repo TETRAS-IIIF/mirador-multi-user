@@ -190,6 +190,7 @@
   "linkedMedia": "External link",
   "loadingImpersonate": "Loading impersonation...",
   "login": "Login",
+  "loginOrSignInWithOpenId": "Login or register",
   "login-with-openid": "Login with OpenID provider",
   "loginTitle": "Log in",
   "login_count": "Login count",
