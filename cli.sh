@@ -30,6 +30,7 @@ usage(){
     echo "  restart [services]          → Restart specified Docker services"
     echo "  rmi <image>                 → Remove Docker image"
     echo "  changelog                   → Update changelog"
+    echo "  update_prod                 → Check for updates, pull, rebuild and restart services"
     echo ""
     echo "Bash access and logs:"
     echo "  frontend_bash               → Open bash in frontend container"
