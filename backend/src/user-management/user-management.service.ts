@@ -119,6 +119,7 @@ export class UserManagementService {
 
       const tokenSet = await client.grant({
         grant_type: 'client_credentials',
+        audience: 'realm-management',
       });
 
       if (!tokenSet.access_token) {
