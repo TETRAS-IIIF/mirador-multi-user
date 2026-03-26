@@ -84,7 +84,6 @@ export const SearchBar = ({
 
   const handleChange = (_event: SyntheticEvent, value: string | null) => {
     if (setSelectedData) {
-      // @ts-ignore
       setSelectedData(value);
     } else if (setSearchedData) {
       setSearchedData(value);

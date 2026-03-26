@@ -368,7 +368,7 @@ export const AllMedias = ({
     }
   };
 
-  const handleMediaFilter = (filter: string) => {
+  const handleMediaFilter = (filter: string | null) => {
     setMediaFilter(filter);
     setCurrentPage(1);
   };
