@@ -18,7 +18,7 @@ interface IUsersSearchBarProps {
   setSearchInput?: (value: string) => void;
   actionButtonLabel?: string;
   label: string;
-  setFilter?: (filter: string) => void;
+  setFilter?: (filter: string | null) => void;
   setUserInput?: (input: string) => void;
   groupByOption?: (option: any) => string;
 }
