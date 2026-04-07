@@ -499,11 +499,13 @@ export const AllMedias = ({
                 </Grid>
               ))}
           </Grid>
-          <PaginationControls
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-          />
+          {!mediaFilter && (
+            <PaginationControls
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          )}
         </Grid>
         <Grid>
           <DrawerLinkMedia
