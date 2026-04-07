@@ -259,7 +259,7 @@ export class AuthService {
 
       const tokenSet: TokenSet = await client.callback(redirectUri, params);
       const userinfo = await client.userinfo(tokenSet.access_token);
-     
+
       let user = await this.usersService.findOneByMail(userinfo.email);
       if (!user) {
         user = await this.linkUserGroupService.createUser({
@@ -327,8 +327,13 @@ export class AuthService {
       );
       const isEnabled = settingOIDC === 'true';
       if (isEnabled) {
+        const clientId = process.env.OIDC_CLIENT_ID;
+        const frontendUrl = process.env.FRONTEND_URL;
+        const redirectUri = encodeURIComponent(frontendUrl);
+        const logoutUrl = `${process.env.OIDC_ISSUER}/protocol/openid-connect/logout?client_id=${clientId}&post_logout_redirect_uri=${redirectUri}`;
+
         return {
-          url: `${process.env.OIDC_ISSUER}/protocol/openid-connect/logout`,
+          url: logoutUrl,
         };
       } else {
         return false;
