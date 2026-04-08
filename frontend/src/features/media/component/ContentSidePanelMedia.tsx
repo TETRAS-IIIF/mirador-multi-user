@@ -1,19 +1,5 @@
-import {
-  Button,
-  Grid,
-  ImageList,
-  Tab,
-  Tabs,
-  Tooltip,
-  Typography,
-} from '@mui/material';
-import {
-  ChangeEvent,
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from 'react';
+import { Button, Grid, ImageList, Tab, Tabs, Tooltip, Typography, } from '@mui/material';
+import { ChangeEvent, SyntheticEvent, useCallback, useEffect, useState, } from 'react';
 import toast from 'react-hot-toast';
 import { Media } from '../types/types.ts';
 import { SearchBar } from '../../../components/elements/SearchBar.tsx';
@@ -87,7 +73,7 @@ export const ContentSidePanelMedia = ({
     }
   };
 
-  const currentPageData = useCurrentPageData({
+  const { currentPageData, totalPages } = useCurrentPageData({
     currentPage,
     sortField,
     sortOrder,
@@ -96,19 +82,6 @@ export const ContentSidePanelMedia = ({
     filter: mediaFilter,
     customSortFunction: filterByMediaType,
   });
-
-  const totalPages = Math.ceil(
-    medias.filter((media) => {
-      if (mediaTabShown === 1) {
-        return media.mediaTypes === MEDIA_TYPES.VIDEO;
-      } else if (mediaTabShown === 2) {
-        return media.mediaTypes === MEDIA_TYPES.IMAGE;
-      } else if (mediaTabShown === 3) {
-        return media.mediaTypes === MEDIA_TYPES.OTHER;
-      }
-      return true;
-    }).length / itemsPerPage,
-  );
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
     setMediaTabShown(newValue);
