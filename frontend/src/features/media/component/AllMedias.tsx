@@ -116,43 +116,34 @@ export const AllMedias = ({
     setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
 
-  const filterByMediaType = (medias: Media[]) => {
-    if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.VIDEO);
-    } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.IMAGE);
-    } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
-      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.OTHER);
-    } else if (mediaTabShown === MEDIA_TYPES_TABS.ALL) {
-      return medias;
-    }
-    return [];
-  };
+  const customFilterFunction = useCallback(
+    (items: Media[]) => {
+      return items.filter((media) => {
+        if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
+          return media.mediaTypes === MEDIA_TYPES.VIDEO;
+        } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
+          return media.mediaTypes === MEDIA_TYPES.IMAGE;
+        } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
+          return media.mediaTypes === MEDIA_TYPES.OTHER;
+        }
+        return true;
+      });
+    },
+    [mediaTabShown],
+  );
 
-  const currentPageData = useCurrentPageData({
+  const { currentPageData, totalPages } = useCurrentPageData({
     currentPage,
     sortField,
     sortOrder,
     items: medias,
     itemsPerPage,
     filter: mediaFilter,
-    customSortFunction: filterByMediaType,
+    customFilterFunction,
   });
 
-  const totalPages = Math.ceil(
-    medias.filter((media) => {
-      if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-        return media.mediaTypes === MEDIA_TYPES.VIDEO;
-      } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-        return media.mediaTypes === MEDIA_TYPES.IMAGE;
-      } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
-        return media.mediaTypes === MEDIA_TYPES.OTHER;
-      }
-      return true;
-    }).length / itemsPerPage,
-  );
   const handleCreateMedia = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       if (!event.target.files || event.target.files.length === 0) return;
@@ -374,6 +365,7 @@ export const AllMedias = ({
     setMediaFilter(filter);
     setCurrentPage(1);
   };
+  console.log('medias.length', medias.length);
   return (
     <Box sx={{ padding: 2 }}>
       <Grid container flexDirection="column" spacing={1}>

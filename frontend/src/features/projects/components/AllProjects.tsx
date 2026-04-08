@@ -107,8 +107,7 @@ export const AllProjects = ({
     setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
 
-  const totalPages = Math.ceil(userProjects.length / itemsPerPage);
-  const currentPageData = useCurrentPageData({
+  const { currentPageData, totalPages } = useCurrentPageData({
     currentPage,
     sortField,
     sortOrder,

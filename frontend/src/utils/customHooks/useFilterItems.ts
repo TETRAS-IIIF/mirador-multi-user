@@ -4,34 +4,23 @@ import dayjs from 'dayjs';
 export const UPDATED_AT = 'updated_at';
 export const TITLE = 'title';
 
-interface IUseCurrentPageData {
-  currentPage: number;
+interface IUseFilterItems {
   sortField: keyof any;
   sortOrder: string;
   items: any[];
-  itemsPerPage: number;
   filter: string | null;
-  customFilterFunction?: (items: any[]) => any[];
   customSortFunction?: (items: any[]) => any[];
 }
 
-export const useCurrentPageData = ({
-  currentPage,
+export const useFilterItems = ({
   sortField,
   sortOrder,
   items,
-  itemsPerPage,
   filter,
-  customFilterFunction,
   customSortFunction,
-}: IUseCurrentPageData) => {
+}: IUseFilterItems) => {
   return useMemo(() => {
     let filteredItems = items.filter((item) => isInFilter(item, filter));
-
-    if (customFilterFunction) {
-      filteredItems = customFilterFunction(filteredItems);
-    }
-
     if (customSortFunction) {
       filteredItems = customSortFunction(filteredItems);
     }
@@ -42,25 +31,8 @@ export const useCurrentPageData = ({
       sortOrder,
     );
 
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-
-    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-
-    return {
-      currentPageData: filteredAndSortedItems.slice(start, end),
-      totalPages,
-    };
-  }, [
-    items,
-    sortField,
-    sortOrder,
-    customFilterFunction,
-    customSortFunction,
-    currentPage,
-    itemsPerPage,
-    filter,
-  ]);
+    return filteredAndSortedItems;
+  }, [items, sortField, sortOrder, customSortFunction, filter]);
 };
 
 const isInFilter = (item: any, filter: string | null) => {
