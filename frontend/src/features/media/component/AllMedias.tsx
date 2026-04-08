@@ -67,6 +67,7 @@ import {
   USER_GROUP_TYPES,
 } from '../../../utils/mmu_types.ts';
 import { reuploadMedia } from '../api/reuploadMedia.ts';
+import { updateMedia } from '../api/updateMedia.ts';
 
 interface IAllMediasProps {
   user: User;
@@ -209,6 +210,7 @@ export const AllMedias = ({
 
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
+      await updateMedia(mediaToUpdate);
       const updatedListOfMedias = medias.filter(function (media) {
         return media.id != mediaToUpdate.id;
       });
@@ -499,13 +501,11 @@ export const AllMedias = ({
                 </Grid>
               ))}
           </Grid>
-          {!mediaFilter && (
-            <PaginationControls
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          )}
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </Grid>
         <Grid>
           <DrawerLinkMedia
