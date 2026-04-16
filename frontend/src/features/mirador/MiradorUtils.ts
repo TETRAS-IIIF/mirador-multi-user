@@ -1,4 +1,3 @@
-// @ts-expect-error \- package has no bundled TypeScript declarations
 import ManifestListTools from 'mirador-mltools-plugin-mmu';
 import editorPlugins from 'mirador-annotation-editor';
 import MMUAdapter from './adapter/MMUAdapter';
