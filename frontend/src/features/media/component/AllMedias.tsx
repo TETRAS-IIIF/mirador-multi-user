@@ -116,7 +116,7 @@ export const AllMedias = ({
     setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   const customFilterFunction = useCallback(
     (items: Media[]) => {
@@ -365,7 +365,7 @@ export const AllMedias = ({
     setMediaFilter(filter);
     setCurrentPage(1);
   };
-  console.log('medias.length', medias.length);
+
   return (
     <Box sx={{ padding: 2 }}>
       <Grid container flexDirection="column" spacing={1}>
