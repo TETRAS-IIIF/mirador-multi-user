@@ -64,11 +64,16 @@ export const useCurrentPageData = ({
 };
 
 const isInFilter = (item: any, filter: string | null) => {
-  if (filter) {
-    return item.title.toLowerCase().includes(filter.toLowerCase());
-  } else {
-    return true;
-  }
+  if (!filter) return true;
+
+  const normalizedFilter = filter.toLowerCase();
+  const normalizedTitle = String(item?.title ?? '').toLowerCase();
+  const normalizedDescription = String(item?.description ?? '').toLowerCase();
+
+  return (
+    normalizedTitle.includes(normalizedFilter) ||
+    normalizedDescription.includes(normalizedFilter)
+  );
 };
 
 const sortItem = (sortField: keyof any, items: any[], sortOrder: string) => {
