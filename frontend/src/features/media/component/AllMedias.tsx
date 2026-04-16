@@ -1,4 +1,12 @@
-import { Box, Grid, IconButton, Tab, Tabs, Tooltip, Typography, } from '@mui/material';
+import {
+  Box,
+  Grid,
+  IconButton,
+  Tab,
+  Tabs,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import {
   ChangeEvent,
   Dispatch,
@@ -43,13 +51,23 @@ import {
   isValidFileForUpload,
   SettingKeys,
 } from '../../../utils/utils.ts';
-import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHooks/filterHook.ts';
+import {
+  TITLE,
+  UPDATED_AT,
+  useCurrentPageData,
+} from '../../../utils/customHooks/filterHook.ts';
 import { useCreateMediaLink } from '../hooks/useCreateMediaLink.ts';
 import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 import { getAccessToMedia } from '../api/getAccessToMedia.ts';
 import { VisuallyHiddenInput } from './VisuallyHiddenInput.tsx';
-import { ITEM_RIGHTS, MEDIA_TYPES, MEDIA_TYPES_TABS, USER_GROUP_TYPES, } from '../../../utils/mmu_types.ts';
+import {
+  ITEM_RIGHTS,
+  MEDIA_TYPES,
+  MEDIA_TYPES_TABS,
+  USER_GROUP_TYPES,
+} from '../../../utils/mmu_types.ts';
 import { reuploadMedia } from '../api/reuploadMedia.ts';
+import { updateMedia } from '../api/updateMedia.ts';
 
 interface IAllMediasProps {
   user: User;
@@ -100,41 +118,32 @@ export const AllMedias = ({
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  const filterByMediaType = (medias: Media[]) => {
-    if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.VIDEO);
-    } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.IMAGE);
-    } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
-      return medias.filter((media) => media.mediaTypes === MEDIA_TYPES.OTHER);
-    } else if (mediaTabShown === MEDIA_TYPES_TABS.ALL) {
-      return medias;
-    }
-    return [];
-  };
+  const customFilterFunction = useCallback(
+    (items: Media[]) => {
+      return items.filter((media) => {
+        if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
+          return media.mediaTypes === MEDIA_TYPES.VIDEO;
+        } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
+          return media.mediaTypes === MEDIA_TYPES.IMAGE;
+        } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
+          return media.mediaTypes === MEDIA_TYPES.OTHER;
+        }
+        return true;
+      });
+    },
+    [mediaTabShown],
+  );
 
-  const currentPageData = useCurrentPageData({
+  const { currentPageData, totalPages } = useCurrentPageData({
     currentPage,
     sortField,
     sortOrder,
     items: medias,
     itemsPerPage,
     filter: mediaFilter,
-    customSortFunction: filterByMediaType,
+    customFilterFunction,
   });
 
-  const totalPages = Math.ceil(
-    medias.filter((media) => {
-      if (mediaTabShown === MEDIA_TYPES_TABS.VIDEO) {
-        return media.mediaTypes === MEDIA_TYPES.VIDEO;
-      } else if (mediaTabShown === MEDIA_TYPES_TABS.IMAGE) {
-        return media.mediaTypes === MEDIA_TYPES.IMAGE;
-      } else if (mediaTabShown === MEDIA_TYPES_TABS.OTHER) {
-        return media.mediaTypes === MEDIA_TYPES.OTHER;
-      }
-      return true;
-    }).length / itemsPerPage,
-  );
   const handleCreateMedia = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       if (!event.target.files || event.target.files.length === 0) return;
@@ -192,6 +201,7 @@ export const AllMedias = ({
 
   const HandleUpdateMedia = useCallback(
     async (mediaToUpdate: Media) => {
+      await updateMedia(mediaToUpdate);
       const updatedListOfMedias = medias.filter(function (media) {
         return media.id != mediaToUpdate.id;
       });
@@ -351,6 +361,11 @@ export const AllMedias = ({
     }
   };
 
+  const handleMediaFilter = (filter: string | null) => {
+    setMediaFilter(filter);
+    setCurrentPage(1);
+  };
+
   return (
     <Box sx={{ padding: 2 }}>
       <Grid container flexDirection="column" spacing={1}>
@@ -395,7 +410,10 @@ export const AllMedias = ({
             justifyContent="flex-end"
           >
             <Grid>
-              <SearchBar setFilter={setMediaFilter} label={t('filterMedia')} />
+              <SearchBar
+                setFilter={handleMediaFilter}
+                label={t('filterMedia')}
+              />
             </Grid>
             <Grid>
               <SortItemSelector<Media>

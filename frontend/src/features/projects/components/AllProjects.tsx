@@ -107,8 +107,7 @@ export const AllProjects = ({
     setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
 
-  const totalPages = Math.ceil(userProjects.length / itemsPerPage);
-  const currentPageData = useCurrentPageData({
+  const { currentPageData, totalPages } = useCurrentPageData({
     currentPage,
     sortField,
     sortOrder,
@@ -363,6 +362,11 @@ export const AllProjects = ({
     }
   };
 
+  const handleProjectFilter = (filter: string | null) => {
+    setProjectFilter(filter);
+    setCurrentPage(1);
+  };
+
   return (
     <>
       <SidePanel
@@ -397,7 +401,7 @@ export const AllProjects = ({
                 <Grid>
                   <SearchBar
                     label={t('filterProjects')}
-                    setFilter={setProjectFilter}
+                    setFilter={handleProjectFilter}
                   />
                 </Grid>
                 <Grid>

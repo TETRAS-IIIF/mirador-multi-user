@@ -18,7 +18,7 @@ interface IUsersSearchBarProps {
   setSearchInput?: (value: string) => void;
   actionButtonLabel?: string;
   label: string;
-  setFilter?: (filteredArray: string | null) => void;
+  setFilter?: (filter: string | null) => void;
   setUserInput?: (input: string) => void;
   groupByOption?: (option: any) => string;
 }
@@ -84,7 +84,6 @@ export const SearchBar = ({
 
   const handleChange = (_event: SyntheticEvent, value: string | null) => {
     if (setSelectedData) {
-      // @ts-ignore
       setSelectedData(value);
     } else if (setSearchedData) {
       setSearchedData(value);

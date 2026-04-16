@@ -70,14 +70,13 @@ export const AllGroups = ({
   const [sortOrder, setSortOrder] = useState('desc');
 
   const { t } = useTranslation();
+  const itemsPerPage = 10;
 
   const toggleSortOrder = () => {
     setSortOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
   };
 
-  const itemsPerPage = 10;
-
-  const currentPageData = useCurrentPageData({
+  const { currentPageData, totalPages } = useCurrentPageData({
     currentPage,
     sortField,
     sortOrder,
@@ -85,8 +84,6 @@ export const AllGroups = ({
     itemsPerPage,
     filter: groupFilter,
   });
-
-  const totalPages = Math.ceil(groups.length / itemsPerPage);
 
   useEffect(() => {
     fetchGroups();
@@ -183,6 +180,11 @@ export const AllGroups = ({
     return fetchGroups();
   };
 
+  const handleGroupFilter = (filter: string | null) => {
+    setGroupFilter(filter);
+    setCurrentPage(1);
+  };
+
   return (
     <>
       <SidePanel
@@ -210,7 +212,7 @@ export const AllGroups = ({
             }}
           >
             <Grid>
-              <SearchBar label={t('filterGroups')} setFilter={setGroupFilter} />
+              <SearchBar label={t('filterGroups')} setFilter={handleGroupFilter} />
             </Grid>
             <Grid>
               <SortItemSelector<UserGroup>
