@@ -36,8 +36,8 @@
     "i18next": "^24.1.2",
     "json-edit-react": "^1.26.2",
     "manifesto.js": "^4.2.21",
-    "mirador": "npm:mirador-video@1.2.12",
-    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.2.15",
+    "mirador": "npm:mirador-video@1.2.13",
+    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.2.17",
     "mirador-mltools-plugin-mmu": "1.0.4",
     "mirador-image-tools": "1.0.0",
     "monaco-editor": "^0.55.1",
@@ -87,7 +87,7 @@
   },
   "overrides": {
     "mirador-image-tools": {
-      "mirador": "npm:mirador-video@1.2.12"
+      "mirador": "npm:mirador-video@1.2.13"
     }
   }
 }
