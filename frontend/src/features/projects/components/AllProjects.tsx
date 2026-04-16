@@ -362,6 +362,11 @@ export const AllProjects = ({
     }
   };
 
+  const handleProjectFilter = (filter: string | null) => {
+    setProjectFilter(filter);
+    setCurrentPage(1);
+  };
+
   return (
     <>
       <SidePanel
@@ -396,7 +401,7 @@ export const AllProjects = ({
                 <Grid>
                   <SearchBar
                     label={t('filterProjects')}
-                    setFilter={setProjectFilter}
+                    setFilter={handleProjectFilter}
                   />
                 </Grid>
                 <Grid>

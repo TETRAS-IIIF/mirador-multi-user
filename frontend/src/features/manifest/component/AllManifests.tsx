@@ -368,6 +368,11 @@ export const AllManifests = ({
     await removeManifestToGroup(manifestId, groupId);
   };
 
+  const handleManifestFilter = (filter: string | null) => {
+    setManifestFilter(filter);
+    setCurrentPage(1);
+  };
+
   return (
     <>
       <SidePanel
@@ -408,7 +413,7 @@ export const AllManifests = ({
                 <Grid>
                   <SearchBar
                     label={t('filterManifest')}
-                    setFilter={setManifestFilter}
+                    setFilter={handleManifestFilter}
                   />
                 </Grid>
                 <Grid>

@@ -180,6 +180,11 @@ export const AllGroups = ({
     return fetchGroups();
   };
 
+  const handleGroupFilter = (filter: string | null) => {
+    setGroupFilter(filter);
+    setCurrentPage(1);
+  };
+
   return (
     <>
       <SidePanel
@@ -207,7 +212,7 @@ export const AllGroups = ({
             }}
           >
             <Grid>
-              <SearchBar label={t('filterGroups')} setFilter={setGroupFilter} />
+              <SearchBar label={t('filterGroups')} setFilter={handleGroupFilter} />
             </Grid>
             <Grid>
               <SortItemSelector<UserGroup>
