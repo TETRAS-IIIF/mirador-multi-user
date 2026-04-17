@@ -28,6 +28,12 @@ export default defineConfig({
           import.meta.url,
         ),
       ),
+      'mirador-annotation-editor': fileURLToPath(
+        new URL(
+          './node_modules/mirador-annotation-editor/dist/mirador-annotation-editor-video.es.js',
+          import.meta.url,
+        ),
+      ),
       'prop-types': 'prop-types/index.js',
     },
     dedupe: [

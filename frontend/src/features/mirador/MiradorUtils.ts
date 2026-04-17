@@ -1,5 +1,3 @@
-// @ts-expect-error \- package has no bundled TypeScript declarations
-import { miradorImageToolsPlugin } from 'mirador-image-tools';
 import ManifestListTools from 'mirador-mltools-plugin-mmu';
 import editorPlugins from 'mirador-annotation-editor';
 import MMUAdapter from './adapter/MMUAdapter';
@@ -12,11 +10,11 @@ import Mirador from 'mirador';
  */
 
 function getViewPlugins() {
-  return [miradorImageToolsPlugin];
+  return [];
 }
 
 function getEditionPlugins() {
-  return [...editorPlugins, ManifestListTools, miradorImageToolsPlugin];
+  return [...editorPlugins, ManifestListTools];
 }
 
 export enum MiradorMode {
