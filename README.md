@@ -86,7 +86,7 @@ Now you can access (all ports can be customized in the .env file) :
 - Database to `http://localhost:3306` For DBeaver or other DB client
 - Caddy to [http://localhost:9000](http://localhost:9000)
 
-## Installation PROD (Docker)
+## Installation PROD (Docker + Traefik as an application proxy on your server)
 
 1. `git clone git@github.com:TETRAS-IIIF/mirador-multi-user.git`
 2. `cd mirador-multi-user`
