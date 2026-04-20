@@ -73,6 +73,8 @@ mirador-multi-user@tetras-libre.fr
 - `cd ..`
 - `docker-compose up --build`
 
+You will eventually get errors related to the database (table settings not existing for example) but it will be fixed in the next step
+
 In another terminal, run following commands to generate the database
 
 - `./cli.sh migration create init `
@@ -81,8 +83,7 @@ In another terminal, run following commands to generate the database
 Now you can access (all ports can be customized in the .env file) :
 
 - frontend to [http://localhost:4000](http://localhost:4000)
-- backend to [http://localhost:3000](http://localhost:3000)
-- backend API documentation to [http://localhost:3000/api](http://localhost:3000/api)
+- backend to [http://localhost:3000/api](http://localhost:3000/api)
 - Database to `http://localhost:3306` For DBeaver or other DB client
 - Caddy to [http://localhost:9000](http://localhost:9000)
 
@@ -96,10 +97,12 @@ Now you can access (all ports can be customized in the .env file) :
 
 5. `docker-compose up --build`
 
-In an other terminal, run following commands to generate the database
+You will eventually get errors related to the database (table settings not existing for example) but it will be fixed in the next step
 
-6. `docker-compose exec backend npm run typeorm:generate-migration --name=db-init`
-7. `docker-compose exec backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
+In another terminal, run following commands to generate the database
+
+6. `./cli.sh migration create init `
+7. `./cli.sh migration run`
 
 ### Check if you're installation is ready to use :
 
