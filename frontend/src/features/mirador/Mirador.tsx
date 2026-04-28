@@ -70,6 +70,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
           setViewer(v);
           return v;
         },
+        getState: () => instance?.store?.getState(),
       }),
       [instance, setViewer],
     );
@@ -122,7 +123,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
       setInstance(viewer);
       setViewer(viewer);
       setMiradorState(viewer.store.getState());
-
       return () => {
         initializedRef.current = false;
         try {

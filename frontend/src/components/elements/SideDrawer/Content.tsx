@@ -73,6 +73,17 @@ export function Content({
   userProjects,
   viewer,
 }: ContentProps) {
+  const handleLogCanvases = () => {
+    if (miradorViewerRef.current) {
+      const state = miradorViewerRef.current.getState();
+      const windows = state.windows;
+
+      Object.values(windows).forEach((window: any) => {
+        console.log('Manifest URL:', window.manifestId);
+        console.log('Active Canvas:', window.canvasId);
+      });
+    }
+  };
   return (
     <Box
       component="main"
@@ -99,6 +110,7 @@ export function Content({
           viewer={viewer}
           fetchMediaForUser={fetchMediaForUser}
           medias={medias}
+          onLogCanvases={handleLogCanvases}
         />
       )}
       {Boolean(
@@ -124,8 +136,8 @@ export function Content({
         )}
       {Boolean(
         user?.id &&
-          !selectedProjectId &&
-          selectedContent === MENU_ELEMENT.MEDIA,
+        !selectedProjectId &&
+        selectedContent === MENU_ELEMENT.MEDIA,
       ) && (
         <AllMedias
           fetchMediaForUser={fetchMediaForUser}
