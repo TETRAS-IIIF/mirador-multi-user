@@ -77,10 +77,11 @@ export function Content({
     if (miradorViewerRef.current) {
       const state = miradorViewerRef.current.getState();
       const windows = state.windows;
+      const firstWindowId = Object.keys(windows)[0];
 
-      Object.values(windows).forEach((window: any) => {
-        console.log('Manifest URL:', window.manifestId);
-        console.log('Active Canvas:', window.canvasId);
+      miradorViewerRef.current.dispatch({
+        type: 'mirador/REMOVE_WINDOW',
+        windowId: firstWindowId,
       });
     }
   };

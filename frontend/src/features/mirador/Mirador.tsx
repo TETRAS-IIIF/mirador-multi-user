@@ -71,6 +71,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
           return v;
         },
         getState: () => instance?.store?.getState(),
+        dispatch: (action: any) => instance.store.dispatch(action),
       }),
       [instance, setViewer],
     );
