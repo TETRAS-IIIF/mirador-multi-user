@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, UnauthorizedException, } from '@nestjs/common';
 import { Impersonation } from './entities/impersonation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -23,12 +19,19 @@ export class ImpersonationService {
     private readonly jwtService: JwtService,
   ) {}
 
+  private buildOidcLogoutUrl(token: string, targetUserId: number): string {
+    const clientId = process.env.OIDC_CLIENT_ID;
+    const frontendUrl = process.env.FRONTEND_URL;
+    const callbackUrl = `${frontendUrl}/impersonate?token=${token}&userId=${targetUserId}`;
+    const encodedCallbackUrl = encodeURIComponent(callbackUrl);
+
+    return `${process.env.OIDC_ISSUER}/protocol/openid-connect/logout?client_id=${clientId}&post_logout_redirect_uri=${encodedCallbackUrl}`;
+  }
   async initiateImpersonation(
     adminUserId: number,
     userId: number,
-  ): Promise<Impersonation> {
+  ): Promise<{ oidcLogoutUrl: string }> {
     try {
-      // Check if admin user exists and is an admin
       const adminUser = await this.userService.findAdminUser(adminUserId);
       if (!adminUser) {
         throw new Error('Only admin users can create impersonation tokens');
@@ -39,7 +42,6 @@ export class ImpersonationService {
         throw new Error('User not found');
       }
 
-      // Create a new impersonation record
       const token = uuidv4();
       const exchangeBefore = new Date(Date.now() + 20 * 60 * 1000);
 
@@ -51,23 +53,34 @@ export class ImpersonationService {
         used: false,
       });
 
-      return this.impersonationRepository.save(impersonation);
+      await this.impersonationRepository.save(impersonation);
+
+      const oidcLogoutUrl = this.buildOidcLogoutUrl(token, userId);
+
+      return { oidcLogoutUrl };
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        'an error occurred while creating impersonation',
+        'An error occurred while creating impersonation',
       );
     }
   }
 
   async validateToken(token: string): Promise<Impersonation> {
     const impersonation = await this.impersonationRepository.findOne({
-      where: { token, used: false },
+      where: { token },
       relations: ['user'],
     });
-    if (!impersonation || new Date() > impersonation.exchangeBefore) {
-      throw new Error('Invalid or expired token');
+    if (!impersonation) {
+      throw new Error(`Token not found: ${token}`);
     }
+    if (impersonation.used) {
+      throw new Error(`Token already used: ${token}`);
+    }
+    if (new Date() > impersonation.exchangeBefore) {
+      throw new Error(`Token expired: ${token}`);
+    }
+
     return impersonation;
   }
 
@@ -75,24 +88,29 @@ export class ImpersonationService {
     impersonateDto: ImpersonateDto,
   ): Promise<{ access_token: string }> {
     try {
-      const isTokenValid = await this.validateToken(impersonateDto.token);
-      if (!isTokenValid) {
+      const impersonation = await this.validateToken(impersonateDto.token);
+      if (!impersonation) {
         throw new UnauthorizedException(
           'You are not allowed to impersonate user',
         );
       }
+      impersonation.used = true;
+      await this.impersonationRepository.save(impersonation);
+
       const user = await this.userService.findOne(impersonateDto.userId);
       const payload = {
         sub: user.id,
         user: user.name,
         isEmailConfirmed: user.isEmailConfirmed,
       };
+
       return {
         access_token: await this.jwtService.signAsync(payload),
       };
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        'an error occurred while impersonating the user',
+        'An error occurred while impersonating the user',
       );
     }
   }

@@ -1,10 +1,10 @@
 import { Navigate } from 'react-router-dom';
 import { MainContent } from '../features/miscellaneous/MainContent.tsx';
 import { MiradorPublicExposed } from '../features/mirador/MIradorPublicExposed.tsx';
-import { Impersonate } from '../features/admin/components/Impersonate.tsx';
 import { MiradorManifestExposed } from '../features/mirador/MiradorManifestExposed';
 import { MailConfirmation } from '../features/auth/components/MailConfirmation.tsx';
 import { Terms } from '../features/miscellaneous/Terms.tsx';
+import { Impersonate } from '../features/admin/components/Impersonate.tsx';
 
 export const protectedRoutes = [
   {
@@ -21,15 +21,15 @@ export const protectedRoutes = [
     element: <MiradorManifestExposed />,
   },
   {
-    path: '/impersonate/*',
-    element: <Impersonate />,
-  },
-  {
     path: '/token/*',
     element: <MailConfirmation />,
   },
   {
     path: '/terms/*',
     element: <Terms />,
+  },
+  {
+    path: '/impersonate/*',
+    element: <Impersonate />,
   },
 ];

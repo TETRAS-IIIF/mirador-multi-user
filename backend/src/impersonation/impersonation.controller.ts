@@ -1,37 +1,53 @@
 import {
-  Controller,
-  Post,
-  Param,
-  UseGuards,
-  Req,
-  Res,
   Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Query,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { ImpersonationService } from './impersonation.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { ImpersonateDto } from './dto/impersonateDto';
 
-@Controller('impersonation')
+@ApiBearerAuth()
+@Controller('auth/impersonate')
 export class ImpersonationController {
   constructor(private readonly impersonationService: ImpersonationService) {}
 
+  @ApiOperation({
+    summary: 'Admin initiates impersonation, returns OIDC logout URL',
+  })
   @UseGuards(AuthGuard)
-  @Post(':id/impersonate')
-  async impersonateUser(@Param('id') userId: number, @Req() req, @Res() res) {
-    const adminUserId = req.user.sub;
-    const impersonation = await this.impersonationService.initiateImpersonation(
-      adminUserId,
-      userId,
+  @HttpCode(HttpStatus.OK)
+  @Post('initiate')
+  async initiate(
+    @Body() { targetUserId }: { targetUserId: number },
+    @Request() req,
+  ): Promise<{ oidcLogoutUrl: string }> {
+    return this.impersonationService.initiateImpersonation(
+      req.user.sub,
+      targetUserId,
     );
-
-    const redirectUrl = `${process.env.FRONTEND_URL}/impersonate/?token=${impersonation.token}`;
-
-    return res.json({ redirectUrl: redirectUrl, user: impersonation.user });
   }
 
-  @UseGuards(AuthGuard)
-  @Post('/impersonate')
-  async impersonate(@Body() impersonateDto: ImpersonateDto) {
-    return this.impersonationService.impersonateUserData(impersonateDto);
+  @ApiOperation({
+    summary:
+      'Exchange impersonation token for access token (called after OIDC logout callback)',
+  })
+  @HttpCode(HttpStatus.OK)
+  @Get('callback')
+  async callback(
+    @Query('token') token: string,
+    @Query('userId') userId: number,
+  ): Promise<{ access_token: string }> {
+    return this.impersonationService.impersonateUserData({
+      token,
+      userId,
+    } as ImpersonateDto);
   }
 }
