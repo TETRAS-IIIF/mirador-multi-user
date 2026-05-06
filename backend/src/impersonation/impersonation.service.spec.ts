@@ -57,7 +57,7 @@ describe('ImpersonationService', () => {
     expect(service).toBeDefined();
   });
 
-  it('initiateImpersonation should create and save impersonation', async () => {
+  it('initiateImpersonation should create and save impersonation and return oidcLogoutUrl', async () => {
     const adminUser = { id: 1, isAdmin: true } as any;
     const user = { id: 2 } as any;
     const created = { id: 'imp-1' } as any;
@@ -82,7 +82,8 @@ describe('ImpersonationService', () => {
       }),
     );
     expect(mockRepo.save).toHaveBeenCalledWith(created);
-    expect(result).toBe(saved);
+    expect(result).toHaveProperty('oidcLogoutUrl');
+    expect(typeof result.oidcLogoutUrl).toBe('string');
   });
 
   it('initiateImpersonation should throw InternalServerErrorException when admin not found', async () => {
@@ -106,17 +107,32 @@ describe('ImpersonationService', () => {
     const result = await service.validateToken('uuid-token');
 
     expect(mockRepo.findOne).toHaveBeenCalledWith({
-      where: { token: 'uuid-token', used: false },
+      where: { token: 'uuid-token' },
       relations: ['user'],
     });
     expect(result).toBe(impersonation);
   });
 
-  it('validateToken should throw when token invalid or expired', async () => {
+  it('validateToken should throw when token not found', async () => {
     mockRepo.findOne.mockResolvedValue(null);
 
     await expect(service.validateToken('bad-token')).rejects.toThrow(
-      'Invalid or expired token',
+      'Token not found: bad-token',
+    );
+  });
+
+  it('validateToken should throw when token already used', async () => {
+    const impersonation = {
+      id: 'imp-1',
+      token: 'uuid-token',
+      used: true,
+      exchangeBefore: new Date(Date.now() + 60_000),
+      user: { id: 2 },
+    } as any;
+    mockRepo.findOne.mockResolvedValue(impersonation);
+
+    await expect(service.validateToken('uuid-token')).rejects.toThrow(
+      'Token already used: uuid-token',
     );
   });
 
@@ -149,7 +165,7 @@ describe('ImpersonationService', () => {
 
     jest
       .spyOn(service, 'validateToken')
-      .mockRejectedValue(new Error('Invalid or expired token'));
+      .mockRejectedValue(new Error('Token not found: bad-token'));
 
     await expect(service.impersonateUserData(dto)).rejects.toBeInstanceOf(
       InternalServerErrorException,
