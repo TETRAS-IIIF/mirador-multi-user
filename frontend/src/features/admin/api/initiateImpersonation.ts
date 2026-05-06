@@ -48,13 +48,12 @@ export const handleImpersonationCallback = async (
       );
     }
 
-    const { access_token } = await response.json();
+    window.open(impersonation.redirectUrl, '_blank');
 
     storage.setToken(access_token);
     storage.setIsImpersonating(true);
     window.location.href = '/app/my-projects';
   } catch (error) {
-    console.error('Failed to handle impersonation callback', error);
-    sessionStorage.removeItem('impersonation_processing');
+    console.error('Failed to initiate impersonation', error);
   }
 };
