@@ -37,7 +37,7 @@
     "json-edit-react": "^1.26.2",
     "manifesto.js": "^4.2.21",
     "mirador": "npm:mirador-video@1.2.13",
-    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.2.18",
+    "mirador-annotation-editor": "npm:mirador-annotation-editor-ai-template@0.0.2",
     "mirador-mltools-plugin-mmu": "1.0.4",
     "monaco-editor": "^0.55.1",
     "react": "^19.0.0",

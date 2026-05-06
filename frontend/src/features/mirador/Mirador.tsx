@@ -101,6 +101,9 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
         // TODO Why we dont use useEditionPlugins ?
         const cfgWithAdapter = {
           ...miradorState.config,
+          llm: {
+            endpoint: import.meta.env.VITE_API_LLM_ENDPOINT,
+          },
           annotation: {
             ...miradorState.config.annotation,
             adapter: (canvasId: string) =>
