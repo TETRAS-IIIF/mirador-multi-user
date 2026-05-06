@@ -1,4 +1,4 @@
-import storage from "../../../utils/storage.ts";
+import storage from '../../../utils/storage.ts';
 
 export const initiateImpersonation = async (userId: number) => {
   const token = storage.getToken();
@@ -7,10 +7,10 @@ export const initiateImpersonation = async (userId: number) => {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/impersonation/${userId}/impersonate`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       },
     );
@@ -24,10 +24,10 @@ export const initiateImpersonation = async (userId: number) => {
     const impersonation = await response.json();
     storage.SetImpersonateUserId(impersonation.user.mail);
 
-    window.open(impersonation.redirectUrl, "_blank");
+    window.open(impersonation.redirectUrl, '_blank');
 
     window.close();
   } catch (error) {
-    console.error("Failed to initiate impersonation", error);
+    console.error('Failed to initiate impersonation', error);
   }
 };
