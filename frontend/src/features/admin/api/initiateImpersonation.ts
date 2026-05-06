@@ -33,9 +33,6 @@ export const handleImpersonationCallback = async (
   token: string,
   userId: number,
 ) => {
-  if (sessionStorage.getItem('impersonation_processing')) return;
-  sessionStorage.setItem('impersonation_processing', 'true');
-
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/auth/impersonate/callback?token=${token}&userId=${userId}`,
