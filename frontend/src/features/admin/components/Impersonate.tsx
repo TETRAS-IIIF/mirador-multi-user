@@ -1,25 +1,22 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import storage from '../../../utils/storage.ts';
-import { useLogin } from '../../../utils/auth.tsx';
 import { useTranslation } from 'react-i18next';
+import { handleImpersonationCallback } from '../api/initiateImpersonation.ts';
 
 export const Impersonate = () => {
   const navigate = useNavigate();
-  const { mutateAsync: loginUser } = useLogin();
   const { t } = useTranslation();
+
   useEffect(() => {
     const impersonate = async () => {
       const params = new URLSearchParams(window.location.search);
       const token = params.get('token');
-      if (token) {
+      const userId = params.get('userId');
+
+      if (token && userId) {
         try {
-          const userData = storage.GetImpersonateUserData();
-          if (userData) {
-            // Call `mutateAsync` and handle navigation after it resolves
-            await loginUser({ mail: '', password: '', isImpersonate: token });
-            navigate('/app/my-projects');
-          }
+          await handleImpersonationCallback(token, Number(userId));
+          navigate('/app/my-projects');
         } catch (error) {
           console.error('Failed to impersonate user:', error);
         }
@@ -29,9 +26,5 @@ export const Impersonate = () => {
     impersonate();
   }, []);
 
-  return (
-    <>
-      <div>{t('loadingImpersonate')}</div>
-    </>
-  );
+  return <div>{t('loadingImpersonate')}</div>;
 };
