@@ -36,7 +36,7 @@ export const handleImpersonationCallback = async (
   try {
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/auth/impersonate/callback?token=${token}&userId=${userId}`,
-      { method: 'GET' },
+      { method: 'POST' },
     );
 
     if (!response.ok) {

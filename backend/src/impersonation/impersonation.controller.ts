@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -40,7 +39,7 @@ export class ImpersonationController {
       'Exchange impersonation token for access token (called after OIDC logout callback)',
   })
   @HttpCode(HttpStatus.OK)
-  @Get('callback')
+  @Post('callback')
   async callback(
     @Query('token') token: string,
     @Query('userId') userId: number,

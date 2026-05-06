@@ -97,7 +97,7 @@ export class ImpersonationService {
       impersonation.used = true;
       await this.impersonationRepository.save(impersonation);
 
-      const user = await this.userService.findOne(impersonateDto.userId);
+      const user = impersonation.user;
       const payload = {
         sub: user.id,
         user: user.name,
