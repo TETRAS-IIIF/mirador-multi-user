@@ -6,6 +6,7 @@ import ForgotPassword from '../features/auth/components/forgotPassword.tsx';
 import { Terms } from '../features/miscellaneous/Terms';
 import { Consent } from '../features/miscellaneous/Consent';
 import { Disconnect } from '../features/miscellaneous/Disconnect.tsx';
+import { Impersonate } from '../features/admin/components/Impersonate.tsx';
 
 export const publicRoutes = [
   {
@@ -39,5 +40,9 @@ export const publicRoutes = [
   {
     path: '/disconnect/*',
     element: <Disconnect />,
+  },
+  {
+    path: '/impersonate/*',
+    element: <Impersonate />,
   },
 ];

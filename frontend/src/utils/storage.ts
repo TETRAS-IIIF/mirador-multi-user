@@ -13,11 +13,11 @@ const storage = {
   clearToken: () => {
     window.localStorage.removeItem(`${storagePrefix}token`);
   },
-  GetImpersonateUserData: (): string | null => {
-    return localStorage.getItem(`${storagePrefix}impersonate-user`);
-  },
-  SetImpersonateUserId: (mail: string) => {
-    window.localStorage.setItem(`${storagePrefix}impersonate-user`, `${mail}`);
+  setIsImpersonating: (value: boolean) => {
+    window.localStorage.setItem(
+      `${storagePrefix}is_impersonating`,
+      JSON.stringify(value),
+    );
   },
   setUserEmail: (mail: string) => {
     window.localStorage.setItem(`${storagePrefix}user_mail`, mail);
