@@ -8,10 +8,6 @@ export class User {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Index()
-  @Column({ nullable: true })
-  oidcId: number;
-
   @Index({ unique: true })
   @Column({ length: 300 })
   mail!: string;
