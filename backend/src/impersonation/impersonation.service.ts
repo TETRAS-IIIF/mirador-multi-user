@@ -25,8 +25,14 @@ export class ImpersonationService {
     const callbackUrl = `${frontendUrl}/impersonate?token=${token}&userId=${targetUserId}`;
     const encodedCallbackUrl = encodeURIComponent(callbackUrl);
 
-    return `${process.env.OIDC_ISSUER}/protocol/openid-connect/logout?client_id=${clientId}&post_logout_redirect_uri=${encodedCallbackUrl}`;
+    const url = `${process.env.OIDC_ISSUER}/protocol/openid-connect/logout?client_id=${clientId}&post_logout_redirect_uri=${encodedCallbackUrl}`;
+
+    console.log('=== OIDC LOGOUT URL ===', url);
+    console.log('=== CALLBACK URL ===', callbackUrl);
+
+    return url;
   }
+
   async initiateImpersonation(
     adminUserId: number,
     userId: number,
