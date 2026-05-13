@@ -22,7 +22,6 @@ interface ProjectWorkspaceProps {
   manifests: Manifest[];
   medias: Media[];
   fetchMediaForUser: () => void;
-  onLogCanvases: () => void;
 }
 
 export function ProjectWorkspace({
@@ -40,7 +39,6 @@ export function ProjectWorkspace({
   manifests,
   medias,
   fetchMediaForUser,
-  onLogCanvases,
 }: ProjectWorkspaceProps) {
   const isEditor = projectSelected.rights !== ITEM_RIGHTS.READER;
 
@@ -53,7 +51,6 @@ export function ProjectWorkspace({
       fetchMediaForUser={fetchMediaForUser}
       fetchManifestForUser={fetchManifestForUser}
       display={true}
-      onLogCanvases={onLogCanvases}
     >
       <Grid sx={{ paddingRight: 5 }}>
         <MiradorViewer

@@ -73,18 +73,6 @@ export function Content({
   userProjects,
   viewer,
 }: ContentProps) {
-  const handleLogCanvases = () => {
-    if (miradorViewerRef.current) {
-      const state = miradorViewerRef.current.getState();
-      const windows = state.windows;
-      const firstWindowId = Object.keys(windows)[0];
-
-      miradorViewerRef.current.dispatch({
-        type: 'mirador/REMOVE_WINDOW',
-        windowId: firstWindowId,
-      });
-    }
-  };
   return (
     <Box
       component="main"
@@ -111,7 +99,6 @@ export function Content({
           viewer={viewer}
           fetchMediaForUser={fetchMediaForUser}
           medias={medias}
-          onLogCanvases={handleLogCanvases}
         />
       )}
       {Boolean(

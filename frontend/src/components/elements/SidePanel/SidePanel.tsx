@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Drawer,
   IconButton,
   IconButtonProps,
@@ -81,7 +80,6 @@ interface SidePanelProps {
   fetchMediaForUser: () => void;
   fetchManifestForUser: () => void;
   display: boolean;
-  onLogCanvases?: () => void;
 }
 
 export const SidePanel = ({
@@ -90,7 +88,6 @@ export const SidePanel = ({
   children,
   fetchMediaForUser,
   fetchManifestForUser,
-  onLogCanvases,
   display,
   user,
   userPersonalGroup,
@@ -163,17 +160,6 @@ export const SidePanel = ({
                 )}
               </ToggleManifestButton>
             </>
-          )}
-          {onLogCanvases && (
-            <Button
-              variant={'contained'}
-              onClick={onLogCanvases}
-              sx={{
-                zIndex: 9999,
-              }}
-            >
-              Log Canvases
-            </Button>
           )}
         </>
       )}
