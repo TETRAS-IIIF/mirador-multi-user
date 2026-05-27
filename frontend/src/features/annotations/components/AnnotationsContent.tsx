@@ -240,8 +240,7 @@ export function AnnotationsContent({
         overflowX: 'hidden',
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-        <Typography variant="h6">Annotations</Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'right', mb: 2 }}>
         <TextField
           label="Rechercher..."
           variant="outlined"
