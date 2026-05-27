@@ -230,7 +230,16 @@ export function AnnotationsContent({
   };
 
   return (
-    <Box sx={{ width: '100%', p: 2 }}>
+    <Box
+      sx={{
+        width: '100%',
+        flexGrow: 1,
+        minWidth: 0,
+        p: 2,
+        boxSizing: 'border-box',
+        overflowX: 'hidden',
+      }}
+    >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
         <Typography variant="h6">Annotations</Typography>
         <TextField
