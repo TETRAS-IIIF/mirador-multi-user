@@ -60,6 +60,7 @@
   "allow_peertube_media_tooltip": "Active l'ajout de vidéos PeerTube comme médias.",
   "allow_youtube_media": "Autoriser les médias YouTube",
   "allow_youtube_media_tooltip": "Active l'ajout de vidéos YouTube comme médias.",
+  "annotation": "Annotation",
   "api_url": "URL de l'API",
   "areYouSureDuplicate": "Êtes-vous sûr de vouloir dupliquer",
   "backend_log_lvl": "Niveau de log du backend",

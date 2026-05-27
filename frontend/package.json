@@ -33,6 +33,7 @@
     "@tanstack/react-query": "^5.77.2",
     "cron": "^3.2.1",
     "dayjs": "^1.11.13",
+    "fuse.js": "^7.3.0",
     "i18next": "^24.1.2",
     "json-edit-react": "^1.26.2",
     "manifesto.js": "^4.2.21",

@@ -1,12 +1,12 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
+  Controller,
+  Delete,
+  Get,
   Param,
+  Post,
   UseGuards,
-  Delete, Query
-} from "@nestjs/common";
+} from '@nestjs/common';
 import { AnnotationPageService } from './annotation-page.service';
 import { CreateAnnotationPageDto } from './dto/create-annotation-page.dto';
 import { AuthGuard } from '../../auth/auth.guard';
@@ -41,6 +41,16 @@ export class AnnotationPageController {
   ) {
     const decodedURI = decodeURIComponent(annotationPageId);
     return this.annotationPageService.findOne(decodedURI, projectId);
+  }
+
+  @ApiOperation({ summary: 'find all user annotation page for project' })
+  @UseGuards(AuthGuard)
+  @Get('/all/:projectId/:userId')
+  async findAllAnnotationForProject(
+    @Param('projectId') projectId: number,
+    @Param('userId') userId: number,
+  ) {
+    return await this.annotationPageService.findAllProjectAnnotation(projectId);
   }
 
   @Delete('/:annotationPageId/:projectId')

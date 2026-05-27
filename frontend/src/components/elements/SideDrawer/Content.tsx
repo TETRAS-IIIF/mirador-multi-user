@@ -15,6 +15,7 @@ import { Project } from '../../../features/projects/types/types.ts';
 import { Dispatch, SetStateAction } from 'react';
 import { MENU_ELEMENT } from '../../../utils/utils.ts';
 import { AdminPanel } from '../../../features/admin/components/AdminPanel.tsx';
+import { AnnotationsContent } from '../../../features/annotations/components/AnnotationsContent.tsx';
 
 interface ContentProps {
   HandleSetIsRunning: () => void;
@@ -124,8 +125,8 @@ export function Content({
         )}
       {Boolean(
         user?.id &&
-          !selectedProjectId &&
-          selectedContent === MENU_ELEMENT.MEDIA,
+        !selectedProjectId &&
+        selectedContent === MENU_ELEMENT.MEDIA,
       ) && (
         <AllMedias
           fetchMediaForUser={fetchMediaForUser}
@@ -159,6 +160,9 @@ export function Content({
       )}
       {Boolean(user?.id && selectedContent === MENU_ELEMENT.SETTING) && (
         <UserSettings user={user} />
+      )}
+      {Boolean(user?.id && selectedContent === MENU_ELEMENT.ANNOTATION) && (
+        <AnnotationsContent userProjects={userProjects} user={user} />
       )}
       {showSignOutModal && (
         <MMUModal

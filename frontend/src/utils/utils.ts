@@ -24,6 +24,7 @@ export const MENU_ELEMENT = {
   MANIFEST: 'MANIFEST',
   SETTING: 'SETTING',
   ADMIN: 'ADMIN',
+  ANNOTATION: 'ANNOTATION',
 };
 
 export const getSettingValue = (
