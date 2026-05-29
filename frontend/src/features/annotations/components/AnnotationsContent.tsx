@@ -35,12 +35,32 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { Project } from '../../projects/types/types.ts';
 import { User } from '../../auth/types/types.ts';
 import { getAllAnnotationsForProject } from '../api/gettingAllAnnotationPageForProject.ts';
+import toast from 'react-hot-toast';
+import { deleteAnnotationPage } from '../../mirador/api/deleteAnnotationPage.ts';
+import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 import JSZip from 'jszip';
 
 interface AnnotationsContentProps {
   userProjects: Project[];
   user: User | null;
 }
+
+const getAnnotationPageId = (anno: any): string | null => {
+  const target = Array.isArray(anno.target) ? anno.target[0] : anno.target;
+
+  let canvasUri: string | null = null;
+
+  if (typeof target === 'string') {
+    canvasUri = target.split('#')[0];
+  } else if (typeof target === 'object' && target !== null) {
+    const source = target.source ?? target.id ?? target['@id'];
+    canvasUri = source ? source.split('#')[0] : null;
+  }
+
+  if (!canvasUri) return null;
+
+  return `${canvasUri}/annotationPage`;
+};
 
 const getAnnotationId = (anno: any, index: number): string =>
   anno.id ? String(anno.id) : String(index);
@@ -294,6 +314,56 @@ export function AnnotationsContent({
       return next;
     });
   };
+  const handleBulkDelete = async () => {
+    const selectedAnnotations = filteredAnnotations.filter((a, i) =>
+      selected.has(getAnnotationId(a, i)),
+    );
+
+    for (const anno of selectedAnnotations) {
+      const project = userProjects.find((p) => p.id === anno.projectId);
+
+      if (!project) {
+        toast.error(t('annotations.errors.projectNotFound'));
+        continue;
+      }
+
+      if (
+        project.rights !== ITEM_RIGHTS.ADMIN &&
+        project.rights !== ITEM_RIGHTS.EDITOR
+      ) {
+        toast.error(
+          t('annotations.errors.noPermission', { projectName: project.title }),
+        );
+        continue;
+      }
+
+      try {
+        const annotationPageId = getAnnotationPageId(anno);
+
+        if (!annotationPageId) {
+          toast.error(t('annotations.errors.noAnnotationPageId'));
+          continue;
+        }
+        console.log(
+          'Deleting annotation page:',
+          annotationPageId,
+          'in project:',
+          anno.projectId,
+        );
+        const APIResponse = await deleteAnnotationPage(
+          annotationPageId,
+          anno.projectId,
+        );
+        console.log('APIResponse', APIResponse);
+        setAnnotations((prev) => prev.filter((a) => a.id !== anno.id));
+      } catch (error) {
+        toast.error(t('annotations.errors.deleteFailed'));
+        console.error(error);
+      }
+    }
+
+    setSelected(new Set());
+  };
 
   const handleBulkDownload = async () => {
     const selectedAnnotations = filteredAnnotations.filter((a, i) =>
@@ -318,14 +388,6 @@ export function AnnotationsContent({
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
     }, 150);
-  };
-
-  const handleBulkDelete = () => {
-    // TODO: call delete API for each selected annotation
-    setAnnotations((prev) =>
-      prev.filter((a, i) => !selected.has(a.id ?? String(i))),
-    );
-    setSelected(new Set());
   };
 
   const resetFilters = () => {
