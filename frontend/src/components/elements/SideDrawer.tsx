@@ -364,34 +364,43 @@ export const SideDrawer = ({
         user={user}
         handleGenerateSnapshot={handleGenerateSnapshot}
       />
-      <Content
-        setMedias={setMedias}
-        HandleSetIsRunning={HandleSetIsRunning}
-        HandleSetUserProjects={HandleSetUserProjects}
-        fetchGroups={fetchGroups}
-        fetchManifestForUser={fetchManifestForUser}
-        fetchMediaForUser={fetchMediaForUser}
-        groups={groups}
-        handleDisconnectUser={handleDisconnectUser}
-        handleSetMiradorState={handleSetMiradorState}
-        manifests={manifests}
-        medias={medias}
-        miradorState={miradorState}
-        miradorViewerRef={miradorViewerRef}
-        projectSelected={projectSelected}
-        saveMiradorState={saveMiradorState}
-        selectedContent={selectedContent}
-        selectedProjectId={selectedProjectId}
-        setSelectedProjectId={setSelectedProjectId}
-        setShowSignOutModal={setShowSignOutModal}
-        setViewer={setViewer}
-        showSignOutModal={showSignOutModal}
-        user={user}
-        userPersonalGroup={userPersonalGroup!}
-        userProjects={userProjects}
-        viewer={viewer}
-        fetchProjects={fetchProjects}
-      />
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          height: '100vh',
+          minWidth: 0,
+        }}
+      >
+        <Content
+          setMedias={setMedias}
+          HandleSetIsRunning={HandleSetIsRunning}
+          HandleSetUserProjects={HandleSetUserProjects}
+          fetchGroups={fetchGroups}
+          fetchManifestForUser={fetchManifestForUser}
+          fetchMediaForUser={fetchMediaForUser}
+          groups={groups}
+          handleDisconnectUser={handleDisconnectUser}
+          handleSetMiradorState={handleSetMiradorState}
+          manifests={manifests}
+          medias={medias}
+          miradorState={miradorState}
+          miradorViewerRef={miradorViewerRef}
+          projectSelected={projectSelected}
+          saveMiradorState={saveMiradorState}
+          selectedContent={selectedContent}
+          selectedProjectId={selectedProjectId}
+          setSelectedProjectId={setSelectedProjectId}
+          setShowSignOutModal={setShowSignOutModal}
+          setViewer={setViewer}
+          showSignOutModal={showSignOutModal}
+          user={user}
+          userPersonalGroup={userPersonalGroup!}
+          userProjects={userProjects}
+          viewer={viewer}
+          fetchProjects={fetchProjects}
+        />
+      </Box>
     </Box>
   );
 };

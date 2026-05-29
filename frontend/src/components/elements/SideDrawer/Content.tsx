@@ -81,7 +81,6 @@ export function Content({
         flexGrow: 1,
         padding: 0,
         margin: 0,
-        maxHeight: '100vh',
       }}
     >
       {selectedProjectId && projectSelected && (
