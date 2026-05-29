@@ -36,6 +36,7 @@
     "fuse.js": "^7.3.0",
     "i18next": "^24.1.2",
     "json-edit-react": "^1.26.2",
+    "jszip": "^3.10.1",
     "manifesto.js": "^4.2.21",
     "mirador": "npm:mirador-video@1.2.13",
     "mirador-annotation-editor": "npm:mirador-annotation-editor-video@1.2.17",
