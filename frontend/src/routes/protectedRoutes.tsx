@@ -11,7 +11,6 @@ export const protectedRoutes = [
     path: '/app/my-projects',
     element: <MainContent />,
   },
-  { path: '*', element: <Navigate to="/app/my-projects" /> },
   {
     path: '/mirador/*',
     element: <MiradorPublicExposed />,
@@ -32,4 +31,5 @@ export const protectedRoutes = [
     path: '/impersonate/*',
     element: <Impersonate />,
   },
+  { path: '*', element: <Navigate to="/app/my-projects" /> },
 ];
