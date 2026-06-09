@@ -1,17 +1,19 @@
 {
   "All": "All",
   "annotations": {
+    "activeFilters": "active filter(s)",
+    "chooseProject": "Choose a project",
+    "content": "Content",
+    "creator": "Creator",
+    "date": "Date",
+    "deleteSelected": "Delete selected",
+    "downloadSelected": "Download selected",
     "errors": {
       "deleteFailed": "Failed to delete annotation",
       "noAnnotationPageId": "Could not find annotation page ID",
       "noPermission": "You don't have permission to delete annotations in project \"{{projectName}}\"",
       "projectNotFound": "Project not found for this annotation"
     },
-    "activeFilters": "active filter(s)",
-    "chooseProject": "Choose a project",
-    "content": "Content",
-    "creator": "Creator",
-    "date": "Date",
     "filterByCanvasId": "By Canvas ID",
     "filterByCreator": "By creator",
     "filterByProject": "By project",
@@ -22,9 +24,11 @@
     "noAnnotations": "No annotation found.",
     "project": "Project",
     "search": "Search...",
+    "selected": "selected",
     "tags": "Tags",
     "unknown": "Unknown"
   },
+  "annotTitle": "Annotations",
   "Copy_iframe_code": "Copy Iframe Code",
   "DeleteAccount": "Delete account",
   "Images": "Images",
