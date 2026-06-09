@@ -161,7 +161,12 @@ export function Content({
         <UserSettings user={user} />
       )}
       {Boolean(user?.id && selectedContent === MENU_ELEMENT.ANNOTATION) && (
-        <AnnotationsContent userProjects={userProjects} user={user} />
+        <AnnotationsContent
+          userProjects={userProjects}
+          user={user}
+          setSelectedProjectId={setSelectedProjectId}
+          handleSetMiradorState={handleSetMiradorState}
+        />
       )}
       {showSignOutModal && (
         <MMUModal

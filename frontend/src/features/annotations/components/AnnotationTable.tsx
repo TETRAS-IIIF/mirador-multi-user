@@ -48,6 +48,7 @@ interface AnnotationTableProps {
   isIndeterminate: boolean;
   onToggleSelectAll: () => void;
   onToggleSelect: (id: string) => void;
+  onProjectClick: (projectId: string | number) => void;
 }
 
 const getBodyValue = (body?: AnnotationBody | AnnotationBody[]): string => {
@@ -117,6 +118,7 @@ export const AnnotationTable = ({
   isIndeterminate,
   onToggleSelectAll,
   onToggleSelect,
+  onProjectClick,
 }: AnnotationTableProps) => {
   const { t } = useTranslation();
 
@@ -200,6 +202,7 @@ export const AnnotationTable = ({
                   isSelected={selected.has(id)}
                   searchQuery={searchQuery}
                   onToggleSelect={onToggleSelect}
+                  onProjectClick={onProjectClick}
                 />
               );
             })
