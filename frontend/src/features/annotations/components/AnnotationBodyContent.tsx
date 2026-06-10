@@ -6,6 +6,7 @@ import { highlightHTML } from '../annotationUtils.ts';
 interface AnnotationBodyContentProps {
   body: any;
   searchQuery: string;
+  clickable?: boolean;
 }
 
 const renderHtmlItem = (item: any, index: number, searchQuery: string) => {
@@ -42,6 +43,7 @@ const renderHtmlItem = (item: any, index: number, searchQuery: string) => {
 export const AnnotationBodyContent = ({
   body,
   searchQuery,
+  clickable = false,
 }: AnnotationBodyContentProps) => {
   if (!body) return <>N/A</>;
 
@@ -51,7 +53,18 @@ export const AnnotationBodyContent = ({
   if (contentItems.length === 0) return <>N/A</>;
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 1,
+        ...(clickable && {
+          cursor: 'pointer',
+          color: 'primary.main',
+          '&:hover': { textDecoration: 'underline' },
+        }),
+      }}
+    >
       {contentItems.map((b, i) => (
         <React.Fragment key={i}>
           {renderHtmlItem(b, i, searchQuery)}

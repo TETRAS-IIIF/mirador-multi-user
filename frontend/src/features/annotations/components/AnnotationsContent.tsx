@@ -19,11 +19,7 @@ import { BulkActionToolbar } from './BulkActionToolbar';
 import { AnnotationTable } from './AnnotationTable';
 import { MMUModal } from '../../../components/elements/modal';
 import { ModalProjectAlreadyOpenByUser } from '../../projects/components/ModalProjectAlreadyOpenByUser';
-import {
-  downloadAnnotationsAsZip,
-  getAnnotationId,
-  getAnnotationPageId,
-} from '../annotationUtils.ts';
+import { downloadAnnotationsAsZip, getAnnotationId, getAnnotationPageId, } from '../annotationUtils.ts';
 
 interface AnnotationsContentProps {
   userProjects: Project[];
@@ -111,7 +107,7 @@ export function AnnotationsContent({
   };
 
   const handleProjectClick = useCallback(
-    (projectId: string | number) => {
+    (projectId: string | number, canvasId?: string) => {
       const project = userProjects.find(
         (p) => String(p.id) === String(projectId),
       );
@@ -119,7 +115,7 @@ export function AnnotationsContent({
         toast.error(t('annotations.errors.projectNotFound'));
         return;
       }
-      openProject(project, project.userWorkspace);
+      openProject(project, project.userWorkspace, false, canvasId);
     },
     [userProjects, openProject, t],
   );

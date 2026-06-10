@@ -48,13 +48,26 @@ interface AnnotationTableProps {
   isIndeterminate: boolean;
   onToggleSelectAll: () => void;
   onToggleSelect: (id: string) => void;
-  onProjectClick: (projectId: string | number) => void;
+  onProjectClick: (projectId: string | number, canvasId?: string) => void;
 }
 
 const getBodyValue = (body?: AnnotationBody | AnnotationBody[]): string => {
   if (!body) return '';
-  const first = Array.isArray(body) ? body[0] : body;
-  return first?.value ?? '';
+  const bodyArray = Array.isArray(body) ? body : [body];
+  return bodyArray
+    .filter((b) => b?.purpose !== 'tagging')
+    .map((b) => b?.value ?? '')
+    .join(' ');
+};
+
+const getTagsValue = (body?: AnnotationBody | AnnotationBody[]): string => {
+  if (!body) return '';
+  const bodyArray = Array.isArray(body) ? body : [body];
+  return bodyArray
+    .filter((b) => b?.purpose === 'tagging')
+    .map((b) => b?.value ?? '')
+    .join(', ')
+    .toLowerCase();
 };
 
 const parseDate = (dateStr: string): number => {
@@ -103,7 +116,7 @@ const COLUMNS: ColumnDef[] = [
     id: SortableColumn.Tags,
     labelKey: 'annotations.tags',
     sx: { width: '20%' },
-    getValue: () => '',
+    getValue: (anno) => getTagsValue(anno.body),
   },
 ];
 

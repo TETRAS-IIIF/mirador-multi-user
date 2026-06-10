@@ -11,8 +11,19 @@ interface AnnotationTableRowProps {
   isSelected: boolean;
   searchQuery: string;
   onToggleSelect: (id: string) => void;
-  onProjectClick: (projectId: string | number) => void;
+  onProjectClick: (projectId: string | number, canvasId?: string) => void;
 }
+
+const extractCanvasId = (anno: Annotation): string | undefined => {
+  const target: any = (anno as any).target;
+  if (!target) return (anno as any).canvasId;
+  if (typeof target === 'string') return target.split('#')[0];
+  if (target.source) {
+    return typeof target.source === 'string' ? target.source : target.source.id;
+  }
+  if (target.id) return target.id.split('#')[0];
+  return (anno as any).canvasId;
+};
 
 export const AnnotationTableRow = ({
   anno,
@@ -23,6 +34,7 @@ export const AnnotationTableRow = ({
   onProjectClick,
 }: AnnotationTableRowProps) => {
   const { t } = useTranslation();
+  const canvasId = extractCanvasId(anno);
 
   return (
     <TableRow
@@ -69,8 +81,17 @@ export const AnnotationTableRow = ({
       <TableCell>
         <HighlightText text={anno.motivation!} highlight={searchQuery} />
       </TableCell>
-      <TableCell>
-        <AnnotationBodyContent body={anno.body} searchQuery={searchQuery} />
+      <TableCell
+        onClick={(e) => {
+          e.stopPropagation();
+          onProjectClick(anno.projectId, canvasId);
+        }}
+      >
+        <AnnotationBodyContent
+          body={anno.body}
+          searchQuery={searchQuery}
+          clickable
+        />
       </TableCell>
       <TableCell>
         <AnnotationBodyTags body={anno.body} searchQuery={searchQuery} />

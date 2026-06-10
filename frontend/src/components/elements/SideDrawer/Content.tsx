@@ -160,14 +160,15 @@ export function Content({
       {Boolean(user?.id && selectedContent === MENU_ELEMENT.SETTING) && (
         <UserSettings user={user} />
       )}
-      {Boolean(user?.id && selectedContent === MENU_ELEMENT.ANNOTATION) && (
-        <AnnotationsContent
-          userProjects={userProjects}
-          user={user}
-          setSelectedProjectId={setSelectedProjectId}
-          handleSetMiradorState={handleSetMiradorState}
-        />
-      )}
+      {Boolean(user?.id && selectedContent === MENU_ELEMENT.ANNOTATION) &&
+        !selectedProjectId && (
+          <AnnotationsContent
+            userProjects={userProjects}
+            user={user}
+            setSelectedProjectId={setSelectedProjectId}
+            handleSetMiradorState={handleSetMiradorState}
+          />
+        )}
       {showSignOutModal && (
         <MMUModal
           openModal={showSignOutModal}

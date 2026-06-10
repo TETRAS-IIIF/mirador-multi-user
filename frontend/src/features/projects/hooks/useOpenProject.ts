@@ -15,6 +15,23 @@ interface UseOpenProjectParams {
   handleSetMiradorState: (state: IState | undefined) => void;
 }
 
+const applyTargetCanvas = (
+  miradorState: IState | undefined,
+  targetCanvasId?: string,
+): IState | undefined => {
+  if (!targetCanvasId || !miradorState?.windows) return miradorState;
+
+  const windows = { ...miradorState.windows };
+  const firstWindowId = Object.keys(windows)[0];
+  if (!firstWindowId) return miradorState;
+
+  windows[firstWindowId] = {
+    ...windows[firstWindowId],
+    canvasId: targetCanvasId,
+  };
+  return { ...miradorState, windows };
+};
+
 export const useOpenProject = ({
   setSelectedProjectId,
   handleSetMiradorState,
@@ -27,12 +44,16 @@ export const useOpenProject = ({
   const [pendingMiradorState, setPendingMiradorState] = useState<
     IState | undefined
   >(undefined);
+  const [pendingTargetCanvasId, setPendingTargetCanvasId] = useState<
+    string | undefined
+  >(undefined);
 
   const openProject = useCallback(
     async (
       project: Project,
       miradorState?: IState,
       forced: boolean = false,
+      targetCanvasId?: string,
     ) => {
       try {
         if (!forced) {
@@ -49,6 +70,7 @@ export const useOpenProject = ({
           if (lockStatus === SELF_LOCK) {
             setPendingProject(project);
             setPendingMiradorState(miradorState);
+            setPendingTargetCanvasId(targetCanvasId);
             setOpenModalConfirmReopenProject(true);
             return;
           }
@@ -61,24 +83,32 @@ export const useOpenProject = ({
         return;
       }
 
+      const stateToLoad = applyTargetCanvas(miradorState, targetCanvasId);
       setSelectedProjectId(project.id);
-      handleSetMiradorState(miradorState);
+      handleSetMiradorState(stateToLoad);
     },
     [setSelectedProjectId, handleSetMiradorState, t],
   );
 
   const confirmForceOpen = useCallback(async () => {
     if (!pendingProject) return;
-    await openProject(pendingProject, pendingMiradorState, true);
+    await openProject(
+      pendingProject,
+      pendingMiradorState,
+      true,
+      pendingTargetCanvasId,
+    );
     setOpenModalConfirmReopenProject(false);
     setPendingProject(null);
     setPendingMiradorState(undefined);
-  }, [pendingProject, pendingMiradorState, openProject]);
+    setPendingTargetCanvasId(undefined);
+  }, [pendingProject, pendingMiradorState, pendingTargetCanvasId, openProject]);
 
   const cancelForceOpen = useCallback(() => {
     setOpenModalConfirmReopenProject(false);
     setPendingProject(null);
     setPendingMiradorState(undefined);
+    setPendingTargetCanvasId(undefined);
   }, []);
 
   return {
