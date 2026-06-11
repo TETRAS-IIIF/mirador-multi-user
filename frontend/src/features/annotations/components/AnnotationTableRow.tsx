@@ -1,4 +1,4 @@
-import { Checkbox, Link, TableCell, TableRow } from '@mui/material';
+import { Checkbox, Chip, Link, TableCell, TableRow } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { HighlightText } from './HighlightText';
 import { AnnotationBodyContent } from './AnnotationBodyContent';
@@ -7,6 +7,7 @@ import { Annotation } from '../hooks/useAnnotationFilters.ts';
 
 interface AnnotationTableRowProps {
   anno: Annotation;
+  canEdit: boolean;
   id: string;
   isSelected: boolean;
   searchQuery: string;
@@ -27,6 +28,7 @@ const extractCanvasId = (anno: Annotation): string | undefined => {
 
 export const AnnotationTableRow = ({
   anno,
+  canEdit,
   id,
   isSelected,
   searchQuery,
@@ -95,6 +97,14 @@ export const AnnotationTableRow = ({
       </TableCell>
       <TableCell>
         <AnnotationBodyTags body={anno.body} searchQuery={searchQuery} />
+      </TableCell>
+      <TableCell>
+        <Chip
+          label={t(canEdit ? 'annotations.canEdit' : 'annotations.readOnly')}
+          color={canEdit ? 'primary' : 'default'}
+          size="small"
+          variant="outlined"
+        />
       </TableCell>
     </TableRow>
   );

@@ -227,6 +227,7 @@ export function AnnotationsContent({
         onToggleSelectAll={toggleSelectAll}
         onToggleSelect={toggleSelect}
         onProjectClick={handleProjectClick}
+        userProjects={userProjects}
       />
 
       <SpeedDial

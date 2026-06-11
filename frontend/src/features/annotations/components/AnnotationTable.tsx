@@ -15,6 +15,8 @@ import { useTranslation } from 'react-i18next';
 import { getAnnotationId } from '../annotationUtils.ts';
 import { AnnotationTableRow } from './AnnotationTableRow';
 import { Annotation, AnnotationBody } from '../hooks/useAnnotationFilters.ts';
+import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
+import { Project } from '../../projects/types/types.ts';
 
 enum SortableColumn {
   Project = 'project',
@@ -23,6 +25,7 @@ enum SortableColumn {
   Motivation = 'motivation',
   Content = 'content',
   Tags = 'tags',
+  Rights = 'rights',
 }
 
 type SortDirection = 'asc' | 'desc';
@@ -41,14 +44,15 @@ interface ColumnDef {
 
 interface AnnotationTableProps {
   annotations: Annotation[];
-  loading: boolean;
-  selected: Set<string>;
-  searchQuery: string;
   isAllSelected: boolean;
   isIndeterminate: boolean;
-  onToggleSelectAll: () => void;
-  onToggleSelect: (id: string) => void;
+  loading: boolean;
   onProjectClick: (projectId: string | number, canvasId?: string) => void;
+  onToggleSelect: (id: string) => void;
+  onToggleSelectAll: () => void;
+  searchQuery: string;
+  selected: Set<string>;
+  userProjects: Project[];
 }
 
 const getBodyValue = (body?: AnnotationBody | AnnotationBody[]): string => {
@@ -70,6 +74,23 @@ const getTagsValue = (body?: AnnotationBody | AnnotationBody[]): string => {
     .toLowerCase();
 };
 
+const canEditAnnotation = (
+  anno: Annotation,
+  projectsMap: Map<string, Project>,
+): boolean => {
+  const project = projectsMap.get(String(anno.projectId));
+  if (!project?.rights) return false;
+  return (
+    project.rights === ITEM_RIGHTS.ADMIN ||
+    project.rights === ITEM_RIGHTS.EDITOR
+  );
+};
+
+const getRightsValue = (
+  anno: Annotation,
+  projectsMap: Map<string, Project>,
+): string => (canEditAnnotation(anno, projectsMap) ? 'edit' : 'read');
+
 const parseDate = (dateStr: string): number => {
   if (!dateStr) return 0;
   const [datePart, timePart] = dateStr.split(' ');
@@ -84,44 +105,6 @@ const parseDate = (dateStr: string): number => {
   ).getTime();
 };
 
-const COLUMNS: ColumnDef[] = [
-  {
-    id: SortableColumn.Project,
-    labelKey: 'annotations.project',
-    getValue: (anno) => anno.projectName ?? String(anno.projectId ?? ''),
-  },
-  {
-    id: SortableColumn.Date,
-    labelKey: 'annotations.date',
-    sx: { minWidth: 120 },
-    getValue: (anno) => anno.creationDate ?? '',
-  },
-  {
-    id: SortableColumn.Creator,
-    labelKey: 'annotations.creator',
-    getValue: (anno) => anno.creator ?? '',
-  },
-  {
-    id: SortableColumn.Motivation,
-    labelKey: 'annotations.motivation',
-    getValue: (anno) => anno.motivation ?? '',
-  },
-  {
-    id: SortableColumn.Content,
-    labelKey: 'annotations.content',
-    sx: { width: '40%' },
-    getValue: (anno) => getBodyValue(anno.body),
-  },
-  {
-    id: SortableColumn.Tags,
-    labelKey: 'annotations.tags',
-    sx: { width: '20%' },
-    getValue: (anno) => getTagsValue(anno.body),
-  },
-];
-
-const COLUMN_MAP = new Map(COLUMNS.map((col) => [col.id, col]));
-
 export const AnnotationTable = ({
   annotations,
   loading,
@@ -132,6 +115,7 @@ export const AnnotationTable = ({
   onToggleSelectAll,
   onToggleSelect,
   onProjectClick,
+  userProjects,
 }: AnnotationTableProps) => {
   const { t } = useTranslation();
 
@@ -139,6 +123,61 @@ export const AnnotationTable = ({
     column: null,
     direction: 'asc',
   });
+
+  const projectsMap = useMemo(
+    () => new Map(userProjects.map((p) => [String(p.id), p])),
+    [userProjects],
+  );
+
+  const columns = useMemo<ColumnDef[]>(
+    () => [
+      {
+        id: SortableColumn.Project,
+        labelKey: 'annotations.project',
+        getValue: (anno) => anno.projectName ?? String(anno.projectId ?? ''),
+      },
+      {
+        id: SortableColumn.Date,
+        labelKey: 'annotations.date',
+        sx: { minWidth: 120 },
+        getValue: (anno) => anno.creationDate ?? '',
+      },
+      {
+        id: SortableColumn.Creator,
+        labelKey: 'annotations.creator',
+        getValue: (anno) => anno.creator ?? '',
+      },
+      {
+        id: SortableColumn.Motivation,
+        labelKey: 'annotations.motivation',
+        getValue: (anno) => anno.motivation ?? '',
+      },
+      {
+        id: SortableColumn.Content,
+        labelKey: 'annotations.content',
+        sx: { width: '40%' },
+        getValue: (anno) => getBodyValue(anno.body),
+      },
+      {
+        id: SortableColumn.Tags,
+        labelKey: 'annotations.tags',
+        sx: { width: '20%' },
+        getValue: (anno) => getTagsValue(anno.body),
+      },
+      {
+        id: SortableColumn.Rights,
+        labelKey: 'annotations.rights',
+        sx: { minWidth: 100 },
+        getValue: (anno) => getRightsValue(anno, projectsMap),
+      },
+    ],
+    [projectsMap],
+  );
+
+  const columnMap = useMemo(
+    () => new Map(columns.map((col) => [col.id, col])),
+    [columns],
+  );
 
   const handleSort = (column: SortableColumn) => {
     setSortState((prev) => ({
@@ -151,7 +190,7 @@ export const AnnotationTable = ({
   const sortedAnnotations = useMemo(() => {
     if (!sortState.column) return annotations;
 
-    const col = COLUMN_MAP.get(sortState.column);
+    const col = columnMap.get(sortState.column);
     if (!col) return annotations;
 
     return [...annotations].sort((a, b) => {
@@ -168,7 +207,7 @@ export const AnnotationTable = ({
 
       return sortState.direction === 'asc' ? comparison : -comparison;
     });
-  }, [annotations, sortState]);
+  }, [annotations, sortState, columnMap]);
 
   return (
     <TableContainer component={Paper}>
@@ -182,7 +221,7 @@ export const AnnotationTable = ({
                 onChange={onToggleSelectAll}
               />
             </TableCell>
-            {COLUMNS.map(({ id, labelKey, sx }) => (
+            {columns.map(({ id, labelKey, sx }) => (
               <TableCell key={id} sx={sx}>
                 <TableSortLabel
                   active={sortState.column === id}
@@ -200,7 +239,7 @@ export const AnnotationTable = ({
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
+              <TableCell colSpan={8} align="center" sx={{ py: 3 }}>
                 <CircularProgress />
               </TableCell>
             </TableRow>
@@ -212,6 +251,7 @@ export const AnnotationTable = ({
                   key={id}
                   anno={anno}
                   id={id}
+                  canEdit={canEditAnnotation(anno, projectsMap)}
                   isSelected={selected.has(id)}
                   searchQuery={searchQuery}
                   onToggleSelect={onToggleSelect}
@@ -221,7 +261,7 @@ export const AnnotationTable = ({
             })
           ) : (
             <TableRow>
-              <TableCell colSpan={7} align="center">
+              <TableCell colSpan={8} align="center">
                 {t('annotations.noAnnotations')}
               </TableCell>
             </TableRow>

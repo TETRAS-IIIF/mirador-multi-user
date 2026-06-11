@@ -3,6 +3,7 @@
   "annotations": {
     "activeFilters": "active filter(s)",
     "chooseProject": "Choose a project",
+    "canEdit": "Editor",
     "content": "Content",
     "creator": "Creator",
     "date": "Date",
@@ -23,6 +24,8 @@
     "motivation": "Motivation",
     "noAnnotations": "No annotation found.",
     "project": "Project",
+    "readOnly": "Read only",
+    "rights": "Rights",
     "search": "Search...",
     "selected": "selected",
     "tags": "Tags",
