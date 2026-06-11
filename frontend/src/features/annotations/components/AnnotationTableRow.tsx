@@ -1,4 +1,5 @@
-import { Checkbox, Chip, Link, TableCell, TableRow } from '@mui/material';
+import { Checkbox, Chip, IconButton, Link, TableCell, TableRow, Tooltip, } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import { useTranslation } from 'react-i18next';
 import { HighlightText } from './HighlightText';
 import { AnnotationBodyContent } from './AnnotationBodyContent';
@@ -13,6 +14,7 @@ interface AnnotationTableRowProps {
   searchQuery: string;
   onToggleSelect: (id: string) => void;
   onProjectClick: (projectId: string | number, canvasId?: string) => void;
+  onEdit: (id: string, anno: Annotation) => void;
 }
 
 const extractCanvasId = (anno: Annotation): string | undefined => {
@@ -34,6 +36,7 @@ export const AnnotationTableRow = ({
   searchQuery,
   onToggleSelect,
   onProjectClick,
+  onEdit,
 }: AnnotationTableRowProps) => {
   const { t } = useTranslation();
   const canvasId = extractCanvasId(anno);
@@ -105,6 +108,21 @@ export const AnnotationTableRow = ({
           size="small"
           variant="outlined"
         />
+      </TableCell>
+      <TableCell padding="checkbox">
+        {canEdit && (
+          <Tooltip title={t('annotations.editAnnotation')}>
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(id, anno);
+              }}
+            >
+              <EditIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        )}
       </TableCell>
     </TableRow>
   );

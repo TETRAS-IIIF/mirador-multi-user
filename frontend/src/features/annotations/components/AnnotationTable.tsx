@@ -17,6 +17,7 @@ import { AnnotationTableRow } from './AnnotationTableRow';
 import { Annotation, AnnotationBody } from '../hooks/useAnnotationFilters.ts';
 import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 import { Project } from '../../projects/types/types.ts';
+import { AnnotationEditModal } from './AnnotationEditModal.tsx';
 
 enum SortableColumn {
   Project = 'project',
@@ -47,6 +48,7 @@ interface AnnotationTableProps {
   isAllSelected: boolean;
   isIndeterminate: boolean;
   loading: boolean;
+  onAnnotationUpdate?: (id: string, updated: Annotation) => void;
   onProjectClick: (projectId: string | number, canvasId?: string) => void;
   onToggleSelect: (id: string) => void;
   onToggleSelectAll: () => void;
@@ -112,6 +114,7 @@ export const AnnotationTable = ({
   searchQuery,
   isAllSelected,
   isIndeterminate,
+  onAnnotationUpdate,
   onToggleSelectAll,
   onToggleSelect,
   onProjectClick,
@@ -209,6 +212,20 @@ export const AnnotationTable = ({
     });
   }, [annotations, sortState, columnMap]);
 
+  const [editTarget, setEditTarget] = useState<{
+    id: string;
+    anno: Annotation;
+  } | null>(null);
+
+  const handleEdit = (id: string, anno: Annotation) => {
+    setEditTarget({ id, anno });
+  };
+
+  const handleSave = (id: string, updated: Annotation) => {
+    // Remonte au parent / appelle ton API ici
+    onAnnotationUpdate?.(id, updated);
+    setEditTarget(null);
+  };
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -234,6 +251,7 @@ export const AnnotationTable = ({
                 </TableSortLabel>
               </TableCell>
             ))}
+            <TableCell>{t('annotations.actions')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -254,6 +272,7 @@ export const AnnotationTable = ({
                   canEdit={canEditAnnotation(anno, projectsMap)}
                   isSelected={selected.has(id)}
                   searchQuery={searchQuery}
+                  onEdit={handleEdit}
                   onToggleSelect={onToggleSelect}
                   onProjectClick={onProjectClick}
                 />
@@ -268,6 +287,13 @@ export const AnnotationTable = ({
           )}
         </TableBody>
       </Table>
+      <AnnotationEditModal
+        open={editTarget !== null}
+        annotation={editTarget?.anno ?? null}
+        annotationId={editTarget?.id ?? null}
+        onClose={() => setEditTarget(null)}
+        onSave={handleSave}
+      />
     </TableContainer>
   );
 };

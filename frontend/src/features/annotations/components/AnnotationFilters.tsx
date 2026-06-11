@@ -28,6 +28,56 @@ interface AnnotationFiltersProps {
   onDateToChange: (value: Dayjs | null) => void;
 }
 
+interface MultiSelectFilterProps {
+  options: string[];
+  value: string[];
+  onChange: (value: string[]) => void;
+  label: string;
+}
+
+const MultiSelectFilter = ({
+  options,
+  value,
+  onChange,
+  label,
+}: MultiSelectFilterProps) => (
+  <Autocomplete
+    multiple
+    options={options}
+    value={value}
+    onChange={(_, v) => onChange(v)}
+    limitTags={2}
+    renderTags={(tagValue, getTagProps) =>
+      tagValue.map((option, index) => {
+        const { key, ...tagProps } = getTagProps({ index });
+        return (
+          <Chip
+            key={key}
+            label={option}
+            size="small"
+            {...tagProps}
+            sx={{
+              maxWidth: 160,
+              '& .MuiChip-label': {
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              },
+            }}
+          />
+        );
+      })
+    }
+    renderInput={(params) => (
+      <TextField {...params} label={label} size="small" />
+    )}
+    sx={{
+      width: 260,
+      flexShrink: 0,
+    }}
+  />
+);
+
 export const AnnotationFilters = ({
   searchQuery,
   onSearchChange,
@@ -74,62 +124,37 @@ export const AnnotationFilters = ({
           )}
         </Box>
 
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-          <Autocomplete
-            multiple
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'flex-start',
+            gap: 2,
+          }}
+        >
+          <MultiSelectFilter
             options={projectOptions}
             value={selectedProjects}
-            onChange={(_, v) => onProjectsChange(v)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label={t('annotations.filterByProject')}
-                size="small"
-              />
-            )}
-            sx={{ minWidth: 200 }}
+            onChange={onProjectsChange}
+            label={t('annotations.filterByProject')}
           />
-          <Autocomplete
-            multiple
+          <MultiSelectFilter
             options={creatorOptions}
             value={selectedCreators}
-            onChange={(_, v) => onCreatorsChange(v)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label={t('annotations.filterByCreator')}
-                size="small"
-              />
-            )}
-            sx={{ minWidth: 200 }}
+            onChange={onCreatorsChange}
+            label={t('annotations.filterByCreator')}
           />
-          <Autocomplete
-            multiple
+          <MultiSelectFilter
             options={tagOptions}
             value={selectedTags}
-            onChange={(_, v) => onTagsChange(v)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label={t('annotations.filterByTag')}
-                size="small"
-              />
-            )}
-            sx={{ minWidth: 200 }}
+            onChange={onTagsChange}
+            label={t('annotations.filterByTag')}
           />
-          <Autocomplete
-            multiple
+          <MultiSelectFilter
             options={canvasIdOptions}
             value={selectedCanvasIds}
-            onChange={(_, v) => onCanvasIdsChange(v)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label={t('annotations.filterByCanvasId')}
-                size="small"
-              />
-            )}
-            sx={{ minWidth: 200 }}
+            onChange={onCanvasIdsChange}
+            label={t('annotations.filterByCanvasId')}
           />
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker

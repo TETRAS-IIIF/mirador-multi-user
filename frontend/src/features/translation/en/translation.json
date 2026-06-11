@@ -1,7 +1,9 @@
 {
   "All": "All",
   "annotations": {
+    "actions": "Actions",
     "activeFilters": "active filter(s)",
+    "cancel": "Cancel",
     "chooseProject": "Choose a project",
     "canEdit": "Editor",
     "content": "Content",
@@ -9,6 +11,7 @@
     "date": "Date",
     "deleteSelected": "Delete selected",
     "downloadSelected": "Download selected",
+    "editAnnotation": "Edit annotation",
     "errors": {
       "deleteFailed": "Failed to delete annotation",
       "noAnnotationPageId": "Could not find annotation page ID",
@@ -21,11 +24,13 @@
     "filterByTag": "By tag",
     "filterDateFrom": "Start date",
     "filterDateTo": "End date",
+    "invalidJson": "Invalid JSON: {{message}}",
     "motivation": "Motivation",
     "noAnnotations": "No annotation found.",
     "project": "Project",
     "readOnly": "Read only",
     "rights": "Rights",
+    "save": "Save",
     "search": "Search...",
     "selected": "selected",
     "tags": "Tags",
