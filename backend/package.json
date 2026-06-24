@@ -27,10 +27,10 @@
   },
   "dependencies": {
     "@casl/ability": "^6.7.1",
-    "@nestjs-modules/mailer": "^1.11.2",
+    "@nestjs-modules/mailer": "^2.3.7",
     "@nestjs/common": "^11.1.9",
     "@nestjs/config": "^4.0.2",
-    "@nestjs/core": "^11.1.9",
+    "@nestjs/core": "^11.1.27",
     "@nestjs/jwt": "^11.0.1",
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/passport": "^11.0.5",
@@ -48,7 +48,7 @@
     "mjml-core": "^4.6.3",
     "multer": "^2.0.2",
     "mysql2": "^3.9.7",
-    "nodemailer": "^7.0.11",
+    "nodemailer": "^9.0.1",
     "openid-client": "^5.5.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
@@ -113,6 +113,6 @@
     "html-minifier": "npm:html-minifier-next@latest",
     "glob": "^11.1.0",
     "mjml": "^4.18.0",
-    "nodemailer": "^7.0.11"
+    "immutable": "4.3.8"
   }
 }
