@@ -113,6 +113,8 @@
   "disconnect_error": "Vous avez été déconnecté",
   "display_user_inscription_page": "Afficher la page d'inscription utilisateur",
   "display_user_inscription_page_tooltip": "Si activé, les utilisateurs peuvent créer un compte via la page d'inscription.",
+  "DISABLE_PROJECT_LOCK": "Désactiver le verrouillage du projet",
+  "disable_project_lock": "Désactiver le verrouillage du projet",
   "downloadMedia": "Télécharger le média",
   "download_logs": "Télécharger les logs",
   "duplicate": "Dupliquer",
