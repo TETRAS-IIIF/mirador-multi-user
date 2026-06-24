@@ -14,6 +14,7 @@ export const requiredSettings = {
   MAX_UPLOAD_SIZE: process.env.MAX_UPLOAD_SIZE,
   OPENID_CONNECTION: process.env.OPENID_CONNECTION,
   TEST_FEATURES: 'false',
+  DISABLE_PROJECT_LOCK: 'false',
 };
 
 export const unMutableSettings = new Map<string, string | undefined>([
@@ -42,6 +43,7 @@ export enum SettingKeys {
   OPENID_CONNECTION = 'OPENID_CONNECTION',
   SWAGGER_URL = 'SWAGGER_URL',
   TEST_FEATURES = 'TEST_FEATURES',
+  DISABLE_PROJECT_LOCK = 'DISABLE_PROJECT_LOCK',
 }
 
 export const parseHumanSizeToMB = (humanSize: string): number => {

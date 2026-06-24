@@ -1,10 +1,6 @@
 import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Project,
-  ProjectGroup,
-  ProjectGroupUpdateDto,
-} from '../types/types.ts';
+import { Project, ProjectGroup, ProjectGroupUpdateDto, } from '../types/types.ts';
 import IState from '../../mirador/interface/IState.ts';
 import { User } from '../../auth/types/types.ts';
 import { deleteProject } from '../api/Project/deleteProject.ts';
@@ -28,11 +24,7 @@ import { Media } from '../../media/types/types.ts';
 import { PaginationControls } from '../../../components/elements/Pagination.tsx';
 import { updateAccessToProject } from '../api/Project/UpdateAccessToProject.ts';
 import SettingsIcon from '@mui/icons-material/Settings';
-import {
-  ITEM_RIGHTS,
-  OBJECT_TYPES,
-  USER_GROUP_TYPES,
-} from '../../../utils/mmu_types.ts';
+import { ITEM_RIGHTS, OBJECT_TYPES, USER_GROUP_TYPES, } from '../../../utils/mmu_types.ts';
 import toast from 'react-hot-toast';
 import { duplicateProject } from '../api/Project/duplicateProject.ts';
 import { getUserNameWithId } from '../../auth/api/getUserNameWithId.ts';
@@ -46,13 +38,11 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { removeProjectFromList } from '../api/Project/removeProjectFromList.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { Manifest } from '../../manifest/types/types.ts';
-import {
-  TITLE,
-  UPDATED_AT,
-  useCurrentPageData,
-} from '../../../utils/customHooks/filterHook.ts';
+import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHooks/filterHook.ts';
 import { MMUModal } from '../../../components/elements/modal.tsx';
 import { ModalProjectAlreadyOpenByUser } from './ModalProjectAlreadyOpenByUser.tsx';
+import { getSettingValue, SettingKeys } from '../../../utils/utils.ts';
+import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 
 interface AllProjectsProps {
   user: User;
@@ -100,6 +90,10 @@ export const AllProjects = ({
   const [pendingMiradorState, setPendingMiradorState] = useState<
     IState | undefined
   >(undefined);
+  const { data: settings } = useAdminSettings();
+  const projectLock =
+    getSettingValue(SettingKeys.DISABLE_PROJECT_LOCK, settings) === 'false';
+
   const { t } = useTranslation();
   const itemsPerPage = 10;
 
@@ -171,7 +165,7 @@ export const AllProjects = ({
     async (
       miradorState: IState | undefined,
       projectUser: Project,
-      forced: boolean = false,
+      forced: boolean = !projectLock,
     ) => {
       const SELF_LOCK = -1;
       try {
