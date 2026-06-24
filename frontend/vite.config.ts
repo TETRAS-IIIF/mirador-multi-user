@@ -68,6 +68,15 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/test/setupTests.ts',
+    alias: {
+      mirador: fileURLToPath(new URL('./src/test/mocks/mirador.ts', import.meta.url)),
+      'mirador-mltools-plugin-mmu': fileURLToPath(
+        new URL('./src/test/mocks/miradorPlugin.ts', import.meta.url),
+      ),
+      'mirador-annotation-editor': fileURLToPath(
+        new URL('./src/test/mocks/miradorPlugin.ts', import.meta.url),
+      ),
+    },
     css: true,
     coverage: {
       provider: 'v8',

@@ -1,32 +1,37 @@
 const storagePrefix = 'Mirador-multi-user-';
+
+const getLocalStorage = (): Storage | undefined =>
+  typeof window !== 'undefined' ? window.localStorage : undefined;
+
 const storage = {
   getToken: () => {
-    return JSON.parse(localStorage.getItem(`${storagePrefix}token`) as string);
+    const token = getLocalStorage()?.getItem(`${storagePrefix}token`);
+    return token ? JSON.parse(token) : null;
   },
   setToken: (token: string) => {
     if (token == undefined) {
       console.error('token is undefined');
       return;
     }
-    window.localStorage.setItem(`${storagePrefix}token`, JSON.stringify(token));
+    getLocalStorage()?.setItem(`${storagePrefix}token`, JSON.stringify(token));
   },
   clearToken: () => {
-    window.localStorage.removeItem(`${storagePrefix}token`);
+    getLocalStorage()?.removeItem(`${storagePrefix}token`);
   },
   setIsImpersonating: (value: boolean) => {
-    window.localStorage.setItem(
+    getLocalStorage()?.setItem(
       `${storagePrefix}is_impersonating`,
       JSON.stringify(value),
     );
   },
   setUserEmail: (mail: string) => {
-    window.localStorage.setItem(`${storagePrefix}user_mail`, mail);
+    getLocalStorage()?.setItem(`${storagePrefix}user_mail`, mail);
   },
   getUserEmail: () => {
-    return window.localStorage.getItem(`${storagePrefix}user_mail`);
+    return getLocalStorage()?.getItem(`${storagePrefix}user_mail`) ?? null;
   },
   clearUserEmail: () => {
-    window.localStorage.removeItem(`${storagePrefix}user_mail`);
+    getLocalStorage()?.removeItem(`${storagePrefix}user_mail`);
   },
 };
 
