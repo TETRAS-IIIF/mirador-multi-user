@@ -94,6 +94,7 @@ export function getDefaultMiradorWorkspaceConfig(
       exportLocalStorageAnnotations: false,
       commentTemplates: project.noteTemplate ?? [],
       tagsSuggestions: project.tags ?? [],
+      allowTargetShapesStyling: true,
     },
     annotations: { htmlSanitizationRuleSet: 'liberal' },
     workspace: { isWorkspaceAddVisible: true, removeResourceButton: true },
