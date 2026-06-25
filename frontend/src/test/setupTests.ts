@@ -65,3 +65,4 @@ vi.mock('react-transition-group', () => ({
   CSSTransition: ({ children }: { children: React.ReactNode }) => children,
   TransitionGroup: ({ children }: { children: React.ReactNode }) => children,
 }));
+

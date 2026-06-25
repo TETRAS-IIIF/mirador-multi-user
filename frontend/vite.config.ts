@@ -10,7 +10,7 @@ export default defineConfig({
     {
       name: 'treat-js-files-as-jsx',
       async transform(code, id) {
-        if (!/\/src\/.*\.js$/.test(id)) return null;
+      if (!/\/src\/.*\.js$/.test(id)) return null;
         return transformWithEsbuild(code, id, {
           loader: 'jsx',
           jsx: 'automatic',
@@ -22,6 +22,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
+      'mirador': fileURLToPath(new URL('./node_modules/mirador/src/index.js', import.meta.url)),
       'mirador-mltools-plugin-mmu': fileURLToPath(
         new URL(
           './node_modules/mirador-mltools-plugin-mmu/dist/mirador-mltools-plugin.es.js',
@@ -67,6 +68,15 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: './src/test/setupTests.ts',
+    alias: {
+      mirador: fileURLToPath(new URL('./src/test/mocks/mirador.ts', import.meta.url)),
+      'mirador-mltools-plugin-mmu': fileURLToPath(
+        new URL('./src/test/mocks/miradorPlugin.ts', import.meta.url),
+      ),
+      'mirador-annotation-editor': fileURLToPath(
+        new URL('./src/test/mocks/miradorPlugin.ts', import.meta.url),
+      ),
+    },
     css: true,
     coverage: {
       provider: 'v8',
