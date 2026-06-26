@@ -12,12 +12,14 @@ import {
 } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAnnotationId } from '../annotationUtils.ts';
+import { getAnnotationId, getAnnotationPageId } from '../annotationUtils.ts';
 import { AnnotationTableRow } from './AnnotationTableRow';
 import { Annotation, AnnotationBody } from '../hooks/useAnnotationFilters.ts';
 import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 import { Project } from '../../projects/types/types.ts';
 import { AnnotationEditModal } from './AnnotationEditModal.tsx';
+import { upsertAnnotationPage } from '../../mirador/api/upsertAnnotationPage.ts';
+import toast from 'react-hot-toast';
 
 enum SortableColumn {
   Project = 'project',
@@ -48,7 +50,7 @@ interface AnnotationTableProps {
   isAllSelected: boolean;
   isIndeterminate: boolean;
   loading: boolean;
-  onAnnotationUpdate?: (id: string, updated: Annotation) => void;
+  onAnnotationUpdated?: (id: string, updated: Annotation) => void;
   onProjectClick: (projectId: string | number, canvasId?: string) => void;
   onToggleSelect: (id: string) => void;
   onToggleSelectAll: () => void;
@@ -114,7 +116,7 @@ export const AnnotationTable = ({
   searchQuery,
   isAllSelected,
   isIndeterminate,
-  onAnnotationUpdate,
+  onAnnotationUpdated,
   onToggleSelectAll,
   onToggleSelect,
   onProjectClick,
@@ -221,11 +223,52 @@ export const AnnotationTable = ({
     setEditTarget({ id, anno });
   };
 
-  const handleSave = (id: string, updated: Annotation) => {
-    // Remonte au parent / appelle ton API ici
-    onAnnotationUpdate?.(id, updated);
-    setEditTarget(null);
+  const handleSave = async (edited: Annotation) => {
+    if (!editTarget) return;
+
+    const annotationPageId = getAnnotationPageId(editTarget.anno);
+
+    if (!annotationPageId) {
+      toast.error(t('annotations.errors.noAnnotationPageId'));
+      return;
+    }
+
+    const dto = {
+      annotationPageId,
+      projectId: Number(edited.projectId),
+      content: {
+        type: 'AnnotationPage',
+        items: [
+          {
+            type: 'Annotation',
+            motivation: edited.motivation ?? 'commenting',
+            body: edited.body,
+            target: edited.target,
+          },
+        ],
+      },
+    };
+
+    try {
+      await upsertAnnotationPage(dto);
+
+      const merged: Annotation = {
+        ...editTarget.anno,
+        body: edited.body,
+        target: edited.target,
+        motivation: edited.motivation ?? editTarget.anno.motivation,
+        projectId: edited.projectId,
+      };
+
+      onAnnotationUpdated?.(editTarget.id, merged);
+      toast.success(t('annotations.saveSuccess'));
+      setEditTarget(null);
+    } catch (e) {
+      console.error(e);
+      toast.error(t('annotations.errors.saveFailed'));
+    }
   };
+
   return (
     <TableContainer component={Paper}>
       <Table>

@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards, } from '@nestjs/common';
 import { AnnotationPageService } from './annotation-page.service';
 import { CreateAnnotationPageDto } from './dto/create-annotation-page.dto';
 import { AuthGuard } from '../../auth/auth.guard';

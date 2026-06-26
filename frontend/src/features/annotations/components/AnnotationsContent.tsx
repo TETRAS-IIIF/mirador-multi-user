@@ -12,14 +12,21 @@ import { deleteAnnotationPage } from '../../mirador/api/deleteAnnotationPage';
 import { ITEM_RIGHTS } from '../../../utils/mmu_types';
 
 import { useAnnotations } from '../hooks/useAnnotations';
-import { useAnnotationFilters } from '../hooks/useAnnotationFilters';
+import {
+  Annotation,
+  useAnnotationFilters,
+} from '../hooks/useAnnotationFilters';
 import { useOpenProject } from '../../projects/hooks/useOpenProject';
 import { AnnotationFilters } from './AnnotationFilters';
 import { BulkActionToolbar } from './BulkActionToolbar';
 import { AnnotationTable } from './AnnotationTable';
 import { MMUModal } from '../../../components/elements/modal';
 import { ModalProjectAlreadyOpenByUser } from '../../projects/components/ModalProjectAlreadyOpenByUser';
-import { downloadAnnotationsAsZip, getAnnotationId, getAnnotationPageId, } from '../annotationUtils.ts';
+import {
+  downloadAnnotationsAsZip,
+  getAnnotationId,
+  getAnnotationPageId,
+} from '../annotationUtils.ts';
 
 interface AnnotationsContentProps {
   userProjects: Project[];
@@ -169,6 +176,12 @@ export function AnnotationsContent({
     await downloadAnnotationsAsZip(selectedAnnotations);
   };
 
+  const handleAnnotationUpdated = (id: string, updated: Annotation) => {
+    setAnnotations((prev) =>
+      prev.map((a, i) => (getAnnotationId(a, i) === id ? updated : a)),
+    );
+  };
+
   const speedDialActions = [
     {
       icon: <WorkIcon />,
@@ -228,6 +241,7 @@ export function AnnotationsContent({
         onToggleSelect={toggleSelect}
         onProjectClick={handleProjectClick}
         userProjects={userProjects}
+        onAnnotationUpdated={handleAnnotationUpdated}
       />
 
       <SpeedDial

@@ -7,6 +7,9 @@
     "content": "Contenu",
     "creator": "Créateur",
     "date": "Date",
+    "errors": {
+      "saveFailed": "Échec de l'enregistrement de l'annotation"
+    },
     "filterByCanvasId": "Par Canvas ID",
     "filterByCreator": "Par créateur",
     "filterByProject": "Par projet",
@@ -18,6 +21,7 @@
     "project": "Projet",
     "readOnly": "Lecture seule",
     "rights": "Droits",
+    "saveSuccess": "Annotation enregistrée avec succès",
     "search": "Rechercher...",
     "tags": "Tags",
     "unknown": "Inconnu"
@@ -83,7 +87,7 @@
   "allow_peertube_media_tooltip": "Active l'ajout de vidéos PeerTube comme médias.",
   "allow_youtube_media": "Autoriser les médias YouTube",
   "allow_youtube_media_tooltip": "Active l'ajout de vidéos YouTube comme médias.",
-  "annotation": "Annotation",
+  "annotation": "Annotations",
   "api_url": "URL de l'API",
   "areYouSureDuplicate": "Êtes-vous sûr de vouloir dupliquer",
   "backend_log_lvl": "Niveau de log du backend",

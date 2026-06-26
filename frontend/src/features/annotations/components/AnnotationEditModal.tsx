@@ -16,7 +16,7 @@ interface AnnotationEditModalProps {
   open: boolean;
   annotation: Annotation | null;
   onClose: () => void;
-  onSave: (id: string, updated: Annotation) => void;
+  onSave: (updated: Annotation) => Promise<void>;
   annotationId: string | null;
 }
 
@@ -42,7 +42,7 @@ export const AnnotationEditModal = ({
     try {
       const parsed = JSON.parse(value);
       setError(null);
-      if (annotationId) onSave(annotationId, parsed);
+      if (annotationId) onSave(parsed);
       onClose();
     } catch (e) {
       setError(t('annotations.invalidJson', { message: (e as Error).message }));

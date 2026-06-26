@@ -16,7 +16,8 @@
       "deleteFailed": "Failed to delete annotation",
       "noAnnotationPageId": "Could not find annotation page ID",
       "noPermission": "You don't have permission to delete annotations in project \"{{projectName}}\"",
-      "projectNotFound": "Project not found for this annotation"
+      "projectNotFound": "Project not found for this annotation",
+      "saveFailed": "Failed to save annotation"
     },
     "filterByCanvasId": "By Canvas ID",
     "filterByCreator": "By creator",
@@ -31,6 +32,7 @@
     "readOnly": "Read only",
     "rights": "Rights",
     "save": "Save",
+    "saveSuccess": "Annotation saved successfully",
     "search": "Search...",
     "selected": "selected",
     "tags": "Tags",
@@ -97,7 +99,7 @@
   "allow_peertube_media_tooltip": "Enable to allow adding PeerTube videos as media.",
   "allow_youtube_media": "Allow YouTube media",
   "allow_youtube_media_tooltip": "Enable to allow adding YouTube videos as media.",
-  "annotation": "Annotation",
+  "annotation": "Annotations",
   "api_url": "API URL",
   "areYouSureDuplicate": "Are you sure you want to duplicate",
   "backend_log_lvl": "Niveau de log du backend",

@@ -3,17 +3,47 @@ import dayjs, { Dayjs } from 'dayjs';
 import Fuse from 'fuse.js';
 import { getCanvasIdFromTarget } from '../annotationUtils.ts';
 
+export interface AnnotationBody {
+  purpose?: string;
+  value?: string;
+  id?: string;
+  type?: string;
+}
+
+export interface MaeDataTag {
+  label: string;
+  value: string;
+  __isNew__?: boolean;
+}
+
+export interface MaeDataTarget {
+  drawingState: string;
+  fullCanvaXYWH: string;
+  scale: number;
+  svg: string;
+}
+
+export interface MaeData {
+  tags: MaeDataTag[];
+  target: MaeDataTarget;
+  templateType: string;
+  textBody: AnnotationBody;
+}
+
 export interface Annotation {
   id?: string;
+  type?: string;
   projectId: string | number;
   projectName?: string;
   creator?: string;
+  lastEditor?: string;
   motivation?: string;
   creationDate?: string;
+  lastSavedDate?: string;
   target?: any;
   body?: AnnotationBody | AnnotationBody[];
+  maeData?: MaeData;
 }
-
 export interface AnnotationBody {
   purpose?: string;
   value?: string;
