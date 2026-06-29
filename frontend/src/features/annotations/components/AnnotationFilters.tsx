@@ -1,9 +1,10 @@
-import { Autocomplete, Box, Chip, Paper, TextField } from '@mui/material';
+import { Box, Chip, Paper, TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Dayjs } from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { MultiSelectFilter } from './MultiSelectFilter.tsx';
 
 interface AnnotationFiltersProps {
   searchQuery: string;
@@ -27,56 +28,6 @@ interface AnnotationFiltersProps {
   dateTo: Dayjs | null;
   onDateToChange: (value: Dayjs | null) => void;
 }
-
-interface MultiSelectFilterProps {
-  options: string[];
-  value: string[];
-  onChange: (value: string[]) => void;
-  label: string;
-}
-
-const MultiSelectFilter = ({
-  options,
-  value,
-  onChange,
-  label,
-}: MultiSelectFilterProps) => (
-  <Autocomplete
-    multiple
-    options={options}
-    value={value}
-    onChange={(_, v) => onChange(v)}
-    limitTags={2}
-    renderTags={(tagValue, getTagProps) =>
-      tagValue.map((option, index) => {
-        const { key, ...tagProps } = getTagProps({ index });
-        return (
-          <Chip
-            key={key}
-            label={option}
-            size="small"
-            {...tagProps}
-            sx={{
-              maxWidth: 160,
-              '& .MuiChip-label': {
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
-              },
-            }}
-          />
-        );
-      })
-    }
-    renderInput={(params) => (
-      <TextField {...params} label={label} size="small" />
-    )}
-    sx={{
-      width: 260,
-      flexShrink: 0,
-    }}
-  />
-);
 
 export const AnnotationFilters = ({
   searchQuery,
