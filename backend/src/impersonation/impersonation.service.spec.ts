@@ -7,6 +7,7 @@ import { UsersService } from '../BaseEntities/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { InternalServerErrorException } from '@nestjs/common';
 import { ImpersonateDto } from './dto/impersonateDto';
+import { SettingsService } from '../BaseEntities/setting/setting.service';
 
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'uuid-token'),
@@ -26,6 +27,10 @@ const mockUsersService = {
 const mockJwtService = {
   signAsync: jest.fn(),
 } as unknown as jest.Mocked<JwtService>;
+
+const mockSettingsService = {
+  get: jest.fn(),
+} as unknown as jest.Mocked<SettingsService>;
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 const futureDate = () => new Date(Date.now() + 60_000);
@@ -61,8 +66,11 @@ describe('ImpersonationService', () => {
         { provide: getRepositoryToken(Impersonation), useValue: mockRepo },
         { provide: UsersService, useValue: mockUsersService },
         { provide: JwtService, useValue: mockJwtService },
+        { provide: SettingsService, useValue: mockSettingsService },
       ],
     }).compile();
+
+    mockSettingsService.get.mockResolvedValue('true');
 
     service = module.get<ImpersonationService>(ImpersonationService);
   });
@@ -153,6 +161,27 @@ describe('ImpersonationService', () => {
       await expect(service.initiateImpersonation(1, 2)).rejects.toBeInstanceOf(
         InternalServerErrorException,
       );
+    });
+
+    it('should skip the OIDC redirect and return an access_token directly when OIDC is not enabled', async () => {
+      const adminUser = { id: 1, isAdmin: true } as any;
+      const user = { id: 2, name: 'John Doe', isEmailConfirmed: true } as any;
+      const created = { id: 'imp-1', token: 'uuid-token' } as any;
+
+      mockSettingsService.get.mockResolvedValue('false');
+      mockUsersService.findAdminUser.mockResolvedValue(adminUser);
+      mockUsersService.findOne.mockResolvedValue(user);
+      mockRepo.create.mockReturnValue(created);
+      mockRepo.save
+        .mockResolvedValueOnce(created)
+        .mockResolvedValueOnce({ ...created, used: true });
+      mockRepo.findOne.mockResolvedValue({ ...created, used: false, user });
+      mockJwtService.signAsync.mockResolvedValue('signed-jwt');
+
+      const result = await service.initiateImpersonation(1, 2);
+
+      expect(result).toEqual({ access_token: 'signed-jwt' });
+      expect(result.oidcLogoutUrl).toBeUndefined();
     });
   });
 

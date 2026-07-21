@@ -27,7 +27,7 @@ export class ImpersonationController {
   async initiate(
     @Body() { targetUserId }: { targetUserId: number },
     @Request() req,
-  ): Promise<{ oidcLogoutUrl: string }> {
+  ): Promise<{ oidcLogoutUrl?: string; access_token?: string }> {
     return this.impersonationService.initiateImpersonation(
       req.user.sub,
       targetUserId,
