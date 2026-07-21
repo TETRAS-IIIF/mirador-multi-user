@@ -1,10 +1,6 @@
 import { Grid, IconButton, Tooltip, Typography } from '@mui/material';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import {
-  Project,
-  ProjectGroup,
-  ProjectGroupUpdateDto,
-} from '../types/types.ts';
+import { Project, ProjectGroup, ProjectGroupUpdateDto, } from '../types/types.ts';
 import IState from '../../mirador/interface/IState.ts';
 import { User } from '../../auth/types/types.ts';
 import { deleteProject } from '../api/Project/deleteProject.ts';
@@ -28,11 +24,7 @@ import { Media } from '../../media/types/types.ts';
 import { PaginationControls } from '../../../components/elements/Pagination.tsx';
 import { updateAccessToProject } from '../api/Project/UpdateAccessToProject.ts';
 import SettingsIcon from '@mui/icons-material/Settings';
-import {
-  ITEM_RIGHTS,
-  OBJECT_TYPES,
-  USER_GROUP_TYPES,
-} from '../../../utils/mmu_types.ts';
+import { ITEM_RIGHTS, OBJECT_TYPES, USER_GROUP_TYPES, } from '../../../utils/mmu_types.ts';
 import toast from 'react-hot-toast';
 import { duplicateProject } from '../api/Project/duplicateProject.ts';
 import { useTranslation } from 'react-i18next';
@@ -43,14 +35,12 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { removeProjectFromList } from '../api/Project/removeProjectFromList.ts';
 import { SidePanel } from '../../../components/elements/SidePanel/SidePanel.tsx';
 import { Manifest } from '../../manifest/types/types.ts';
-import {
-  TITLE,
-  UPDATED_AT,
-  useCurrentPageData,
-} from '../../../utils/customHooks/filterHook.ts';
+import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHooks/filterHook.ts';
 import { MMUModal } from '../../../components/elements/modal.tsx';
 import { ModalProjectAlreadyOpenByUser } from './ModalProjectAlreadyOpenByUser.tsx';
 import { useOpenProject } from '../hooks/useOpenProject.ts';
+import { getSettingValue, SettingKeys } from '../../../utils/utils.ts';
+import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 
 interface AllProjectsProps {
   user: User;
@@ -92,6 +82,19 @@ export const AllProjects = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<keyof Project>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState('desc');
+  const [openModalConfirmReopenProject, setOpenModalConfirmReopenProject] =
+    useState(false);
+  const [pendingProject, setPendingProject] = useState<Project | null>(null);
+  const [pendingMiradorState, setPendingMiradorState] = useState<
+    IState | undefined
+  >(undefined);
+  const { data: settings } = useAdminSettings();
+
+
+  // TODO merge
+  const projectLock =
+    getSettingValue(SettingKeys.DISABLE_PROJECT_LOCK, settings) === 'false';
+
   const { t } = useTranslation();
   const itemsPerPage = 10;
 

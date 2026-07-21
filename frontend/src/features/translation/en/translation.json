@@ -155,6 +155,8 @@
   "disconnect_error": "You had been disconnect",
   "display_user_inscription_page": "Display User Inscription Page",
   "display_user_inscription_page_tooltip": "If enabled, users will be able to register themselves via the signup page.",
+  "DISABLE_PROJECT_LOCK": "Remove project lock",
+  "disable_project_lock": "Remove project lock",
   "downloadMedia": "Download media",
   "download_logs": "Download logs",
   "duplicate": "Duplicate",

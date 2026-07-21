@@ -27,6 +27,7 @@ export class ImpersonationService {
 
     return `${process.env.OIDC_ISSUER}/protocol/openid-connect/logout?client_id=${clientId}&post_logout_redirect_uri=${encodedCallbackUrl}`;
   }
+
   async initiateImpersonation(
     adminUserId: number,
     userId: number,

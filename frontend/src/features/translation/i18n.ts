@@ -10,13 +10,26 @@ import "dayjs/locale/es";
 
 dayjs.extend(localizedFormat);
 
+const getDetectedLanguage = (): string => {
+  const savedLanguage =
+    typeof window !== "undefined"
+      ? window.localStorage?.getItem("i18nextLng")
+      : undefined;
+  if (savedLanguage) {
+    return savedLanguage;
+  }
+
+  const browserLanguage =
+    typeof navigator !== "undefined"
+      ? navigator.language?.split("-")[0]
+      : undefined;
+  return browserLanguage || "en";
+};
+
 // 🟢 Initialize i18next
 i18n.use(initReactI18next).init({
   fallbackLng: "en",
-  lng:
-    localStorage.getItem("i18nextLng") ||
-    navigator.language.split("-")[0] ||
-    "en",
+  lng: getDetectedLanguage(),
   interpolation: { escapeValue: false },
   resources: {
     en: { translation: en },
@@ -46,10 +59,7 @@ const loadLanguage = async (lng: string): Promise<void> => {
   await i18n.changeLanguage(lng);
 };
 
-const detectedLng =
-  localStorage.getItem("i18nextLng") ||
-  navigator.language.split("-")[0] ||
-  "en";
+const detectedLng = getDetectedLanguage();
 
 loadLanguage(detectedLng);
 
