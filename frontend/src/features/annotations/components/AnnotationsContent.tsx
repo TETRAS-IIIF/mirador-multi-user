@@ -201,28 +201,38 @@ export function AnnotationsContent({
         overflowX: 'hidden',
       }}
     >
-      <AnnotationFilters
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        activeFilterCount={activeFilterCount}
-        onResetFilters={resetFilters}
-        projectOptions={projectOptions}
-        selectedProjects={selectedProjects}
-        onProjectsChange={setSelectedProjects}
-        creatorOptions={creatorOptions}
-        selectedCreators={selectedCreators}
-        onCreatorsChange={setSelectedCreators}
-        tagOptions={tagOptions}
-        selectedTags={selectedTags}
-        onTagsChange={setSelectedTags}
-        canvasIdOptions={canvasIdOptions}
-        selectedCanvasIds={selectedCanvasIds}
-        onCanvasIdsChange={setSelectedCanvasIds}
-        dateFrom={dateFrom}
-        onDateFromChange={setDateFrom}
-        dateTo={dateTo}
-        onDateToChange={setDateTo}
-      />
+      <Box
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 10,
+          bgcolor: 'background.default',
+          pb: 1,
+        }}
+      >
+        <AnnotationFilters
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          activeFilterCount={activeFilterCount}
+          onResetFilters={resetFilters}
+          projectOptions={projectOptions}
+          selectedProjects={selectedProjects}
+          onProjectsChange={setSelectedProjects}
+          creatorOptions={creatorOptions}
+          selectedCreators={selectedCreators}
+          onCreatorsChange={setSelectedCreators}
+          tagOptions={tagOptions}
+          selectedTags={selectedTags}
+          onTagsChange={setSelectedTags}
+          canvasIdOptions={canvasIdOptions}
+          selectedCanvasIds={selectedCanvasIds}
+          onCanvasIdsChange={setSelectedCanvasIds}
+          dateFrom={dateFrom}
+          onDateFromChange={setDateFrom}
+          dateTo={dateTo}
+          onDateToChange={setDateTo}
+        />
+      </Box>
 
       <BulkActionToolbar
         selectedCount={selected.size}
