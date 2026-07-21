@@ -19,6 +19,7 @@ describe('AnnotationPageService', () => {
       create: jest.fn(),
       delete: jest.fn(),
       save: jest.fn(),
+      upsert: jest.fn(),
       find: jest.fn(),
       findOne: jest.fn(),
     };
@@ -44,7 +45,7 @@ describe('AnnotationPageService', () => {
   });
 
   describe('create', () => {
-    it('deletes existing and saves new annotationPage then returns findAll', async () => {
+    it('upserts new annotationPage then returns findAll', async () => {
       const dto: CreateAnnotationPageDto = {
         annotationPageId: 'page-1',
         projectId: 123,
@@ -55,19 +56,16 @@ describe('AnnotationPageService', () => {
       const found = [{ id: 1, ...dto }] as AnnotationPage[];
 
       repo.create.mockReturnValue(created);
-      repo.delete.mockResolvedValue({ affected: 1 } as DeleteResult);
-      repo.save.mockResolvedValue(created);
+      repo.upsert.mockResolvedValue(undefined);
       // findAll calls repo.find internally
       repo.find.mockResolvedValue(found);
 
       const result = await service.create(dto);
 
       expect(repo.create).toHaveBeenCalledWith(dto);
-      expect(repo.delete).toHaveBeenCalledWith({
-        annotationPageId: created.annotationPageId,
-        projectId: created.projectId,
+      expect(repo.upsert).toHaveBeenCalledWith(created, {
+        conflictPaths: ['annotationPageId', 'projectId'],
       });
-      expect(repo.save).toHaveBeenCalledWith(created);
       expect(repo.find).toHaveBeenCalledWith({
         where: {
           annotationPageId: created.annotationPageId,

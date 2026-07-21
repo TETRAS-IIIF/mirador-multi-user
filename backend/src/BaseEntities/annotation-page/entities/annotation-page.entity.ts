@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IsNumber, IsString } from "class-validator";
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { IsNumber, IsString } from 'class-validator';
 
 @Entity()
+@Unique(['annotationPageId', 'projectId'])
 export class AnnotationPage {
   @PrimaryGeneratedColumn()
   id: number;

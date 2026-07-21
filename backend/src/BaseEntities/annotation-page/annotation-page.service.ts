@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, } from '@nestjs/common';
 import { CreateAnnotationPageDto } from './dto/create-annotation-page.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnnotationPage } from './entities/annotation-page.entity';
@@ -24,15 +20,10 @@ export class AnnotationPageService {
         createAnnotationPageDto,
       );
 
-      // TODO It will be better to used upsert method
-      await this.annotationPageRepository.delete({
-        annotationPageId: annotationPage.annotationPageId,
-        projectId: annotationPage.projectId,
+      await this.annotationPageRepository.upsert(annotationPage, {
+        conflictPaths: ['annotationPageId', 'projectId'],
       });
-      // Save annotationPage
-      await this.annotationPageRepository.save(annotationPage);
 
-      // Return all annotationPage. In current workflow, only one will be matching
       return this.findAll(
         annotationPage.annotationPageId,
         annotationPage.projectId,

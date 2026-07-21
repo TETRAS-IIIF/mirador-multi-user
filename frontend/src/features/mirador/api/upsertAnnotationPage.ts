@@ -1,5 +1,5 @@
-import storage from "../../../utils/storage.ts";
-import { AnnotationPageDto } from "../type/type.ts";
+import storage from '../../../utils/storage.ts';
+import { AnnotationPageDto } from '../type/type.ts';
 
 export const upsertAnnotationPage = async (
   annotationPageDto: AnnotationPageDto,
@@ -9,10 +9,10 @@ export const upsertAnnotationPage = async (
     const response = await fetch(
       `${import.meta.env.VITE_BACKEND_URL}/annotation-page`,
       {
-        method: "POST",
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(annotationPageDto),
       },

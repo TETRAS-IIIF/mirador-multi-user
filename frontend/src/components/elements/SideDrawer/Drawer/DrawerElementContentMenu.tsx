@@ -4,6 +4,7 @@ import WorkIcon from '@mui/icons-material/Work';
 import ArticleIcon from '@mui/icons-material/Article';
 import PermMediaIcon from '@mui/icons-material/PermMedia';
 import GroupsIcon from '@mui/icons-material/Groups';
+import NotesIcon from '@mui/icons-material/Notes';
 import { useTranslation } from 'react-i18next';
 import { MENU_ELEMENT } from '../../../../utils/utils.ts';
 
@@ -63,6 +64,17 @@ export function DrawerElementContentMenu({
             icon={<GroupsIcon />}
             text={t('group')}
             action={() => handleChangeContent(MENU_ELEMENT.GROUPS)}
+          />
+        </ListItem>
+      </Tooltip>
+      <Tooltip title={t('annotTitle')} placement="right">
+        <ListItem sx={{ padding: 0 }}>
+          <ItemButton
+            open={open}
+            selected={MENU_ELEMENT.ANNOTATION === selectedContent}
+            icon={<NotesIcon />}
+            text={t('annotation')}
+            action={() => handleChangeContent(MENU_ELEMENT.ANNOTATION)}
           />
         </ListItem>
       </Tooltip>
