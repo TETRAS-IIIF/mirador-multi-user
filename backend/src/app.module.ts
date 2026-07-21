@@ -15,7 +15,7 @@ import { LinkUserGroupModule } from './LinkModules/link-user-group/link-user-gro
 import { ManifestModule } from './BaseEntities/manifest/manifest.module';
 import dbConfiguration from './config/db.config';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { PugAdapter } from '@nestjs-modules/mailer/adapters/pug.adapter';
 import { EmailServerModule } from './utils/email/email.module';
 import { CustomLogger } from './utils/Logger/CustomLogger.service';
 import { LinkManifestGroupModule } from './LinkModules/link-manifest-group/link-manifest-group.module';
