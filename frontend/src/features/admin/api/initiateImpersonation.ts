@@ -22,8 +22,18 @@ export const initiateImpersonation = async (userId: number) => {
       );
     }
 
-    const { oidcLogoutUrl } = await response.json();
-    window.location.href = oidcLogoutUrl;
+    const { oidcLogoutUrl, access_token } = await response.json();
+
+    if (oidcLogoutUrl) {
+      window.location.href = oidcLogoutUrl;
+      return;
+    }
+
+    if (access_token) {
+      storage.setToken(access_token);
+      storage.setIsImpersonating(true);
+      window.location.href = '/app/my-projects';
+    }
   } catch (error) {
     console.error('Failed to initiate impersonation', error);
   }

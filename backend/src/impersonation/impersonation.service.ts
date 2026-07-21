@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { CustomLogger } from '../utils/Logger/CustomLogger.service';
 import { JwtService } from '@nestjs/jwt';
 import { ImpersonateDto } from './dto/impersonateDto';
+import { SettingsService } from '../BaseEntities/setting/setting.service';
+import { SettingKeys } from '../BaseEntities/setting/utils.setting';
 
 @Injectable()
 export class ImpersonationService {
@@ -17,6 +19,7 @@ export class ImpersonationService {
     private readonly impersonationRepository: Repository<Impersonation>,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly settingsService: SettingsService,
   ) {}
 
   private buildOidcLogoutUrl(token: string, targetUserId: number): string {
@@ -31,7 +34,7 @@ export class ImpersonationService {
   async initiateImpersonation(
     adminUserId: number,
     userId: number,
-  ): Promise<{ oidcLogoutUrl: string }> {
+  ): Promise<{ oidcLogoutUrl?: string; access_token?: string }> {
     try {
       const adminUser = await this.userService.findAdminUser(adminUserId);
       if (!adminUser) {
@@ -55,6 +58,17 @@ export class ImpersonationService {
       });
 
       await this.impersonationRepository.save(impersonation);
+
+      const isOidcEnabled =
+        (await this.settingsService.get(SettingKeys.OPENID_CONNECTION)) ===
+        'true';
+
+      if (!isOidcEnabled) {
+        return await this.impersonateUserData({
+          token,
+          userId,
+        } as ImpersonateDto);
+      }
 
       const oidcLogoutUrl = this.buildOidcLogoutUrl(token, userId);
 
