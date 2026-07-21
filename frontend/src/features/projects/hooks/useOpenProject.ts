@@ -7,6 +7,8 @@ import IState from '../../mirador/interface/IState';
 import { isProjectLocked } from '../api/Project/isProjectLocked';
 import { handleLock } from '../api/Project/handleLock';
 import { getUserNameWithId } from '../../auth/api/getUserNameWithId';
+import { getSettingValue, SettingKeys } from '../../../utils/utils.ts';
+import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 
 const SELF_LOCK = -1;
 
@@ -38,6 +40,10 @@ export const useOpenProject = ({
 }: UseOpenProjectParams) => {
   const { t } = useTranslation();
 
+  const { data: settings } = useAdminSettings();
+  const projectLock =
+    getSettingValue(SettingKeys.DISABLE_PROJECT_LOCK, settings) === 'false';
+
   const [openModalConfirmReopenProject, setOpenModalConfirmReopenProject] =
     useState(false);
   const [pendingProject, setPendingProject] = useState<Project | null>(null);
@@ -52,7 +58,7 @@ export const useOpenProject = ({
     async (
       project: Project,
       miradorState?: IState,
-      forced: boolean = false,
+      forced: boolean = !projectLock,
       targetCanvasId?: string,
     ) => {
       try {
@@ -87,7 +93,7 @@ export const useOpenProject = ({
       setSelectedProjectId(project.id);
       handleSetMiradorState(stateToLoad);
     },
-    [setSelectedProjectId, handleSetMiradorState, t],
+    [setSelectedProjectId, handleSetMiradorState, t, projectLock],
   );
 
   const confirmForceOpen = useCallback(async () => {

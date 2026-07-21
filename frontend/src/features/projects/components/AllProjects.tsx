@@ -39,8 +39,6 @@ import { TITLE, UPDATED_AT, useCurrentPageData, } from '../../../utils/customHoo
 import { MMUModal } from '../../../components/elements/modal.tsx';
 import { ModalProjectAlreadyOpenByUser } from './ModalProjectAlreadyOpenByUser.tsx';
 import { useOpenProject } from '../hooks/useOpenProject.ts';
-import { getSettingValue, SettingKeys } from '../../../utils/utils.ts';
-import { useAdminSettings } from '../../../utils/customHooks/useAdminSettings.ts';
 
 interface AllProjectsProps {
   user: User;
@@ -82,18 +80,6 @@ export const AllProjects = ({
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<keyof Project>(UPDATED_AT);
   const [sortOrder, setSortOrder] = useState('desc');
-  const [openModalConfirmReopenProject, setOpenModalConfirmReopenProject] =
-    useState(false);
-  const [pendingProject, setPendingProject] = useState<Project | null>(null);
-  const [pendingMiradorState, setPendingMiradorState] = useState<
-    IState | undefined
-  >(undefined);
-  const { data: settings } = useAdminSettings();
-
-
-  // TODO merge
-  const projectLock =
-    getSettingValue(SettingKeys.DISABLE_PROJECT_LOCK, settings) === 'false';
 
   const { t } = useTranslation();
   const itemsPerPage = 10;
