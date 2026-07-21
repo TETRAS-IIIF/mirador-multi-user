@@ -26,7 +26,7 @@ import { loadLanguage } from '../../features/translation/i18n.ts';
 import { Content } from './SideDrawer/Content';
 import { MMUDrawer } from './SideDrawer/MMUDrawer';
 import { getUserMedias } from '../../features/media/api/getUserMedias.ts';
-
+import { Box } from '@mui/material';
 import { Manifest } from '../../features/manifest/types/types';
 import { MENU_ELEMENT } from '../../utils/utils.ts';
 import { generateSnapshot } from '../../features/projects/api/snapshot/generateProjectSnapShot.ts';
@@ -347,7 +347,14 @@ export const SideDrawer = ({
   }, [userProjects, selectedProjectId]);
 
   return (
-    <>
+    <Box
+      sx={{
+        display: 'flex',
+        height: '100vh',
+        width: '100vw',
+        overflow: 'hidden',
+      }}
+    >
       <MMUDrawer
         selectedContent={selectedContent}
         handleChangeContent={handleChangeContent}
@@ -357,34 +364,43 @@ export const SideDrawer = ({
         user={user}
         handleGenerateSnapshot={handleGenerateSnapshot}
       />
-      <Content
-        setMedias={setMedias}
-        HandleSetIsRunning={HandleSetIsRunning}
-        HandleSetUserProjects={HandleSetUserProjects}
-        fetchGroups={fetchGroups}
-        fetchManifestForUser={fetchManifestForUser}
-        fetchMediaForUser={fetchMediaForUser}
-        groups={groups}
-        handleDisconnectUser={handleDisconnectUser}
-        handleSetMiradorState={handleSetMiradorState}
-        manifests={manifests}
-        medias={medias}
-        miradorState={miradorState}
-        miradorViewerRef={miradorViewerRef}
-        projectSelected={projectSelected}
-        saveMiradorState={saveMiradorState}
-        selectedContent={selectedContent}
-        selectedProjectId={selectedProjectId}
-        setSelectedProjectId={setSelectedProjectId}
-        setShowSignOutModal={setShowSignOutModal}
-        setViewer={setViewer}
-        showSignOutModal={showSignOutModal}
-        user={user}
-        userPersonalGroup={userPersonalGroup!}
-        userProjects={userProjects}
-        viewer={viewer}
-        fetchProjects={fetchProjects}
-      />
-    </>
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          height: '100vh',
+          minWidth: 0,
+        }}
+      >
+        <Content
+          setMedias={setMedias}
+          HandleSetIsRunning={HandleSetIsRunning}
+          HandleSetUserProjects={HandleSetUserProjects}
+          fetchGroups={fetchGroups}
+          fetchManifestForUser={fetchManifestForUser}
+          fetchMediaForUser={fetchMediaForUser}
+          groups={groups}
+          handleDisconnectUser={handleDisconnectUser}
+          handleSetMiradorState={handleSetMiradorState}
+          manifests={manifests}
+          medias={medias}
+          miradorState={miradorState}
+          miradorViewerRef={miradorViewerRef}
+          projectSelected={projectSelected}
+          saveMiradorState={saveMiradorState}
+          selectedContent={selectedContent}
+          selectedProjectId={selectedProjectId}
+          setSelectedProjectId={setSelectedProjectId}
+          setShowSignOutModal={setShowSignOutModal}
+          setViewer={setViewer}
+          showSignOutModal={showSignOutModal}
+          user={user}
+          userPersonalGroup={userPersonalGroup!}
+          userProjects={userProjects}
+          viewer={viewer}
+          fetchProjects={fetchProjects}
+        />
+      </Box>
+    </Box>
   );
 };
