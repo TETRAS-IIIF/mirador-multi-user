@@ -59,6 +59,8 @@
   "admin_create_user": "Créer un utilisateur",
   "admin_delete_Confirmation": "Supprimer cet utilisateur ?",
   "advancedEdit": "Édition avancée",
+  "sanity_check_title": "Vérifications de cohérence",
+  "sanity_check_user_personal_group": "Chaque utilisateur a un groupe personnel",
   "advanced_edit_disabled": "Ouvrez le projet une première fois pour accéder à l'édition avancer",
   "advanced_edit_disabled_manifest": "Ce manifest provient d'un lien, vous ne pouvez pas l'éditer",
   "advanced_edit_disabled_project": "Ouvrez le projet une première fois pour accéder à l'édition avancer",
