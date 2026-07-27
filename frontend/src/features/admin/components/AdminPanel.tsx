@@ -7,6 +7,7 @@ import { MMUModal } from '../../../components/elements/modal.tsx';
 import { CreateUserForm } from './CreateUserForm.tsx';
 import { AdminCollapsibleTable } from './adminCollapsibleTable.tsx';
 import { AdminSettings } from './AdminSettings.tsx';
+import { SanityChecks } from './SanityChecks.tsx';
 
 export const AdminPanel = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -79,6 +80,9 @@ export const AdminPanel = () => {
 
   return (
     <Grid>
+      <Grid sx={{ margin: 1 }}>
+        <SanityChecks />
+      </Grid>
       <Grid sx={{ margin: 1 }}>
         <AdminSettings />
       </Grid>
