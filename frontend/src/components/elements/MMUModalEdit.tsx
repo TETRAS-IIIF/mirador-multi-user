@@ -1072,7 +1072,7 @@ export const MMUModalEdit = <
           <ReplaceModalContent
             handleReplaceItem={handleReplaceItem}
             itemId={item.id}
-            itemName={item.title!}
+            itemName={item.path!}
             hash={item.hash!}
             setOpenReplaceModal={setOpenReplaceModal}
           />
