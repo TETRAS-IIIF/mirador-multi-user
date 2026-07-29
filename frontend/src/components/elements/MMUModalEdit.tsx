@@ -983,7 +983,7 @@ export const MMUModalEdit = <
                 {(rights === ITEM_RIGHTS.ADMIN ||
                   rights === ITEM_RIGHTS.EDITOR) &&
                   tabValue === 0 &&
-                  duplicateItem && (
+                  duplicateItem && objectTypes !== OBJECT_TYPES.PROJECT && (
                     <Tooltip title={t('duplicate')}>
                       <Button
                         color="primary"
