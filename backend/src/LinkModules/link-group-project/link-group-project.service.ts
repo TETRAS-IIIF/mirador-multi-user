@@ -30,7 +30,7 @@ import {
   DEFAULT_PROJECT_SNAPSHOT_FILE_NAME,
   UPLOAD_FOLDER,
 } from '../../utils/constants';
-import * as fs from 'node:fs';
+import * as fs from 'node:fs/promises';
 import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
 import { AnnotationPageService } from '../../BaseEntities/annotation-page/annotation-page.service';
 import { constructSnapshotWorkspace } from './utils/snapshot.utils';
@@ -639,7 +639,7 @@ export class LinkGroupProjectService {
 
       const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 
-      fs.mkdirSync(uploadPath, { recursive: true });
+      await fs.mkdir(uploadPath, { recursive: true });
 
       const workspaceData = {
         generated_at: Date.now(),
@@ -647,7 +647,7 @@ export class LinkGroupProjectService {
       };
 
       const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
-      fs.writeFileSync(
+      await fs.writeFile(
         workspaceJsonPath,
         JSON.stringify(workspaceData, null, 2),
         'utf-8',
@@ -692,12 +692,26 @@ export class LinkGroupProjectService {
       const project = await this.projectService.findOne(projectId);
       const snapshotToUpdate = await this.snapshotService.findOne(snapshotId);
       const uploadPath = `${UPLOAD_FOLDER}/${snapshotToUpdate.hash}`;
+
+      const projectAnnotationPages =
+        await this.annotationPageService.findAllProjectAnnotation(projectId);
+
+      const snapshotWorkspace = constructSnapshotWorkspace(
+        projectAnnotationPages,
+        project.userWorkspace,
+      );
+      if (!snapshotWorkspace) {
+        throw new BadRequestException(
+          'No workspace found for snapshot. Please ensure the project has valid workspace data.',
+        );
+      }
+
       const workspaceData = {
         generated_at: Date.now(),
-        workspace: project.userWorkspace,
+        workspace: snapshotWorkspace,
       };
       const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
-      fs.writeFileSync(
+      await fs.writeFile(
         workspaceJsonPath,
         JSON.stringify(workspaceData, null, 2),
         'utf-8',
@@ -707,6 +721,9 @@ export class LinkGroupProjectService {
         title: title,
       });
     } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while updating snapshot`,
@@ -719,9 +736,18 @@ export class LinkGroupProjectService {
     try {
       const snapshotToDelete = await this.snapshotService.findOne(snapshotId);
       const uploadPath = `${UPLOAD_FOLDER}/${snapshotToDelete.hash}`;
-      const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
-      //TODO: remove file located at uploadPath generate rights error on filesystem
-      fs.unlinkSync(workspaceJsonPath);
+
+      try {
+        await fs.rm(uploadPath, { recursive: true, force: true });
+      } catch (fsError) {
+        // Don't let a filesystem cleanup failure (e.g. permissions) block
+        // deletion of the snapshot record itself.
+        this.logger.error(
+          `Failed to remove snapshot directory ${uploadPath}: ${fsError.message}`,
+          fsError.stack,
+        );
+      }
+
       return await this.snapshotService.deleteSnapshot(snapshotId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
