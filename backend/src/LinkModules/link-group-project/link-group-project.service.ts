@@ -736,9 +736,18 @@ export class LinkGroupProjectService {
     try {
       const snapshotToDelete = await this.snapshotService.findOne(snapshotId);
       const uploadPath = `${UPLOAD_FOLDER}/${snapshotToDelete.hash}`;
-      const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
-      //TODO: remove file located at uploadPath generate rights error on filesystem
-      await fs.unlink(workspaceJsonPath);
+
+      try {
+        await fs.rm(uploadPath, { recursive: true, force: true });
+      } catch (fsError) {
+        // Don't let a filesystem cleanup failure (e.g. permissions) block
+        // deletion of the snapshot record itself.
+        this.logger.error(
+          `Failed to remove snapshot directory ${uploadPath}: ${fsError.message}`,
+          fsError.stack,
+        );
+      }
+
       return await this.snapshotService.deleteSnapshot(snapshotId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
