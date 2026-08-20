@@ -77,8 +77,8 @@ You will eventually get errors related to the database (table settings not exist
 
 In another terminal, run following commands to generate the database
 
-- `./cli.sh migration create init `
-- `./cli.sh migration run`
+- `just migration create init`
+- `just migration run`
 
 Now you can access (all ports can be customized in the .env file) :
 
@@ -101,8 +101,8 @@ You will eventually get errors related to the database (table settings not exist
 
 In another terminal, run following commands to generate the database
 
-6. `./cli.sh migration create init `
-7. `./cli.sh migration run`
+6. `just migration create init`
+7. `just migration run`
 
 ### Check if you're installation is ready to use :
 
