@@ -83,9 +83,6 @@
     "vite": "^6.4.2",
     "vitest": "^4.0.15"
   },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.9.5"
-  },
   "overrides": {
     "immutable": "4.3.8"
   }
