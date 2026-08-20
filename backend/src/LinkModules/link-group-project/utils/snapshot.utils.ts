@@ -44,7 +44,7 @@ function addAnnotationToMatchingCanvas(
     if (!match) continue;
 
     if (!Array.isArray(match.annotations)) match.annotations = [];
-    match.annotations.push({ id: page.annotationPageId, ...page.content });
+    match.annotations.push({ ...page.content, id: page.annotationPageId });
   }
 }
 
