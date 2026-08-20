@@ -64,11 +64,14 @@ export const constructSnapshotWorkspace = (
     const pageItems = page?.content?.items;
     if (!Array.isArray(pageItems)) continue;
 
+    const canvasIds = new Set<string>();
     for (const item of pageItems) {
       const annotationId = getAnnotationIdFromItem(item);
-      if (!annotationId) continue;
+      if (annotationId) canvasIds.add(annotationId);
+    }
 
-      addAnnotationToMatchingCanvas(manifests, annotationId, page);
+    for (const canvasId of canvasIds) {
+      addAnnotationToMatchingCanvas(manifests, canvasId, page);
     }
   }
 
