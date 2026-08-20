@@ -692,9 +692,23 @@ export class LinkGroupProjectService {
       const project = await this.projectService.findOne(projectId);
       const snapshotToUpdate = await this.snapshotService.findOne(snapshotId);
       const uploadPath = `${UPLOAD_FOLDER}/${snapshotToUpdate.hash}`;
+
+      const projectAnnotationPages =
+        await this.annotationPageService.findAllProjectAnnotation(projectId);
+
+      const snapshotWorkspace = constructSnapshotWorkspace(
+        projectAnnotationPages,
+        project.userWorkspace,
+      );
+      if (!snapshotWorkspace) {
+        throw new BadRequestException(
+          'No workspace found for snapshot. Please ensure the project has valid workspace data.',
+        );
+      }
+
       const workspaceData = {
         generated_at: Date.now(),
-        workspace: project.userWorkspace,
+        workspace: snapshotWorkspace,
       };
       const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
       await fs.writeFile(
@@ -707,6 +721,9 @@ export class LinkGroupProjectService {
         title: title,
       });
     } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while updating snapshot`,
