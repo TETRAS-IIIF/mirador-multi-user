@@ -30,7 +30,7 @@ import {
   DEFAULT_PROJECT_SNAPSHOT_FILE_NAME,
   UPLOAD_FOLDER,
 } from '../../utils/constants';
-import * as fs from 'node:fs';
+import * as fs from 'node:fs/promises';
 import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
 import { AnnotationPageService } from '../../BaseEntities/annotation-page/annotation-page.service';
 import { constructSnapshotWorkspace } from './utils/snapshot.utils';
@@ -639,7 +639,7 @@ export class LinkGroupProjectService {
 
       const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 
-      fs.mkdirSync(uploadPath, { recursive: true });
+      await fs.mkdir(uploadPath, { recursive: true });
 
       const workspaceData = {
         generated_at: Date.now(),
@@ -647,7 +647,7 @@ export class LinkGroupProjectService {
       };
 
       const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
-      fs.writeFileSync(
+      await fs.writeFile(
         workspaceJsonPath,
         JSON.stringify(workspaceData, null, 2),
         'utf-8',
@@ -697,7 +697,7 @@ export class LinkGroupProjectService {
         workspace: project.userWorkspace,
       };
       const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
-      fs.writeFileSync(
+      await fs.writeFile(
         workspaceJsonPath,
         JSON.stringify(workspaceData, null, 2),
         'utf-8',
@@ -721,7 +721,7 @@ export class LinkGroupProjectService {
       const uploadPath = `${UPLOAD_FOLDER}/${snapshotToDelete.hash}`;
       const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
       //TODO: remove file located at uploadPath generate rights error on filesystem
-      fs.unlinkSync(workspaceJsonPath);
+      await fs.unlink(workspaceJsonPath);
       return await this.snapshotService.deleteSnapshot(snapshotId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
