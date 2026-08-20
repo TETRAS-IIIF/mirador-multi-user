@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
 import JSZip from 'jszip';
 
+export const escapeRegExp = (value: string): string =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 export const getAnnotationPageId = (anno: any): string | null => {
   const target = Array.isArray(anno.target) ? anno.target[0] : anno.target;
 
@@ -32,7 +35,7 @@ export const highlightHTML = (
   highlight: string,
 ): string => {
   if (!highlight.trim()) return htmlContent;
-  const regex = new RegExp(`(?![^<]*>)(${highlight})`, 'gi');
+  const regex = new RegExp(`(?![^<]*>)(${escapeRegExp(highlight)})`, 'gi');
   return htmlContent.replace(
     regex,
     '<mark style="background-color: #fff59d; padding: 0;">$1</mark>',

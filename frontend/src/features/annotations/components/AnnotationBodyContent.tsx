@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, Divider } from '@mui/material';
+import DOMPurify from 'dompurify';
 import { HighlightText } from './HighlightText';
 import { highlightHTML } from '../annotationUtils.ts';
 
@@ -27,7 +28,9 @@ const renderHtmlItem = (item: any, index: number, searchQuery: string) => {
     );
   }
 
-  const highlightedContent = highlightHTML(content, searchQuery);
+  const highlightedContent = DOMPurify.sanitize(
+    highlightHTML(content, searchQuery),
+  );
   return (
     <Box
       key={index}
