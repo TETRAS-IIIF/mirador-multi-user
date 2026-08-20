@@ -57,8 +57,10 @@ export const constructSnapshotWorkspace = (
   if (miradorWorkspace === null) {
     return;
   }
+  // Clone so we never mutate the live Project entity's workspace in place.
+  const workspaceClone = structuredClone(miradorWorkspace);
   const manifests: ManifestsMap =
-    (miradorWorkspace as any).manifests ?? (miradorWorkspace as ManifestsMap);
+    (workspaceClone as any).manifests ?? (workspaceClone as ManifestsMap);
 
   for (const page of annotationPages) {
     const pageItems = page?.content?.items;
@@ -75,5 +77,5 @@ export const constructSnapshotWorkspace = (
     }
   }
 
-  return miradorWorkspace;
+  return workspaceClone;
 };
