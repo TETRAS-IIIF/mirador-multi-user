@@ -64,19 +64,6 @@ export class AnnotationPageService {
     }
   }
 
-  async findOne(annotationPageId: string, projectId: number) {
-    try {
-      return await this.annotationPageRepository.findOne({
-        where: { annotationPageId: annotationPageId, projectId: projectId },
-      });
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        `an error occurred while finding annotationPage with id :${annotationPageId}, ${error.message}`,
-      );
-    }
-  }
-
   async deleteAnnotationPage(annotationPageId: string, projectId: number) {
     try {
       const result = await this.annotationPageRepository.delete({
