@@ -44,7 +44,7 @@ function addAnnotationToMatchingCanvas(
     if (!match) continue;
 
     if (!Array.isArray(match.annotations)) match.annotations = [];
-    match.annotations.push({ id: page.annotationPageId, ...page.content });
+    match.annotations.push({ ...page.content, id: page.annotationPageId });
   }
 }
 
@@ -57,20 +57,25 @@ export const constructSnapshotWorkspace = (
   if (miradorWorkspace === null) {
     return;
   }
+  // Clone so we never mutate the live Project entity's workspace in place.
+  const workspaceClone = structuredClone(miradorWorkspace);
   const manifests: ManifestsMap =
-    (miradorWorkspace as any).manifests ?? (miradorWorkspace as ManifestsMap);
+    (workspaceClone as any).manifests ?? (workspaceClone as ManifestsMap);
 
   for (const page of annotationPages) {
     const pageItems = page?.content?.items;
     if (!Array.isArray(pageItems)) continue;
 
+    const canvasIds = new Set<string>();
     for (const item of pageItems) {
       const annotationId = getAnnotationIdFromItem(item);
-      if (!annotationId) continue;
+      if (annotationId) canvasIds.add(annotationId);
+    }
 
-      addAnnotationToMatchingCanvas(manifests, annotationId, page);
+    for (const canvasId of canvasIds) {
+      addAnnotationToMatchingCanvas(manifests, canvasId, page);
     }
   }
 
-  return miradorWorkspace;
+  return workspaceClone;
 };
