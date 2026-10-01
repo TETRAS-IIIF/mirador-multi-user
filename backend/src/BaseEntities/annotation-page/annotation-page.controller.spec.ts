@@ -12,7 +12,6 @@ describe('AnnotationPageController', () => {
     const serviceMock: Partial<jest.Mocked<AnnotationPageService>> = {
       create: jest.fn(),
       findAll: jest.fn(),
-      findOne: jest.fn(),
       deleteAnnotationPage: jest.fn(),
     };
 
@@ -64,20 +63,6 @@ describe('AnnotationPageController', () => {
     const result = await controller.findAll(projectId as any, annotPageId);
 
     expect(service.findAll).toHaveBeenCalledWith(annotPageId, projectId);
-    expect(result).toBe(expected);
-  });
-
-  it('findOne() decodes annotationPageId and forwards to service', async () => {
-    const projectId = 42;
-    const encoded = encodeURIComponent('http://example.com/anno/1');
-    const decoded = 'http://example.com/anno/1';
-    const expected = { id: 'anno-1' };
-
-    service.findOne.mockResolvedValue(expected as any);
-
-    const result = await controller.findOne(encoded, projectId as any);
-
-    expect(service.findOne).toHaveBeenCalledWith(decoded, projectId);
     expect(result).toBe(expected);
   });
 

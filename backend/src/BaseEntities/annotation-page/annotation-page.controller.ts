@@ -24,17 +24,6 @@ export class AnnotationPageController {
     return this.annotationPageService.findAll(annotPageId, projectId);
   }
 
-  @ApiOperation({ summary: 'finding an annotation page' })
-  @UseGuards(AuthGuard)
-  @Get(':annotationPageId/:projectId')
-  findOne(
-    @Param('annotationPageId') annotationPageId: string,
-    @Param('projectId') projectId: number,
-  ) {
-    const decodedURI = decodeURIComponent(annotationPageId);
-    return this.annotationPageService.findOne(decodedURI, projectId);
-  }
-
   @ApiOperation({ summary: 'find all user annotation page for project' })
   @UseGuards(AuthGuard)
   @Get('/all/:projectId/:userId')

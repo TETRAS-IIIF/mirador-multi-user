@@ -21,7 +21,6 @@ describe('AnnotationPageService', () => {
       save: jest.fn(),
       upsert: jest.fn(),
       find: jest.fn(),
-      findOne: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -140,32 +139,6 @@ describe('AnnotationPageService', () => {
       });
 
       await expect(service.findAll('page-1', 5)).rejects.toBeInstanceOf(
-        InternalServerErrorException,
-      );
-    });
-  });
-
-  describe('findOne', () => {
-    it('returns single page', async () => {
-      const annotPageId = 'page-1';
-      const projectId = 5;
-      const page = { id: 1 } as any;
-      repo.findOne.mockResolvedValue(page);
-
-      const result = await service.findOne(annotPageId, projectId);
-
-      expect(repo.findOne).toHaveBeenCalledWith({
-        where: { annotationPageId: annotPageId, projectId },
-      });
-      expect(result).toBe(page);
-    });
-
-    it('throws InternalServerErrorException on error', async () => {
-      repo.findOne.mockImplementation(() => {
-        throw new Error('DB error');
-      });
-
-      await expect(service.findOne('page-1', 5)).rejects.toBeInstanceOf(
         InternalServerErrorException,
       );
     });
