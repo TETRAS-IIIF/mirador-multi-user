@@ -8,12 +8,13 @@ compose := `command -v docker-compose >/dev/null 2>&1 && echo docker-compose || 
 frontend_service := "frontend"
 backend_service := "backend"
 db_service := "db"
-# Read values from .env like docker compose does (just's dotenv parser rejects unquoted spaces)
-db_user := `grep -E '^DB_USER=' .env 2>/dev/null | cut -d= -f2- | sed -e 's/^ *//' -e 's/ *$//' || true`
-db_pass := `grep -E '^DB_PASS=' .env 2>/dev/null | cut -d= -f2- | sed -e 's/^ *//' -e 's/ *$//' || true`
-database := `grep -E '^DB_DATABASE=' .env 2>/dev/null | cut -d= -f2- | sed -e 's/^ *//' -e 's/ *$//' || true`
+# Database name from .env, only used to name dump files
+database := `grep -E '^DB_DATABASE=' .env 2>/dev/null | cut -d= -f2- | sed -e 's/^ *//' -e 's/ *$//' -e 's/\r$//' || true`
 dump_path := "dumps"
-mariadb := "mariadb -u " + db_user + " " + database + " -p" + db_pass
+# Credentials are read inside the db container from the MARIADB_* variables docker compose
+# set from .env (single-quoted so the host shell never parses the password).
+mariadb := "sh -c 'exec mariadb -u\"$MARIADB_USER\" -p\"$MARIADB_PASSWORD\" \"$MARIADB_DATABASE\"'"
+mariadb_dump := "sh -c 'exec mariadb-dump --databases \"$MARIADB_DATABASE\" -u\"$MARIADB_USER\" -p\"$MARIADB_PASSWORD\"'"
 
 [private]
 default:
@@ -187,9 +188,16 @@ mysql:
 # Dump the database (gzip) into dumps/
 [group('db')]
 mysql_dump:
-    @mkdir -p {{ dump_path }}
-    @{{ compose }} exec -T {{ db_service }} mariadb-dump --databases {{ database }} -u {{ db_user }} -p{{ db_pass }} \
-        | gzip > {{ dump_path }}/{{ database }}_$(date +%Y%m%d_%H%M%S).sql.gz
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p {{ dump_path }}
+    out="{{ dump_path }}/{{ database }}_$(date +%Y%m%d_%H%M%S).sql.gz"
+    if ! {{ compose }} exec -T {{ db_service }} {{ mariadb_dump }} | gzip > "$out"; then
+      rm -f "$out"
+      echo "Database dump failed" >&2
+      exit 1
+    fi
+    echo "Dump written to $out"
 
 # Restore the database from a gzipped dump (erases current data)
 [group('db')]
