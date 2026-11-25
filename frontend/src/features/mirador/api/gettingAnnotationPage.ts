@@ -3,13 +3,14 @@ import storage from "../../../utils/storage.ts";
 export const gettingAnnotationPage = async (
   annotationPageId: string,
   projectId: number,
+  includeDrafts = false,
 ) => {
   try {
     const token = storage.getToken();
     const encodedURI = encodeURIComponent(annotationPageId);
 
     const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/annotation-page/${encodedURI}/${projectId}`,
+      `${import.meta.env.VITE_BACKEND_URL}/annotation-page/${encodedURI}/${projectId}${includeDrafts ? '?drafts=true' : ''}`,
       {
         method: "GET",
         headers: {
