@@ -112,7 +112,7 @@ export function AssistantPanel({
   const [costUsd, setCostUsd] = useState(0);
   const abortRef = useRef<AbortController | null>(null);
   const runIdRef = useRef<string | null>(null);
-  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const messagesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     getHistory(projectId)
@@ -128,7 +128,9 @@ export function AssistantPanel({
   }, [projectId]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView?.({ block: 'end' });
+    // Scroll the message list only (scrollIntoView would also scroll the page).
+    const list = messagesRef.current;
+    if (list) list.scrollTop = list.scrollHeight;
   }, [items]);
 
   const showDrafts = useCallback(() => getShowDrafts(projectId), [projectId]);
@@ -333,7 +335,15 @@ export function AssistantPanel({
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        height: '100%',
+        // Fixed to the window height: only the message list scrolls, so a
+        // long conversation never makes the page taller.
+        height: '100vh',
+        maxHeight: '100vh',
+        position: 'sticky',
+        top: 0,
+        alignSelf: 'flex-start',
+        flexShrink: 0,
+        overflow: 'hidden',
         width: 380,
       }}
     >
@@ -370,7 +380,17 @@ export function AssistantPanel({
         </IconButton>
       </Stack>
       <Divider />
-      <Box sx={{ flexGrow: 1, overflowY: 'auto', px: 1.5, py: 1 }}>
+      <Box
+        ref={messagesRef}
+        data-testid="assistant-messages"
+        sx={{
+          flex: '1 1 auto',
+          minHeight: 0,
+          overflowY: 'auto',
+          px: 1.5,
+          py: 1,
+        }}
+      >
         {items.length === 0 && (
           <Typography variant="body2" color="text.secondary">
             {t('assistant.empty')}
@@ -591,7 +611,6 @@ export function AssistantPanel({
             }
           })}
           {running && <CircularProgress size={18} />}
-          <div ref={bottomRef} />
         </Stack>
       </Box>
       {suggestions.length > 0 && !running && (
