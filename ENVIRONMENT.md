@@ -110,6 +110,7 @@ Note: The dev sample has SMTP values empty by default to avoid accidental email 
 |---|---:|
 | `EXTERNAL_DASHBOARD_URL` | Optional link to external dashboards/tools |
 | `ACCOUNT_MANAGEMENT_URL` | Optional link to account management page (e.g., password reset) |
+| `ASSISTANT_URL` | Optional URL of the AI assistant stack ([mmu-agents-backend](https://github.com/TETRAS-IIIF/mmu-agents-backend)). Empty: no assistant panel. Build-time: rebuild the frontend image after changing it |
 
 ---
 

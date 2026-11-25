@@ -19,6 +19,7 @@ import type { Project } from '../projects/types/types';
 import type { User } from '../auth/types/types';
 import MMUAdapter from './adapter/MMUAdapter';
 import { getMiradorViewer, MiradorMode } from './MiradorUtils.ts';
+import { DRAFT_MARKER, getShowDrafts } from '../assistant/draftsState.ts';
 
 export type MiradorViewerHandle = {
   setViewer: () => IState;
@@ -106,10 +107,16 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
                 project.id,
                 `${canvasId}/annotationPage`,
                 user.name,
+                { showDrafts: () => getShowDrafts(project.id) },
               ),
             commentTemplates: project.noteTemplate,
             tagsSuggestions: project.tags,
           },
+          annotations: {
+            ...miradorState.config.annotations,
+            draftMarker: DRAFT_MARKER,
+          },
+          projectId: project.id,
         };
         viewer.store.dispatch(
           Mirador.actions.importMiradorState({
