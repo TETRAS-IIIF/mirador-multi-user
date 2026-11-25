@@ -216,12 +216,13 @@ test('ask the assistant, then accept its draft in the annotation list', async ({
           conversationId: 1,
           model: 'claude-opus-5-5',
         },
-        {
+        // Enough steps to overflow the panel's message list.
+        ...Array.from({ length: 40 }, (_, i) => ({
           type: 'step',
-          id: 's1',
-          label: 'Looking at the page',
+          id: `s${i}`,
+          label: `Looking at the page, part ${i + 1}`,
           status: 'done',
-        },
+        })),
         {
           type: 'draft',
           annotationId: row.id,
@@ -286,6 +287,24 @@ test('ask the assistant, then accept its draft in the annotation list', async ({
   await expect(panel.getByTestId('draft-card')).toContainText(
     'anno domini MCCCXLII',
   );
+  // The panel keeps the window height: only its message list scrolls.
+  const sizes = await page.evaluate(() => {
+    const panel = document.querySelector('[data-testid="assistant-panel"]')!;
+    const list = document.querySelector(
+      '[data-testid="assistant-messages"]',
+    ) as HTMLElement;
+    return {
+      panelBottom: panel.getBoundingClientRect().bottom,
+      viewport: window.innerHeight,
+      page: document.documentElement.scrollHeight,
+      listOverflows: list.scrollHeight > list.clientHeight,
+      listAtBottom: list.scrollTop + list.clientHeight >= list.scrollHeight - 2,
+    };
+  });
+  expect(sizes.listOverflows, 'the conversation overflows the list').toBe(true);
+  expect(sizes.listAtBottom, 'the list is scrolled to the end').toBe(true);
+  expect(sizes.panelBottom).toBeLessThanOrEqual(sizes.viewport);
+  expect(sizes.page).toBeLessThanOrEqual(sizes.viewport);
   expect(chatBody).toMatchObject({
     message: 'find the date and annotate it',
     context: { projectId, manifestId: MANIFEST, canvasId: CANVAS },
