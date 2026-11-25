@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { LinkGroupProjectService } from './link-group-project.service';
 import { LinkGroupProjectController } from './link-group-project.controller';
 import { Project } from '../../BaseEntities/project/entities/project.entity';
@@ -21,7 +21,7 @@ import { MetadataModule } from '../../BaseEntities/metadata/metadata.module';
     UserGroupModule,
     LinkUserGroupModule,
     SnapshotModule,
-    AnnotationPageModule,
+    forwardRef(() => AnnotationPageModule),
     MetadataModule,
   ],
   controllers: [LinkGroupProjectController],
