@@ -1,217 +1,73 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { DeleteResult, Repository } from 'typeorm';
-import {
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-
 import { AnnotationPageService } from './annotation-page.service';
-import { AnnotationPage } from './entities/annotation-page.entity';
+import { AnnotationService } from '../annotation/annotation.service';
 import { CreateAnnotationPageDto } from './dto/create-annotation-page.dto';
 
 describe('AnnotationPageService', () => {
   let service: AnnotationPageService;
-  let repo: jest.Mocked<Repository<AnnotationPage>>;
+  let rows: jest.Mocked<
+    Pick<
+      AnnotationService,
+      'replacePage' | 'getProjectPages' | 'getPage' | 'deletePage'
+    >
+  >;
+  const caller = { id: 3, name: 'alice' };
+  const page = {
+    id: 1,
+    projectId: 42,
+    annotationPageId: 'canvas/annotationPage',
+    content: { id: 'canvas/annotationPage', type: 'AnnotationPage', items: [] },
+  };
 
   beforeEach(async () => {
-    const repoMock: Partial<jest.Mocked<Repository<AnnotationPage>>> = {
-      create: jest.fn(),
-      delete: jest.fn(),
-      save: jest.fn(),
-      upsert: jest.fn(),
-      find: jest.fn(),
-      findOne: jest.fn(),
+    rows = {
+      replacePage: jest.fn().mockResolvedValue([page]),
+      getProjectPages: jest.fn().mockResolvedValue([page]),
+      getPage: jest.fn().mockResolvedValue([page]),
+      deletePage: jest.fn().mockResolvedValue({ affected: 1 }),
     };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AnnotationPageService,
-        {
-          provide: getRepositoryToken(AnnotationPage),
-          useValue: repoMock,
-        },
+        { provide: AnnotationService, useValue: rows },
       ],
     }).compile();
-
     service = module.get(AnnotationPageService);
-    repo = module.get(getRepositoryToken(AnnotationPage)) as jest.Mocked<
-      Repository<AnnotationPage>
-    >;
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  it('create() syncs the rows of the page with its items', async () => {
+    const dto = {
+      projectId: 42,
+      annotationPageId: 'canvas/annotationPage',
+      content: { items: [] },
+    } as unknown as CreateAnnotationPageDto;
+    await expect(service.create(dto, caller)).resolves.toEqual([page]);
+    expect(rows.replacePage).toHaveBeenCalledWith(
+      42,
+      'canvas/annotationPage',
+      dto.content,
+      caller,
+    );
   });
 
-  describe('create', () => {
-    it('upserts new annotationPage then returns findAll', async () => {
-      const dto: CreateAnnotationPageDto = {
-        annotationPageId: 'page-1',
-        projectId: 123,
-        // add any other required fields
-      } as any;
-
-      const created = { ...dto, id: 1 } as AnnotationPage;
-      const found = [{ id: 1, ...dto }] as AnnotationPage[];
-
-      repo.create.mockReturnValue(created);
-      repo.upsert.mockResolvedValue(undefined);
-      // findAll calls repo.find internally
-      repo.find.mockResolvedValue(found);
-
-      const result = await service.create(dto);
-
-      expect(repo.create).toHaveBeenCalledWith(dto);
-      expect(repo.upsert).toHaveBeenCalledWith(created, {
-        conflictPaths: ['annotationPageId', 'projectId'],
-      });
-      expect(repo.find).toHaveBeenCalledWith({
-        where: {
-          annotationPageId: created.annotationPageId,
-          projectId: created.projectId,
-        },
-      });
-      expect(result).toBe(found);
-    });
-
-    it('wraps errors in InternalServerErrorException', async () => {
-      const dto: CreateAnnotationPageDto = {
-        annotationPageId: 'page-1',
-        projectId: 123,
-      } as any;
-
-      repo.create.mockImplementation(() => {
-        throw new Error('boom');
-      });
-
-      await expect(service.create(dto)).rejects.toBeInstanceOf(
-        InternalServerErrorException,
-      );
-    });
+  it('findAllProjectAnnotation() returns published pages for export', async () => {
+    await service.findAllProjectAnnotation(42);
+    expect(rows.getProjectPages).toHaveBeenCalledWith(42, { forExport: true });
   });
 
-  describe('findAllProjectAnnotation', () => {
-    it('returns array from repository', async () => {
-      const projectId = 10;
-      const pages = [
-        { id: 1, projectId },
-        { id: 2, projectId },
-      ] as any;
-      repo.find.mockResolvedValue(pages);
-
-      const result = await service.findAllProjectAnnotation(projectId);
-
-      expect(repo.find).toHaveBeenCalledWith({
-        where: { projectId },
-      });
-      expect(result).toBe(pages);
-    });
-
-    it('throws InternalServerErrorException on error', async () => {
-      repo.find.mockImplementation(() => {
-        throw new Error('DB error');
-      });
-
-      await expect(service.findAllProjectAnnotation(10)).rejects.toBeInstanceOf(
-        InternalServerErrorException,
-      );
-    });
+  it('findAll() keeps the array contract and passes the drafts flag', async () => {
+    await expect(service.findAll('p', 42, true)).resolves.toEqual([page]);
+    expect(rows.getPage).toHaveBeenCalledWith(42, 'p', true);
   });
 
-  describe('findAll', () => {
-    it('returns matching pages', async () => {
-      const annotPageId = 'page-1';
-      const projectId = 5;
-      const pages = [{ id: 1 }] as any;
-      repo.find.mockResolvedValue(pages);
-
-      const result = await service.findAll(annotPageId, projectId);
-
-      expect(repo.find).toHaveBeenCalledWith({
-        where: { annotationPageId: annotPageId, projectId },
-      });
-      expect(result).toBe(pages);
-    });
-
-    it('throws InternalServerErrorException on error', async () => {
-      repo.find.mockImplementation(() => {
-        throw new Error('DB error');
-      });
-
-      await expect(service.findAll('page-1', 5)).rejects.toBeInstanceOf(
-        InternalServerErrorException,
-      );
-    });
+  it('findOne() returns the page or null', async () => {
+    await expect(service.findOne('p', 42)).resolves.toEqual(page);
+    rows.getPage.mockResolvedValueOnce([]);
+    await expect(service.findOne('p', 42)).resolves.toBeNull();
   });
 
-  describe('findOne', () => {
-    it('returns single page', async () => {
-      const annotPageId = 'page-1';
-      const projectId = 5;
-      const page = { id: 1 } as any;
-      repo.findOne.mockResolvedValue(page);
-
-      const result = await service.findOne(annotPageId, projectId);
-
-      expect(repo.findOne).toHaveBeenCalledWith({
-        where: { annotationPageId: annotPageId, projectId },
-      });
-      expect(result).toBe(page);
-    });
-
-    it('throws InternalServerErrorException on error', async () => {
-      repo.findOne.mockImplementation(() => {
-        throw new Error('DB error');
-      });
-
-      await expect(service.findOne('page-1', 5)).rejects.toBeInstanceOf(
-        InternalServerErrorException,
-      );
-    });
-  });
-
-  describe('deleteAnnotationPage', () => {
-    it('returns delete result when affected > 0', async () => {
-      const annotPageId = 'page-1';
-      const projectId = 5;
-      const deleteResult = { affected: 1 } as DeleteResult;
-
-      repo.delete.mockResolvedValue(deleteResult);
-
-      const result = await service.deleteAnnotationPage(annotPageId, projectId);
-
-      expect(repo.delete).toHaveBeenCalledWith({
-        annotationPageId: annotPageId,
-        projectId,
-      });
-      expect(result).toBe(deleteResult);
-    });
-
-    it('returns NotFoundException instance when affected === 0', async () => {
-      const annotPageId = 'page-1';
-      const projectId = 5;
-      const deleteResult = { affected: 0 } as DeleteResult;
-
-      repo.delete.mockResolvedValue(deleteResult);
-
-      const result = await service.deleteAnnotationPage(annotPageId, projectId);
-
-      expect(repo.delete).toHaveBeenCalledWith({
-        annotationPageId: annotPageId,
-        projectId,
-      });
-      expect(result).toBeInstanceOf(NotFoundException);
-    });
-
-    it('throws InternalServerErrorException when repository throws', async () => {
-      repo.delete.mockImplementation(() => {
-        throw new Error('DB error');
-      });
-
-      await expect(
-        service.deleteAnnotationPage('page-1', 5),
-      ).rejects.toBeInstanceOf(InternalServerErrorException);
-    });
+  it('deleteAnnotationPage() deletes the page and its rows', async () => {
+    await service.deleteAnnotationPage('p', 42);
+    expect(rows.deletePage).toHaveBeenCalledWith(42, 'p');
   });
 });
