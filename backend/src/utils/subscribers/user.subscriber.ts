@@ -4,7 +4,7 @@ import {
   UpdateEvent,
 } from 'typeorm';
 import { User } from '../../BaseEntities/users/entities/user.entity';
-import { UnauthorizedException } from "@nestjs/common";
+import { UnauthorizedException } from '@nestjs/common';
 
 @EventSubscriber()
 export class UserSubscriber implements EntitySubscriberInterface<User> {

@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, UnauthorizedException, } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Impersonation } from './entities/impersonation.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

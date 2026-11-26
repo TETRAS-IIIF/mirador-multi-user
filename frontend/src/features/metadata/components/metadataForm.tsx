@@ -64,7 +64,7 @@ export const MetadataForm = <T extends { id: number }>({
         [term]: newValue,
       });
     },
-    [selectedMetadataData],
+    [handleSetMetadataFormData, selectedMetadataData],
   );
 
   const doesItemContainMetadataField = (fieldTerm: string): boolean => {

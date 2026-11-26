@@ -91,11 +91,13 @@ export const SideDrawer = ({
         intervalRef.current = null;
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, [miradorViewerRef.current, isMiradorRunning]);
 
   useEffect(() => {
     fetchUserPersonalGroup();
     loadPreferredLanguage();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, [user]);
 
   const HandleSetIsRunning = () => {
@@ -110,7 +112,7 @@ export const SideDrawer = ({
     (newProject: Project) => {
       return setUserProjects([newProject, ...userProjects]);
     },
-    [setUserProjects],
+    [setUserProjects, userProjects],
   );
 
   const handleChangeContent = async (content: string) => {
@@ -242,7 +244,14 @@ export const SideDrawer = ({
         });
       }
     }
-  }, [handleSaveProject, setSelectedProjectId, user, userProjects]);
+  }, [
+    handleSaveProject,
+    selectedProjectId,
+    setSelectedProjectId,
+    t,
+    user,
+    userProjects,
+  ]);
 
   const handleGenerateSnapshot = async (projectId: number) => {
     const generated_at = dayjs(Date.now())
@@ -317,7 +326,7 @@ export const SideDrawer = ({
     } catch (error) {
       console.error(t('errorFetchProject'), error);
     }
-  }, [user.id]);
+  }, [t, user.id]);
 
   const fetchMediaForUser = async () => {
     const allMedias = await getUserMedias();
@@ -334,6 +343,7 @@ export const SideDrawer = ({
 
   useEffect(() => {
     initializedWorkspace();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, [selectedProjectId]);
 
   const projectSelected = useMemo(() => {

@@ -91,7 +91,7 @@ export const AdvancedTextEditor = ({
     )
       return { valid: false, reason: t('advancedEditor.textAlreadyHighlighted') };
     return { valid: true };
-  }, []);
+  }, [t]);
 
   const isSelectionInTextContent = useCallback(
     (model: monaco.editor.ITextModel, selection: monaco.Selection) => {
@@ -123,7 +123,7 @@ export const AdvancedTextEditor = ({
         return { valid: false, reason: t("advancedEditor.selectionContainHTMLElements")};
       return { valid: true };
     },
-    [],
+    [t],
   );
 
   const updateColorPickerPosition = useCallback(() => {

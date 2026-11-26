@@ -33,7 +33,7 @@ describe('LinkGroupProjectService', () => {
   let projectService: jest.Mocked<ProjectService>;
   let groupService: jest.Mocked<UserGroupService>;
   let linkUserGroupService: jest.Mocked<LinkUserGroupService>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   let snapshotService: jest.Mocked<SnapshotService>;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let annotationPageService: jest.Mocked<AnnotationPageService>;

@@ -1,4 +1,10 @@
-import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn, } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { LinkUserGroup } from '../../../LinkModules/link-user-group/entities/link-user-group.entity';
 import { Impersonation } from '../../../impersonation/entities/impersonation.entity';
 import { Language } from '../../../utils/email/utils';

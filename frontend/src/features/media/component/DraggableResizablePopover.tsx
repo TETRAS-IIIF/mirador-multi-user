@@ -146,6 +146,7 @@ export const DraggableResizablePopover = ({
       document.removeEventListener('mousemove', onDragMove);
       document.removeEventListener('mousemove', onResizeMove);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, []);
 
   return (

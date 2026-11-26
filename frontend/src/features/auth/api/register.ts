@@ -9,29 +9,25 @@ export type RegisterCredentialsDTO = {
 export const register = async (
   data: RegisterCredentialsDTO,
 ): Promise<UserResponse> => {
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/link-user-group/user`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...data,
-          preferredLanguage: navigator.language.split("-")[0],
-        }),
+  const response = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/link-user-group/user`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
-    if (!response.ok) {
-      if (response.status === 409) {
-        throw new Error("a user with this email or username already exists");
-      }
-      throw new Error("Failed to create user");
+      body: JSON.stringify({
+        ...data,
+        preferredLanguage: navigator.language.split("-")[0],
+      }),
+    },
+  );
+  if (!response.ok) {
+    if (response.status === 409) {
+      throw new Error("a user with this email or username already exists");
     }
-    const user = await response.json();
-    return user;
-  } catch (error) {
-    throw error;
+    throw new Error("Failed to create user");
   }
+  const user = await response.json();
+  return user;
 };

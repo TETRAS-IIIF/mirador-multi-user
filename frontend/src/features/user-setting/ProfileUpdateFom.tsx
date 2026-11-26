@@ -120,8 +120,7 @@ export const ProfileUpdateForm = () => {
       });
     }
   };
-  const togglePasswordVisibility = (field: string) => {
-    // @ts-ignore
+  const togglePasswordVisibility = (field: keyof typeof showPassword) => {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 

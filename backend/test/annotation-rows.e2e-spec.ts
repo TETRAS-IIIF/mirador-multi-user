@@ -354,13 +354,11 @@ describeDb('annotation rows (e2e, real DB)', () => {
   it('accepts and reverts a batch, keeping annotations a person edited', async () => {
     const batch = await as(
       EDITOR,
-      http()
-        .post('/annotation-batch')
-        .send({
-          projectId: PROJECT,
-          kind: 'transcribe',
-          model: 'claude-haiku-5-5',
-        }),
+      http().post('/annotation-batch').send({
+        projectId: PROJECT,
+        kind: 'transcribe',
+        model: 'claude-haiku-5-5',
+      }),
       true,
     ).expect(201);
     const batchId = batch.body.id;

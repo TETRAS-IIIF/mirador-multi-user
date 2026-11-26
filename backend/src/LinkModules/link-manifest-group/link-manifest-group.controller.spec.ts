@@ -11,11 +11,6 @@ import { LinkUserGroupService } from '../link-user-group/link-user-group.service
 describe('LinkManifestGroupService', () => {
   let service: LinkManifestGroupService;
 
-  let repo: jest.Mocked<Repository<LinkManifestGroup>>;
-  let manifestService: jest.Mocked<ManifestService>;
-  let userGroupService: jest.Mocked<UserGroupService>;
-  let linkUserGroupService: jest.Mocked<LinkUserGroupService>;
-
   beforeEach(async () => {
     const repoMock: Partial<jest.Mocked<Repository<LinkManifestGroup>>> = {
       create: jest.fn(),
@@ -71,10 +66,6 @@ describe('LinkManifestGroupService', () => {
     }).compile();
 
     service = module.get(LinkManifestGroupService);
-    repo = module.get(getRepositoryToken(LinkManifestGroup));
-    manifestService = module.get(ManifestService);
-    userGroupService = module.get(UserGroupService);
-    linkUserGroupService = module.get(LinkUserGroupService);
   });
 
   it('should be defined', () => {

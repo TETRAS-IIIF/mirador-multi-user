@@ -1,6 +1,4 @@
-export const template = (data: {
-  userName: string;
-}) => `
+export const template = (data: { userName: string }) => `
 <!DOCTYPE html>
 <html>
 <head>

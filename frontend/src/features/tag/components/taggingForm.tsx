@@ -38,6 +38,7 @@ export const TaggingForm = ({ object, objectTypes }: ITaggingFormProps) => {
 
   useEffect(() => {
     HandleGetTags();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, []);
 
   const getOptionLabelForTags = (option: Manifest): string => {

@@ -46,6 +46,7 @@ export const AdminSettings = () => {
 
   useEffect(() => {
     fetchSettings();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- runs on mount only; the functions it calls are recreated on every render
   }, []);
 
   return (

@@ -217,6 +217,7 @@ export const MMUModalEdit = <
       }
     };
     textContent();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, [objectTypes, item]);
 
   const [
@@ -394,6 +395,7 @@ export const MMUModalEdit = <
         setJsonElementToEditInAdvancedEditor(item.userWorkspace);
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, []);
 
   const handleGetOtpionLabel = (option: { title: string }) => {

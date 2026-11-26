@@ -147,7 +147,7 @@ export const AllManifests = ({
         }
       }
     },
-    [fetchManifestForUser, manifests],
+    [fetchManifestForUser, MAX_UPLOAD_SIZE, t, user.id],
   );
 
   const HandleOpenModal = useCallback(
@@ -185,6 +185,7 @@ export const AllManifests = ({
 
   useEffect(() => {
     fetchManifestForUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, []);
 
   const HandleCopyToClipBoard = async (path: string) => {

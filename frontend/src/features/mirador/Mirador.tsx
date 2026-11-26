@@ -130,6 +130,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
       setViewer(viewer);
       setMiradorState(viewer.store.getState());
 
+      const containerElementId = containerId.current;
       return () => {
         initializedRef.current = false;
         try {
@@ -137,9 +138,10 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>(
         } catch (error) {
           console.error(error);
         }
-        const el = document.getElementById(containerId.current);
+        const el = document.getElementById(containerElementId);
         if (el) el.replaceChildren();
       };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- Mirador is created once per mount; later changes go through its store
     }, []);
 
     return (

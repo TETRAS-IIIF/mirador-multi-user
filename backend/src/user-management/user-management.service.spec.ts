@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ForbiddenException, InternalServerErrorException, } from '@nestjs/common';
+import {
+  ForbiddenException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { UserManagementService } from './user-management.service';
@@ -24,16 +27,7 @@ jest.mock('openid-client');
 describe('UserManagementService', () => {
   let service: UserManagementService;
 
-  let usersService: jest.Mocked<UsersService>;
-  let projectService: jest.Mocked<ProjectService>;
-  let linkGroupProjectService: jest.Mocked<LinkGroupProjectService>;
-  let linkManifestGroupService: jest.Mocked<LinkManifestGroupService>;
-  let manifestService: jest.Mocked<ManifestService>;
-  let mediaService: jest.Mocked<MediaService>;
-  let linkMediaGroupService: jest.Mocked<LinkMediaGroupService>;
   let userGroupService: jest.Mocked<UserGroupService>;
-  let settingsService: jest.Mocked<SettingsService>;
-  let emailServerService: jest.Mocked<EmailServerService>;
 
   const mockFetch = jest.fn();
   global.fetch = mockFetch as any;
@@ -124,16 +118,7 @@ describe('UserManagementService', () => {
 
     service = module.get<UserManagementService>(UserManagementService);
 
-    usersService = module.get(UsersService);
-    projectService = module.get(ProjectService);
-    linkGroupProjectService = module.get(LinkGroupProjectService);
-    linkManifestGroupService = module.get(LinkManifestGroupService);
-    manifestService = module.get(ManifestService);
-    mediaService = module.get(MediaService);
-    linkMediaGroupService = module.get(LinkMediaGroupService);
     userGroupService = module.get(UserGroupService);
-    settingsService = module.get(SettingsService);
-    emailServerService = module.get(EmailServerService);
   });
 
   afterEach(() => {

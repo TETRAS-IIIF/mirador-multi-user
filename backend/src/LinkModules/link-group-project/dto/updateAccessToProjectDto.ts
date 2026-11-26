@@ -1,5 +1,5 @@
 import { GroupProjectRights } from '../../../enum/rights';
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateAccessToProjectDto {
   @ApiProperty()

@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module } from '@nestjs/common';
 import { CaslAbilityFactory } from './casl-ability.factory/casl-ability.factory';
 
 @Module({

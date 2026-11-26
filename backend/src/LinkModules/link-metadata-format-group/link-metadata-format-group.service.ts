@@ -2,8 +2,8 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException
-} from "@nestjs/common";
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateLinkMetadataFormatGroupDto } from './dto/create-link-metadata-format-group.dto';
 import { MetadataFormatService } from '../../BaseEntities/metadata-format/metadata-format.service';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';

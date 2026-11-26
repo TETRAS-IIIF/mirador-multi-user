@@ -6,9 +6,7 @@ import {
 } from 'typeorm';
 import { Impersonation } from '../../impersonation/entities/impersonation.entity';
 @EventSubscriber()
-export class ImpersonationSubscriber
-  implements EntitySubscriberInterface<Impersonation>
-{
+export class ImpersonationSubscriber implements EntitySubscriberInterface<Impersonation> {
   // Listen to changes in the Impersonation entity
   listenTo() {
     return Impersonation;
