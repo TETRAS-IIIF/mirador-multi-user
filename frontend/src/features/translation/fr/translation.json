@@ -460,7 +460,10 @@
     "usageMonth": "Ce mois-ci : {{tokens}} tokens, environ {{cost}} $",
     "usageTokenQuota": "limite {{limit}} tokens",
     "usageRequestQuota": "{{used}} requêtes sur {{limit}} aujourd'hui",
-    "model": "Modèle"
+    "model": "Modèle",
+    "selectRegion": "Poser une question sur une zone : tracer sur l'image",
+    "selectingRegion": "Tracez un rectangle sur l'image (Échap pour annuler)",
+    "region": "Zone {{x}},{{y}} · {{w}}×{{h}}"
   },
   "assistantUsage": {
     "title": "Utilisation de l'assistant",
@@ -485,6 +488,15 @@
     "hoverHint": "Survolez une barre pour voir le détail du jour.",
     "answersCount_one": "{{count}} réponse",
     "answersCount_other": "{{count}} réponses"
+  },
+  "assistantSettings": {
+    "tab": "Assistant",
+    "tabDescription": "Fonctionnement de l'assistant IA dans ce projet",
+    "enable": "Activer l'assistant pour ce projet",
+    "enableHelp": "Nécessaire quand l'assistant ne sert que les projets qui l'ont activé (réglé par l'administrateur). Le contenu du projet (textes, images) n'est envoyé au fournisseur d'IA que lorsque l'assistant est utilisé.",
+    "instructions": "Consignes pour l'assistant dans ce projet",
+    "instructionsHelp": "Ajoutées à chaque conversation de ce projet. {{count}} / {{max}} caractères.",
+    "instructionsPlaceholder": "Ex. : transcrire en diplomatique, garder les abréviations. Utiliser les tags personne, lieu, date. Répondre en français."
   },
   "reviewQueue": {
     "open": "Revoir tous les brouillons du projet",

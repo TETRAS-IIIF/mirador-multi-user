@@ -65,10 +65,13 @@ vi.mock('./api.ts', async () => {
 
 import * as api from './api.ts';
 import * as annotationApi from '../mirador/api/annotationApi.ts';
+import * as mirador from 'mirador';
 import {
   activeWindow,
   runViewerAction,
   viewerContext,
+  regionFromPoints,
+  selectRegion,
 } from './viewerBridge.ts';
 import { AssistantPanel } from './components/AssistantPanel.tsx';
 
@@ -417,6 +420,32 @@ describe('AssistantPanel', () => {
     expect(body.model).toBeUndefined();
   });
 
+  it('renders the answer as Markdown, while it streams', async () => {
+    vi.mocked(api.streamChat).mockImplementation(async (_body, onEvent) => {
+      onEvent({ type: 'text', delta: 'The date is **13' });
+      onEvent({ type: 'text', delta: '42**.\n\n- folio 12' });
+      onEvent({ type: 'done', stopReason: 'end_turn' });
+    });
+    render(
+      <AssistantPanel
+        projectId={7}
+        viewer={fakeViewer()}
+        language="en"
+        onClose={() => undefined}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText('assistant.placeholder'), {
+      target: { value: 'date?' },
+    });
+    fireEvent.click(screen.getByLabelText('assistant.send'));
+    const answer = await screen.findByTestId('assistant-text');
+    await waitFor(() =>
+      expect(answer.querySelector('strong')?.textContent).toBe('1342'),
+    );
+    expect(answer.querySelector('li')?.textContent).toBe('folio 12');
+    // The user's own message stays plain text.
+    expect(screen.getByText('date?').querySelector('strong')).toBeNull();
+  });
   it('ignores an unexpected model list instead of breaking', async () => {
     vi.mocked(api.getModels).mockResolvedValue({
       messages: [],
@@ -432,5 +461,211 @@ describe('AssistantPanel', () => {
     await waitFor(() => expect(api.getModels).toHaveBeenCalled());
     expect(screen.getByLabelText('assistant.placeholder')).toBeInTheDocument();
     expect(screen.queryByTestId('assistant-model')).toBeNull();
+  });
+});
+
+/* eslint-disable @typescript-eslint/no-explicit-any -- OpenSeadragon and Mirador's OSDReferences are untyped */
+/** Minimal OpenSeadragon: handlers, overlays, viewport where 1 pixel = 2 canvas units. */
+function fakeOsd() {
+  const handlers: Record<string, ((e: any) => void)[]> = {};
+  const overlays: Record<string, unknown> = {};
+  class Point {
+    constructor(
+      public x: number,
+      public y: number,
+    ) {}
+
+    times(factor: number) {
+      return new Point(this.x * factor, this.y * factor);
+    }
+  }
+  class Rect {
+    constructor(
+      public x: number,
+      public y: number,
+      public width: number,
+      public height: number,
+    ) {}
+
+    getTopLeft() {
+      return new Point(this.x, this.y);
+    }
+  }
+  return {
+    handlers,
+    overlays,
+    element: document.createElement('div'),
+    viewport: {
+      getBounds: () => new Rect(0, 0, 1, 1),
+      getCenter: () => new Point(0, 0),
+      // Like OpenSeadragon: takes any {x, y}, returns its own Point.
+      pointFromPixel: (p: { x: number; y: number }) =>
+        new Point(p.x * 2, p.y * 2),
+      // Like OpenSeadragon: needs a real Point (uses its methods).
+      pixelFromPoint: (p: Point) => p.times(0.5),
+    },
+    addHandler: (name: string, fn: (e: any) => void) => {
+      (handlers[name] ??= []).push(fn);
+    },
+    removeHandler: (name: string, fn: (e: any) => void) => {
+      handlers[name] = (handlers[name] ?? []).filter((h) => h !== fn);
+    },
+    addOverlay: (el: HTMLElement, rect: unknown) => {
+      overlays[el.id] = rect;
+    },
+    updateOverlay: (el: HTMLElement, rect: unknown) => {
+      overlays[el.id] = rect;
+    },
+    removeOverlay: (id: string) => {
+      delete overlays[id];
+    },
+    fire(name: string, position: { x: number; y: number }) {
+      const event = {
+        position: new Point(position.x, position.y),
+        preventDefaultAction: false,
+      };
+      (handlers[name] ?? []).forEach((h) => h(event));
+      return event;
+    },
+  };
+}
+
+describe('region selection', () => {
+  const useOsd = (osd: ReturnType<typeof fakeOsd> | undefined) => {
+    (mirador.OSDReferences as any).get = () =>
+      osd ? { current: osd } : undefined;
+  };
+  afterEach(() => useOsd(undefined));
+
+  it('regionFromPoints: whole pixels, any drag direction, clamped at 0', () => {
+    expect(regionFromPoints({ x: 30.4, y: 40.6 }, { x: 10.2, y: -5 })).toEqual({
+      x: 10,
+      y: 0,
+      w: 20,
+      h: 41,
+    });
+    expect(regionFromPoints({ x: 5, y: 5 }, { x: 5, y: 5 })).toEqual({
+      x: 5,
+      y: 5,
+      w: 1,
+      h: 1,
+    });
+  });
+
+  it('turns a drag on the image into a canvas region, without panning', () => {
+    const osd = fakeOsd();
+    useOsd(osd);
+    const onSelect = vi.fn();
+    selectRegion(fakeViewer(), onSelect, vi.fn());
+    expect(osd.element.style.cursor).toBe('crosshair');
+    expect(
+      osd.fire('canvas-press', { x: 10, y: 20 }).preventDefaultAction,
+    ).toBe(true);
+    expect(osd.fire('canvas-drag', { x: 50, y: 70 }).preventDefaultAction).toBe(
+      true,
+    );
+    osd.fire('canvas-release', { x: 60, y: 80 });
+    expect(onSelect).toHaveBeenCalledWith({
+      canvasId: CANVAS,
+      region: { x: 20, y: 40, w: 100, h: 120 },
+    });
+    // The outline stays; selection mode ends.
+    const outline = osd.element.querySelector<HTMLElement>(
+      '#mmu-assistant-region',
+    )!;
+    // Drawn over the dragged pixels, and kept in place on zoom and pan.
+    expect([
+      outline.style.left,
+      outline.style.top,
+      outline.style.width,
+      outline.style.height,
+    ]).toEqual(['10px', '20px', '50px', '60px']);
+    expect(osd.handlers['update-viewport']).toHaveLength(1);
+    expect(osd.handlers['canvas-drag']).toHaveLength(0);
+    expect(osd.element.style.cursor).toBe('');
+  });
+
+  it('Escape cancels and removes the outline; no image cancels at once', () => {
+    const osd = fakeOsd();
+    useOsd(osd);
+    const onCancel = vi.fn();
+    selectRegion(fakeViewer(), vi.fn(), onCancel);
+    osd.fire('canvas-press', { x: 1, y: 1 });
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(onCancel).toHaveBeenCalled();
+    expect(osd.element.querySelector('#mmu-assistant-region')).toBeNull();
+    expect(osd.handlers['canvas-press']).toHaveLength(0);
+    expect(osd.handlers['update-viewport']).toHaveLength(0);
+
+    useOsd(undefined);
+    const onNoImage = vi.fn();
+    selectRegion(fakeViewer(), vi.fn(), onNoImage);
+    expect(onNoImage).toHaveBeenCalled();
+  });
+
+  it('the panel sends the selected region, and drops it on another canvas', async () => {
+    const osd = fakeOsd();
+    useOsd(osd);
+    vi.mocked(api.streamChat).mockImplementation(async (_body, onEvent) => {
+      onEvent({ type: 'done', stopReason: 'end_turn' });
+    });
+    const viewer = fakeViewer();
+    render(
+      <AssistantPanel
+        projectId={7}
+        viewer={viewer}
+        language="en"
+        onClose={() => undefined}
+      />,
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: 'assistant.selectRegion' }),
+    );
+    expect(screen.getByText('assistant.selectingRegion')).toBeInTheDocument();
+    osd.fire('canvas-press', { x: 10, y: 20 });
+    osd.fire('canvas-release', { x: 60, y: 80 });
+    expect(await screen.findByTestId('assistant-region')).toHaveTextContent(
+      'assistant.region',
+    );
+
+    const ask = async (text: string) => {
+      fireEvent.change(screen.getByLabelText('assistant.placeholder'), {
+        target: { value: text },
+      });
+      fireEvent.click(screen.getByLabelText('assistant.send'));
+      await waitFor(() =>
+        expect(vi.mocked(api.streamChat).mock.calls.at(-1)?.[0].message).toBe(
+          text,
+        ),
+      );
+      return vi.mocked(api.streamChat).mock.calls.at(-1)![0].context;
+    };
+    expect((await ask('what is this?')).region).toEqual({
+      x: 20,
+      y: 40,
+      w: 100,
+      h: 120,
+    });
+    // Still about the same region for the next question.
+    expect((await ask('and the date?')).region).toEqual({
+      x: 20,
+      y: 40,
+      w: 100,
+      h: 120,
+    });
+
+    // The user moved to another canvas: the region no longer applies.
+    const state = viewer.store.getState();
+    viewer.store.getState = () => ({
+      ...state,
+      windows: {
+        w1: { ...state.windows.w1, canvasId: 'https://example.org/canvas/2' },
+      },
+    });
+    expect((await ask('next page?')).region).toBeUndefined();
+    await waitFor(() =>
+      expect(screen.queryByTestId('assistant-region')).toBeNull(),
+    );
+    expect(osd.element.querySelector('#mmu-assistant-region')).toBeNull();
   });
 });

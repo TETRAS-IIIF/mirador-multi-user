@@ -22,6 +22,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import RateReviewIcon from '@mui/icons-material/RateReview';
+import CropFreeIcon from '@mui/icons-material/CropFree';
 import { addCompanionWindow } from 'mirador';
 import { useTranslation } from 'react-i18next';
 import {
@@ -29,6 +30,7 @@ import {
   answerConfirm,
   answerViewer,
   type AssistantEvent,
+  type Region,
   type AssistantModel,
   getHistory,
   getModels,
@@ -46,11 +48,14 @@ import {
 import { DraftReviewDialog } from './DraftReviewDialog.tsx';
 import { getShowDrafts } from '../draftsState.ts';
 import { draftTags, draftText } from '../draftContent.ts';
+import { AssistantMarkdown } from './AssistantMarkdown.tsx';
 import { pickModel, saveModel, savedModel } from '../modelChoice.ts';
 import {
   activeWindow,
+  clearRegionOverlay,
   refreshCanvas,
   runViewerAction,
+  selectRegion,
   viewerContext,
 } from '../viewerBridge.ts';
 
@@ -104,6 +109,13 @@ export function AssistantPanel({
   const [usage, setUsage] = useState<UsageStatus | null>(null);
   const [models, setModels] = useState<AssistantModel[]>([]);
   const [model, setModel] = useState<string | null>(null);
+  // A region of the open canvas the next messages are about.
+  const [regionSelection, setRegionSelection] = useState<{
+    canvasId: string;
+    region: Region;
+  } | null>(null);
+  const [selectingRegion, setSelectingRegion] = useState(false);
+  const stopSelectingRef = useRef<(() => void) | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const runIdRef = useRef<string | null>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
@@ -118,7 +130,10 @@ export function AssistantPanel({
         ]),
       )
       .catch(() => undefined);
-    return () => abortRef.current?.abort();
+    return () => {
+      abortRef.current?.abort();
+      stopSelectingRef.current?.();
+    };
   }, [projectId]);
 
   // Models the user may pick, and their last choice when still allowed.
@@ -256,6 +271,39 @@ export function AssistantPanel({
     [viewer, projectId, showDrafts],
   );
 
+  const toggleRegionSelection = () => {
+    if (selectingRegion) {
+      stopSelectingRef.current?.();
+      stopSelectingRef.current = null;
+      setSelectingRegion(false);
+      return;
+    }
+    setSelectingRegion(true);
+    stopSelectingRef.current = selectRegion(
+      viewer,
+      (selection) => {
+        stopSelectingRef.current = null;
+        setSelectingRegion(false);
+        setRegionSelection(selection);
+      },
+      () => {
+        stopSelectingRef.current = null;
+        setSelectingRegion(false);
+      },
+    );
+  };
+
+  const clearRegion = () => {
+    clearRegionOverlay(viewer);
+    setRegionSelection(null);
+  };
+
+  /** The selected region, if the user is still on its canvas. */
+  const currentRegion = (canvasId: string | undefined) =>
+    regionSelection && regionSelection.canvasId === canvasId
+      ? regionSelection.region
+      : undefined;
+
   const send = async (
     message: string,
     mode: 'careful' | 'quick' = 'careful',
@@ -273,6 +321,9 @@ export function AssistantPanel({
     const selected = window
       ? viewer.store.getState().windows?.[window.id]?.selectedAnnotationId
       : undefined;
+    const context = viewerContext(viewer);
+    const region = currentRegion(context.canvasId);
+    if (regionSelection && !region) clearRegion();
     try {
       await streamChat(
         {
@@ -282,7 +333,8 @@ export function AssistantPanel({
           ...(mode === 'careful' && model ? { model } : {}),
           context: {
             projectId,
-            ...viewerContext(viewer),
+            ...context,
+            ...(region ? { region } : {}),
             ...(selected ? { annotationId: selected } : {}),
             language,
           },
@@ -497,16 +549,7 @@ export function AssistantPanel({
                   </Box>
                 );
               case 'assistant':
-                return (
-                  <Typography
-                    key={index}
-                    variant="body2"
-                    sx={{ whiteSpace: 'pre-wrap' }}
-                    data-testid="assistant-text"
-                  >
-                    {item.text}
-                  </Typography>
-                );
+                return <AssistantMarkdown key={index} text={item.text} />;
               case 'run':
                 return (
                   <Typography
@@ -724,7 +767,44 @@ export function AssistantPanel({
         </Stack>
       )}
       <Divider />
+      {(selectingRegion || regionSelection) && (
+        <Stack direction="row" sx={{ px: 1.5, pt: 1 }}>
+          {selectingRegion ? (
+            <Typography variant="caption" color="text.secondary">
+              {t('assistant.selectingRegion')}
+            </Typography>
+          ) : (
+            regionSelection && (
+              <Chip
+                size="small"
+                icon={<CropFreeIcon />}
+                data-testid="assistant-region"
+                label={t('assistant.region', {
+                  x: regionSelection.region.x,
+                  y: regionSelection.region.y,
+                  w: regionSelection.region.w,
+                  h: regionSelection.region.h,
+                })}
+                onDelete={clearRegion}
+              />
+            )
+          )}
+        </Stack>
+      )}
       <Stack direction="row" spacing={1} alignItems="flex-end" sx={{ p: 1.5 }}>
+        <Tooltip title={t('assistant.selectRegion')}>
+          <span>
+            <IconButton
+              aria-label={t('assistant.selectRegion')}
+              aria-pressed={selectingRegion}
+              color={selectingRegion || regionSelection ? 'primary' : 'default'}
+              disabled={running}
+              onClick={toggleRegionSelection}
+            >
+              <CropFreeIcon />
+            </IconButton>
+          </span>
+        </Tooltip>
         <TextField
           fullWidth
           multiline
