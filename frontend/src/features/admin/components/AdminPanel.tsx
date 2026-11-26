@@ -84,7 +84,7 @@ export const AdminPanel = () => {
       <Grid sx={{ margin: 1 }}>
         <AdminSettings />
       </Grid>
-      {isAssistantEnabled() && <AssistantUsageDashboard />}
+      {isAssistantEnabled() && <AssistantUsageDashboard users={users} />}
       <Grid container flexDirection="column" spacing={1}>
         <Grid container>
           <Grid container flexDirection="column" spacing={1} sx={{ margin: 1 }}>

@@ -59,6 +59,7 @@ vi.mock('./api.ts', async () => {
     resetHistory: vi.fn(async () => ({})),
     addNote: vi.fn(async () => ({})),
     getMyUsage: vi.fn(async () => null),
+    getModels: vi.fn(async () => null),
   };
 });
 
@@ -329,5 +330,90 @@ describe('AssistantPanel', () => {
     fireEvent.click(screen.getByLabelText('assistant.send'));
     await screen.findByText('Hello.');
     await waitFor(() => expect(api.getMyUsage).toHaveBeenCalledTimes(2));
+  });
+
+  it('lets the user pick the model, remembers it and sends it', async () => {
+    vi.stubGlobal('localStorage', memoryStorage());
+    vi.mocked(api.getModels).mockResolvedValue({
+      default: 'claude-opus-5-5',
+      models: [
+        { id: 'claude-opus-5-5', label: 'Opus 5.5', costTier: 3 },
+        { id: 'claude-haiku-5-5', label: 'Haiku 5.5', costTier: 1 },
+      ],
+    });
+    vi.mocked(api.streamChat).mockImplementation(async (body, onEvent) => {
+      onEvent({
+        type: 'run',
+        runId: 'r1',
+        conversationId: 1,
+        model: body.model ?? 'claude-opus-5-5',
+      });
+      onEvent({ type: 'text', delta: 'Hi.' });
+      onEvent({ type: 'done', stopReason: 'end_turn' });
+    });
+    const panel = () =>
+      render(
+        <AssistantPanel
+          projectId={7}
+          viewer={fakeViewer()}
+          language="en"
+          onClose={() => undefined}
+        />,
+      );
+    const { unmount } = panel();
+    const picker = await screen.findByRole('combobox', {
+      name: 'assistant.model',
+    });
+    expect(picker).toHaveTextContent('Opus 5.5');
+    fireEvent.mouseDown(picker);
+    fireEvent.click(await screen.findByRole('option', { name: /Haiku 5.5/ }));
+
+    fireEvent.change(screen.getByLabelText('assistant.placeholder'), {
+      target: { value: 'hi' },
+    });
+    fireEvent.click(screen.getByLabelText('assistant.send'));
+    await screen.findByText('Hi.');
+    expect(vi.mocked(api.streamChat).mock.calls[0][0].model).toBe(
+      'claude-haiku-5-5',
+    );
+    // The answer says which model wrote it.
+    expect(screen.getByTestId('assistant-run-model')).toHaveTextContent(
+      'Haiku 5.5',
+    );
+
+    // Remembered on the next opening.
+    unmount();
+    panel();
+    expect(
+      await screen.findByRole('combobox', { name: 'assistant.model' }),
+    ).toHaveTextContent('Haiku 5.5');
+    vi.unstubAllGlobals();
+  });
+
+  it('keeps the fast model for the manifest suggestion and hides a one-model picker', async () => {
+    vi.mocked(api.getModels).mockResolvedValue({
+      default: 'claude-opus-5-5',
+      models: [{ id: 'claude-opus-5-5', label: 'Opus 5.5', costTier: 3 }],
+    });
+    vi.mocked(api.streamChat).mockImplementation(async (_body, onEvent) => {
+      onEvent({ type: 'done', stopReason: 'end_turn' });
+    });
+    render(
+      <AssistantPanel
+        projectId={7}
+        viewer={fakeViewer()}
+        language="en"
+        onClose={() => undefined}
+      />,
+    );
+    await waitFor(() => expect(api.getModels).toHaveBeenCalled());
+    expect(screen.queryByTestId('assistant-model')).toBeNull();
+    fireEvent.click(
+      screen.getByRole('button', { name: 'assistant.suggestManifest' }),
+    );
+    await waitFor(() => expect(api.streamChat).toHaveBeenCalled());
+    const body = vi.mocked(api.streamChat).mock.calls[0][0];
+    expect(body.mode).toBe('quick');
+    expect(body.model).toBeUndefined();
   });
 });

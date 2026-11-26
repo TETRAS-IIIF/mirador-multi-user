@@ -29,6 +29,8 @@ import {
   niceMax,
   presetRange,
   summaryToCsv,
+  displayName,
+  withUserNames,
 } from '../usageDashboard.ts';
 
 function downloadCsv(summary: UsageSummary) {
@@ -42,12 +44,27 @@ function downloadCsv(summary: UsageSummary) {
 }
 
 /** Admin panel section: usage and estimated cost of the assistant. */
-export function AssistantUsageDashboard() {
+export function AssistantUsageDashboard({
+  users = [],
+}: {
+  /** MMU users (id, name), for current user names. */
+  users?: { id: number; name: string }[];
+}) {
   const { t, i18n } = useTranslation();
   const [range, setRange] = useState(() => presetRange('thisMonth'));
-  const [summary, setSummary] = useState<UsageSummary | null>(null);
+  const [rawSummary, setSummary] = useState<UsageSummary | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // Current names from MMU's user list, which the admin panel has loaded.
+  const userNames = useMemo(
+    () => new Map(users.map((u) => [u.id, u.name])),
+    [users],
+  );
+  const summary = useMemo(
+    () => rawSummary && withUserNames(rawSummary, userNames),
+    [rawSummary, userNames],
+  );
 
   useEffect(() => {
     if (!range.from || !range.to || range.from > range.to) return;
@@ -146,12 +163,12 @@ export function AssistantUsageDashboard() {
           </Paper>
 
           <Grid container spacing={2}>
-            <Grid size={{ xs: 12, lg: 6 }}>
+            <Grid size={{ xs: 12, xl: 6 }}>
               <UsageTable
                 title={t('assistantUsage.byUser')}
                 rows={summary.byUser.map((u) => ({
                   key: `u${u.userId}`,
-                  name: u.userName ?? `#${u.userId}`,
+                  name: displayName(u.userName, u.userId),
                   totals: u,
                 }))}
                 number={number}
@@ -159,12 +176,12 @@ export function AssistantUsageDashboard() {
                 percent={percent}
               />
             </Grid>
-            <Grid size={{ xs: 12, lg: 6 }}>
+            <Grid size={{ xs: 12, xl: 6 }}>
               <UsageTable
                 title={t('assistantUsage.byProject')}
                 rows={summary.byProject.map((p) => ({
                   key: `p${p.projectId}`,
-                  name: p.projectTitle ?? `#${p.projectId}`,
+                  name: displayName(p.projectTitle, p.projectId),
                   totals: p,
                 }))}
                 number={number}
@@ -172,7 +189,7 @@ export function AssistantUsageDashboard() {
                 percent={percent}
               />
             </Grid>
-            <Grid size={{ xs: 12, lg: 6 }}>
+            <Grid size={{ xs: 12, xl: 6 }}>
               <UsageTable
                 title={t('assistantUsage.byModel')}
                 rows={summary.byModel.map((m) => ({

@@ -7,7 +7,9 @@ import {
   CircularProgress,
   Divider,
   IconButton,
+  MenuItem,
   Paper,
+  Select,
   Stack,
   TextField,
   Tooltip,
@@ -25,7 +27,9 @@ import {
   answerConfirm,
   answerViewer,
   type AssistantEvent,
+  type AssistantModel,
   getHistory,
+  getModels,
   getMyUsage,
   resetHistory,
   stopRun,
@@ -37,6 +41,7 @@ import {
   deleteAnnotation,
 } from '../../mirador/api/annotationApi.ts';
 import { getShowDrafts } from '../draftsState.ts';
+import { pickModel, saveModel, savedModel } from '../modelChoice.ts';
 import {
   activeWindow,
   refreshCanvas,
@@ -48,6 +53,8 @@ type DraftEvent = Extract<AssistantEvent, { type: 'draft' }>;
 type Item =
   | { kind: 'user'; text: string }
   | { kind: 'assistant'; text: string }
+  /** Start of an answer: which model writes it. */
+  | { kind: 'run'; model: string }
   | { kind: 'step'; id: string; label: string; status: string; detail?: string }
   | {
       kind: 'draft';
@@ -113,6 +120,8 @@ export function AssistantPanel({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [costUsd, setCostUsd] = useState(0);
   const [usage, setUsage] = useState<UsageStatus | null>(null);
+  const [models, setModels] = useState<AssistantModel[]>([]);
+  const [model, setModel] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const runIdRef = useRef<string | null>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
@@ -129,6 +138,26 @@ export function AssistantPanel({
       .catch(() => undefined);
     return () => abortRef.current?.abort();
   }, [projectId]);
+
+  // Models the user may pick, and their last choice when still allowed.
+  useEffect(() => {
+    let cancelled = false;
+    getModels()
+      .then((list) => {
+        if (cancelled || !list) return;
+        setModels(list.models);
+        setModel(pickModel(savedModel(), list.models, list.default));
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const chooseModel = (id: string) => {
+    setModel(id);
+    saveModel(id);
+  };
 
   // The user's own usage this month: on open, then after each answer.
   useEffect(() => {
@@ -156,6 +185,7 @@ export function AssistantPanel({
         case 'run':
           runIdRef.current = event.runId;
           setRunId(event.runId);
+          setItems((prev) => [...prev, { kind: 'run', model: event.model }]);
           break;
         case 'text':
           setItems((prev) => {
@@ -254,6 +284,8 @@ export function AssistantPanel({
         {
           message: text,
           mode,
+          // "Quick" tasks keep the instance's fast model.
+          ...(mode === 'careful' && model ? { model } : {}),
           context: {
             projectId,
             ...viewerContext(viewer),
@@ -366,6 +398,33 @@ export function AssistantPanel({
         <Typography variant="subtitle1" sx={{ flexGrow: 1 }}>
           {t('assistant.title')}
         </Typography>
+        {models.length > 1 && model && (
+          <Select
+            size="small"
+            variant="standard"
+            disableUnderline
+            value={model}
+            disabled={running}
+            onChange={(e) => chooseModel(String(e.target.value))}
+            inputProps={{ 'aria-label': t('assistant.model') }}
+            data-testid="assistant-model"
+            sx={{ mr: 0.5, fontSize: 14 }}
+          >
+            {models.map((m) => (
+              <MenuItem key={m.id} value={m.id}>
+                {m.label}
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ ml: 1 }}
+                >
+                  {'$'.repeat(m.costTier)}
+                </Typography>
+              </MenuItem>
+            ))}
+          </Select>
+        )}
         <Tooltip title={t('assistant.suggestManifest')}>
           <span>
             <IconButton
@@ -441,6 +500,18 @@ export function AssistantPanel({
                     data-testid="assistant-text"
                   >
                     {item.text}
+                  </Typography>
+                );
+              case 'run':
+                return (
+                  <Typography
+                    key={index}
+                    variant="caption"
+                    color="text.secondary"
+                    data-testid="assistant-run-model"
+                  >
+                    {models.find((m) => m.id === item.model)?.label ??
+                      item.model}
                   </Typography>
                 );
               case 'step':

@@ -472,7 +472,8 @@
     "reviewDrafts_other": "{{count}} drafts to review",
     "usageMonth": "This month: {{tokens}} tokens, about ${{cost}}",
     "usageTokenQuota": "limit {{limit}} tokens",
-    "usageRequestQuota": "{{used}} of {{limit}} requests today"
+    "usageRequestQuota": "{{used}} of {{limit}} requests today",
+    "model": "Model"
   },
   "assistantUsage": {
     "title": "Assistant usage",

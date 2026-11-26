@@ -17,11 +17,14 @@ import type { UsageSummary, UsageTotals } from './api.ts';
 import { AssistantUsageDashboard } from './components/AssistantUsageDashboard.tsx';
 import {
   daysOf,
+  displayName,
   modelColors,
   niceMax,
   presetRange,
   summaryToCsv,
+  withUserNames,
 } from './usageDashboard.ts';
+import { pickModel } from './modelChoice.ts';
 
 const totals = (costUsd: number, answers = 1): UsageTotals => ({
   inputTokens: 1000,
@@ -125,6 +128,35 @@ describe('usage dashboard helpers', () => {
   });
 });
 
+describe('names in the usage dashboard', () => {
+  it("prefers MMU's current user names over the saved ones", () => {
+    const named = withUserNames(
+      summary,
+      new Map([
+        [3, 'alice'],
+        [4, 'robert'],
+      ]),
+    );
+    expect(named.byUser.map((u) => u.userName)).toEqual(['robert', 'alice']);
+    // Unknown to MMU (e.g. deleted): the saved name stays.
+    expect(withUserNames(summary, new Map()).byUser[0].userName).toBe('bob');
+  });
+
+  it('shows the id with the name, or the id alone', () => {
+    expect(displayName('Codex', 9)).toBe('Codex (#9)');
+    expect(displayName(null, 9)).toBe('#9');
+  });
+});
+
+describe('pickModel', () => {
+  const allowed = [{ id: 'opus' }, { id: 'haiku' }];
+  it('keeps the saved model while it is allowed, else the default', () => {
+    expect(pickModel('haiku', allowed, 'opus')).toBe('haiku');
+    expect(pickModel('sonnet', allowed, 'opus')).toBe('opus');
+    expect(pickModel(null, allowed, 'opus')).toBe('opus');
+  });
+});
+
 describe('AssistantUsageDashboard', () => {
   beforeEach(() => {
     vi.mocked(api.getUsageSummary).mockReset();
@@ -145,13 +177,15 @@ describe('AssistantUsageDashboard', () => {
     expect(screen.getAllByText('claude-opus-5-5').length).toBeGreaterThan(0);
 
     const users = screen.getByRole('table', { name: 'assistantUsage.byUser' });
-    expect(within(users).getByText('bob')).toBeInTheDocument();
+    expect(within(users).getByText('bob (#4)')).toBeInTheDocument();
     // No name kept: the id.
     expect(within(users).getByText('#3')).toBeInTheDocument();
     const projects = screen.getByRole('table', {
       name: 'assistantUsage.byProject',
     });
-    expect(within(projects).getByText('Codex, "draft"')).toBeInTheDocument();
+    expect(
+      within(projects).getByText('Codex, "draft" (#8)'),
+    ).toBeInTheDocument();
 
     // Hovering a bar gives the day's detail, per model.
     fireEvent.mouseEnter(screen.getAllByTestId('cost-bar')[0]);
@@ -161,6 +195,14 @@ describe('AssistantUsageDashboard', () => {
     expect(screen.getByTestId('cost-chart-detail')).toHaveTextContent(
       'claude-haiku-5-5 $0.25',
     );
+  });
+
+  it('uses the user names the admin panel loaded from MMU', async () => {
+    render(<AssistantUsageDashboard users={[{ id: 3, name: 'alice' }]} />);
+    const users = await screen.findByRole('table', {
+      name: 'assistantUsage.byUser',
+    });
+    expect(within(users).getByText('alice (#3)')).toBeInTheDocument();
   });
 
   it('reloads for another range', async () => {

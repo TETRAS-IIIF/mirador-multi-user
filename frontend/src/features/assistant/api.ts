@@ -85,7 +85,13 @@ const post = async (path: string, body: unknown) => {
 
 /** Sends a message and calls `onEvent` for each streamed event. */
 export async function streamChat(
-  body: { message: string; mode?: 'careful' | 'quick'; context: ChatContext },
+  body: {
+    message: string;
+    mode?: 'careful' | 'quick';
+    /** A model id from getModels(); overrides `mode`. */
+    model?: string;
+    context: ChatContext;
+  },
   onEvent: (event: AssistantEvent) => void,
   signal?: AbortSignal,
 ): Promise<void> {
@@ -195,4 +201,22 @@ export async function getUsageSummary(
     throw new Error(`/assistant/admin/usage failed (${response.status})`);
   }
   return response.json();
+}
+
+/** A model the user may pick (GET /assistant/models). */
+export type AssistantModel = {
+  id: string;
+  label: string;
+  /** Relative cost, 1 ($) to 3 ($$$). */
+  costTier: 1 | 2 | 3;
+};
+
+export async function getModels(): Promise<{
+  default: string;
+  models: AssistantModel[];
+} | null> {
+  const response = await fetch(`${ASSISTANT_URL}/assistant/models`, {
+    headers: headers(false),
+  });
+  return response.ok ? response.json() : null;
 }
