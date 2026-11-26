@@ -1,5 +1,8 @@
 import { AnnotationPage } from '../../../BaseEntities/annotation-page/entities/annotation-page.entity';
 
+/** A page as rebuilt from annotation rows (published only). */
+type SnapshotPage = Pick<AnnotationPage, 'annotationPageId' | 'content'>;
+
 interface ManifestEntry {
   isFetching: boolean;
   id: string;
@@ -34,7 +37,7 @@ function getAnnotationIdFromItem(item: any): string | null {
 function addAnnotationToMatchingCanvas(
   manifests: ManifestsMap,
   annotationId: string,
-  page: AnnotationPage,
+  page: SnapshotPage,
 ): void {
   for (const manifest of Object.values(manifests)) {
     const items = manifest?.json?.items;
@@ -49,7 +52,7 @@ function addAnnotationToMatchingCanvas(
 }
 
 export const constructSnapshotWorkspace = (
-  annotationPages: AnnotationPage[],
+  annotationPages: SnapshotPage[],
   miradorWorkspace: Record<string, ManifestEntry> & {
     manifests?: ManifestsMap;
   },
