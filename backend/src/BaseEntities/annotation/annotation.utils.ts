@@ -24,14 +24,20 @@ export function stripMmuFields<T extends Record<string, any>>(content: T): T {
   return copy as T;
 }
 
+/** Version of an annotation row, sent back on update to detect concurrent edits. */
+export const annotationVersion = (row: Annotation): string =>
+  String(row.version ?? 0);
+
 /**
- * The annotation as MMU clients see it. Drafts carry `mmu:` fields so that
- * Mirador and the annotation editor can tell them apart.
+ * The annotation as MMU clients see it. Every annotation carries its
+ * `mmu:version`; drafts also carry `mmu:` fields so that Mirador and the
+ * annotation editor can tell them apart.
  */
 export function toClientAnnotation(row: Annotation): Record<string, any> {
   const content = {
     ...stripMmuFields(row.content ?? {}),
     id: row.annotationId,
+    'mmu:version': annotationVersion(row),
   };
   if (row.status !== AnnotationStatus.DRAFT) return content;
   return {
