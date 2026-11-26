@@ -61,6 +61,12 @@ import JsonEditorWithControls from './jsonAvancedEditor.tsx';
 import { getEditorLanguageFromMedia } from '../../features/media/utils/utils.ts';
 import { AdvancedTextEditor } from '../../features/media/component/AdvancedTextEditor.tsx';
 import { ReplaceModalContent } from '../../features/projects/ReplaceModalContent.tsx';
+import { isAssistantEnabled } from '../../features/assistant/api.ts';
+import { AssistantSettingsTab } from '../../features/assistant/components/AssistantSettingsTab.tsx';
+import {
+  readAssistantSettings,
+  withAssistantSettings,
+} from '../../features/assistant/projectSettings.ts';
 
 interface ModalItemProps<T> {
   HandleOpenModalEdit: () => void;
@@ -184,6 +190,14 @@ export const MMUModalEdit = <
   const [selectedMetadataData, setSelectedMetadataData] =
     useState<MetadataFields>();
   const [tabValue, setTabValue] = useState(0);
+  // Assistant settings live in the project's metadata (read by the assistant).
+  const showAssistantTab =
+    objectTypes === OBJECT_TYPES.PROJECT && isAssistantEnabled();
+  const itemMetadata = (item as { metadata?: Record<string, unknown> })
+    .metadata;
+  const [assistantSettings, setAssistantSettings] = useState(() =>
+    readAssistantSettings(itemMetadata ?? metadata),
+  );
   const [metadataFormats, setMetadataFormats] = useState<MetadataFormat[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<
@@ -217,7 +231,7 @@ export const MMUModalEdit = <
       }
     };
     textContent();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, [objectTypes, item]);
 
   const [
@@ -291,6 +305,15 @@ export const MMUModalEdit = <
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
       templates: templates,
+      // Merged into the metadata sent with the rest: every other key is kept.
+      ...(showAssistantTab
+        ? {
+            metadata: withAssistantSettings(
+              itemMetadata ?? metadata,
+              assistantSettings,
+            ),
+          }
+        : {}),
     };
     if (
       objectTypes !== OBJECT_TYPES.GROUP &&
@@ -395,7 +418,7 @@ export const MMUModalEdit = <
         setJsonElementToEditInAdvancedEditor(item.userWorkspace);
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, []);
 
   const handleGetOtpionLabel = (option: { title: string }) => {
@@ -650,6 +673,17 @@ export const MMUModalEdit = <
               </Tooltip>
             }
             {...a11yProps(6)}
+          />
+        )}
+
+        {showAssistantTab && (
+          <Tab
+            label={
+              <Tooltip title={t('assistantSettings.tabDescription')}>
+                <span>{t('assistantSettings.tab')}</span>
+              </Tooltip>
+            }
+            {...a11yProps(7)}
           />
         )}
       </Tabs>
@@ -936,6 +970,17 @@ export const MMUModalEdit = <
             </Grid>
           </Grid>
         </CustomTabPanel>
+        {showAssistantTab && (
+          <CustomTabPanel index={7} value={tabValue}>
+            <AssistantSettingsTab
+              settings={assistantSettings}
+              onChange={setAssistantSettings}
+              disabled={
+                rights !== ITEM_RIGHTS.ADMIN && rights !== ITEM_RIGHTS.EDITOR
+              }
+            />
+          </CustomTabPanel>
+        )}
         {(rights === ITEM_RIGHTS.ADMIN || rights === ITEM_RIGHTS.EDITOR) && (
           <Grid
             container

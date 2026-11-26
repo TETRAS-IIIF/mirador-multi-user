@@ -204,3 +204,159 @@ export function showAnnotation(
   }
   zoom();
 }
+
+/** Rectangle between two points, in whole canvas pixels, clamped at 0. */
+export function regionFromPoints(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+): Region {
+  const x = Math.max(0, Math.round(Math.min(a.x, b.x)));
+  const y = Math.max(0, Math.round(Math.min(a.y, b.y)));
+  return {
+    x,
+    y,
+    w: Math.max(1, Math.round(Math.max(a.x, b.x)) - x),
+    h: Math.max(1, Math.round(Math.max(a.y, b.y)) - y),
+  };
+}
+
+const REGION_OVERLAY_ID = 'mmu-assistant-region';
+
+/** The region outline drawn on each window's viewer, kept in sync with zoom and pan. */
+const outlines = new Map<
+  string,
+  { osd: any; element: HTMLElement; follow: () => void }
+>();
+
+/** Draws (or moves) the outline of `region`, in canvas coordinates, on `osd`. */
+function drawOutline(windowId: string, osd: any, region: Region) {
+  let outline = outlines.get(windowId);
+  if (!outline || outline.osd !== osd) {
+    removeOutline(windowId);
+    const element = document.createElement('div');
+    element.id = REGION_OVERLAY_ID;
+    Object.assign(element.style, {
+      background: 'rgba(25, 118, 210, 0.08)',
+      border: '2px dashed #1976d2',
+      boxSizing: 'border-box',
+      pointerEvents: 'none',
+      position: 'absolute',
+      zIndex: '10',
+    });
+    osd.element?.appendChild(element);
+    const follow = () => place(osd, element);
+    osd.addHandler('update-viewport', follow);
+    outline = { osd, element, follow };
+    outlines.set(windowId, outline);
+  }
+  outline.element.dataset.region = JSON.stringify(region);
+  place(osd, outline.element);
+}
+
+/** Positions the outline from its canvas region (viewport = canvas coordinates). */
+function place(osd: any, element: HTMLElement) {
+  const region = JSON.parse(element.dataset.region ?? 'null') as Region | null;
+  if (!region) return;
+  // An OpenSeadragon Point (Mirador doesn't export the class, and its instances report
+  // Object as their constructor): made from the prototype of a point OpenSeadragon created.
+  const pointProto = Object.getPrototypeOf(osd.viewport.getCenter());
+  const Point = (x: number, y: number) =>
+    Object.assign(Object.create(pointProto), { x, y });
+  const a = osd.viewport.pixelFromPoint(Point(region.x, region.y), true);
+  const b = osd.viewport.pixelFromPoint(
+    Point(region.x + region.w, region.y + region.h),
+    true,
+  );
+  Object.assign(element.style, {
+    height: `${Math.max(1, b.y - a.y)}px`,
+    left: `${a.x}px`,
+    top: `${a.y}px`,
+    width: `${Math.max(1, b.x - a.x)}px`,
+  });
+}
+
+function removeOutline(windowId: string) {
+  const outline = outlines.get(windowId);
+  if (!outline) return;
+  outline.osd.removeHandler('update-viewport', outline.follow);
+  outline.element.remove();
+  outlines.delete(windowId);
+}
+
+/** Removes the selected-region outline from the active window, if any. */
+export function clearRegionOverlay(viewer: Viewer | undefined) {
+  const window = activeWindow(viewer);
+  if (window) removeOutline(window.id);
+}
+
+/**
+ * Lets the user drag a rectangle on the image of the active window. Calls
+ * `onSelect` with the region in canvas coordinates, or `onCancel` (Escape,
+ * or no image). Returns a function that stops the selection.
+ */
+export function selectRegion(
+  viewer: Viewer | undefined,
+  onSelect: (selection: { canvasId: string; region: Region }) => void,
+  onCancel: () => void,
+): () => void {
+  const window = activeWindow(viewer);
+  const osd = window && (OSDReferences?.get(window.id)?.current as any);
+  if (!window?.canvasId || !osd?.viewport) {
+    onCancel();
+    return () => undefined;
+  }
+  removeOutline(window.id);
+  let start: { x: number; y: number } | null = null;
+  const toCanvas = (position: unknown) =>
+    osd.viewport.pointFromPixel(position) as { x: number; y: number };
+
+  const onPress = (event: any) => {
+    event.preventDefaultAction = true;
+    start = toCanvas(event.position);
+    drawOutline(window.id, osd, regionFromPoints(start, start));
+  };
+  const onDrag = (event: any) => {
+    // Select instead of panning.
+    event.preventDefaultAction = true;
+    if (!start) return;
+    drawOutline(
+      window.id,
+      osd,
+      regionFromPoints(start, toCanvas(event.position)),
+    );
+  };
+  const onRelease = (event: any) => {
+    event.preventDefaultAction = true;
+    if (!start) return;
+    const region = regionFromPoints(start, toCanvas(event.position));
+    drawOutline(window.id, osd, region);
+    stop(false);
+    onSelect({ canvasId: window.canvasId, region });
+  };
+  const onClick = (event: any) => {
+    event.preventDefaultAction = true;
+  };
+  const onKey = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') {
+      stop(true);
+      onCancel();
+    }
+  };
+  const stop = (clear: boolean) => {
+    osd.removeHandler('canvas-press', onPress);
+    osd.removeHandler('canvas-drag', onDrag);
+    osd.removeHandler('canvas-release', onRelease);
+    osd.removeHandler('canvas-click', onClick);
+    document.removeEventListener('keydown', onKey);
+    if (osd.element) osd.element.style.cursor = '';
+    if (clear) removeOutline(window.id);
+  };
+
+  osd.addHandler('canvas-press', onPress);
+  osd.addHandler('canvas-drag', onDrag);
+  osd.addHandler('canvas-release', onRelease);
+  osd.addHandler('canvas-click', onClick);
+  document.addEventListener('keydown', onKey);
+  if (osd.element) osd.element.style.cursor = 'crosshair';
+  return () => stop(true);
+}
