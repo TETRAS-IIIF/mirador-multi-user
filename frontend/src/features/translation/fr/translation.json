@@ -460,7 +460,14 @@
     "usageMonth": "Ce mois-ci : {{tokens}} tokens, environ {{cost}} $",
     "usageTokenQuota": "limite {{limit}} tokens",
     "usageRequestQuota": "{{used}} requêtes sur {{limit}} aujourd'hui",
-    "model": "Modèle"
+    "model": "Modèle",
+    "editText": "Texte",
+    "editTags": "Tags",
+    "editTagsHelp": "Tapez un tag puis Entrée.",
+    "editFormatting": "La mise en forme (gras, listes, liens) est réduite à des paragraphes si vous enregistrez ici. Utilisez l'éditeur d'annotation pour la garder.",
+    "openEditor": "Éditeur d'annotation",
+    "save": "Enregistrer",
+    "saveAndAccept": "Enregistrer et accepter"
   },
   "assistantUsage": {
     "title": "Utilisation de l'assistant",

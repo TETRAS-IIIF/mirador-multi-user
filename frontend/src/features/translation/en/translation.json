@@ -473,7 +473,14 @@
     "usageMonth": "This month: {{tokens}} tokens, about ${{cost}}",
     "usageTokenQuota": "limit {{limit}} tokens",
     "usageRequestQuota": "{{used}} of {{limit}} requests today",
-    "model": "Model"
+    "model": "Model",
+    "editText": "Text",
+    "editTags": "Tags",
+    "editTagsHelp": "Type a tag and press Enter.",
+    "editFormatting": "Formatting (bold, lists, links) is simplified to paragraphs when saved here. Use the annotation editor to keep it.",
+    "openEditor": "Annotation editor",
+    "save": "Save",
+    "saveAndAccept": "Save and accept"
   },
   "assistantUsage": {
     "title": "Assistant usage",
