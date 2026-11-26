@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createSseParser } from './sse.ts';
 import {
@@ -103,8 +103,24 @@ describe('createSseParser', () => {
   });
 });
 
+/** In-memory Storage: Node 25+ has its own `localStorage` global, which hides jsdom's. */
+function memoryStorage(): Storage {
+  const data = new Map<string, string>();
+  return {
+    get length() {
+      return data.size;
+    },
+    clear: () => data.clear(),
+    getItem: (k) => data.get(k) ?? null,
+    key: (i) => [...data.keys()][i] ?? null,
+    removeItem: (k) => void data.delete(k),
+    setItem: (k, v) => void data.set(k, String(v)),
+  };
+}
+
 describe('draftsState', () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(() => vi.stubGlobal('localStorage', memoryStorage()));
+  afterEach(() => vi.unstubAllGlobals());
   it('defaults to showing drafts, per project, and notifies listeners', () => {
     expect(getShowDrafts(1)).toBe(true);
     const listener = vi.fn();
