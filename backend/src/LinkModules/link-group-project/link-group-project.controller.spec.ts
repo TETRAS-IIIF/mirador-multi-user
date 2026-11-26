@@ -397,6 +397,7 @@ describe('LinkGroupProjectController', () => {
     );
     expect(mockLinkGroupProjectService.deleteSnapshot).toHaveBeenCalledWith(
       snapshotId,
+      projectId,
     );
     expect(resp).toBe(result);
   });

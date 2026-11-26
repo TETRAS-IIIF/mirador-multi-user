@@ -329,7 +329,10 @@ export class LinkGroupProjectController {
       request.user.sub,
       projectId,
       async () => {
-        return await this.linkGroupProjectService.deleteSnapshot(snapshotId);
+        return await this.linkGroupProjectService.deleteSnapshot(
+          snapshotId,
+          projectId,
+        );
       },
     );
   }

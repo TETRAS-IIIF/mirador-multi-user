@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import {
@@ -18,6 +19,13 @@ import { GroupProjectRights } from '../../enum/rights';
 import { ActionType } from '../../enum/actions';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
+
+jest.mock('node:fs/promises', () => ({
+  mkdir: jest.fn(),
+  writeFile: jest.fn(),
+  rm: jest.fn(),
+}));
+import * as fsPromises from 'node:fs/promises';
 
 describe('LinkGroupProjectService', () => {
   let service: LinkGroupProjectService;
@@ -65,6 +73,7 @@ describe('LinkGroupProjectService', () => {
     const snapshotServiceMock: Partial<jest.Mocked<SnapshotService>> = {
       createSnapshot: jest.fn(),
       findOne: jest.fn(),
+      findOneInProject: jest.fn(),
       updateSnapshot: jest.fn(),
       deleteSnapshot: jest.fn(),
     };
@@ -328,5 +337,67 @@ describe('LinkGroupProjectService', () => {
         InternalServerErrorException,
       );
     });
+  });
+
+  describe('snapshots', () => {
+    const snapshot = {
+      id: 5,
+      title: 'Before',
+      hash: 'a94a8fe5ccb19ba61c4c0873d391e987982fbbd3',
+    } as any;
+
+    beforeEach(() => jest.clearAllMocks());
+
+    it('renames without touching the frozen workspace.json', async () => {
+      snapshotService.findOneInProject.mockResolvedValue(snapshot);
+      snapshotService.updateSnapshot.mockResolvedValue({
+        ...snapshot,
+        title: 'After',
+      });
+      await service.updateSnapshot('After', 5, 7);
+      expect(snapshotService.findOneInProject).toHaveBeenCalledWith(5, 7);
+      expect(snapshotService.updateSnapshot).toHaveBeenCalledWith(5, {
+        ...snapshot,
+        title: 'After',
+      });
+      expect(fsPromises.writeFile).not.toHaveBeenCalled();
+    });
+
+    it("refuses to rename or delete another project's snapshot", async () => {
+      snapshotService.findOneInProject.mockResolvedValue(null);
+      await expect(service.updateSnapshot('x', 5, 99)).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+      await expect(service.deleteSnapshot(5, 99)).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+      expect(snapshotService.updateSnapshot).not.toHaveBeenCalled();
+      expect(snapshotService.deleteSnapshot).not.toHaveBeenCalled();
+      expect(fsPromises.rm).not.toHaveBeenCalled();
+    });
+
+    it("deletes the snapshot's folder and row, even if the folder cannot be removed", async () => {
+      snapshotService.findOneInProject.mockResolvedValue(snapshot);
+      (fsPromises.rm as jest.Mock).mockRejectedValueOnce(new Error('EACCES'));
+      await service.deleteSnapshot(5, 7);
+      expect(fsPromises.rm).toHaveBeenCalledWith(
+        expect.stringMatching(new RegExp(`/${snapshot.hash}$`)),
+        { recursive: true, force: true },
+      );
+      expect(snapshotService.deleteSnapshot).toHaveBeenCalledWith(5);
+    });
+
+    it.each(['', '..', 'a/b', undefined])(
+      'never removes a folder for a snapshot hash like %p',
+      async (hash) => {
+        snapshotService.findOneInProject.mockResolvedValue({
+          ...snapshot,
+          hash,
+        });
+        await service.deleteSnapshot(5, 7);
+        expect(fsPromises.rm).not.toHaveBeenCalled();
+        expect(snapshotService.deleteSnapshot).toHaveBeenCalledWith(5);
+      },
+    );
   });
 });
