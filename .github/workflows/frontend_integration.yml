@@ -35,5 +35,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint
+        run: npm run lint
+
       - name: Run Vitest in CI mode
         run: npm run test:ci
