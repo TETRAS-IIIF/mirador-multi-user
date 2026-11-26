@@ -459,7 +459,8 @@
     "reviewDrafts_other": "{{count}} brouillons à relire",
     "usageMonth": "Ce mois-ci : {{tokens}} tokens, environ {{cost}} $",
     "usageTokenQuota": "limite {{limit}} tokens",
-    "usageRequestQuota": "{{used}} requêtes sur {{limit}} aujourd'hui"
+    "usageRequestQuota": "{{used}} requêtes sur {{limit}} aujourd'hui",
+    "model": "Modèle"
   },
   "assistantUsage": {
     "title": "Utilisation de l'assistant",

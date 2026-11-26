@@ -96,3 +96,21 @@ export function niceMax(value: number): number {
   const step = [1, 2, 2.5, 5, 10].find((m) => m * power >= value) ?? 10;
   return step * power;
 }
+
+/** User names from MMU (current), over the names saved with the usage records. */
+export function withUserNames(
+  summary: UsageSummary,
+  names: Map<number, string>,
+): UsageSummary {
+  return {
+    ...summary,
+    byUser: summary.byUser.map((u) => ({
+      ...u,
+      userName: names.get(u.userId) ?? u.userName,
+    })),
+  };
+}
+
+/** "Codex Xolotl (#9)", or "#9" when no name is known (e.g. deleted). */
+export const displayName = (name: string | null | undefined, id: number) =>
+  name ? `${name} (#${id})` : `#${id}`;

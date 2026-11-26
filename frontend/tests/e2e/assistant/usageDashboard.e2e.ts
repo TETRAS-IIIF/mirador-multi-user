@@ -118,9 +118,9 @@ test('an admin sees the assistant usage in the admin panel', async ({
 
   const dashboard = page.getByTestId('assistant-usage-dashboard');
   await expect(dashboard).toBeVisible();
-  await expect(dashboard.getByText('Codex Xolotl')).toBeVisible();
-  // A project without a kept title shows its id.
-  await expect(dashboard.getByText('#4')).toBeVisible();
+  // Names come with their id; a project without a kept title shows its id.
+  await expect(dashboard.getByText('Codex Xolotl (#9)')).toBeVisible();
+  await expect(dashboard.getByText('#4', { exact: true })).toBeVisible();
   await expect(dashboard.getByTestId('cost-bar').first()).toBeVisible();
   await dashboard.getByTestId('cost-chart').scrollIntoViewIfNeeded();
   await dashboard.getByTestId('cost-bar').nth(3).hover();
