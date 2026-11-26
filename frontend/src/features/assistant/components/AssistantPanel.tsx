@@ -41,6 +41,7 @@ import {
   deleteAnnotation,
 } from '../../mirador/api/annotationApi.ts';
 import { getShowDrafts } from '../draftsState.ts';
+import { AssistantMarkdown } from './AssistantMarkdown.tsx';
 import { pickModel, saveModel, savedModel } from '../modelChoice.ts';
 import {
   activeWindow,
@@ -492,16 +493,7 @@ export function AssistantPanel({
                   </Box>
                 );
               case 'assistant':
-                return (
-                  <Typography
-                    key={index}
-                    variant="body2"
-                    sx={{ whiteSpace: 'pre-wrap' }}
-                    data-testid="assistant-text"
-                  >
-                    {item.text}
-                  </Typography>
-                );
+                return <AssistantMarkdown key={index} text={item.text} />;
               case 'run':
                 return (
                   <Typography

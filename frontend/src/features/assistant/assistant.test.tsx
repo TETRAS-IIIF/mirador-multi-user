@@ -416,4 +416,31 @@ describe('AssistantPanel', () => {
     expect(body.mode).toBe('quick');
     expect(body.model).toBeUndefined();
   });
+
+  it('renders the answer as Markdown, while it streams', async () => {
+    vi.mocked(api.streamChat).mockImplementation(async (_body, onEvent) => {
+      onEvent({ type: 'text', delta: 'The date is **13' });
+      onEvent({ type: 'text', delta: '42**.\n\n- folio 12' });
+      onEvent({ type: 'done', stopReason: 'end_turn' });
+    });
+    render(
+      <AssistantPanel
+        projectId={7}
+        viewer={fakeViewer()}
+        language="en"
+        onClose={() => undefined}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText('assistant.placeholder'), {
+      target: { value: 'date?' },
+    });
+    fireEvent.click(screen.getByLabelText('assistant.send'));
+    const answer = await screen.findByTestId('assistant-text');
+    await waitFor(() =>
+      expect(answer.querySelector('strong')?.textContent).toBe('1342'),
+    );
+    expect(answer.querySelector('li')?.textContent).toBe('folio 12');
+    // The user's own message stays plain text.
+    expect(screen.getByText('date?').querySelector('strong')).toBeNull();
+  });
 });
