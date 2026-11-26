@@ -473,7 +473,8 @@
     "usageMonth": "This month: {{tokens}} tokens, about ${{cost}}",
     "usageTokenQuota": "limit {{limit}} tokens",
     "usageRequestQuota": "{{used}} of {{limit}} requests today",
-    "model": "Model"
+    "model": "Model",
+    "resumed": "Answer still running: continued"
   },
   "assistantUsage": {
     "title": "Assistant usage",
@@ -498,5 +499,36 @@
     "hoverHint": "Hover a bar to see the day.",
     "answersCount_one": "{{count}} answer",
     "answersCount_other": "{{count}} answers"
+  },
+  "assistantJob": {
+    "open": "Background job: annotate a whole manifest",
+    "title": "Background job",
+    "intro": "The assistant annotates every canvas (or a range) of a manifest with the same instructions. It keeps going if you close the panel; the drafts wait for your review.",
+    "manifest": "Manifest",
+    "instructions": "Instructions",
+    "instructionsPlaceholder": "E.g. Transcribe the text of each page and tag people, places and dates.",
+    "from": "From canvas",
+    "to": "To canvas",
+    "estimate_one": "{{count}} canvas, about ${{cost}} (estimate).",
+    "estimate_other": "{{count}} canvases, about ${{cost}} (estimate).",
+    "estimateButton": "Estimate",
+    "start_one": "Start ({{count}} canvas, about ${{cost}})",
+    "start_other": "Start ({{count}} canvases, about ${{cost}})",
+    "started": "Job started: {{title}}",
+    "progress_one": "{{done}} / {{total}} canvases {{label}} · {{count}} draft",
+    "progress_other": "{{done}} / {{total}} canvases {{label}} · {{count}} drafts",
+    "finished_one": "Job finished: {{title}}, {{count}} draft to review",
+    "finished_other": "Job finished: {{title}}, {{count}} drafts to review",
+    "stopped_one": "Job stopped: {{title}}, {{count}} draft kept",
+    "stopped_other": "Job stopped: {{title}}, {{count}} drafts kept",
+    "failed_one": "Job ended early: {{title}}, {{count}} draft kept",
+    "failed_other": "Job ended early: {{title}}, {{count}} drafts kept",
+    "finishedShort_one": "Finished · {{count}} draft to review",
+    "finishedShort_other": "Finished · {{count}} drafts to review",
+    "stoppedShort_one": "Stopped · {{count}} draft kept",
+    "stoppedShort_other": "Stopped · {{count}} drafts kept",
+    "failedShort_one": "Ended early · {{count}} draft kept",
+    "failedShort_other": "Ended early · {{count}} drafts kept",
+    "dismiss": "Dismiss"
   }
 }
