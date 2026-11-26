@@ -41,6 +41,7 @@ import {
   deleteAnnotation,
 } from '../../mirador/api/annotationApi.ts';
 import { getShowDrafts } from '../draftsState.ts';
+import { uncertainty } from '../uncertainty.ts';
 import { pickModel, saveModel, savedModel } from '../modelChoice.ts';
 import {
   activeWindow,
@@ -560,6 +561,17 @@ export function AssistantPanel({
                           variant="outlined"
                           label={t('assistant.draft')}
                         />
+                        {uncertainty(draft.annotation) && (
+                          <Tooltip title={uncertainty(draft.annotation)}>
+                            <Chip
+                              size="small"
+                              color="error"
+                              variant="outlined"
+                              data-testid="draft-uncertain"
+                              label={t('assistant.uncertain')}
+                            />
+                          </Tooltip>
+                        )}
                         {draftTags(draft.annotation).map((tag) => (
                           <Chip key={tag} size="small" label={tag} />
                         ))}

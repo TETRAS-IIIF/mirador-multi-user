@@ -460,7 +460,8 @@
     "usageMonth": "Ce mois-ci : {{tokens}} tokens, environ {{cost}} $",
     "usageTokenQuota": "limite {{limit}} tokens",
     "usageRequestQuota": "{{used}} requêtes sur {{limit}} aujourd'hui",
-    "model": "Modèle"
+    "model": "Modèle",
+    "uncertain": "Incertain"
   },
   "assistantUsage": {
     "title": "Utilisation de l'assistant",
