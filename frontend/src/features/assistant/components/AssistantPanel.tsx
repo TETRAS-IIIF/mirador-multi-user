@@ -26,9 +26,11 @@ import {
   answerViewer,
   type AssistantEvent,
   getHistory,
+  getMyUsage,
   resetHistory,
   stopRun,
   streamChat,
+  type UsageStatus,
 } from '../api.ts';
 import {
   acceptAnnotation,
@@ -110,6 +112,7 @@ export function AssistantPanel({
   const [running, setRunning] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [costUsd, setCostUsd] = useState(0);
+  const [usage, setUsage] = useState<UsageStatus | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const runIdRef = useRef<string | null>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
@@ -126,6 +129,18 @@ export function AssistantPanel({
       .catch(() => undefined);
     return () => abortRef.current?.abort();
   }, [projectId]);
+
+  // The user's own usage this month: on open, then after each answer.
+  useEffect(() => {
+    if (running) return;
+    let cancelled = false;
+    getMyUsage()
+      .then((status) => !cancelled && setUsage(status))
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [running]);
 
   useEffect(() => {
     // Scroll the message list only (scrollIntoView would also scroll the page).
@@ -676,11 +691,50 @@ export function AssistantPanel({
         <Typography
           variant="caption"
           color="text.secondary"
-          sx={{ px: 1.5, pb: 1 }}
+          sx={{ px: 1.5, pb: usage ? 0 : 1 }}
         >
           {t('assistant.cost', { cost: costUsd.toFixed(3) })}
         </Typography>
       )}
+      {usage && <UsageLine usage={usage} />}
     </Paper>
+  );
+}
+
+/** "This month: 120,000 tokens, about $1.40", with the quotas when set. */
+function UsageLine({ usage }: { usage: UsageStatus }) {
+  const { t, i18n } = useTranslation();
+  const number = (n: number) => n.toLocaleString(i18n.language);
+  const parts = [
+    t('assistant.usageMonth', {
+      tokens: number(usage.tokensThisMonth),
+      cost: usage.costThisMonthUsd.toFixed(2),
+    }),
+  ];
+  if (usage.limits.tokensPerMonth > 0) {
+    parts.push(
+      t('assistant.usageTokenQuota', {
+        limit: number(usage.limits.tokensPerMonth),
+      }),
+    );
+  }
+  if (usage.limits.requestsPerDay > 0) {
+    parts.push(
+      t('assistant.usageRequestQuota', {
+        used: usage.requestsToday,
+        limit: usage.limits.requestsPerDay,
+      }),
+    );
+  }
+  return (
+    <Typography
+      variant="caption"
+      color={usage.blockedReason ? 'error' : 'text.secondary'}
+      sx={{ px: 1.5, pb: 1 }}
+      data-testid="assistant-usage"
+    >
+      {parts.join(' · ')}
+      {usage.blockedReason ? ` · ${usage.blockedReason}` : ''}
+    </Typography>
   );
 }
