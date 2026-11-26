@@ -4,6 +4,8 @@ import MMUAdapter from './adapter/MMUAdapter';
 import { Project } from 'features/projects/types/types';
 import { User } from 'features/auth/export';
 import Mirador from 'mirador';
+import { draftsPlugins } from './plugins/draftsPlugins.tsx';
+import { DRAFT_MARKER, getShowDrafts } from '../assistant/draftsState.ts';
 
 /**
  * This file gather all stuff related to Mirador configuration and plugins management, to avoid having this logic spread in the codebase and make it easier to maintain and update Mirador and its plugins versions in the future
@@ -14,7 +16,7 @@ function getViewPlugins() {
 }
 
 function getEditionPlugins() {
-  return [...editorPlugins, ManifestListTools];
+  return [...editorPlugins, ManifestListTools, ...draftsPlugins];
 }
 
 export enum MiradorMode {
@@ -90,13 +92,19 @@ export function getDefaultMiradorWorkspaceConfig(
     tags: project.tags,
     annotation: {
       adapter: (canvasId: string) =>
-        new MMUAdapter(project.id, `${canvasId}/annotationPage`, userName),
+        new MMUAdapter(project.id, `${canvasId}/annotationPage`, userName, {
+          showDrafts: () => getShowDrafts(project.id),
+        }),
       exportLocalStorageAnnotations: false,
       commentTemplates: project.noteTemplate ?? [],
       tagsSuggestions: project.tags ?? [],
       allowTargetShapesStyling: true,
     },
-    annotations: { htmlSanitizationRuleSet: 'liberal' },
+    // Drafts (suggestions waiting for review) are drawn and listed apart.
+    annotations: {
+      htmlSanitizationRuleSet: 'liberal',
+      draftMarker: DRAFT_MARKER,
+    },
     workspace: { isWorkspaceAddVisible: true, removeResourceButton: true },
     language,
     projectId: project.id,
