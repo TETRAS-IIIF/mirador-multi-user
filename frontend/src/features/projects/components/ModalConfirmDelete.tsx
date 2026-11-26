@@ -1,5 +1,6 @@
 import { Button, Grid, Typography } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import DOMPurify from 'dompurify';
 
 interface IModalConfirmDeleteProps {
   deleteItem?: (itemId: number, share?: string) => void;
@@ -31,7 +32,8 @@ export const ModalConfirmDelete = ({
         <Grid>
           <Typography
             sx={{ 'word-break': ' break-word' }}
-            dangerouslySetInnerHTML={{ __html: content }}
+            // Item names are interpolated unescaped (i18next escapeValue: false).
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
           />
         </Grid>
         <Grid
