@@ -7,6 +7,8 @@ import { MMUModal } from '../../../components/elements/modal.tsx';
 import { CreateUserForm } from './CreateUserForm.tsx';
 import { AdminCollapsibleTable } from './adminCollapsibleTable.tsx';
 import { AdminSettings } from './AdminSettings.tsx';
+import { isAssistantEnabled } from '../../assistant/api.ts';
+import { AssistantUsageDashboard } from '../../assistant/components/AssistantUsageDashboard.tsx';
 
 export const AdminPanel = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -82,6 +84,7 @@ export const AdminPanel = () => {
       <Grid sx={{ margin: 1 }}>
         <AdminSettings />
       </Grid>
+      {isAssistantEnabled() && <AssistantUsageDashboard />}
       <Grid container flexDirection="column" spacing={1}>
         <Grid container>
           <Grid container flexDirection="column" spacing={1} sx={{ margin: 1 }}>

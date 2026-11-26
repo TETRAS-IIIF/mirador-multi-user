@@ -58,6 +58,7 @@ vi.mock('./api.ts', async () => {
     stopRun: vi.fn(async () => ({})),
     resetHistory: vi.fn(async () => ({})),
     addNote: vi.fn(async () => ({})),
+    getMyUsage: vi.fn(async () => null),
   };
 });
 
@@ -277,5 +278,40 @@ describe('AssistantPanel', () => {
     await screen.findByText('Monthly token quota reached.');
     fireEvent.click(screen.getByText('assistant.yes'));
     expect(api.answerConfirm).toHaveBeenCalledWith('r2', 'c1', true);
+  });
+
+  it("shows the user's own usage this month, with the quotas, and reloads it after an answer", async () => {
+    vi.mocked(api.getMyUsage).mockResolvedValue({
+      tokensThisMonth: 120000,
+      requestsToday: 3,
+      costThisMonthUsd: 1.4,
+      limits: { tokensPerMonth: 0, requestsPerDay: 50 },
+      blockedReason: null,
+    });
+    vi.mocked(api.streamChat).mockImplementation(async (_body, onEvent) => {
+      onEvent({ type: 'text', delta: 'Hello.' });
+      onEvent({ type: 'done', stopReason: 'end_turn' });
+    });
+    render(
+      <AssistantPanel
+        projectId={7}
+        viewer={fakeViewer()}
+        language="en"
+        onClose={() => undefined}
+      />,
+    );
+    const line = await screen.findByTestId('assistant-usage');
+    // Keys: i18n is not initialised in tests. No token quota set, so no token limit.
+    expect(line).toHaveTextContent('assistant.usageMonth');
+    expect(line).toHaveTextContent('assistant.usageRequestQuota');
+    expect(line).not.toHaveTextContent('assistant.usageTokenQuota');
+    expect(api.getMyUsage).toHaveBeenCalledTimes(1);
+
+    fireEvent.change(screen.getByLabelText('assistant.placeholder'), {
+      target: { value: 'hi' },
+    });
+    fireEvent.click(screen.getByLabelText('assistant.send'));
+    await screen.findByText('Hello.');
+    await waitFor(() => expect(api.getMyUsage).toHaveBeenCalledTimes(2));
   });
 });
