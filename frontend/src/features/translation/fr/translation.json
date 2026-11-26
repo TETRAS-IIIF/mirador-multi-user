@@ -488,5 +488,18 @@
     "hoverHint": "Survolez une barre pour voir le détail du jour.",
     "answersCount_one": "{{count}} réponse",
     "answersCount_other": "{{count}} réponses"
+  },
+  "assistantFeedback": {
+    "up": "Bonne réponse",
+    "down": "Mauvaise réponse",
+    "thanks": "Merci pour votre retour",
+    "comment": "Qu'est-ce qui n'allait pas ?",
+    "commentPlaceholder": "Qu'est-ce qui n'allait pas ? (facultatif)",
+    "send": "Envoyer",
+    "title": "Retours sur les réponses (👍 {{up}} · 👎 {{down}})",
+    "none": "Aucun retour sur cette période.",
+    "tableLabel": "Retours sur les réponses",
+    "date": "Date",
+    "rating": "Note"
   }
 }

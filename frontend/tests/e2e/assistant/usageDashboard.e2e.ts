@@ -109,6 +109,31 @@ test('an admin sees the assistant usage in the admin panel', async ({
         ),
       });
     }
+    if (url.pathname === '/assistant/admin/feedback') {
+      return route.fulfill({
+        status: 200,
+        headers: cors,
+        json: {
+          from: url.searchParams.get('from'),
+          to: url.searchParams.get('to'),
+          up: 4,
+          down: 1,
+          items: [
+            {
+              runId: 'r1',
+              rating: 'down',
+              comment: 'It read the date as 1343.',
+              userId: 3,
+              userName: 'david',
+              projectId: 12,
+              projectTitle: 'Book of hours',
+              model: 'claude-opus-5-5',
+              createdAt: '2026-11-20T10:00:00Z',
+            },
+          ],
+        },
+      });
+    }
     return route.fulfill({ status: 404, headers: cors, json: {} });
   });
 
@@ -122,6 +147,12 @@ test('an admin sees the assistant usage in the admin panel', async ({
   await expect(dashboard.getByText('Codex Xolotl (#9)')).toBeVisible();
   await expect(dashboard.getByText('#4', { exact: true })).toBeVisible();
   await expect(dashboard.getByTestId('cost-bar').first()).toBeVisible();
+  // Feedback on answers, for the same period.
+  const feedback = dashboard.getByRole('table', {
+    name: /feedback on answers/i,
+  });
+  await expect(feedback).toContainText('It read the date as 1343.');
+  await expect(feedback).toContainText('david (#3)');
   await dashboard.getByTestId('cost-chart').scrollIntoViewIfNeeded();
   await dashboard.getByTestId('cost-bar').nth(3).hover();
   await expect(dashboard.getByTestId('cost-chart-detail')).toContainText('$');

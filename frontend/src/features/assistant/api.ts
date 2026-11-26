@@ -220,3 +220,46 @@ export async function getModels(): Promise<{
   });
   return response.ok ? response.json() : null;
 }
+
+export type Rating = 'up' | 'down';
+
+/** The user's thumbs up or down (and comment) on one of their answers. */
+export const giveFeedback = (runId: string, rating: Rating, comment?: string) =>
+  post(`/assistant/runs/${runId}/feedback`, {
+    rating,
+    ...(comment ? { comment } : {}),
+  });
+
+export type FeedbackList = {
+  from: string;
+  to: string;
+  up: number;
+  down: number;
+  items: {
+    runId: string;
+    rating: Rating;
+    comment: string | null;
+    userId: number;
+    userName: string | null;
+    projectId: number;
+    projectTitle: string | null;
+    model: string | null;
+    createdAt: string;
+  }[];
+};
+
+/** Feedback on answers, MMU admins only (GET /assistant/admin/feedback). */
+export async function getFeedback(
+  from: string,
+  to: string,
+): Promise<FeedbackList> {
+  const query = new URLSearchParams({ from, to });
+  const response = await fetch(
+    `${ASSISTANT_URL}/assistant/admin/feedback?${query}`,
+    { headers: headers(false) },
+  );
+  if (!response.ok) {
+    throw new Error(`/assistant/admin/feedback failed (${response.status})`);
+  }
+  return response.json();
+}

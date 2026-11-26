@@ -43,6 +43,7 @@ import {
   deleteAnnotation,
 } from '../../mirador/api/annotationApi.ts';
 import { getShowDrafts } from '../draftsState.ts';
+import { AnswerFeedback } from './AnswerFeedback.tsx';
 import { AssistantMarkdown } from './AssistantMarkdown.tsx';
 import { pickModel, saveModel, savedModel } from '../modelChoice.ts';
 import {
@@ -60,6 +61,8 @@ type Item =
   | { kind: 'assistant'; text: string }
   /** Start of an answer: which model writes it. */
   | { kind: 'run'; model: string }
+  /** After an answer: thumbs up / down. */
+  | { kind: 'feedback'; runId: string }
   | { kind: 'step'; id: string; label: string; status: string; detail?: string }
   | {
       kind: 'draft';
@@ -271,6 +274,13 @@ export function AssistantPanel({
           ]);
           break;
         case 'done':
+          if (runIdRef.current) {
+            const answered = runIdRef.current;
+            setItems((prev) => [
+              ...prev,
+              { kind: 'feedback', runId: answered },
+            ]);
+          }
           break;
       }
     },
@@ -545,6 +555,8 @@ export function AssistantPanel({
                 );
               case 'assistant':
                 return <AssistantMarkdown key={index} text={item.text} />;
+              case 'feedback':
+                return <AnswerFeedback key={index} runId={item.runId} />;
               case 'run':
                 return (
                   <Typography
