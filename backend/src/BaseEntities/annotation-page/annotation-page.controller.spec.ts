@@ -53,19 +53,17 @@ describe('AnnotationPageController', () => {
     expect(controller).toBeDefined();
   });
 
-  it.each([
-    'create',
-    'findAll',
-    'findAllAnnotationForProject',
-    'delete',
-  ])('%s() is protected by AuthGuard', (handler) => {
-    const guards =
-      Reflect.getMetadata(
-        GUARDS_METADATA,
-        AnnotationPageController.prototype[handler],
-      ) ?? [];
-    expect(guards).toContain(AuthGuard);
-  });
+  it.each(['create', 'findAll', 'findAllAnnotationForProject', 'delete'])(
+    '%s() is protected by AuthGuard',
+    (handler) => {
+      const guards =
+        Reflect.getMetadata(
+          GUARDS_METADATA,
+          AnnotationPageController.prototype[handler],
+        ) ?? [];
+      expect(guards).toContain(AuthGuard);
+    },
+  );
 
   describe('with editor rights', () => {
     beforeEach(() => giveRight(GroupProjectRights.EDITOR));

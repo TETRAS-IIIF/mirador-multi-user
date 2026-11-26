@@ -36,7 +36,6 @@ export class AnnotationPageService {
     );
   }
 
-
   async deleteAnnotationPage(annotationPageId: string, projectId: number) {
     return this.annotationService.deletePage(
       Number(projectId),
