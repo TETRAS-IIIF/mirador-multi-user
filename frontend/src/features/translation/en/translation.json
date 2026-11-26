@@ -498,5 +498,27 @@
     "hoverHint": "Hover a bar to see the day.",
     "answersCount_one": "{{count}} answer",
     "answersCount_other": "{{count}} answers"
+  },
+  "reviewQueue": {
+    "open": "Review all drafts of the project",
+    "title_one": "{{count}} draft to review",
+    "title_other": "{{count}} drafts to review",
+    "canvas": "Canvas",
+    "batch": "Batch",
+    "tag": "Tag",
+    "all": "All",
+    "show": "Show",
+    "noBatch": "No batch",
+    "noText": "(no text)",
+    "empty": "No draft to review.",
+    "error": "Something went wrong. The list was reloaded.",
+    "shortcuts": "Keyboard: J / K to move, A accept, R reject, S show.",
+    "acceptAll": "Accept all ({{count}})",
+    "rejectAll": "Reject all ({{count}})",
+    "confirmAccept_one": "Accept this draft?",
+    "confirmAccept_other": "Accept these {{count}} drafts?",
+    "confirmReject_one": "Reject (delete) this draft?",
+    "confirmReject_other": "Reject (delete) these {{count}} drafts?",
+    "confirm": "Confirm"
   }
 }
