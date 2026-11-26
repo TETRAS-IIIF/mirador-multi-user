@@ -510,5 +510,6 @@
     "instructions": "Instructions for the assistant in this project",
     "instructionsHelp": "Added to every conversation in this project. {{count}} / {{max}} characters.",
     "instructionsPlaceholder": "E.g. Transcribe in diplomatic form, keep abbreviations. Use the tags person, place, date. Answer in French."
-  }
+  },
+  "annotationConflict": "Not saved: someone else changed this annotation since you opened it. Copy your text, close the editor and open the annotation again."
 }

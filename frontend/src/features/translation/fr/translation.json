@@ -497,5 +497,6 @@
     "instructions": "Consignes pour l'assistant dans ce projet",
     "instructionsHelp": "Ajoutées à chaque conversation de ce projet. {{count}} / {{max}} caractères.",
     "instructionsPlaceholder": "Ex. : transcrire en diplomatique, garder les abréviations. Utiliser les tags personne, lieu, date. Répondre en français."
-  }
+  },
+  "annotationConflict": "Non enregistré : quelqu'un d'autre a modifié cette annotation depuis que vous l'avez ouverte. Copiez votre texte, fermez l'éditeur et rouvrez l'annotation."
 }
