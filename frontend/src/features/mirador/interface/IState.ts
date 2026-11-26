@@ -13,6 +13,7 @@ export default interface IState {
   companionWindows: Record<string, any>;
   config: {
     annotation: Record<string, any>;
+    annotations?: Record<string, unknown>;
   };
   elasticLayout: Record<string, any>;
   layers: Record<string, any>;

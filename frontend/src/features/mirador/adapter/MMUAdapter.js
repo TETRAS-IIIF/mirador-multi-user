@@ -1,13 +1,33 @@
-import { upsertAnnotationPage } from '../api/upsertAnnotationPage.ts';
 import { gettingAnnotationPage } from '../api/gettingAnnotationPage.ts';
 import { deleteAnnotationPage } from '../api/deleteAnnotationPage.ts';
+import {
+  AnnotationApiError,
+  acceptAnnotation,
+  acceptAnnotations,
+  createAnnotation,
+  deleteAnnotation,
+  deleteAnnotations,
+  updateAnnotation,
+} from '../api/annotationApi.ts';
 
+/**
+ * Mirador annotation adapter for one canvas page of an MMU project.
+ *
+ * Each call changes one annotation on the server (`/annotation` routes), so
+ * two people editing the same canvas no longer overwrite each other. Every
+ * write resolves to the canvas AnnotationPage, as Mirador expects.
+ *
+ * Drafts (annotations suggested by the assistant) are part of the page only
+ * when `options.showDrafts()` returns true. They carry `mmu:status: 'draft'`.
+ */
 export default class MMUAdapter {
   /** */
-  constructor(projectId, annotationPageId, user) {
+  constructor(projectId, annotationPageId, user, options = {}) {
     this.projectId = projectId;
     this.annotationPageId = annotationPageId;
     this.user = user;
+    this.showDrafts = options.showDrafts ?? (() => false);
+    this.onChange = options.onChange ?? (() => {});
   }
 
   /**
@@ -18,80 +38,100 @@ export default class MMUAdapter {
     return this.user;
   }
 
-  /** */
-  async create(annotation) {
-    const emptyAnnoPage = {
-      id: this.annotationPageId,
-      items: [],
-      type: 'AnnotationPage',
-    };
-    let annotationPage = await this.all();
-    if (annotationPage.length < 1) {
-      annotationPage = emptyAnnoPage;
-    }
-    annotationPage.items.push(annotation);
-    return await upsertAnnotationPage({
-      projectId: this.projectId,
-      annotationPageId: this.annotationPageId,
-      content: annotationPage,
-    });
+  /** @private */
+  emptyPage() {
+    return { id: this.annotationPageId, items: [], type: 'AnnotationPage' };
+  }
+
+  /** @private */
+  async changed() {
+    this.onChange();
+    return this.all();
   }
 
   /** */
+  async create(annotation) {
+    await createAnnotation({
+      projectId: this.projectId,
+      annotationPageId: this.annotationPageId,
+      content: annotation,
+    });
+    return this.changed();
+  }
+
+  /**
+   * Saving from the editor publishes a draft, unless the annotation still
+   * says it is one.
+   */
   async update(annotation) {
-    const annotationPage = await this.all();
-    if (annotationPage) {
-      const currentIndex = annotationPage.items.findIndex(
-        (item) => item.id === annotation.id,
-      );
-      annotationPage.items.splice(currentIndex, 1, annotation);
-      return await upsertAnnotationPage({
-        projectId: this.projectId,
-        annotationPageId: this.annotationPageId,
-        content: annotationPage,
-      });
-    }
-    return null;
+    const status =
+      annotation['mmu:status'] === 'draft' ? undefined : 'published';
+    await updateAnnotation(this.projectId, annotation.id, {
+      content: annotation,
+      status,
+    });
+    return this.changed();
   }
 
   /** */
   async delete(annoId) {
     if (!annoId) {
-      return await deleteAnnotationPage(this.annotationPageId, this.projectId);
+      await deleteAnnotationPage(this.annotationPageId, this.projectId);
+      return this.changed();
     }
-    const annotationPage = await this.all();
-    if (annotationPage) {
-      annotationPage.items = annotationPage.items.filter(
-        (item) => item.id !== annoId,
-      );
+    try {
+      await deleteAnnotation(this.projectId, annoId);
+    } catch (error) {
+      // The editor calls delete on the adapter of every visible canvas:
+      // 404 means the annotation was on another canvas (or already gone).
+      if (!(error instanceof AnnotationApiError) || error.status !== 404) {
+        throw error;
+      }
     }
-    return await upsertAnnotationPage({
-      projectId: this.projectId,
+    return this.changed();
+  }
+
+  /** Publishes one draft. */
+  async accept(annoId) {
+    await acceptAnnotation(this.projectId, annoId);
+    return this.changed();
+  }
+
+  /** Publishes every draft of this canvas. */
+  async acceptAll() {
+    await acceptAnnotations({
       annotationPageId: this.annotationPageId,
-      content: annotationPage,
+      projectId: this.projectId,
     });
+    return this.changed();
+  }
+
+  /** Deletes every draft of this canvas. */
+  async rejectAll() {
+    await deleteAnnotations({
+      annotationPageId: this.annotationPageId,
+      projectId: this.projectId,
+      status: 'draft',
+    });
+    return this.changed();
   }
 
   /** */
   async get(annoId) {
     const annotationPage = await this.all();
-    if (annotationPage) {
-      return annotationPage.items.find((item) => item.id === annoId);
-    }
-    return null;
+    return annotationPage.items.find((item) => item.id === annoId) ?? null;
   }
 
   /** */
   async all() {
-    // At this point, but I think we must have only one annotation page. For now it's not the case
-    let annotationPage = await gettingAnnotationPage(
+    const pages = await gettingAnnotationPage(
       this.annotationPageId,
       this.projectId,
+      this.showDrafts(),
     );
-    if (annotationPage.length > 0) {
-      return annotationPage[0].content;
-    } else {
-      return [];
+    if (Array.isArray(pages) && pages.length > 0 && pages[0].content) {
+      return pages[0].content;
     }
+    return this.emptyPage();
   }
 }

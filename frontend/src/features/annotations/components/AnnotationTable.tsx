@@ -12,13 +12,13 @@ import {
 } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAnnotationId, getAnnotationPageId } from '../annotationUtils.ts';
+import { getAnnotationId } from '../annotationUtils.ts';
 import { AnnotationTableRow } from './AnnotationTableRow';
 import { Annotation, AnnotationBody } from '../hooks/useAnnotationFilters.ts';
 import { ITEM_RIGHTS } from '../../../utils/mmu_types.ts';
 import { Project } from '../../projects/types/types.ts';
 import { AnnotationEditModal } from './AnnotationEditModal.tsx';
-import { upsertAnnotationPage } from '../../mirador/api/upsertAnnotationPage.ts';
+import { updateAnnotation } from '../../mirador/api/annotationApi.ts';
 import toast from 'react-hot-toast';
 
 enum SortableColumn {
@@ -226,31 +226,30 @@ export const AnnotationTable = ({
   const handleSave = async (edited: Annotation) => {
     if (!editTarget) return;
 
-    const annotationPageId = getAnnotationPageId(editTarget.anno);
-
-    if (!annotationPageId) {
+    if (!editTarget.anno.id) {
       toast.error(t('annotations.errors.noAnnotationPageId'));
       return;
     }
 
-    const dto = {
-      annotationPageId,
-      projectId: Number(edited.projectId),
-      content: {
-        type: 'AnnotationPage',
-        items: [
-          {
-            type: 'Annotation',
-            motivation: edited.motivation ?? 'commenting',
-            body: edited.body,
-            target: edited.target,
-          },
-        ],
-      },
+    // Only this annotation is updated: the other annotations of the canvas
+    // stay as they are. projectId/projectName are table-only fields.
+    const stored: Record<string, unknown> = { ...editTarget.anno };
+    delete stored.projectId;
+    delete stored.projectName;
+    const content = {
+      ...stored,
+      motivation:
+        edited.motivation ?? editTarget.anno.motivation ?? 'commenting',
+      body: edited.body,
+      target: edited.target,
     };
 
     try {
-      await upsertAnnotationPage(dto);
+      await updateAnnotation(
+        Number(edited.projectId),
+        String(editTarget.anno.id),
+        { content },
+      );
 
       const merged: Annotation = {
         ...editTarget.anno,

@@ -1,90 +1,46 @@
-import { Injectable, InternalServerErrorException, NotFoundException, } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateAnnotationPageDto } from './dto/create-annotation-page.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { AnnotationPage } from './entities/annotation-page.entity';
-import { Repository } from 'typeorm';
-import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
+import { AnnotationService, Caller } from '../annotation/annotation.service';
 
+/**
+ * Page-level view over the `annotation` rows. The routes keep their former
+ * contract: a page is returned as `[{ id, projectId, annotationPageId,
+ * content }]`, with `content` a IIIF AnnotationPage.
+ */
 @Injectable()
 export class AnnotationPageService {
-  private readonly logger = new CustomLogger();
+  constructor(private readonly annotationService: AnnotationService) {}
 
-  constructor(
-    @InjectRepository(AnnotationPage)
-    private readonly annotationPageRepository: Repository<AnnotationPage>,
-  ) {}
-
-  async create(createAnnotationPageDto: CreateAnnotationPageDto) {
-    try {
-      const annotationPage = this.annotationPageRepository.create(
-        createAnnotationPageDto,
-      );
-
-      await this.annotationPageRepository.upsert(annotationPage, {
-        conflictPaths: ['annotationPageId', 'projectId'],
-      });
-
-      return this.findAll(
-        annotationPage.annotationPageId,
-        annotationPage.projectId,
-      );
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        `an error occurred while creating annotationPage, ${error.message}`,
-      );
-    }
+  /** Whole-page upsert (older clients): syncs rows with `content.items`. */
+  async create(dto: CreateAnnotationPageDto, caller: Caller) {
+    return this.annotationService.replacePage(
+      Number(dto.projectId),
+      dto.annotationPageId,
+      dto.content,
+      caller,
+    );
   }
 
+  /** Published annotations of every page of the project (snapshots, exports, tables). */
   async findAllProjectAnnotation(projectId: number) {
-    try {
-      return await this.annotationPageRepository.find({
-        where: {
-          projectId: projectId,
-        },
-      });
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        `an error occurred while creating annotationPage, ${error.message}`,
-      );
-    }
+    return this.annotationService.getProjectPages(Number(projectId), {
+      forExport: true,
+    });
   }
 
-  async findAll(annotPageId: string, projectId: number) {
-    try {
-      return await this.annotationPageRepository.find({
-        where: { annotationPageId: annotPageId, projectId: projectId },
-      });
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        `an error occurred while finding annotationPages, ${error.message}`,
-      );
-    }
+  async findAll(annotPageId: string, projectId: number, includeDrafts = false) {
+    return this.annotationService.getPage(
+      Number(projectId),
+      annotPageId,
+      includeDrafts,
+    );
   }
+
 
   async deleteAnnotationPage(annotationPageId: string, projectId: number) {
-    try {
-      const result = await this.annotationPageRepository.delete({
-        annotationPageId,
-        projectId,
-      });
-      if (result.affected === 0) {
-        return new NotFoundException(
-          `AnnotationPage with ID "${annotationPageId}" in project "${projectId}" not found.`,
-        );
-      }
-      return result;
-    } catch (error) {
-      this.logger.error(
-        `Failed to delete AnnotationPage with ID "${annotationPageId}" in project "${projectId}": ${error.message}`,
-        error.stack,
-      );
-
-      throw new InternalServerErrorException(
-        `An error occurred while deleting the annotationPage. Please try again later.`,
-      );
-    }
+    return this.annotationService.deletePage(
+      Number(projectId),
+      annotationPageId,
+    );
   }
 }
