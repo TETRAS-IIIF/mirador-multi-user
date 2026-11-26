@@ -416,4 +416,21 @@ describe('AssistantPanel', () => {
     expect(body.mode).toBe('quick');
     expect(body.model).toBeUndefined();
   });
+
+  it('ignores an unexpected model list instead of breaking', async () => {
+    vi.mocked(api.getModels).mockResolvedValue({
+      messages: [],
+    } as unknown as Awaited<ReturnType<typeof api.getModels>>);
+    render(
+      <AssistantPanel
+        projectId={7}
+        viewer={fakeViewer()}
+        language="en"
+        onClose={() => undefined}
+      />,
+    );
+    await waitFor(() => expect(api.getModels).toHaveBeenCalled());
+    expect(screen.getByLabelText('assistant.placeholder')).toBeInTheDocument();
+    expect(screen.queryByTestId('assistant-model')).toBeNull();
+  });
 });

@@ -126,7 +126,8 @@ export function AssistantPanel({
     let cancelled = false;
     getModels()
       .then((list) => {
-        if (cancelled || !list) return;
+        // An unexpected answer (older or misconfigured assistant) must not break the panel.
+        if (cancelled || !list || !Array.isArray(list.models)) return;
         setModels(list.models);
         setModel(pickModel(savedModel(), list.models, list.default));
       })
