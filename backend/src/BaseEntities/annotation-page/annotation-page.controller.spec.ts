@@ -83,7 +83,10 @@ describe('AnnotationPageController', () => {
         USER_ID,
         PROJECT_ID,
       );
-      expect(service.create).toHaveBeenCalledWith(dto);
+      expect(service.create).toHaveBeenCalledWith(dto, {
+        id: USER_ID,
+        name: undefined,
+      });
       expect(result).toBe(created);
     });
 
@@ -102,6 +105,35 @@ describe('AnnotationPageController', () => {
     });
   });
 
+  describe('drafts and the assistant', () => {
+    beforeEach(() => giveRight(GroupProjectRights.EDITOR));
+
+    it('findAll() serves drafts to an editor who asks for them', async () => {
+      service.findAll.mockResolvedValue([] as any);
+      await controller.findAll(PROJECT_ID, 'page-123', 'true', request);
+      expect(service.findAll).toHaveBeenCalledWith(
+        'page-123',
+        PROJECT_ID,
+        true,
+      );
+    });
+
+    it('page-level writes are refused to the assistant', async () => {
+      const assistant = {
+        ...request,
+        headers: { 'x-mmu-client': 'assistant' },
+      };
+      await expect(
+        controller.create({ projectId: PROJECT_ID } as any, assistant),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+      await expect(
+        controller.delete(PROJECT_ID, 'p', assistant),
+      ).rejects.toBeInstanceOf(ForbiddenException);
+      expect(service.create).not.toHaveBeenCalled();
+      expect(service.deleteAnnotationPage).not.toHaveBeenCalled();
+    });
+  });
+
   describe('with reader rights', () => {
     beforeEach(() => giveRight(GroupProjectRights.READER));
 
@@ -109,9 +141,18 @@ describe('AnnotationPageController', () => {
       const expected = [{ id: 'a' }, { id: 'b' }];
       service.findAll.mockResolvedValue(expected as any);
 
-      const result = await controller.findAll(PROJECT_ID, 'page-123', request);
+      const result = await controller.findAll(
+        PROJECT_ID,
+        'page-123',
+        undefined,
+        request,
+      );
 
-      expect(service.findAll).toHaveBeenCalledWith('page-123', PROJECT_ID);
+      expect(service.findAll).toHaveBeenCalledWith(
+        'page-123',
+        PROJECT_ID,
+        false,
+      );
       expect(result).toBe(expected);
     });
 
@@ -120,11 +161,17 @@ describe('AnnotationPageController', () => {
       const expected = { id: 'anno-1' };
       service.findOne.mockResolvedValue(expected as any);
 
-      const result = await controller.findOne(encoded, PROJECT_ID, request);
+      const result = await controller.findOne(
+        encoded,
+        PROJECT_ID,
+        undefined,
+        request,
+      );
 
       expect(service.findOne).toHaveBeenCalledWith(
         'http://example.com/anno/1',
         PROJECT_ID,
+        false,
       );
       expect(result).toBe(expected);
     });
@@ -135,6 +182,16 @@ describe('AnnotationPageController', () => {
       await controller.findAllAnnotationForProject(PROJECT_ID, 99, request);
 
       expect(service.findAllProjectAnnotation).toHaveBeenCalledWith(PROJECT_ID);
+    });
+
+    it('findAll() never serves drafts to a reader', async () => {
+      service.findAll.mockResolvedValue([] as any);
+      await controller.findAll(PROJECT_ID, 'page-123', 'true', request);
+      expect(service.findAll).toHaveBeenCalledWith(
+        'page-123',
+        PROJECT_ID,
+        false,
+      );
     });
 
     it('create() is refused', async () => {
@@ -163,8 +220,14 @@ describe('AnnotationPageController', () => {
         'create',
         () => controller.create({ projectId: PROJECT_ID } as any, request),
       ],
-      ['findAll', () => controller.findAll(PROJECT_ID, 'p', request)],
-      ['findOne', () => controller.findOne('p', PROJECT_ID, request)],
+      [
+        'findAll',
+        () => controller.findAll(PROJECT_ID, 'p', undefined, request),
+      ],
+      [
+        'findOne',
+        () => controller.findOne('p', PROJECT_ID, undefined, request),
+      ],
       [
         'findAllAnnotationForProject',
         () => controller.findAllAnnotationForProject(PROJECT_ID, 1, request),
@@ -177,8 +240,8 @@ describe('AnnotationPageController', () => {
     it('never reaches the service', async () => {
       await Promise.allSettled([
         controller.create({ projectId: PROJECT_ID } as any, request),
-        controller.findAll(PROJECT_ID, 'p', request),
-        controller.findOne('p', PROJECT_ID, request),
+        controller.findAll(PROJECT_ID, 'p', undefined, request),
+        controller.findOne('p', PROJECT_ID, undefined, request),
         controller.findAllAnnotationForProject(PROJECT_ID, 1, request),
         controller.delete(PROJECT_ID, 'p', request),
       ]);

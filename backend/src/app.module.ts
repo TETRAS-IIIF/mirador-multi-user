@@ -26,6 +26,7 @@ import { LinkMetadataFormatGroupModule } from './LinkModules/link-metadata-forma
 import { MetadataModule } from './BaseEntities/metadata/metadata.module';
 import { ImpersonationModule } from './impersonation/impersonation.module';
 import { AnnotationPageModule } from './BaseEntities/annotation-page/annotation-page.module';
+import { AnnotationModule } from './BaseEntities/annotation/annotation.module';
 import { SnapshotModule } from './BaseEntities/snapshot/snapshot.module';
 import { SettingsModule } from './BaseEntities/setting/setting.module';
 import { DatabaseModule } from './BaseEntities/database/database.module';
@@ -87,6 +88,7 @@ import { DatabaseModule } from './BaseEntities/database/database.module';
     MetadataModule,
     ImpersonationModule,
     AnnotationPageModule,
+    AnnotationModule,
     SnapshotModule,
     SettingsModule,
     DatabaseModule,

@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { Project } from '../../projects/types/types';
 import { User } from '../../auth/types/types';
 import IState from '../../mirador/interface/IState';
-import { deleteAnnotationPage } from '../../mirador/api/deleteAnnotationPage';
+import { deleteAnnotation } from '../../mirador/api/annotationApi.ts';
 import { ITEM_RIGHTS } from '../../../utils/mmu_types';
 
 import { useAnnotations } from '../hooks/useAnnotations';
@@ -25,7 +25,6 @@ import { ModalProjectAlreadyOpenByUser } from '../../projects/components/ModalPr
 import {
   downloadAnnotationsAsZip,
   getAnnotationId,
-  getAnnotationPageId,
 } from '../annotationUtils.ts';
 
 interface AnnotationsContentProps {
@@ -151,14 +150,13 @@ export function AnnotationsContent({
       }
 
       try {
-        const annotationPageId = getAnnotationPageId(anno);
-
-        if (!annotationPageId) {
+        if (!anno.id) {
           toast.error(t('annotations.errors.noAnnotationPageId'));
           continue;
         }
 
-        await deleteAnnotationPage(annotationPageId, Number(anno.projectId));
+        // Deletes this annotation only, not the whole canvas page.
+        await deleteAnnotation(Number(anno.projectId), String(anno.id));
         setAnnotations((prev) => prev.filter((a) => a.id !== anno.id));
       } catch (error) {
         toast.error(t('annotations.errors.deleteFailed'));
