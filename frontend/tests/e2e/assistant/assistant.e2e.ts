@@ -278,6 +278,24 @@ test('ask the assistant, then accept its draft in the annotation list', async ({
   // Ask the assistant.
   await page.getByRole('button', { name: /open the assistant/i }).click();
   const panel = page.getByTestId('assistant-panel');
+
+  // Ask about a region: drag a rectangle on the image.
+  await panel.getByRole('button', { name: /ask about a region/i }).click();
+  const image = (await page
+    .locator('.openseadragon-canvas')
+    .first()
+    .boundingBox())!;
+  const cx = image.x + image.width / 2;
+  const cy = image.y + image.height / 2;
+  await page.mouse.move(cx - 60, cy - 40);
+  await page.mouse.down();
+  await page.mouse.move(cx + 40, cy + 30, { steps: 8 });
+  await page.mouse.up();
+  await expect(panel.getByTestId('assistant-region')).toBeVisible();
+  // The outline is drawn where the user dragged.
+  const outline = (await page.locator('#mmu-assistant-region').boundingBox())!;
+  expect(Math.abs(outline.x - (cx - 60))).toBeLessThan(3);
+  expect(Math.abs(outline.width - 100)).toBeLessThan(4);
   await panel
     .getByLabel(/ask the assistant/i)
     .fill('find the date and annotate it');
@@ -307,7 +325,18 @@ test('ask the assistant, then accept its draft in the annotation list', async ({
   expect(sizes.page).toBeLessThanOrEqual(sizes.viewport);
   expect(chatBody).toMatchObject({
     message: 'find the date and annotate it',
-    context: { projectId, manifestId: MANIFEST, canvasId: CANVAS },
+    context: {
+      projectId,
+      manifestId: MANIFEST,
+      canvasId: CANVAS,
+      // In canvas pixels, inside the 400x600 canvas.
+      region: {
+        x: expect.any(Number),
+        y: expect.any(Number),
+        w: expect.any(Number),
+        h: expect.any(Number),
+      },
+    },
   });
 
   // The window shows a draft counter; it opens the annotation list.

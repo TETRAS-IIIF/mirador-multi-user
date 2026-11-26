@@ -473,7 +473,10 @@
     "usageMonth": "This month: {{tokens}} tokens, about ${{cost}}",
     "usageTokenQuota": "limit {{limit}} tokens",
     "usageRequestQuota": "{{used}} of {{limit}} requests today",
-    "model": "Model"
+    "model": "Model",
+    "selectRegion": "Ask about a region: drag on the image",
+    "selectingRegion": "Drag a rectangle on the image (Esc to cancel)",
+    "region": "Region {{x}},{{y}} · {{w}}×{{h}}"
   },
   "assistantUsage": {
     "title": "Assistant usage",

@@ -460,7 +460,10 @@
     "usageMonth": "Ce mois-ci : {{tokens}} tokens, environ {{cost}} $",
     "usageTokenQuota": "limite {{limit}} tokens",
     "usageRequestQuota": "{{used}} requêtes sur {{limit}} aujourd'hui",
-    "model": "Modèle"
+    "model": "Modèle",
+    "selectRegion": "Poser une question sur une zone : tracer sur l'image",
+    "selectingRegion": "Tracez un rectangle sur l'image (Échap pour annuler)",
+    "region": "Zone {{x}},{{y}} · {{w}}×{{h}}"
   },
   "assistantUsage": {
     "title": "Utilisation de l'assistant",
