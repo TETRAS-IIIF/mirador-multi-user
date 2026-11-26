@@ -79,6 +79,7 @@ describe('AuthService', () => {
         loginCounter: 5,
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-require-imports -- spy on the module object the service uses
       const bcrypt = require('bcrypt');
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
 
@@ -123,6 +124,7 @@ describe('AuthService', () => {
         password: '$2b$10$somehashedpassword',
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-require-imports -- spy on the module object the service uses
       const bcrypt = require('bcrypt');
       jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
 

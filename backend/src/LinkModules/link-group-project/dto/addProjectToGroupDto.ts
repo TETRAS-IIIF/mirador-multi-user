@@ -1,6 +1,6 @@
 import { GroupProjectRights } from '../../../enum/rights';
 import { IsEnum, IsNumber, IsOptional } from 'class-validator';
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty } from '@nestjs/swagger';
 
 export class AddProjectToGroupDto {
   @IsNumber()

@@ -7,5 +7,5 @@ export class loginDto {
   @IsString()
   password: string;
 
-  isImpersonate?:string
+  isImpersonate?: string;
 }

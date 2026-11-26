@@ -3,7 +3,7 @@ import { manifestOrigin } from '../../../enum/origins';
 export class UpdateManifestJsonDto {
   id: number;
 
-  json:any;
+  json: any;
 
   origin: manifestOrigin;
 

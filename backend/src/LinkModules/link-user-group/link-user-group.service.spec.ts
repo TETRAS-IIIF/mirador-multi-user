@@ -13,13 +13,6 @@ import { SettingsService } from '../../BaseEntities/setting/setting.service';
 describe('LinkUserGroupService', () => {
   let service: LinkUserGroupService;
 
-  let repo: jest.Mocked<Repository<LinkUserGroup>>;
-  let userGroupService: jest.Mocked<UserGroupService>;
-  let usersService: jest.Mocked<UsersService>;
-  let emailService: jest.Mocked<EmailServerService>;
-  let linkMetadataFormatGroupService: jest.Mocked<LinkMetadataFormatGroupService>;
-  let settingsService: jest.Mocked<SettingsService>;
-
   beforeEach(async () => {
     const repoMock: Partial<jest.Mocked<Repository<LinkUserGroup>>> = {
       create: jest.fn(),
@@ -97,12 +90,6 @@ describe('LinkUserGroupService', () => {
     }).compile();
 
     service = module.get(LinkUserGroupService);
-    repo = module.get(getRepositoryToken(LinkUserGroup));
-    userGroupService = module.get(UserGroupService);
-    usersService = module.get(UsersService);
-    emailService = module.get(EmailServerService);
-    linkMetadataFormatGroupService = module.get(LinkMetadataFormatGroupService);
-    settingsService = module.get(SettingsService);
   });
 
   afterEach(() => {

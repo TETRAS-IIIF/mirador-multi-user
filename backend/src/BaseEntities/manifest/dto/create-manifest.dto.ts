@@ -18,5 +18,5 @@ export class CreateManifestDto {
 
   description: string;
 
-  metadata:any;
+  metadata: any;
 }

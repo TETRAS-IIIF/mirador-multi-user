@@ -74,7 +74,6 @@ export class MediaInterceptor implements NestInterceptor {
           '$1://caddy/',
         );
         let videoId: string | null = null;
-        const youtubeJson = null;
         let peertubeVideoJson = null;
         switch (true) {
           case await isVideo(url): {

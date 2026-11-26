@@ -1,4 +1,3 @@
-
 export class CreateMetadataFormatDto {
   title: string;
   metadata: any;

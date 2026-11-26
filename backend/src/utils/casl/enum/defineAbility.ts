@@ -1,5 +1,6 @@
-import { defineAbility } from "@casl/ability";
+import { defineAbility } from '@casl/ability';
 
-export default (user) => defineAbility((can)=>{
-  can('delete', 'Project',{ ownerId: user.sub});
-})
+export default (user) =>
+  defineAbility((can) => {
+    can('delete', 'Project', { ownerId: user.sub });
+  });
