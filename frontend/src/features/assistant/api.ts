@@ -136,3 +136,63 @@ export async function getHistory(projectId: number): Promise<{
   if (!response.ok) return { messages: [] };
   return response.json();
 }
+
+/** The user's own usage this month (GET /assistant/usage). */
+export type UsageStatus = {
+  tokensThisMonth: number;
+  requestsToday: number;
+  costThisMonthUsd: number;
+  limits: { tokensPerMonth: number; requestsPerDay: number };
+  blockedReason: string | null;
+};
+
+export async function getMyUsage(): Promise<UsageStatus | null> {
+  const response = await fetch(`${ASSISTANT_URL}/assistant/usage`, {
+    headers: headers(false),
+  });
+  return response.ok ? response.json() : null;
+}
+
+export type UsageTotals = {
+  inputTokens: number;
+  outputTokens: number;
+  cacheReadTokens: number;
+  cacheWriteTokens: number;
+  tokens: number;
+  costUsd: number;
+  answers: number;
+  apiCalls: number;
+  cacheHitRate: number;
+};
+
+/** Instance-wide usage, MMU admins only (GET /assistant/admin/usage). */
+export type UsageSummary = {
+  from: string;
+  to: string;
+  totals: UsageTotals;
+  byDay: (UsageTotals & {
+    day: string;
+    costByModel: Record<string, number>;
+  })[];
+  byModel: (UsageTotals & { model: string })[];
+  byUser: (UsageTotals & { userId: number; userName: string | null })[];
+  byProject: (UsageTotals & {
+    projectId: number;
+    projectTitle: string | null;
+  })[];
+};
+
+export async function getUsageSummary(
+  from: string,
+  to: string,
+): Promise<UsageSummary> {
+  const query = new URLSearchParams({ from, to });
+  const response = await fetch(
+    `${ASSISTANT_URL}/assistant/admin/usage?${query}`,
+    { headers: headers(false) },
+  );
+  if (!response.ok) {
+    throw new Error(`/assistant/admin/usage failed (${response.status})`);
+  }
+  return response.json();
+}

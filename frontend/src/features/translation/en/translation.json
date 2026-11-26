@@ -469,6 +469,33 @@
     "actionFailed": "The action failed.",
     "showDrafts": "Show drafts",
     "reviewDrafts_one": "{{count}} draft to review",
-    "reviewDrafts_other": "{{count}} drafts to review"
+    "reviewDrafts_other": "{{count}} drafts to review",
+    "usageMonth": "This month: {{tokens}} tokens, about ${{cost}}",
+    "usageTokenQuota": "limit {{limit}} tokens",
+    "usageRequestQuota": "{{used}} of {{limit}} requests today"
+  },
+  "assistantUsage": {
+    "title": "Assistant usage",
+    "thisMonth": "This month",
+    "lastMonth": "Last month",
+    "last30": "Last 30 days",
+    "from": "From",
+    "to": "To",
+    "exportCsv": "Export CSV",
+    "error": "Could not load the assistant usage.",
+    "cost": "Estimated cost",
+    "tokens": "Tokens",
+    "answers": "Answers",
+    "cacheHitRate": "Cache hit rate",
+    "estimateNote": "Costs are estimated by the assistant from its price list (UTC days). The Anthropic invoice is the reference.",
+    "costPerDay": "Estimated cost per day",
+    "byUser": "By user",
+    "byProject": "By project",
+    "byModel": "By model",
+    "name": "Name",
+    "noUsage": "No usage in this period.",
+    "hoverHint": "Hover a bar to see the day.",
+    "answersCount_one": "{{count}} answer",
+    "answersCount_other": "{{count}} answers"
   }
 }
