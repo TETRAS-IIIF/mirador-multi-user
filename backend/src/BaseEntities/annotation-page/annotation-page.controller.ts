@@ -99,20 +99,6 @@ export class AnnotationPageController {
     return this.annotationPageService.findAll(annotPageId, projectId, include);
   }
 
-  @ApiOperation({ summary: 'finding an annotation page' })
-  @UseGuards(AuthGuard)
-  @Get(':annotationPageId/:projectId')
-  async findOne(
-    @Param('annotationPageId') annotationPageId: string,
-    @Param('projectId') projectId: number,
-    @Query('drafts') drafts: string,
-    @Req() request,
-  ) {
-    const include = await this.includeDrafts(request, projectId, drafts);
-    const decodedURI = decodeURIComponent(annotationPageId);
-    return this.annotationPageService.findOne(decodedURI, projectId, include);
-  }
-
   @ApiOperation({ summary: 'find all user annotation page for project' })
   @UseGuards(AuthGuard)
   @Get('/all/:projectId/:userId')

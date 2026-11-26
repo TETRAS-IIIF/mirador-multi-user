@@ -26,7 +26,6 @@ describe('AnnotationPageController', () => {
     const serviceMock: Partial<jest.Mocked<AnnotationPageService>> = {
       create: jest.fn(),
       findAll: jest.fn(),
-      findOne: jest.fn(),
       findAllProjectAnnotation: jest.fn(),
       deleteAnnotationPage: jest.fn(),
     };
@@ -57,7 +56,6 @@ describe('AnnotationPageController', () => {
   it.each([
     'create',
     'findAll',
-    'findOne',
     'findAllAnnotationForProject',
     'delete',
   ])('%s() is protected by AuthGuard', (handler) => {
@@ -156,26 +154,6 @@ describe('AnnotationPageController', () => {
       expect(result).toBe(expected);
     });
 
-    it('findOne() decodes annotationPageId and forwards to service', async () => {
-      const encoded = encodeURIComponent('http://example.com/anno/1');
-      const expected = { id: 'anno-1' };
-      service.findOne.mockResolvedValue(expected as any);
-
-      const result = await controller.findOne(
-        encoded,
-        PROJECT_ID,
-        undefined,
-        request,
-      );
-
-      expect(service.findOne).toHaveBeenCalledWith(
-        'http://example.com/anno/1',
-        PROJECT_ID,
-        false,
-      );
-      expect(result).toBe(expected);
-    });
-
     it('findAllAnnotationForProject() forwards projectId', async () => {
       service.findAllProjectAnnotation.mockResolvedValue([] as any);
 
@@ -225,10 +203,6 @@ describe('AnnotationPageController', () => {
         () => controller.findAll(PROJECT_ID, 'p', undefined, request),
       ],
       [
-        'findOne',
-        () => controller.findOne('p', PROJECT_ID, undefined, request),
-      ],
-      [
         'findAllAnnotationForProject',
         () => controller.findAllAnnotationForProject(PROJECT_ID, 1, request),
       ],
@@ -241,7 +215,6 @@ describe('AnnotationPageController', () => {
       await Promise.allSettled([
         controller.create({ projectId: PROJECT_ID } as any, request),
         controller.findAll(PROJECT_ID, 'p', undefined, request),
-        controller.findOne('p', PROJECT_ID, undefined, request),
         controller.findAllAnnotationForProject(PROJECT_ID, 1, request),
         controller.delete(PROJECT_ID, 'p', request),
       ]);

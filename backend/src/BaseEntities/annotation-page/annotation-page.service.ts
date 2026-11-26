@@ -36,18 +36,6 @@ export class AnnotationPageService {
     );
   }
 
-  async findOne(
-    annotationPageId: string,
-    projectId: number,
-    includeDrafts = false,
-  ) {
-    const [page] = await this.annotationService.getPage(
-      Number(projectId),
-      annotationPageId,
-      includeDrafts,
-    );
-    return page ?? null;
-  }
 
   async deleteAnnotationPage(annotationPageId: string, projectId: number) {
     return this.annotationService.deletePage(

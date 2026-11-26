@@ -60,12 +60,6 @@ describe('AnnotationPageService', () => {
     expect(rows.getPage).toHaveBeenCalledWith(42, 'p', true);
   });
 
-  it('findOne() returns the page or null', async () => {
-    await expect(service.findOne('p', 42)).resolves.toEqual(page);
-    rows.getPage.mockResolvedValueOnce([]);
-    await expect(service.findOne('p', 42)).resolves.toBeNull();
-  });
-
   it('deleteAnnotationPage() deletes the page and its rows', async () => {
     await service.deleteAnnotationPage('p', 42);
     expect(rows.deletePage).toHaveBeenCalledWith(42, 'p');
