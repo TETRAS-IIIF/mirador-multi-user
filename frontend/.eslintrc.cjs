@@ -9,10 +9,14 @@ module.exports = {
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
+  // Warnings don't fail `npm run lint`: only `any` is a warning, to type
+  // gradually. Everything else is an error.
   rules: {
     'react-refresh/only-export-components': [
-      'warn',
+      'error',
       { allowConstantExport: true },
     ],
+    'react-hooks/exhaustive-deps': 'error',
+    '@typescript-eslint/no-explicit-any': 'warn',
   },
 }

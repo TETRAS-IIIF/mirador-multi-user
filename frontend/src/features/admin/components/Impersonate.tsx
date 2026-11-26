@@ -30,6 +30,7 @@ export const Impersonate = () => {
     };
 
     impersonate();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once: the login/impersonation token is single-use
   }, []);
 
   return <div>{t('loadingImpersonate')}</div>;

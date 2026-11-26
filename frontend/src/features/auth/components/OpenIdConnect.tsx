@@ -38,6 +38,7 @@ export const OpenIdConnect = () => {
     };
 
     tryToIdentify();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once: the login/impersonation token is single-use
   }, []);
 
   return <LoadingSpinner />;

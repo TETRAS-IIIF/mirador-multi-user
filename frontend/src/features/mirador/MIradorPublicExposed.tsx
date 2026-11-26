@@ -50,6 +50,7 @@ export const MiradorPublicExposed = () => {
     };
 
     fetchAndSetupMirador();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- the viewer is created by this effect; adding it would re-create it
   }, []);
 
   return (

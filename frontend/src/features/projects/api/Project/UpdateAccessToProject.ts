@@ -7,24 +7,20 @@ export const updateAccessToProject = async (
   rights: ITEM_RIGHTS,
 ) => {
   const token = storage.getToken();
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/link-group-project/change-rights`,
-      {
-        method: 'PATCH',
-        headers: {
-          authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          projectId: projectId,
-          rights: rights,
-          groupId: userGroupId,
-        }),
+  const response = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/link-group-project/change-rights`,
+    {
+      method: 'PATCH',
+      headers: {
+        authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
-    );
-    return await response.json();
-  } catch (error) {
-    throw error;
-  }
+      body: JSON.stringify({
+        projectId: projectId,
+        rights: rights,
+        groupId: userGroupId,
+      }),
+    },
+  );
+  return await response.json();
 };

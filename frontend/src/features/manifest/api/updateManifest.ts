@@ -4,9 +4,10 @@ import storage from '../../../utils/storage.ts';
 export const updateManifest = async (manifest: Manifest) => {
   const token = storage.getToken();
 
-  // @ts-ignore
+  // Front-end only fields, not sent to the backend.
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { json, shared, share, templates, ...manifestToUpdate } = manifest;
+  const { json, shared, share, templates, ...manifestToUpdate } =
+    manifest as Manifest & { templates?: unknown };
   const response = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest`,
     {

@@ -86,6 +86,7 @@ export const ContentSidePanelManifest = ({
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return filtered.slice(start, end);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- the filter function is recreated on every render; it only depends on the listed values
   }, [currentPage, itemsPerPage, manifests, manifestFilter]);
 
   const { thumbnailUrls, fetchThumbnails } =

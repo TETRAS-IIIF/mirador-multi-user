@@ -54,6 +54,7 @@ export const ContentSidePanelMedia = ({
 
   useEffect(() => {
     fetchMediaForUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, [open]);
 
   useEffect(() => {
@@ -102,7 +103,7 @@ export const ContentSidePanelMedia = ({
         fetchMediaForUser();
       }
     },
-    [fetchMediaForUser, user.id, userPersonalGroup, medias],
+    [fetchMediaForUser, user.id, userPersonalGroup, t],
   );
 
   const createMediaWithLink = async (link: string) => {

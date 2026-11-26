@@ -62,7 +62,6 @@ export const AllProjects = ({
   selectedProjectId,
   setSelectedProjectId,
   userProjects,
-  setUserProjects,
   handleSetMiradorState,
   fetchProjects,
   fetchManifestForUser,
@@ -106,6 +105,7 @@ export const AllProjects = ({
     fetchProjects();
     fetchUserPersonalGroup();
     fetchManifestForUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, [openModalProjectId]);
 
   const deleteUserProject = async (projectId: number) => {
@@ -184,13 +184,7 @@ export const AllProjects = ({
       HandleOpenModal(response.id);
       toggleModalProjectCreation();
     },
-    [
-      HandleOpenModal,
-      setUserProjects,
-      toggleModalProjectCreation,
-      user,
-      userProjects,
-    ],
+    [HandleOpenModal, toggleModalProjectCreation, user],
   );
 
   const handleAddUser = async (projectId: number) => {

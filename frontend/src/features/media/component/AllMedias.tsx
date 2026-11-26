@@ -105,6 +105,7 @@ export const AllMedias = ({
 
   useEffect(() => {
     fetchMediaForUser();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- re-runs only when the listed values change; the functions it calls are recreated on every render
   }, []);
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
@@ -173,7 +174,7 @@ export const AllMedias = ({
 
       fetchMediaForUser();
     },
-    [fetchMediaForUser, medias],
+    [fetchMediaForUser, MAX_UPLOAD_SIZE, t, user.id, userPersonalGroup],
   );
 
   const HandleCopyToClipBoard = async (path: string) => {
@@ -209,7 +210,7 @@ export const AllMedias = ({
       setMedias(updatedListOfMedias);
       fetchMediaForUser();
     },
-    [medias, setMedias],
+    [fetchMediaForUser, medias, setMedias],
   );
 
   const handleGrantAccess = async (mediaId: number) => {

@@ -179,6 +179,7 @@ export default function JsonEditorWithControls({
 
   const visibleData = React.useMemo<JSONValue>(
     () => filterJson(data),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the filter function is recreated on every render; it only depends on the listed values
     [data, searchTerm],
   );
 

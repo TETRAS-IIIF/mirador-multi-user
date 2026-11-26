@@ -54,7 +54,7 @@ export const DrawerLinkMedia = ({
   const handleToggleModalGroupCreation = useCallback(() => {
     toggleModalMediaCreation();
     setMediaLink('');
-  }, [CreateMediaWithLink]);
+  }, [toggleModalMediaCreation]);
 
   const handleDrawerTransition = () => {
     if (inputRef.current) {

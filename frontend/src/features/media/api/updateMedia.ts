@@ -6,21 +6,17 @@ export const updateMedia = async (mediaToUpdate: Media) => {
   const { share,shared, ...mediaDto } = mediaToUpdate;
   const token = storage.getToken();
 
-  try {
-    const response = await fetch(
-      `${import.meta.env.VITE_BACKEND_URL}/link-media-group/media`,
-      {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(mediaDto),
+  const response = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/link-media-group/media`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-    );
-    const toReturn = await response.json();
-    return toReturn;
-  } catch (error) {
-    throw error;
-  }
+      body: JSON.stringify(mediaDto),
+    },
+  );
+  const toReturn = await response.json();
+  return toReturn;
 };
