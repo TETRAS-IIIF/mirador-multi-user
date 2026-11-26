@@ -474,6 +474,9 @@
     "usageTokenQuota": "limit {{limit}} tokens",
     "usageRequestQuota": "{{used}} of {{limit}} requests today",
     "model": "Model",
+    "selectRegion": "Ask about a region: drag on the image",
+    "selectingRegion": "Drag a rectangle on the image (Esc to cancel)",
+    "region": "Region {{x}},{{y}} · {{w}}×{{h}}",
     "uncertain": "Uncertain"
   },
   "assistantUsage": {
@@ -499,5 +502,14 @@
     "hoverHint": "Hover a bar to see the day.",
     "answersCount_one": "{{count}} answer",
     "answersCount_other": "{{count}} answers"
+  },
+  "assistantSettings": {
+    "tab": "Assistant",
+    "tabDescription": "How the AI assistant works in this project",
+    "enable": "Enable the assistant for this project",
+    "enableHelp": "Needed when the assistant only serves projects that opted in (set by the administrator). Project content (text, images) is sent to the AI provider only when the assistant is used.",
+    "instructions": "Instructions for the assistant in this project",
+    "instructionsHelp": "Added to every conversation in this project. {{count}} / {{max}} characters.",
+    "instructionsPlaceholder": "E.g. Transcribe in diplomatic form, keep abbreviations. Use the tags person, place, date. Answer in French."
   }
 }
