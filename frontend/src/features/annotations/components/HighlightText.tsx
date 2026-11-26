@@ -1,3 +1,5 @@
+import { escapeRegExp } from '../annotationUtils.ts';
+
 interface HighlightTextProps {
   text: string;
   highlight: string;
@@ -7,7 +9,7 @@ export const HighlightText = ({ text, highlight }: HighlightTextProps) => {
   if (!text) return null;
   if (!highlight.trim()) return <>{text}</>;
 
-  const regex = new RegExp(`(${highlight})`, 'gi');
+  const regex = new RegExp(`(${escapeRegExp(highlight)})`, 'gi');
   const parts = String(text).split(regex);
 
   return (
