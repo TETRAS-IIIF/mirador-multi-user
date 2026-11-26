@@ -473,7 +473,8 @@
     "usageMonth": "This month: {{tokens}} tokens, about ${{cost}}",
     "usageTokenQuota": "limit {{limit}} tokens",
     "usageRequestQuota": "{{used}} of {{limit}} requests today",
-    "model": "Model"
+    "model": "Model",
+    "showOnImage": "Show on the image"
   },
   "assistantUsage": {
     "title": "Assistant usage",
