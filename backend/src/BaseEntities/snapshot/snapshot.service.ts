@@ -43,6 +43,24 @@ export class SnapshotService {
     }
   }
 
+  /** The snapshot, only if it belongs to this project. */
+  async findOneInProject(
+    snapshotId: number,
+    projectId: number,
+  ): Promise<Snapshot | null> {
+    try {
+      return await this.snapshotRepository.findOne({
+        where: { id: snapshotId, project: { id: projectId } },
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `An error occurred while finding snapshot with id ${snapshotId}`,
+        error,
+      );
+    }
+  }
+
   async updateSnapshot(
     snapshotId: number,
     snapshot: Snapshot,

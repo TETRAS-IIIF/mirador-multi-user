@@ -30,10 +30,13 @@ import {
   DEFAULT_PROJECT_SNAPSHOT_FILE_NAME,
   UPLOAD_FOLDER,
 } from '../../utils/constants';
-import * as fs from 'node:fs';
+import * as fs from 'node:fs/promises';
 import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
 import { AnnotationPageService } from '../../BaseEntities/annotation-page/annotation-page.service';
 import { constructSnapshotWorkspace } from './utils/snapshot.utils';
+
+/** Snapshot folder names: generateAlphanumericSHA1Hash output. */
+const SNAPSHOT_HASH = /^[A-Za-z0-9]+$/;
 import { MetadataService } from '../../BaseEntities/metadata/metadata.service';
 import { ObjectTypes } from '../../enum/ObjectTypes';
 
@@ -639,7 +642,7 @@ export class LinkGroupProjectService {
 
       const uploadPath = `${UPLOAD_FOLDER}/${hash}`;
 
-      fs.mkdirSync(uploadPath, { recursive: true });
+      await fs.mkdir(uploadPath, { recursive: true });
 
       const workspaceData = {
         generated_at: Date.now(),
@@ -647,7 +650,7 @@ export class LinkGroupProjectService {
       };
 
       const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
-      fs.writeFileSync(
+      await fs.writeFile(
         workspaceJsonPath,
         JSON.stringify(workspaceData, null, 2),
         'utf-8',
@@ -687,24 +690,30 @@ export class LinkGroupProjectService {
     }
   }
 
-  async updateSnapshot(title: string, snapshotId: number, projectId: number) {
-    try {
-      const project = await this.projectService.findOne(projectId);
-      const snapshotToUpdate = await this.snapshotService.findOne(snapshotId);
-      const uploadPath = `${UPLOAD_FOLDER}/${snapshotToUpdate.hash}`;
-      const workspaceData = {
-        generated_at: Date.now(),
-        workspace: project.userWorkspace,
-      };
-      const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
-      fs.writeFileSync(
-        workspaceJsonPath,
-        JSON.stringify(workspaceData, null, 2),
-        'utf-8',
+  /** The snapshot, or 404 when it does not exist or belongs to another project. */
+  private async projectSnapshot(snapshotId: number, projectId: number) {
+    const snapshot = await this.snapshotService.findOneInProject(
+      Number(snapshotId),
+      Number(projectId),
+    );
+    if (!snapshot) {
+      throw new NotFoundException(
+        `Snapshot ${snapshotId} not found in project ${projectId}`,
       );
-      return await this.snapshotService.updateSnapshot(snapshotId, {
-        ...snapshotToUpdate,
-        title: title,
+    }
+    return snapshot;
+  }
+
+  /**
+   * Renames a snapshot. Its workspace.json is left as generated: a snapshot is
+   * a frozen copy of the project, and the UI only offers a rename.
+   */
+  async updateSnapshot(title: string, snapshotId: number, projectId: number) {
+    const snapshot = await this.projectSnapshot(snapshotId, projectId);
+    try {
+      return await this.snapshotService.updateSnapshot(snapshot.id, {
+        ...snapshot,
+        title,
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -715,14 +724,29 @@ export class LinkGroupProjectService {
     }
   }
 
-  async deleteSnapshot(snapshotId: number) {
+  async deleteSnapshot(snapshotId: number, projectId: number) {
+    const snapshot = await this.projectSnapshot(snapshotId, projectId);
     try {
-      const snapshotToDelete = await this.snapshotService.findOne(snapshotId);
-      const uploadPath = `${UPLOAD_FOLDER}/${snapshotToDelete.hash}`;
-      const workspaceJsonPath = `${uploadPath}/${DEFAULT_PROJECT_SNAPSHOT_FILE_NAME}`;
-      //TODO: remove file located at uploadPath generate rights error on filesystem
-      fs.unlinkSync(workspaceJsonPath);
-      return await this.snapshotService.deleteSnapshot(snapshotId);
+      // Only a plain hash names a snapshot folder: never let an empty or odd
+      // value turn into a recursive delete of the upload folder itself.
+      if (SNAPSHOT_HASH.test(snapshot.hash ?? '')) {
+        const uploadPath = `${UPLOAD_FOLDER}/${snapshot.hash}`;
+        try {
+          await fs.rm(uploadPath, { recursive: true, force: true });
+        } catch (fsError) {
+          // Don't let a filesystem cleanup failure (e.g. permissions) block
+          // deletion of the snapshot record itself.
+          this.logger.error(
+            `Failed to remove snapshot directory ${uploadPath}: ${fsError.message}`,
+            fsError.stack,
+          );
+        }
+      } else {
+        this.logger.warn(
+          `Snapshot ${snapshot.id} has no valid hash: files left in place`,
+        );
+      }
+      return await this.snapshotService.deleteSnapshot(snapshot.id);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
