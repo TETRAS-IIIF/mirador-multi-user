@@ -1,15 +1,25 @@
 services:
 
   db:
-    image: mariadb:latest
+    # Major version pinned: a new server gets the same MariaDB as the others.
+    # Never lower it: MariaDB cannot open data written by a newer version.
+    image: mariadb:13
     environment:
       MARIADB_ROOT_PASSWORD: ${DB_PASS}
       MARIADB_DATABASE: ${DB_DATABASE}
       MARIADB_USER: ${DB_USER}
       MARIADB_PASSWORD: ${DB_PASS}
+      # Upgrades the system tables when the data comes from an older version.
+      MARIADB_AUTO_UPGRADE: "1"
     restart: unless-stopped
     volumes:
       - ./mariaDB/data:/var/lib/mysql:rw
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     networks:
       - app-network
 
@@ -44,6 +54,14 @@ services:
     restart: ${RESTART}
     depends_on:
       - backend
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:4000/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      # The image builds nothing at startup in production, but the dev
+      # server (dev.yml) needs time for its first compilation.
+      start_period: 120s
     networks:
       - app-network
 
@@ -96,7 +114,17 @@ services:
       YOUTUBE_API_KEY: ${YOUTUBE_API_KEY}
       HOST: ${HOST}
     depends_on:
-      - db
+      # Starts once MariaDB accepts connections, so the first start (which
+      # creates the schema) no longer fails.
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:$${BACKEND_PORT:-3000}/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      # `nest start` compiles, then migrations run, before the port opens.
+      start_period: 180s
     restart: ${RESTART}
     links:
       - db
@@ -105,8 +133,13 @@ services:
 
   caddy:
     hostname: files
-    image: caddy:latest
+    image: caddy:2
     restart: ${RESTART}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:80/favicon.ico"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
     environment:
       - CORS_ALLOWED_HOSTS
       - WEBPACK_MODE=development
