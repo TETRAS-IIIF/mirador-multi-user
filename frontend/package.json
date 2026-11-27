@@ -40,7 +40,7 @@
     "manifesto.js": "^4.2.21",
     "marked": "^14.0.0",
     "mirador": "npm:mirador-video@^4.3.0",
-    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@^1.6.0",
+    "mirador-annotation-editor": "npm:mirador-annotation-editor-video@^1.6.1",
     "mirador-mltools-plugin-mmu": "^1.2.1",
     "monaco-editor": "^0.55.1",
     "react": "^19.0.0",
