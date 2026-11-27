@@ -10,9 +10,9 @@ export const OpenButton = ({ text, isSelected }: CloseButtonProps) => {
   return (
     <Grid
       container
-      justifyContent="center"
-      alignItems="center"
       sx={{
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: isSelected ? '#1976d2' : '#fff',
         padding: '5px',
         borderRadius: 1,
@@ -24,8 +24,8 @@ export const OpenButton = ({ text, isSelected }: CloseButtonProps) => {
       <Typography
         variant="body2"
         color="textSecondary"
-        alignItems="center"
         sx={{
+          alignItems: 'center',
           textColor: isSelected ? 'white' : 'inherit',
         }}
       >

@@ -259,8 +259,10 @@ export default function JsonEditorWithControls({
           <TextField
             size="small"
             placeholder={t('jsonEditor.search', { defaultValue: 'Search...' })}
-            InputProps={{
+            slotProps={{
+              input: {
               startAdornment: <SearchIcon fontSize="small" sx={{ mr: 0.5 }} />,
+            },
             }}
             sx={{ width: 200 }}
             value={searchTerm}

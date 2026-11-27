@@ -47,17 +47,19 @@ export const CreateUserForm = ({
   };
 
   return (
-    <Grid container wrap="nowrap" spacing={2} flexDirection="column">
+    <Grid container wrap="nowrap" spacing={2} sx={{ flexDirection: 'column' }}>
       <Grid>
         <Typography variant="h6">{t('create_user_form')}</Typography>
       </Grid>
       <form>
         <Grid
           container
-          direction="column"
-          justifyContent="center"
           spacing={2}
-          maxWidth={'1000px'}
+          sx={{
+            flexDirection: 'column',
+            justifyContent: 'center',
+            maxWidth: '1000px',
+          }}
         >
           <Grid>
             <FormField

@@ -52,13 +52,7 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
   };
 
   return (
-    <Grid
-      container
-      direction={'column'}
-      sx={{
-        padding: 2,
-      }}
-    >
+    <Grid container sx={{ flexDirection: 'column', padding: 2 }}>
       <Grid
         container
         spacing={2}
@@ -93,11 +87,8 @@ export const UserSettings = ({ user }: IUserSettingsProps) => {
       <Grid
         container
         spacing={2}
-        direction={'column'}
         size={12}
-        sx={{
-          justifyContent: 'center',
-        }}
+        sx={{ flexDirection: 'column', justifyContent: 'center' }}
       >
         {oidcConnect && (
           <Grid container>

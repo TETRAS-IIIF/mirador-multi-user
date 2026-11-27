@@ -592,7 +592,7 @@ export function AssistantPanel({
         width: 380,
       }}
     >
-      <Stack direction="row" alignItems="center" sx={{ px: 1.5, py: 1 }}>
+      <Stack direction="row" sx={{ alignItems: 'center', px: 1.5, py: 1 }}>
         <Typography variant="subtitle1" sx={{ flexGrow: 1 }}>
           {t('assistant.title')}
         </Typography>
@@ -679,7 +679,7 @@ export function AssistantPanel({
               sx={{ p: 1 }}
               data-testid="assistant-job"
             >
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack direction="row" sx={{ alignItems: 'center' }} spacing={1}>
                 <Typography variant="body2" sx={{ flexGrow: 1 }} noWrap>
                   {job.title}
                 </Typography>
@@ -872,7 +872,11 @@ export function AssistantPanel({
                               {draftText(draft.annotation)}
                             </Typography>
                           </ButtonBase>
-                          <Stack direction="row" spacing={0.5} flexWrap="wrap">
+                          <Stack
+                            direction="row"
+                            spacing={0.5}
+                            sx={{ flexWrap: 'wrap' }}
+                          >
                             <Chip
                               size="small"
                               color="warning"
@@ -887,7 +891,7 @@ export function AssistantPanel({
                             <Stack
                               direction="row"
                               spacing={1}
-                              justifyContent="flex-end"
+                              sx={{ justifyContent: 'flex-end' }}
                             >
                               <Button
                                 size="small"
@@ -996,7 +1000,11 @@ export function AssistantPanel({
                               {String(f.current)}
                             </Typography>
                           )}
-                        <Stack direction="row" alignItems="center" spacing={1}>
+                        <Stack
+                          direction="row"
+                          sx={{ alignItems: 'center' }}
+                          spacing={1}
+                        >
                           <Typography variant="body2" sx={{ flexGrow: 1 }}>
                             {String(f.suggested)}
                           </Typography>
@@ -1032,8 +1040,7 @@ export function AssistantPanel({
         <Stack
           direction="row"
           spacing={0.5}
-          flexWrap="wrap"
-          sx={{ px: 1.5, pb: 1 }}
+          sx={{ flexWrap: 'wrap', px: 1.5, pb: 1 }}
           useFlexGap
         >
           {suggestions.map((s) => (
@@ -1072,7 +1079,11 @@ export function AssistantPanel({
           )}
         </Stack>
       )}
-      <Stack direction="row" spacing={1} alignItems="flex-end" sx={{ p: 1.5 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{ alignItems: 'flex-end', p: 1.5 }}
+      >
         <Tooltip title={t('assistant.selectRegion')}>
           <span>
             <IconButton
@@ -1104,7 +1115,9 @@ export function AssistantPanel({
               submit();
             }
           }}
-          inputProps={{ 'aria-label': t('assistant.placeholder') }}
+          slotProps={{
+            htmlInput: { 'aria-label': t('assistant.placeholder') },
+          }}
         />
         {running ? (
           <IconButton

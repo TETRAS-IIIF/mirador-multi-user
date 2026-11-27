@@ -95,14 +95,16 @@ export const DrawerCreateGroup = ({
             </Toolbar>
           </AppBar>
           <Grid>
-            <Grid container alignItems="center" spacing={2}>
+            <Grid container sx={{ alignItems: 'center' }} spacing={2}>
               <Grid>
                 <Typography>{t('groupTitleLabel')}</Typography>
               </Grid>
               <Grid sx={{ width: '70%' }}>
                 <TextField
-                  inputProps={{
-                    maxLength: 255,
+                  slotProps={{
+                    htmlInput: {
+                      maxLength: 255,
+                    },
                   }}
                   inputRef={inputRef}
                   onChange={handleNameChange}

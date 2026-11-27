@@ -108,11 +108,15 @@ export default function CollapsibleTable({
 
   return (
     <>
-      <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
+      <Grid
+        container
+        spacing={2}
+        sx={{ alignItems: 'center', marginBottom: 2 }}
+      >
         <Grid size={8}>
           <TextField
             fullWidth
-            inputProps={{ maxLength: 255 }}
+            slotProps={{ htmlInput: { maxLength: 255 } }}
             label={t('filter_snapshots')}
             variant="outlined"
             value={filter}

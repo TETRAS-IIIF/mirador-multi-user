@@ -85,8 +85,7 @@ export function DraftEditForm({
       <Stack
         direction="row"
         spacing={1}
-        justifyContent="flex-end"
-        flexWrap="wrap"
+        sx={{ justifyContent: 'flex-end', flexWrap: 'wrap' }}
         useFlexGap
       >
         <Button size="small" onClick={onOpenEditor} disabled={busy}>

@@ -241,7 +241,12 @@ export function DraftReviewDialog({
       </DialogTitle>
       <DialogContent dividers>
         <Stack spacing={2}>
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ flexWrap: 'wrap' }}
+            useFlexGap
+          >
             <TextField
               select
               size="small"
@@ -325,10 +330,8 @@ export function DraftReviewDialog({
                   <Stack
                     direction="row"
                     spacing={0.5}
-                    alignItems="center"
-                    flexWrap="wrap"
                     useFlexGap
-                    sx={{ mt: 0.5 }}
+                    sx={{ alignItems: 'center', flexWrap: 'wrap', mt: 0.5 }}
                   >
                     {draftTags(draft.content).map((value) => (
                       <Chip key={value} size="small" label={value} />

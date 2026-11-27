@@ -58,11 +58,14 @@ export const SnapshotFactory = <
   };
   return (
     <Grid
-      alignItems="center"
       container
-      flexDirection="column"
       spacing={1}
-      sx={{ padding: 0, margin: 0 }}
+      sx={{
+        alignItems: 'center',
+        flexDirection: 'column',
+        padding: 0,
+        margin: 0,
+      }}
     >
       <Grid
         container

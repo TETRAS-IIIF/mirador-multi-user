@@ -64,7 +64,7 @@ export const ManifestCreationForm = ({
   };
 
   return (
-    <Grid container direction="column" spacing={4}>
+    <Grid container sx={{ flexDirection: 'column' }} spacing={4}>
       <Grid container>
         <Paper elevation={3} style={{ padding: '20px', width: '100%' }}>
           <Grid>

@@ -123,7 +123,11 @@ export function AdminCollapsibleTable({
   };
   return (
     <>
-      <Grid container spacing={2} alignItems="center" sx={{ marginBottom: 2 }}>
+      <Grid
+        container
+        spacing={2}
+        sx={{ alignItems: 'center', marginBottom: 2 }}
+      >
         <Grid size={12}>
           <TextField
             fullWidth

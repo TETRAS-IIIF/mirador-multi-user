@@ -59,13 +59,13 @@ export const MutableSettingsEditor = ({
   };
 
   return (
-    <Grid container direction={'column'} sx={{ p: 3 }}>
+    <Grid container sx={{ flexDirection: 'column', p: 3 }}>
       <Grid>
         <Typography variant="h6" gutterBottom>
           Mutable Settings
         </Typography>
       </Grid>
-      <Grid container direction="column" spacing={2}>
+      <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
         {editableSettings.map((setting) => (
           <Grid key={setting.id}>
             <RenderInput setting={setting} handleChange={handleChange} />

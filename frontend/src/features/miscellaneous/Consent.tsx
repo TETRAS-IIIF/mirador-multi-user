@@ -8,12 +8,12 @@ export const Consent = () => {
   return (
     <Grid
       container
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
       spacing={10}
-      minHeight={'100vh'}
       sx={{
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
         backgroundImage: theme.palette.backgroundImage,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -21,7 +21,7 @@ export const Consent = () => {
         marginTop: 0,
       }}
     >
-      <Grid width={'100%'} height={'100%'}>
+      <Grid sx={{ width: '100%', height: '100%' }}>
         <Consent />
       </Grid>
     </Grid>

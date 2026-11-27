@@ -11,7 +11,6 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, FormEvent, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LoadingButton } from '@mui/lab';
 
 interface IDrawerCreateProjectProps {
   modalCreateProjectIsOpen: boolean;
@@ -85,7 +84,7 @@ export const DrawerCreateProject = ({
               </Toolbar>
             </AppBar>
             <form onSubmit={handleSubmit}>
-              <Grid container alignItems="center" spacing={2}>
+              <Grid container sx={{ alignItems: 'center' }} spacing={2}>
                 <Grid>
                   <label>{t('labelProjectTitle')}</label>
                 </Grid>
@@ -96,18 +95,18 @@ export const DrawerCreateProject = ({
                     sx={{ width: '100%' }}
                     placeholder={t('placeholderProject')}
                     value={projectName}
-                    inputProps={{ maxLength: 100 }}
+                    slotProps={{ htmlInput: { maxLength: 100 } }}
                   />
                 </Grid>
                 <Grid>
-                  <LoadingButton
+                  <Button
                     size="large"
                     variant="contained"
                     type="submit"
                     loading={isLoading}
                   >
                     {t('add')}
-                  </LoadingButton>
+                  </Button>
                 </Grid>
               </Grid>
             </form>

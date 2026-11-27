@@ -11,7 +11,6 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, FormEvent, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { LoadingButton } from '@mui/lab';
 
 interface IDrawerCreateMediaProps {
   modalCreateMediaIsOpen: boolean;
@@ -94,14 +93,16 @@ export const DrawerLinkMedia = ({
               </Toolbar>
             </AppBar>
             <form onSubmit={handleLinkingMedia}>
-              <Grid container alignItems="center" spacing={2}>
+              <Grid container sx={{ alignItems: 'center' }} spacing={2}>
                 <Grid>
                   <label>{t('mediaLink')}:</label>
                 </Grid>
                 <Grid sx={{ width: '70%' }}>
                   <TextField
-                    inputProps={{
-                      maxLength: 255,
+                    slotProps={{
+                      htmlInput: {
+                        maxLength: 255,
+                      },
                     }}
                     inputRef={inputRef}
                     onChange={handleNameChange}
@@ -110,14 +111,14 @@ export const DrawerLinkMedia = ({
                   ></TextField>
                 </Grid>
                 <Grid>
-                  <LoadingButton
+                  <Button
                     size="large"
                     variant="contained"
                     onClick={handleLinkingMedia}
                     loading={isPending}
                   >
                     {t('add')}
-                  </LoadingButton>
+                  </Button>
                 </Grid>
               </Grid>
             </form>

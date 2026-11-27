@@ -85,9 +85,13 @@ export const AdminPanel = () => {
         <AdminSettings />
       </Grid>
       {isAssistantEnabled() && <AssistantUsageDashboard users={users} />}
-      <Grid container flexDirection="column" spacing={1}>
+      <Grid container sx={{ flexDirection: 'column' }} spacing={1}>
         <Grid container>
-          <Grid container flexDirection="column" spacing={1} sx={{ margin: 1 }}>
+          <Grid
+            container
+            spacing={1}
+            sx={{ flexDirection: 'column', margin: 1 }}
+          >
             <Grid>
               <Typography variant="h6" gutterBottom>
                 {t('users')}

@@ -79,14 +79,14 @@ export const ItemList = <
   return (
     <Grid
       container
-      direction="column"
       spacing={2}
       sx={{
+        flexDirection: 'column',
         overflowY: 'auto',
         minWidth: 935,
       }}
     >
-      <Grid container direction={'row'} alignItems={'center'}>
+      <Grid container direction={'row'} sx={{ alignItems: 'center' }}>
         <Grid>
           <Typography variant="h5">{t('Permissions')}</Typography>
         </Grid>
@@ -102,7 +102,7 @@ export const ItemList = <
           </MMUToolTip>
         </Grid>
       </Grid>
-      <Grid container alignItems={'center'} direction={'row'}>
+      <Grid container sx={{ alignItems: 'center' }} direction={'row'}>
         <Grid>
           <SearchBar
             label={searchBarLabel}
@@ -123,19 +123,21 @@ export const ItemList = <
         </Grid>
       </Grid>
 
-      <Grid container direction="column" spacing={1}>
+      <Grid container sx={{ flexDirection: 'column' }} spacing={1}>
         {items?.map((listItem) =>
           listItem ? (
             <Grid
               key={listItem.id}
               container
-              alignItems="center"
-              justifyContent="space-between"
-              sx={{ width: '100%' }}
+              sx={{
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                width: '100%',
+              }}
             >
               <Typography>{listItem.title}</Typography>
 
-              <Box display="flex" alignItems="center" gap={1}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 {renderIcon(listItem.type!)}
                 {isActionAllowedForListItem(listItem) ? (
                   <>

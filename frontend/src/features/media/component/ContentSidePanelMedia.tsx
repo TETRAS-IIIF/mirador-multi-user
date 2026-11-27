@@ -126,7 +126,7 @@ export const ContentSidePanelMedia = ({
 
   if (medias.length === 0) {
     mediaContent = (
-      <Grid container justifyContent="center">
+      <Grid container sx={{ justifyContent: 'center' }}>
         <Typography variant="h6" component="h2">
           {t('noMediaYet')}
         </Typography>
@@ -155,7 +155,7 @@ export const ContentSidePanelMedia = ({
     );
   } else {
     mediaContent = (
-      <Grid container justifyContent="center" alignItems="center">
+      <Grid container sx={{ justifyContent: 'center', alignItems: 'center' }}>
         <Typography variant="h6" component="h2">
           {t('noMatchingMediaFilter')}
         </Typography>
@@ -167,15 +167,18 @@ export const ContentSidePanelMedia = ({
       <Grid
         container
         spacing={2}
-        sx={{ padding: '5px', width: '400px' }}
-        alignItems="center"
-        flexDirection="row"
+        sx={{
+          alignItems: 'center',
+          flexDirection: 'row',
+          padding: '5px',
+          width: '400px',
+        }}
       >
         <Grid>
           <SearchBar label={t('search')} setFilter={setMediaFilter} />
         </Grid>
         <Grid>
-          <Grid container direction="column" spacing={1}>
+          <Grid container sx={{ flexDirection: 'column' }} spacing={1}>
             <Grid>
               <Tooltip
                 title={t('actionsDial.upload')}

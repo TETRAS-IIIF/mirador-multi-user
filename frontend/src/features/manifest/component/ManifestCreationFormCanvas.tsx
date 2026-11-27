@@ -46,8 +46,8 @@ export const ManifestCreationFormCanvas = ({
   return (
     <Grid key={canvasIndex}>
       <Paper elevation={3} sx={{ padding: 2, width: '100%' }}>
-        <Grid container direction="column" spacing={2}>
-          <Grid container spacing={2} alignItems="center">
+        <Grid container sx={{ flexDirection: 'column' }} spacing={2}>
+          <Grid container spacing={2} sx={{ alignItems: 'center' }}>
             <Grid size="grow">
               <FieldForm
                 name={media.title}

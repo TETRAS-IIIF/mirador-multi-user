@@ -13,7 +13,7 @@ export const LoginPage = () => {
     getSettingValue(SettingKeys.OPENID_CONNECTION, settings) === 'true';
 
   return (
-    <Grid container direction="column" spacing={4}>
+    <Grid container sx={{ flexDirection: 'column' }} spacing={4}>
       {allowClassic && (
         <Grid>
           <LoginForm />

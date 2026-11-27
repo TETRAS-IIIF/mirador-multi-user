@@ -51,9 +51,11 @@ export const SnapshotExpendableContent = ({
     <Grid container spacing={2} sx={{ padding: 2 }}>
       <Grid
         container
-        justifyContent="space-between"
-        alignItems="center"
-        flexDirection="row"
+        sx={{
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexDirection: 'row',
+        }}
         spacing={2}
       >
         <Grid size="grow">
@@ -78,7 +80,7 @@ export const SnapshotExpendableContent = ({
           />
         </Grid>
       </Grid>
-      <Grid container spacing={1} alignItems="center">
+      <Grid container spacing={1} sx={{ alignItems: 'center' }}>
         <Grid>
           <Button
             color="primary"
