@@ -3,6 +3,7 @@ import {
   Alert,
   Box,
   Button,
+  ButtonBase,
   Chip,
   CircularProgress,
   Divider,
@@ -50,6 +51,7 @@ import {
   clearRegionOverlay,
   refreshCanvas,
   runViewerAction,
+  showAnnotation,
   selectRegion,
   viewerContext,
 } from '../viewerBridge.ts';
@@ -582,20 +584,42 @@ export function AssistantPanel({
                     data-testid="draft-card"
                   >
                     <Stack spacing={1}>
-                      {draft.cropUrl && (
-                        <img
-                          src={draft.cropUrl}
-                          alt=""
-                          style={{
-                            maxWidth: '100%',
-                            maxHeight: 160,
-                            objectFit: 'contain',
-                          }}
-                        />
-                      )}
-                      <Typography variant="body2">
-                        {draftText(draft.annotation)}
-                      </Typography>
+                      <ButtonBase
+                        aria-label={t('assistant.showOnImage')}
+                        title={t('assistant.showOnImage')}
+                        data-testid="draft-show"
+                        onClick={() =>
+                          showAnnotation(viewer, {
+                            id: draft.annotationId,
+                            canvasId: draft.canvasId,
+                            target: draft.annotation.target,
+                          })
+                        }
+                        sx={{
+                          alignItems: 'stretch',
+                          borderRadius: 1,
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: 1,
+                          textAlign: 'left',
+                          '&:hover': { bgcolor: 'action.hover' },
+                        }}
+                      >
+                        {draft.cropUrl && (
+                          <img
+                            src={draft.cropUrl}
+                            alt=""
+                            style={{
+                              maxWidth: '100%',
+                              maxHeight: 160,
+                              objectFit: 'contain',
+                            }}
+                          />
+                        )}
+                        <Typography variant="body2">
+                          {draftText(draft.annotation)}
+                        </Typography>
+                      </ButtonBase>
                       <Stack direction="row" spacing={0.5} flexWrap="wrap">
                         <Chip
                           size="small"

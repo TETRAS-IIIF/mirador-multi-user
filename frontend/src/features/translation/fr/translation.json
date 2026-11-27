@@ -463,7 +463,8 @@
     "model": "Modèle",
     "selectRegion": "Poser une question sur une zone : tracer sur l'image",
     "selectingRegion": "Tracez un rectangle sur l'image (Échap pour annuler)",
-    "region": "Zone {{x}},{{y}} · {{w}}×{{h}}"
+    "region": "Zone {{x}},{{y}} · {{w}}×{{h}}",
+    "showOnImage": "Voir sur l'image"
   },
   "assistantUsage": {
     "title": "Utilisation de l'assistant",
