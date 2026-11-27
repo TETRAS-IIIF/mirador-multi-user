@@ -59,6 +59,15 @@ describeDb('annotation rows (e2e, real DB)', () => {
   });
 
   const http = () => request(app.getHttpServer());
+  /** A served page without the `mmu:version` of each annotation. */
+  const withoutVersions = (page: any) => ({
+    ...page,
+    items: page.items.map((item: any) => {
+      const copy = { ...item };
+      delete copy['mmu:version'];
+      return copy;
+    }),
+  });
   const as = (user: number, req: request.Test, assistant = false) => {
     req.set('Authorization', `Bearer ${tokens[user]}`);
     if (assistant) req.set('x-mmu-client', 'assistant');
@@ -171,7 +180,7 @@ describeDb('annotation rows (e2e, real DB)', () => {
     expect(await service.migrateLegacyPages()).toBe(0);
     expect(await db.getRepository(Annotation).count()).toBe(3);
 
-    expect(await getPage(READER)).toEqual(legacy);
+    expect(withoutVersions(await getPage(READER))).toEqual(legacy);
     const stored = await db
       .getRepository(AnnotationPage)
       .findOneBy({ annotationPageId: PAGE });
@@ -237,7 +246,76 @@ describeDb('annotation rows (e2e, real DB)', () => {
     ).expect(200);
     await as(EDITOR, http().delete(`/annotation/${PROJECT}/u2`)).expect(200);
     const page = await getPage(READER);
-    expect(page.items).toEqual([anno('u1', 'edited')]);
+    expect(withoutVersions(page).items).toEqual([anno('u1', 'edited')]);
+  });
+
+  it('refuses to overwrite an annotation someone else saved meanwhile (409)', async () => {
+    await as(
+      EDITOR,
+      http()
+        .post('/annotation')
+        .send({
+          projectId: PROJECT,
+          annotationPageId: PAGE,
+          content: anno('v1'),
+        }),
+    ).expect(201);
+    // Two people open the same annotation: same version.
+    const opened = (await getPage(EDITOR)).items.find(
+      (i: any) => i.id === 'v1',
+    );
+    const version = opened['mmu:version'];
+    expect(version).toEqual(expect.any(String));
+
+    // The first one saves: accepted, new version.
+    await new Promise((r) => setTimeout(r, 20));
+    const first = await as(
+      EDITOR,
+      http()
+        .patch(`/annotation/${PROJECT}/v1`)
+        .send({ content: anno('v1', 'first'), expectedVersion: version }),
+    ).expect(200);
+    // The response carries the new version, to keep editing without reloading.
+    expect(first.body.content['mmu:version']).not.toBe(version);
+
+    // The second one saves with the version they opened: refused, with the current text.
+    const second = await as(
+      EDITOR,
+      http()
+        .patch(`/annotation/${PROJECT}/v1`)
+        .send({ content: anno('v1', 'second'), expectedVersion: version }),
+    ).expect(409);
+    expect(second.body.current.body).toEqual(anno('v1', 'first').body);
+    const now = (await getPage(EDITOR)).items.find((i: any) => i.id === 'v1');
+    expect(now.body).toEqual(anno('v1', 'first').body);
+    expect(now['mmu:version']).not.toBe(version);
+
+    // With the current version, or without any (older clients), it saves.
+    await as(
+      EDITOR,
+      http()
+        .patch(`/annotation/${PROJECT}/v1`)
+        .send({
+          content: anno('v1', 'third'),
+          expectedVersion: now['mmu:version'],
+        }),
+    ).expect(200);
+    await as(
+      EDITOR,
+      http()
+        .patch(`/annotation/${PROJECT}/v1`)
+        .send({ content: anno('v1', 'fourth') }),
+    ).expect(200);
+
+    // Exports carry no mmu: fields.
+    const exported = await service.getProjectPages(PROJECT, {
+      forExport: true,
+    });
+    expect(
+      exported
+        .flatMap((p: any) => p.content.items)
+        .some((i: any) => 'mmu:version' in i),
+    ).toBe(false);
   });
 
   it('serves drafts only to editors who ask, never to readers or exports', async () => {

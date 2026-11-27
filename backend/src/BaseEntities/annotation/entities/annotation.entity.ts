@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
   UpdateDateColumn,
+  VersionColumn,
 } from 'typeorm';
 import { AnnotationBatch } from './annotation-batch.entity';
 
@@ -75,6 +76,13 @@ export class Annotation {
 
   @Column({ nullable: true })
   acceptedById: number | null;
+
+  /**
+   * Incremented on every save. Served as `mmu:version`; an update sent with an
+   * older `expectedVersion` is refused (someone else saved meanwhile).
+   */
+  @VersionColumn({ default: 1 })
+  version: number;
 
   /** True once a person has edited an AI annotation: revert keeps it. */
   @Column({ default: false })

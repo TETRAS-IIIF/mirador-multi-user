@@ -472,7 +472,8 @@
     "openEditor": "Éditeur d'annotation",
     "save": "Enregistrer",
     "saveAndAccept": "Enregistrer et accepter",
-    "resumed": "Réponse toujours en cours : reprise"
+    "resumed": "Réponse toujours en cours : reprise",
+    "uncertain": "Incertain"
   },
   "assistantUsage": {
     "title": "Utilisation de l'assistant",
@@ -559,5 +560,19 @@
     "failedShort_one": "Interrompue · {{count}} brouillon conservé",
     "failedShort_other": "Interrompue · {{count}} brouillons conservés",
     "dismiss": "Masquer"
-  }
+  },
+  "assistantFeedback": {
+    "up": "Bonne réponse",
+    "down": "Mauvaise réponse",
+    "thanks": "Merci pour votre retour",
+    "comment": "Qu'est-ce qui n'allait pas ?",
+    "commentPlaceholder": "Qu'est-ce qui n'allait pas ? (facultatif)",
+    "send": "Envoyer",
+    "title": "Retours sur les réponses (👍 {{up}} · 👎 {{down}})",
+    "none": "Aucun retour sur cette période.",
+    "tableLabel": "Retours sur les réponses",
+    "date": "Date",
+    "rating": "Note"
+  },
+  "annotationConflict": "Non enregistré : quelqu'un d'autre a modifié cette annotation depuis que vous l'avez ouverte. Copiez votre texte, fermez l'éditeur et rouvrez l'annotation."
 }

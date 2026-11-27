@@ -53,6 +53,14 @@ export class UpdateAnnotationDto {
   @IsOptional()
   @IsIn(Object.values(AnnotationStatus))
   status?: AnnotationStatus;
+
+  /**
+   * The `mmu:version` the client loaded. When the annotation has changed
+   * since (someone else saved it), the update is refused with 409.
+   */
+  @IsOptional()
+  @IsString()
+  expectedVersion?: string;
 }
 
 /** Parsed from the query string by the controller. */

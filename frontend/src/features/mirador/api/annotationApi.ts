@@ -76,7 +76,12 @@ export const createAnnotation = (dto: {
 export const updateAnnotation = (
   projectId: number,
   annotationId: string,
-  dto: { content?: Record<string, unknown>; status?: 'draft' | 'published' },
+  dto: {
+    content?: Record<string, unknown>;
+    status?: 'draft' | 'published';
+    /** The `mmu:version` loaded: 409 if someone else saved since. */
+    expectedVersion?: string;
+  },
 ) =>
   call<AnnotationRow>(one(projectId, annotationId), {
     method: 'PATCH',
