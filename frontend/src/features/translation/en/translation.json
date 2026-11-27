@@ -573,5 +573,18 @@
     "failedShort_one": "Ended early · {{count}} draft kept",
     "failedShort_other": "Ended early · {{count}} drafts kept",
     "dismiss": "Dismiss"
+  },
+  "assistantFeedback": {
+    "up": "Good answer",
+    "down": "Bad answer",
+    "thanks": "Thanks for your feedback",
+    "comment": "What was wrong?",
+    "commentPlaceholder": "What was wrong? (optional)",
+    "send": "Send",
+    "title": "Feedback on answers (👍 {{up}} · 👎 {{down}})",
+    "none": "No feedback in this period.",
+    "tableLabel": "Feedback on answers",
+    "date": "Date",
+    "rating": "Rating"
   }
 }
