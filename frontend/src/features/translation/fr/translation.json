@@ -573,5 +573,6 @@
     "tableLabel": "Retours sur les réponses",
     "date": "Date",
     "rating": "Note"
-  }
+  },
+  "annotationConflict": "Non enregistré : quelqu'un d'autre a modifié cette annotation depuis que vous l'avez ouverte. Copiez votre texte, fermez l'éditeur et rouvrez l'annotation."
 }

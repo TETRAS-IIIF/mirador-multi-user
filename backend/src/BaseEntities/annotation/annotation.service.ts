@@ -23,6 +23,7 @@ import {
   buildAnnotationPage,
   pageItems,
   stripMmuFields,
+  annotationVersion,
   toClientAnnotation,
   withAcceptProvenance,
 } from './annotation.utils';
@@ -469,6 +470,16 @@ export class AnnotationService implements OnApplicationBootstrap {
           throw new NotFoundException(`Annotation ${annotationId} not found`);
         if (caller.assistant && fresh.status !== AnnotationStatus.DRAFT) {
           throw new ForbiddenException('The assistant can only change drafts');
+        }
+        if (
+          dto.expectedVersion &&
+          dto.expectedVersion !== annotationVersion(fresh)
+        ) {
+          throw new ConflictException({
+            message:
+              'This annotation was changed by someone else since you opened it.',
+            current: toClientAnnotation(fresh),
+          });
         }
         if (dto.content !== undefined) {
           if (!dto.content || typeof dto.content !== 'object') {

@@ -586,5 +586,6 @@
     "tableLabel": "Feedback on answers",
     "date": "Date",
     "rating": "Rating"
-  }
+  },
+  "annotationConflict": "Not saved: someone else changed this annotation since you opened it. Copy your text, close the editor and open the annotation again."
 }

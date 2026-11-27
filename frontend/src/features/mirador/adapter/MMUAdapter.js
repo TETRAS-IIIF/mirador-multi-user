@@ -9,6 +9,26 @@ import {
   deleteAnnotations,
   updateAnnotation,
 } from '../api/annotationApi.ts';
+import toast from 'react-hot-toast';
+import { t } from 'i18next';
+
+/**
+ * Versions of the annotations as last loaded or saved (`mmu:version`), per
+ * project: sent back on save, so the server refuses to overwrite an
+ * annotation someone else saved meanwhile. Module-wide because Mirador
+ * creates a new adapter for each call.
+ */
+const versions = new Map();
+const versionKey = (projectId, annotationId) => `${projectId}|${annotationId}`;
+
+/** Records the versions of a page's annotations. */
+function rememberVersions(projectId, page) {
+  (page?.items ?? []).forEach((item) => {
+    if (item?.id && item['mmu:version'] != null) {
+      versions.set(versionKey(projectId, item.id), String(item['mmu:version']));
+    }
+  });
+}
 
 /**
  * Mirador annotation adapter for one canvas page of an MMU project.
@@ -66,10 +86,27 @@ export default class MMUAdapter {
   async update(annotation) {
     const status =
       annotation['mmu:status'] === 'draft' ? undefined : 'published';
-    await updateAnnotation(this.projectId, annotation.id, {
-      content: annotation,
-      status,
-    });
+    const key = versionKey(this.projectId, annotation.id);
+    const expectedVersion = annotation['mmu:version'] ?? versions.get(key);
+    try {
+      const row = await updateAnnotation(this.projectId, annotation.id, {
+        content: annotation,
+        status,
+        ...(expectedVersion != null
+          ? { expectedVersion: String(expectedVersion) }
+          : {}),
+      });
+      if (row?.content?.['mmu:version'] != null) {
+        versions.set(key, String(row.content['mmu:version']));
+      }
+    } catch (error) {
+      // Someone else saved this annotation since it was opened: keep the
+      // editor open (the text is not lost) and say so.
+      if (error instanceof AnnotationApiError && error.status === 409) {
+        toast.error(t('annotationConflict'), { duration: 10000 });
+      }
+      throw error;
+    }
     return this.changed();
   }
 
@@ -130,6 +167,7 @@ export default class MMUAdapter {
       this.showDrafts(),
     );
     if (Array.isArray(pages) && pages.length > 0 && pages[0].content) {
+      rememberVersions(this.projectId, pages[0].content);
       return pages[0].content;
     }
     return this.emptyPage();
