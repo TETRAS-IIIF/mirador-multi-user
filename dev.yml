@@ -4,7 +4,6 @@ services:
     volumes:
       - ./backend/.:/app
       - /app/node_modules
-      - ./migrations:/app/migrations
     command: npm run start:debug
 
   frontend:

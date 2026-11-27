@@ -73,12 +73,7 @@ mirador-multi-user@tetras-libre.fr
 - `cd ..`
 - `docker-compose up --build`
 
-You will eventually get errors related to the database (table settings not existing for example) but it will be fixed in the next step
-
-In another terminal, run following commands to generate the database
-
-- `just migration create init `
-- `just migration run`
+The backend creates the database schema on its first start, and applies new migrations at every start (see [Database migrations](#database-migrations)).
 
 Now you can access (all ports can be customized in the .env file) :
 
@@ -97,12 +92,15 @@ Now you can access (all ports can be customized in the .env file) :
 
 5. `docker-compose up --build`
 
-You will eventually get errors related to the database (table settings not existing for example) but it will be fixed in the next step
+The backend creates the database schema on its first start, and applies new migrations at every start (see [Database migrations](#database-migrations)).
 
-In another terminal, run following commands to generate the database
+### Database migrations
 
-6. `just migration create init `
-7. `just migration run`
+Migrations are committed in `backend/src/migrations` and run when the backend starts (`DB_MIGRATIONS_RUN=false` turns that off).
+
+- Changing an entity: `just migration create <name>`, review the generated file, commit it with the change. CI fails when the entities and the migrations disagree.
+- `just migration check` shows what differs between the database and the code; the backend also logs a warning at startup when they differ.
+- **Existing instance, once, when upgrading to this version** (it had its own uncommitted migrations): after `just up --build -d`, run `just migration check`. If it lists changes, make a dump (`just mysql_dump`), then `just migration sync`: it shows the SQL, warns about anything dropped, and applies it after confirmation.
 
 ### Check if you're installation is ready to use :
 
