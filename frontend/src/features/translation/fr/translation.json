@@ -472,7 +472,8 @@
     "openEditor": "Éditeur d'annotation",
     "save": "Enregistrer",
     "saveAndAccept": "Enregistrer et accepter",
-    "resumed": "Réponse toujours en cours : reprise"
+    "resumed": "Réponse toujours en cours : reprise",
+    "uncertain": "Incertain"
   },
   "assistantUsage": {
     "title": "Utilisation de l'assistant",

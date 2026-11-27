@@ -59,6 +59,7 @@ import { getShowDrafts } from '../draftsState.ts';
 import { applyJobEvent, type JobState, newJob } from '../jobs.ts';
 import { JobDialog } from './JobDialog.tsx';
 import { draftTags, draftText } from '../draftContent.ts';
+import { uncertainty } from '../uncertainty.ts';
 import { AssistantMarkdown } from './AssistantMarkdown.tsx';
 import { pickModel, saveModel, savedModel } from '../modelChoice.ts';
 import {
@@ -879,6 +880,17 @@ export function AssistantPanel({
                               variant="outlined"
                               label={t('assistant.draft')}
                             />
+                            {uncertainty(draft.annotation) && (
+                              <Tooltip title={uncertainty(draft.annotation)}>
+                                <Chip
+                                  size="small"
+                                  color="error"
+                                  variant="outlined"
+                                  data-testid="draft-uncertain"
+                                  label={t('assistant.uncertain')}
+                                />
+                              </Tooltip>
+                            )}
                             {draftTags(draft.annotation).map((tag) => (
                               <Chip key={tag} size="small" label={tag} />
                             ))}

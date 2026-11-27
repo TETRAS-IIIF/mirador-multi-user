@@ -485,7 +485,8 @@
     "openEditor": "Annotation editor",
     "save": "Save",
     "saveAndAccept": "Save and accept",
-    "resumed": "Answer still running: continued"
+    "resumed": "Answer still running: continued",
+    "uncertain": "Uncertain"
   },
   "assistantUsage": {
     "title": "Assistant usage",
