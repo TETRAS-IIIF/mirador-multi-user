@@ -39,3 +39,52 @@ jobs:
 
       - name: Run backend tests
         run: npm test
+
+  migrations:
+    # The committed migrations, applied to an empty database, must give
+    # exactly the schema the entities describe.
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: mariadb:11.8
+        env:
+          MARIADB_ROOT_PASSWORD: ci-root
+          MARIADB_DATABASE: mmu_ci
+          MARIADB_USER: mmu
+          MARIADB_PASSWORD: ci-password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      DB_HOST: 127.0.0.1
+      DB_USER: mmu
+      DB_PASS: ci-password
+      DB_DATABASE: mmu_ci
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: 'backend/package-lock.json'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Apply the migrations to an empty database
+        run: npm run typeorm:run-migrations
+
+      - name: No schema change left without its migration
+        run: npm run typeorm:check-migrations
