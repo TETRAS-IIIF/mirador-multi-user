@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
+  Badge,
   Box,
   Button,
   ButtonBase,
@@ -21,6 +22,7 @@ import StopIcon from '@mui/icons-material/Stop';
 import CloseIcon from '@mui/icons-material/Close';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import RateReviewIcon from '@mui/icons-material/RateReview';
 import CropFreeIcon from '@mui/icons-material/CropFree';
 import { addCompanionWindow } from 'mirador';
 import { useTranslation } from 'react-i18next';
@@ -41,9 +43,12 @@ import {
 } from '../api.ts';
 import {
   acceptAnnotation,
+  countAnnotations,
   deleteAnnotation,
 } from '../../mirador/api/annotationApi.ts';
+import { DraftReviewDialog } from './DraftReviewDialog.tsx';
 import { getShowDrafts } from '../draftsState.ts';
+import { draftTags, draftText } from '../draftContent.ts';
 import { AssistantMarkdown } from './AssistantMarkdown.tsx';
 import { pickModel, saveModel, savedModel } from '../modelChoice.ts';
 import {
@@ -80,29 +85,6 @@ type Item =
       diff: Extract<AssistantEvent, { type: 'manifest_diff' }>;
     }
   | { kind: 'error'; message: string };
-
-type Body = { purpose?: string; value?: unknown };
-
-/** Bodies of a W3C annotation, as an array. */
-const bodiesOf = (annotation: Record<string, unknown>): Body[] => {
-  const body = annotation.body as Body | Body[] | undefined;
-  if (Array.isArray(body)) return body;
-  return body ? [body] : [];
-};
-
-/** Text of a W3C annotation's describing body, without HTML. */
-function draftText(annotation: Record<string, unknown>) {
-  const describing = bodiesOf(annotation).find((b) => b?.purpose !== 'tagging');
-  const html = String(describing?.value ?? '');
-  return (
-    new DOMParser().parseFromString(html, 'text/html').body.textContent ?? ''
-  );
-}
-
-const draftTags = (annotation: Record<string, unknown>) =>
-  bodiesOf(annotation)
-    .filter((b) => b?.purpose === 'tagging')
-    .map((b) => String(b.value));
 
 interface AssistantPanelProps {
   projectId: number;
@@ -161,7 +143,8 @@ export function AssistantPanel({
     let cancelled = false;
     getModels()
       .then((list) => {
-        if (cancelled || !list) return;
+        // An unexpected answer (older or misconfigured assistant) must not break the panel.
+        if (cancelled || !list || !Array.isArray(list.models)) return;
         setModels(list.models);
         setModel(pickModel(savedModel(), list.models, list.default));
       })
@@ -195,6 +178,17 @@ export function AssistantPanel({
   }, [items]);
 
   const showDrafts = useCallback(() => getShowDrafts(projectId), [projectId]);
+  const [draftCount, setDraftCount] = useState(0);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  /** Drafts of the project waiting for review (header badge). */
+  const updateDraftCount = useCallback(() => {
+    countAnnotations({ projectId, status: 'draft' })
+      .then(({ count }) => setDraftCount(count))
+      .catch(() => undefined);
+  }, [projectId]);
+  useEffect(() => {
+    if (!running) updateDraftCount();
+  }, [running, updateDraftCount]);
 
   const onEvent = useCallback(
     (event: AssistantEvent) => {
@@ -400,6 +394,7 @@ export function AssistantPanel({
       else await deleteAnnotation(projectId, draft.annotationId);
       setDraftState(draft.annotationId, accept ? 'accepted' : 'rejected');
       await refreshCanvas(viewer, projectId, draft.canvasId, showDrafts);
+      updateDraftCount();
     } catch (error) {
       console.error(error);
       setItems((prev) => [
@@ -491,6 +486,16 @@ export function AssistantPanel({
               <AutoFixHighIcon />
             </IconButton>
           </span>
+        </Tooltip>
+        <Tooltip title={t('reviewQueue.open')}>
+          <IconButton
+            aria-label={t('reviewQueue.open')}
+            onClick={() => setReviewOpen(true)}
+          >
+            <Badge badgeContent={draftCount} color="warning" max={999}>
+              <RateReviewIcon />
+            </Badge>
+          </IconButton>
         </Tooltip>
         <Tooltip title={t('assistant.newChat')}>
           <span>
@@ -872,6 +877,14 @@ export function AssistantPanel({
         </Typography>
       )}
       {usage && <UsageLine usage={usage} />}
+      <DraftReviewDialog
+        open={reviewOpen}
+        onClose={() => setReviewOpen(false)}
+        projectId={projectId}
+        viewer={viewer}
+        showDrafts={showDrafts}
+        onChanged={updateDraftCount}
+      />
     </Paper>
   );
 }
