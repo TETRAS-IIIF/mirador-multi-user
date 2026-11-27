@@ -19,6 +19,8 @@ import {
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import {
+  type FeedbackList,
+  getFeedback,
   getUsageSummary,
   type UsageSummary,
   type UsageTotals,
@@ -54,6 +56,7 @@ export function AssistantUsageDashboard({
   const [range, setRange] = useState(() => presetRange('thisMonth'));
   const [rawSummary, setSummary] = useState<UsageSummary | null>(null);
   const [error, setError] = useState(false);
+  const [feedback, setFeedback] = useState<FeedbackList | null>(null);
   const [loading, setLoading] = useState(false);
 
   // Current names from MMU's user list, which the admin panel has loaded.
@@ -75,6 +78,10 @@ export function AssistantUsageDashboard({
       .then((s) => !cancelled && setSummary(s))
       .catch(() => !cancelled && setError(true))
       .finally(() => !cancelled && setLoading(false));
+    // Feedback is optional: an older assistant without the route shows none.
+    getFeedback(range.from, range.to)
+      .then((f) => !cancelled && setFeedback(f))
+      .catch(() => !cancelled && setFeedback(null));
     return () => {
       cancelled = true;
     };
@@ -205,7 +212,57 @@ export function AssistantUsageDashboard({
           </Grid>
         </>
       )}
+      {feedback && <FeedbackTable feedback={feedback} />}
     </Stack>
+  );
+}
+
+/** Feedback on answers in the period: what to improve in MMU_AGENT.md. */
+function FeedbackTable({ feedback }: { feedback: FeedbackList }) {
+  const { t, i18n } = useTranslation();
+  return (
+    <Paper variant="outlined" sx={{ p: 2, overflowX: 'auto' }}>
+      <Typography variant="subtitle1" gutterBottom>
+        {t('assistantFeedback.title', {
+          up: feedback.up,
+          down: feedback.down,
+        })}
+      </Typography>
+      {feedback.items.length === 0 ? (
+        <Typography variant="body2" color="text.secondary">
+          {t('assistantFeedback.none')}
+        </Typography>
+      ) : (
+        <Table size="small" aria-label={t('assistantFeedback.tableLabel')}>
+          <TableHead>
+            <TableRow>
+              <TableCell>{t('assistantFeedback.date')}</TableCell>
+              <TableCell>{t('assistantFeedback.rating')}</TableCell>
+              <TableCell>{t('assistantFeedback.comment')}</TableCell>
+              <TableCell>{t('assistantUsage.byUser')}</TableCell>
+              <TableCell>{t('assistantUsage.byProject')}</TableCell>
+              <TableCell>{t('assistantUsage.byModel')}</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {feedback.items.map((f) => (
+              <TableRow key={`${f.runId}-${f.userId}`}>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>
+                  {new Date(f.createdAt).toLocaleString(i18n.language)}
+                </TableCell>
+                <TableCell>{f.rating === 'up' ? '👍' : '👎'}</TableCell>
+                <TableCell sx={{ minWidth: 240 }}>{f.comment ?? ''}</TableCell>
+                <TableCell>{displayName(f.userName, f.userId)}</TableCell>
+                <TableCell>
+                  {displayName(f.projectTitle, f.projectId)}
+                </TableCell>
+                <TableCell>{f.model ?? ''}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
+    </Paper>
   );
 }
 

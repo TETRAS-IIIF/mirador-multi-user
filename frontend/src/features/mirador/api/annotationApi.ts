@@ -112,3 +112,24 @@ export const countAnnotationsByPage = (filter: AnnotationFilter) =>
   call<Record<string, number>>(
     `${base()}/count?${query(filter, { groupBy: 'page' })}`,
   );
+
+/** Annotations of a project matching the filter, oldest first. */
+export const listAnnotations = (filter: AnnotationFilter) =>
+  call<AnnotationRow[]>(`${base()}?${query(filter)}`);
+
+/** An assistant run (or other job) that wrote drafts. */
+export type AnnotationBatch = {
+  id: number;
+  projectId: number;
+  kind: string;
+  model: string;
+  instructions: string | null;
+  status: string;
+  createdAt: string;
+};
+
+/** Batches of a project, newest first. */
+export const listBatches = (projectId: number) =>
+  call<AnnotationBatch[]>(
+    `${import.meta.env.VITE_BACKEND_URL}/annotation-batch?projectId=${projectId}`,
+  );

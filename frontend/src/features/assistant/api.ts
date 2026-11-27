@@ -59,6 +59,13 @@ export type AssistantEvent =
     }
   | { type: 'suggestions'; actions: string[] }
   | {
+      type: 'progress';
+      done: number;
+      total: number;
+      canvasId?: string;
+      label?: string;
+    }
+  | {
       type: 'usage';
       inputTokens: number;
       outputTokens: number;
@@ -83,6 +90,24 @@ const post = async (path: string, body: unknown) => {
   return response.json();
 };
 
+/** Reads an SSE response, calling `onEvent` for each event. */
+async function readEvents(
+  response: Response,
+  onEvent: (event: AssistantEvent) => void,
+) {
+  if (!response.ok || !response.body) {
+    throw new Error(`The assistant answered ${response.status}`);
+  }
+  const parse = createSseParser((data) => onEvent(data as AssistantEvent));
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    parse(decoder.decode(value, { stream: true }));
+  }
+}
+
 /** Sends a message and calls `onEvent` for each streamed event. */
 export async function streamChat(
   body: {
@@ -101,18 +126,87 @@ export async function streamChat(
     body: JSON.stringify(body),
     signal,
   });
-  if (!response.ok || !response.body) {
-    throw new Error(`The assistant answered ${response.status}`);
-  }
-  const parse = createSseParser((data) => onEvent(data as AssistantEvent));
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder();
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    parse(decoder.decode(value, { stream: true }));
-  }
+  await readEvents(response, onEvent);
 }
+
+/** A running or recently finished answer or job (GET /assistant/runs). */
+export type RunSummary = {
+  runId: string;
+  kind: 'chat' | 'job';
+  title: string;
+  startedAt: string;
+  finished: boolean;
+  stopReason: string | null;
+  events: number;
+  progress: Extract<AssistantEvent, { type: 'progress' }> | null;
+};
+
+export async function listRuns(projectId: number): Promise<RunSummary[]> {
+  const response = await fetch(
+    `${ASSISTANT_URL}/assistant/runs?projectId=${projectId}`,
+    { headers: headers(false) },
+  );
+  if (!response.ok) return [];
+  const body = await response.json();
+  return Array.isArray(body?.runs) ? body.runs : [];
+}
+
+/** Follows a run: its events from index `from`, then live until it ends. */
+export async function followRun(
+  runId: string,
+  from: number,
+  onEvent: (event: AssistantEvent) => void,
+  signal?: AbortSignal,
+): Promise<void> {
+  const response = await fetch(
+    `${ASSISTANT_URL}/assistant/runs/${runId}/events?from=${from}`,
+    { headers: headers(false), signal },
+  );
+  await readEvents(response, onEvent);
+}
+
+/** A background job: the same instructions on canvases of a manifest. */
+export type JobRequest = {
+  projectId: number;
+  manifestId: string;
+  canvasIds?: string[];
+  instructions: string;
+  model?: string;
+  language?: string;
+};
+
+export type JobEstimate = {
+  model: string;
+  manifestLabel: string;
+  canvases: { id: string; label: string }[];
+  perCanvasUsd: number;
+  costUsd: number;
+};
+
+/** Error with the assistant's message (e.g. "Manifest … is not in this project"). */
+export class AssistantRequestError extends Error {}
+
+const postJson = async <T>(path: string, body: unknown): Promise<T> => {
+  const response = await fetch(`${ASSISTANT_URL}${path}`, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    const detail = await response.json().catch(() => null);
+    const message = Array.isArray(detail?.message)
+      ? detail.message.join(', ')
+      : (detail?.message ?? `${path} failed (${response.status})`);
+    throw new AssistantRequestError(message);
+  }
+  return response.json();
+};
+
+export const estimateJob = (body: JobRequest) =>
+  postJson<JobEstimate>('/assistant/jobs/estimate', body);
+
+export const startJob = (body: JobRequest) =>
+  postJson<{ runId: string }>('/assistant/jobs', body);
 
 export const stopRun = (runId: string) =>
   post(`/assistant/runs/${runId}/stop`, {});
@@ -219,4 +313,47 @@ export async function getModels(): Promise<{
     headers: headers(false),
   });
   return response.ok ? response.json() : null;
+}
+
+export type Rating = 'up' | 'down';
+
+/** The user's thumbs up or down (and comment) on one of their answers. */
+export const giveFeedback = (runId: string, rating: Rating, comment?: string) =>
+  post(`/assistant/runs/${runId}/feedback`, {
+    rating,
+    ...(comment ? { comment } : {}),
+  });
+
+export type FeedbackList = {
+  from: string;
+  to: string;
+  up: number;
+  down: number;
+  items: {
+    runId: string;
+    rating: Rating;
+    comment: string | null;
+    userId: number;
+    userName: string | null;
+    projectId: number;
+    projectTitle: string | null;
+    model: string | null;
+    createdAt: string;
+  }[];
+};
+
+/** Feedback on answers, MMU admins only (GET /assistant/admin/feedback). */
+export async function getFeedback(
+  from: string,
+  to: string,
+): Promise<FeedbackList> {
+  const query = new URLSearchParams({ from, to });
+  const response = await fetch(
+    `${ASSISTANT_URL}/assistant/admin/feedback?${query}`,
+    { headers: headers(false) },
+  );
+  if (!response.ok) {
+    throw new Error(`/assistant/admin/feedback failed (${response.status})`);
+  }
+  return response.json();
 }
