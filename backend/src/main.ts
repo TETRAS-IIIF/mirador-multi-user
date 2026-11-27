@@ -13,8 +13,10 @@ import { EmailServerService } from './utils/email/email.service';
 import { InternalServerErrorFilter } from './utils/ErrorFilters/InternalServerErrorExceptionFilter';
 import { UsersService } from './BaseEntities/users/users.service';
 import { json } from 'express';
+import { assertEnv } from './config/check-env';
 
 async function bootstrap() {
+  assertEnv();
   const app = await NestFactory.create(AppModule);
 
   app.use(json({ limit: `${parseInt(Process.env.MAX_API_PAYLOAD_SIZE)}mb` }));
