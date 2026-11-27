@@ -5,6 +5,7 @@ import { Project } from 'features/projects/types/types';
 import { User } from 'features/auth/export';
 import Mirador from 'mirador';
 import { draftsPlugins } from './plugins/draftsPlugins.tsx';
+import { liveRefreshPlugin } from './plugins/liveRefreshPlugin.tsx';
 import { DRAFT_MARKER, getShowDrafts } from '../assistant/draftsState.ts';
 
 /**
@@ -16,7 +17,12 @@ function getViewPlugins() {
 }
 
 function getEditionPlugins() {
-  return [...editorPlugins, ManifestListTools, ...draftsPlugins];
+  return [
+    ...editorPlugins,
+    ManifestListTools,
+    ...draftsPlugins,
+    liveRefreshPlugin,
+  ];
 }
 
 export enum MiradorMode {
