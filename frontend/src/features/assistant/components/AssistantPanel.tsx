@@ -9,6 +9,7 @@ import {
   CircularProgress,
   Divider,
   IconButton,
+  LinearProgress,
   MenuItem,
   Paper,
   Select,
@@ -22,6 +23,8 @@ import StopIcon from '@mui/icons-material/Stop';
 import CloseIcon from '@mui/icons-material/Close';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
+import toast from 'react-hot-toast';
 import RateReviewIcon from '@mui/icons-material/RateReview';
 import CropFreeIcon from '@mui/icons-material/CropFree';
 import { addCompanionWindow } from 'mirador';
@@ -33,9 +36,11 @@ import {
   type AssistantEvent,
   type Region,
   type AssistantModel,
+  followRun,
   getHistory,
   getModels,
   getMyUsage,
+  listRuns,
   resetHistory,
   stopRun,
   streamChat,
@@ -51,6 +56,8 @@ import { DraftEditForm } from './DraftEditForm.tsx';
 import { withEditedContent } from '../draftEdit.ts';
 import { DraftReviewDialog } from './DraftReviewDialog.tsx';
 import { getShowDrafts } from '../draftsState.ts';
+import { applyJobEvent, type JobState, newJob } from '../jobs.ts';
+import { JobDialog } from './JobDialog.tsx';
 import { draftTags, draftText } from '../draftContent.ts';
 import { AssistantMarkdown } from './AssistantMarkdown.tsx';
 import { pickModel, saveModel, savedModel } from '../modelChoice.ts';
@@ -122,6 +129,10 @@ export function AssistantPanel({
   const [selectingRegion, setSelectingRegion] = useState(false);
   const stopSelectingRef = useRef<(() => void) | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  // Background jobs of the project, followed while the panel is open.
+  const [jobs, setJobs] = useState<JobState[]>([]);
+  const [jobDialogOpen, setJobDialogOpen] = useState(false);
+  const jobFollowers = useRef(new Map<string, AbortController>());
   const runIdRef = useRef<string | null>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
@@ -362,6 +373,103 @@ export function AssistantPanel({
     }
   };
 
+  /** Follows a background job: progress, drafts, a notification at the end. */
+  const followJob = (runId: string, title: string) => {
+    if (jobFollowers.current.has(runId)) return;
+    const controller = new AbortController();
+    jobFollowers.current.set(runId, controller);
+    setJobs((prev) => [...prev, newJob(runId, title)]);
+    const update = (event: AssistantEvent) =>
+      setJobs((prev) =>
+        prev.map((job) =>
+          job.runId === runId ? applyJobEvent(job, event) : job,
+        ),
+      );
+    let drafts = 0;
+    followRun(
+      runId,
+      0,
+      (event) => {
+        update(event);
+        if (event.type === 'draft') {
+          drafts += 1;
+          // Show the job's drafts on the open canvas as they come.
+          if (viewerContext(viewer).canvasId === event.canvasId) {
+            refreshCanvas(viewer, projectId, event.canvasId, showDrafts).catch(
+              console.error,
+            );
+          }
+        }
+        if (event.type === 'done') {
+          const message = t(
+            event.stopReason === 'cancelled'
+              ? 'assistantJob.stopped'
+              : event.stopReason === 'end_turn'
+                ? 'assistantJob.finished'
+                : 'assistantJob.failed',
+            { title, count: drafts },
+          );
+          if (event.stopReason === 'end_turn') toast.success(message);
+          else toast(message);
+        }
+      },
+      controller.signal,
+    )
+      .catch((error) => {
+        if (!controller.signal.aborted) console.error(error);
+      })
+      .finally(() => jobFollowers.current.delete(runId));
+  };
+
+  /** Takes over an answer still running (e.g. the panel was closed meanwhile). */
+  const resume = async (resumedRunId: string) => {
+    setRunning(true);
+    setRunId(resumedRunId);
+    runIdRef.current = resumedRunId;
+    setItems((prev) => [
+      ...prev,
+      {
+        kind: 'step',
+        id: `resumed-${resumedRunId}`,
+        label: t('assistant.resumed'),
+        status: 'done',
+      },
+    ]);
+    const controller = new AbortController();
+    abortRef.current = controller;
+    try {
+      await followRun(resumedRunId, 0, onEvent, controller.signal);
+    } catch (error) {
+      if (!controller.signal.aborted) console.error(error);
+    } finally {
+      setRunning(false);
+      setRunId(null);
+      runIdRef.current = null;
+    }
+  };
+
+  // On open: follow the project's running jobs, and an answer still running.
+  useEffect(() => {
+    let cancelled = false;
+    const followers = jobFollowers.current;
+    listRuns(projectId)
+      .then((runs) => {
+        if (cancelled) return;
+        runs
+          .filter((run) => run.kind === 'job' && !run.finished)
+          .forEach((run) => followJob(run.runId, run.title));
+        const answer = runs.find((run) => run.kind === 'chat' && !run.finished);
+        if (answer) resume(answer.runId);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+      followers.forEach((controller) => controller.abort());
+      followers.clear();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per project; the functions only use refs and setters
+  }, [projectId]);
+
   const stop = () => {
     if (runId) stopRun(runId).catch(() => abortRef.current?.abort());
     else abortRef.current?.abort();
@@ -528,6 +636,14 @@ export function AssistantPanel({
             </IconButton>
           </span>
         </Tooltip>
+        <Tooltip title={t('assistantJob.open')}>
+          <IconButton
+            aria-label={t('assistantJob.open')}
+            onClick={() => setJobDialogOpen(true)}
+          >
+            <PlaylistPlayIcon />
+          </IconButton>
+        </Tooltip>
         <Tooltip title={t('reviewQueue.open')}>
           <IconButton
             aria-label={t('reviewQueue.open')}
@@ -554,6 +670,67 @@ export function AssistantPanel({
         </IconButton>
       </Stack>
       <Divider />
+      {jobs.length > 0 && (
+        <Stack spacing={1} sx={{ px: 1.5, py: 1 }} data-testid="assistant-jobs">
+          {jobs.map((job) => (
+            <Paper
+              key={job.runId}
+              variant="outlined"
+              sx={{ p: 1 }}
+              data-testid="assistant-job"
+            >
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Typography variant="body2" sx={{ flexGrow: 1 }} noWrap>
+                  {job.title}
+                </Typography>
+                {job.finished ? (
+                  <IconButton
+                    size="small"
+                    aria-label={t('assistantJob.dismiss')}
+                    onClick={() =>
+                      setJobs((prev) =>
+                        prev.filter((j) => j.runId !== job.runId),
+                      )
+                    }
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                ) : (
+                  <Button
+                    size="small"
+                    color="error"
+                    onClick={() => stopRun(job.runId).catch(console.error)}
+                  >
+                    {t('assistant.stop')}
+                  </Button>
+                )}
+              </Stack>
+              <LinearProgress
+                variant={job.total ? 'determinate' : 'indeterminate'}
+                value={job.total ? (100 * job.done) / job.total : 0}
+                sx={{ my: 0.5 }}
+              />
+              <Typography variant="caption" color="text.secondary">
+                {job.finished
+                  ? t(
+                      job.stopReason === 'cancelled'
+                        ? 'assistantJob.stoppedShort'
+                        : job.stopReason === 'end_turn'
+                          ? 'assistantJob.finishedShort'
+                          : 'assistantJob.failedShort',
+                      { count: job.drafts },
+                    )
+                  : t('assistantJob.progress', {
+                      done: job.done,
+                      total: job.total || '…',
+                      label: job.label ?? '',
+                      count: job.drafts,
+                    })}
+              </Typography>
+            </Paper>
+          ))}
+        </Stack>
+      )}
       <Box
         ref={messagesRef}
         data-testid="assistant-messages"
@@ -957,6 +1134,18 @@ export function AssistantPanel({
         </Typography>
       )}
       {usage && <UsageLine usage={usage} />}
+      <JobDialog
+        open={jobDialogOpen}
+        onClose={() => setJobDialogOpen(false)}
+        projectId={projectId}
+        viewer={viewer}
+        model={model}
+        language={language}
+        onStarted={(startedRunId, title) => {
+          followJob(startedRunId, title);
+          toast(t('assistantJob.started', { title }));
+        }}
+      />
       <DraftReviewDialog
         open={reviewOpen}
         onClose={() => setReviewOpen(false)}
