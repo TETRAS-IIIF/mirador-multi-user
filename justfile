@@ -22,6 +22,16 @@ default:
 
 # ─── Deployment and maintenance ──────────────────────────────────────────────
 
+# Create .env for a new production instance: a few questions, secrets generated
+[group('deploy')]
+new-instance:
+    @scripts/new-instance.sh
+
+# Check .env without printing values: missing keys, sample placeholders, short secrets
+[group('deploy')]
+check-env file=".env":
+    @scripts/check-env.sh {{ file }}
+
 # Start Docker services
 [group('deploy')]
 up *args:

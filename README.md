@@ -86,8 +86,8 @@ Now you can access (all ports can be customized in the .env file) :
 
 1. `git clone git@github.com:TETRAS-IIIF/mirador-multi-user.git`
 2. `cd mirador-multi-user`
-3. `cp .env.prod.sample .env`.
-4. Set the required environment variables in the `.env` file. See [ENVIRONMENT.md](ENVIRONMENT.md) for a complete list of environment variables and their descriptions.
+3. `just new-instance`: asks for the domain, the instance name, the administrator and SMTP settings, derives the host and router names, generates the secrets, and writes `.env` (readable by its owner only). `just check-env` checks it again at any time, printing key names only.
+4. Optional settings (OpenID Connect, YouTube, upload limits…) are in `.env` with their defaults; see [ENVIRONMENT.md](ENVIRONMENT.md).
 
 
 5. `docker-compose up --build`
