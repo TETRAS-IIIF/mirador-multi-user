@@ -477,6 +477,7 @@
     "selectRegion": "Ask about a region: drag on the image",
     "selectingRegion": "Drag a rectangle on the image (Esc to cancel)",
     "region": "Region {{x}},{{y}} · {{w}}×{{h}}",
+    "showOnImage": "Show on the image",
     "editText": "Text",
     "editTags": "Tags",
     "editTagsHelp": "Type a tag and press Enter.",
@@ -517,5 +518,27 @@
     "instructions": "Instructions for the assistant in this project",
     "instructionsHelp": "Added to every conversation in this project. {{count}} / {{max}} characters.",
     "instructionsPlaceholder": "E.g. Transcribe in diplomatic form, keep abbreviations. Use the tags person, place, date. Answer in French."
+  },
+  "reviewQueue": {
+    "open": "Review all drafts of the project",
+    "title_one": "{{count}} draft to review",
+    "title_other": "{{count}} drafts to review",
+    "canvas": "Canvas",
+    "batch": "Batch",
+    "tag": "Tag",
+    "all": "All",
+    "show": "Show",
+    "noBatch": "No batch",
+    "noText": "(no text)",
+    "empty": "No draft to review.",
+    "error": "Something went wrong. The list was reloaded.",
+    "shortcuts": "Keyboard: J / K to move, A accept, R reject, S show.",
+    "acceptAll": "Accept all ({{count}})",
+    "rejectAll": "Reject all ({{count}})",
+    "confirmAccept_one": "Accept this draft?",
+    "confirmAccept_other": "Accept these {{count}} drafts?",
+    "confirmReject_one": "Reject (delete) this draft?",
+    "confirmReject_other": "Reject (delete) these {{count}} drafts?",
+    "confirm": "Confirm"
   }
 }

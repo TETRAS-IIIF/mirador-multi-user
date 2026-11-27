@@ -464,6 +464,7 @@
     "selectRegion": "Poser une question sur une zone : tracer sur l'image",
     "selectingRegion": "Tracez un rectangle sur l'image (Échap pour annuler)",
     "region": "Zone {{x}},{{y}} · {{w}}×{{h}}",
+    "showOnImage": "Voir sur l'image",
     "editText": "Texte",
     "editTags": "Tags",
     "editTagsHelp": "Tapez un tag puis Entrée.",
@@ -504,5 +505,27 @@
     "instructions": "Consignes pour l'assistant dans ce projet",
     "instructionsHelp": "Ajoutées à chaque conversation de ce projet. {{count}} / {{max}} caractères.",
     "instructionsPlaceholder": "Ex. : transcrire en diplomatique, garder les abréviations. Utiliser les tags personne, lieu, date. Répondre en français."
+  },
+  "reviewQueue": {
+    "open": "Revoir tous les brouillons du projet",
+    "title_one": "{{count}} brouillon à revoir",
+    "title_other": "{{count}} brouillons à revoir",
+    "canvas": "Canevas",
+    "batch": "Lot",
+    "tag": "Tag",
+    "all": "Tous",
+    "show": "Voir",
+    "noBatch": "Sans lot",
+    "noText": "(sans texte)",
+    "empty": "Aucun brouillon à revoir.",
+    "error": "Une erreur est survenue. La liste a été rechargée.",
+    "shortcuts": "Clavier : J / K pour naviguer, A accepter, R rejeter, S voir.",
+    "acceptAll": "Tout accepter ({{count}})",
+    "rejectAll": "Tout rejeter ({{count}})",
+    "confirmAccept_one": "Accepter ce brouillon ?",
+    "confirmAccept_other": "Accepter ces {{count}} brouillons ?",
+    "confirmReject_one": "Rejeter (supprimer) ce brouillon ?",
+    "confirmReject_other": "Rejeter (supprimer) ces {{count}} brouillons ?",
+    "confirm": "Confirmer"
   }
 }
