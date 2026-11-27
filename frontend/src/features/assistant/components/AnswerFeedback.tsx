@@ -37,7 +37,7 @@ export function AnswerFeedback({ runId }: { runId: string }) {
 
   return (
     <Stack spacing={0.5} data-testid="answer-feedback">
-      <Stack direction="row" spacing={0.5} alignItems="center">
+      <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
         <Tooltip title={t('assistantFeedback.up')}>
           <IconButton
             size="small"
@@ -84,7 +84,7 @@ export function AnswerFeedback({ runId }: { runId: string }) {
         )}
       </Stack>
       {commenting && (
-        <Stack direction="row" spacing={1} alignItems="flex-start">
+        <Stack direction="row" spacing={1} sx={{ alignItems: 'flex-start' }}>
           <TextField
             size="small"
             fullWidth
