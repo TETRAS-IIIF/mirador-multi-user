@@ -476,7 +476,8 @@
     "model": "Model",
     "selectRegion": "Ask about a region: drag on the image",
     "selectingRegion": "Drag a rectangle on the image (Esc to cancel)",
-    "region": "Region {{x}},{{y}} · {{w}}×{{h}}"
+    "region": "Region {{x}},{{y}} · {{w}}×{{h}}",
+    "showOnImage": "Show on the image"
   },
   "assistantUsage": {
     "title": "Assistant usage",

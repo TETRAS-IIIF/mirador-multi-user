@@ -12,6 +12,10 @@ declare module 'mirador' {
     windowId: string,
     annotationIds: string[],
   ) => unknown;
+  export const selectAnnotation: (
+    windowId: string,
+    annotationId: string,
+  ) => unknown;
   export const receiveAnnotation: (
     targetId: string,
     annotationId: string,
