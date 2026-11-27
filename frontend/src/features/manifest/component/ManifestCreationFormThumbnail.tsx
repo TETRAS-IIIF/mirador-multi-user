@@ -34,7 +34,7 @@ export const ManifestCreationFormThumbnail = ({
     <>
       <Grid container sx={{ height: '75px' }}>
         <Paper elevation={3} style={{ padding: '20px', width: '100%' }}>
-          <Grid container spacing={4} alignItems="center">
+          <Grid container spacing={4} sx={{ alignItems: 'center' }}>
             <Grid size={8}>
               <FieldForm
                 name="manifest-thumbnail"

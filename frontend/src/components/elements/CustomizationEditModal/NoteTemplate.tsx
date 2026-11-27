@@ -82,9 +82,13 @@ export const NoteTemplate = ({
   };
 
   return (
-    <Grid container spacing={2} flexDirection="column" sx={{ marginTop: 1 }}>
-      <Grid container spacing={1} flexDirection="column">
-        <Grid container flexDirection="row" alignItems="center" spacing={2}>
+    <Grid container spacing={2} sx={{ flexDirection: 'column', marginTop: 1 }}>
+      <Grid container spacing={1} sx={{ flexDirection: 'column' }}>
+        <Grid
+          container
+          sx={{ flexDirection: 'row', alignItems: 'center' }}
+          spacing={2}
+        >
           <Grid sx={{ marginBottom: 2 }}>
             <Typography>{t('noteTemplateInfo')}</Typography>
           </Grid>
@@ -125,9 +129,9 @@ export const NoteTemplate = ({
         {selectedTemplate && (
           <Grid
             container
-            flexDirection="column"
             spacing={1}
             sx={{
+              flexDirection: 'column',
               display: 'flex',
               height: '100%',
               marginTop: 1,

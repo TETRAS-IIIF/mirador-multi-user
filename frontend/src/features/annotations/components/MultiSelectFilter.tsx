@@ -63,9 +63,9 @@ export const MultiSelectFilter = ({
           </Tooltip>
         );
       }}
-      renderTags={(selected, getTagProps) =>
+      renderValue={(selected, getItemProps) =>
         selected.map((option, index) => {
-          const { key, ...tagProps } = getTagProps({ index });
+          const { key, ...tagProps } = getItemProps({ index });
           return (
             <Tooltip key={key} title={option} placement="top">
               <Chip

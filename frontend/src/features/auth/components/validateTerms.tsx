@@ -1,11 +1,10 @@
-import { Checkbox, FormControlLabel, Grid, Link } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Grid, Link } from '@mui/material';
 import { Layout } from './Layout.tsx';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useValidTerms } from '../api/validTerms.ts';
-import { LoadingButton } from '@mui/lab';
 
 export const ValidateTerms = () => {
   const [checked, setChecked] = useState(false);
@@ -31,9 +30,11 @@ export const ValidateTerms = () => {
     <Layout title={t('validate-terms-title')}>
       <Grid
         container
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
+        sx={{
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
         spacing={3}
       >
         <Grid>
@@ -56,7 +57,7 @@ export const ValidateTerms = () => {
           />
         </Grid>
         <Grid>
-          <LoadingButton
+          <Button
             variant="contained"
             color="primary"
             onClick={handleValidate}
@@ -64,7 +65,7 @@ export const ValidateTerms = () => {
             loading={isPending}
           >
             {t('validateTerms')}
-          </LoadingButton>
+          </Button>
         </Grid>
       </Grid>
     </Layout>

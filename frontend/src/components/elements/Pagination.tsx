@@ -17,7 +17,7 @@ export const PaginationControls = ({
   };
 
   return (
-    <Box display="flex" justifyContent="center">
+    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <Pagination
         count={totalPages}
         page={currentPage}

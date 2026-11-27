@@ -10,12 +10,12 @@ export const Disconnect = () => {
   return (
     <Grid
       container
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
       spacing={1}
-      minHeight={'100vh'}
       sx={{
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
         backgroundImage: theme.palette.backgroundImage,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -25,10 +25,12 @@ export const Disconnect = () => {
     >
       <Grid
         container
-        sx={{ backgroundColor: 'rgba(255, 255, 255, 0.4)' }}
-        justifyContent="center"
-        alignItems="center"
-        flexDirection="column"
+        sx={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          backgroundColor: 'rgba(255, 255, 255, 0.4)',
+        }}
         spacing={1}
       >
         <Grid>

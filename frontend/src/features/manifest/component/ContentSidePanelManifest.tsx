@@ -169,8 +169,7 @@ export const ContentSidePanelManifest = ({
       <Grid
         container
         spacing={1}
-        sx={{ padding: '20px', width: '400px' }}
-        alignItems="center"
+        sx={{ alignItems: 'center', padding: '20px', width: '400px' }}
       >
         <Grid>
           <SearchBar label={t('search')} setFilter={setManifestFilter} />
@@ -250,9 +249,14 @@ export const ContentSidePanelManifest = ({
       ) : (
         <Grid
           container
-          sx={{ minWidth: 400, padding: 1, width: 400, minHeight: 400 }}
-          alignItems={'center'}
-          justifyContent={'center'}
+          sx={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: 400,
+            padding: 1,
+            width: 400,
+            minHeight: 400,
+          }}
         >
           <Typography>{t('noMatchingManifestFilter')}</Typography>
         </Grid>

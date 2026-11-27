@@ -1,8 +1,7 @@
 import { useSendTestMail } from '../api/sendTestMail.ts';
-import { Grid, Typography } from '@mui/material';
+import { Button, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { LoadingButton } from '@mui/lab';
 import { useAppLogs } from '../api/getAppLogs.ts';
 
 export const AdminActions = () => {
@@ -40,7 +39,7 @@ export const AdminActions = () => {
     });
   };
   return (
-    <Grid container spacing={1} flexDirection="column">
+    <Grid container spacing={1} sx={{ flexDirection: 'column' }}>
       <Grid>
         <Typography variant="h6" component="div">
           {t('admin_action_title')}
@@ -48,24 +47,24 @@ export const AdminActions = () => {
       </Grid>
       <Grid container spacing={2}>
         <Grid>
-          <LoadingButton
+          <Button
             size="large"
             variant="contained"
             onClick={handleSendTestMail}
             loading={isPending}
           >
             {t('send_test_mail')}
-          </LoadingButton>
+          </Button>
         </Grid>
         <Grid>
-          <LoadingButton
+          <Button
             size="large"
             variant="contained"
             onClick={handleDownloadAppLogs}
             loading={isDownloading}
           >
             {t('download_logs')}
-          </LoadingButton>
+          </Button>
         </Grid>
       </Grid>
     </Grid>

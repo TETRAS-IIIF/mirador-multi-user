@@ -34,9 +34,11 @@ export const NotConfirmedAccount = () => {
     <Layout title={t('notConfirmedAccountTitle')}>
       <Grid
         container
-        direction="column"
-        justifyContent="center"
-        alignItems="center"
+        sx={{
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
         spacing={2}
       >
         <>

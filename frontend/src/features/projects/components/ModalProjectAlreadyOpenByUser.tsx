@@ -14,13 +14,13 @@ export const ModalProjectAlreadyOpenByUser = ({
 
   return (
     <Box>
-      <Typography variant="h6" mb={2}>
+      <Typography variant="h6" sx={{ mb: 2 }}>
         {t('projectLockedByYouTitle')}
       </Typography>
 
-      <Typography mb={3}>{t('projectLockedByYouInfo')}</Typography>
+      <Typography sx={{ mb: 3 }}>{t('projectLockedByYouInfo')}</Typography>
 
-      <Box display="flex" justifyContent="flex-end" gap={2}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
         <Button onClick={onCancel}>{t('cancel')}</Button>
         <Button variant="contained" color="error" onClick={onConfirm}>
           {t('reopenProject')}

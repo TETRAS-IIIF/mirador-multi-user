@@ -36,8 +36,8 @@ export const TagMaker = ({ project, handleUpdateTags }: TagMakerProps) => {
   };
 
   return (
-    <Grid container spacing={2} flexDirection="column" sx={{ marginTop: 1 }}>
-      <Grid container spacing={1} flexDirection="row">
+    <Grid container spacing={2} sx={{ flexDirection: 'column', marginTop: 1 }}>
+      <Grid container spacing={1} sx={{ flexDirection: 'row' }}>
         <TextField
           label={t('addTag')}
           variant="outlined"

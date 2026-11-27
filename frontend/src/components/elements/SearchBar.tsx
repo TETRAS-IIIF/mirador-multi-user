@@ -91,8 +91,8 @@ export const SearchBar = ({
   };
 
   return (
-    <Grid container flexDirection="column">
-      <Grid container spacing={2} alignItems="center">
+    <Grid container sx={{ flexDirection: 'column' }}>
+      <Grid container spacing={2} sx={{ alignItems: 'center' }}>
         {fetchFunction ? (
           <Grid>
             <Autocomplete

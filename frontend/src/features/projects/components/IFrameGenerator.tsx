@@ -41,17 +41,17 @@ export const IFrameGenerator = ({ snapshotUrl }: IframeGeneratorProps) => {
           setOpenModal={handleIframeModal}
           width={500}
         >
-          <Grid container spacing={2} flexDirection={'column'}>
+          <Grid container spacing={2} sx={{ flexDirection: 'column' }}>
             <Grid>
               <TextField
                 slotProps={{
                   htmlInput: { maxLength: 255 },
+                  input: { readOnly: true },
                 }}
                 label="Iframe Code"
                 multiline
                 fullWidth
                 value={iframeCode}
-                InputProps={{ readOnly: true }}
               />
             </Grid>
             <Grid>

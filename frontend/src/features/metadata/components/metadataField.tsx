@@ -18,7 +18,7 @@ const MetadataField = memo(
   ({ field, value, handleInputChange }: MetadataFieldProps) => {
     return (
       <Grid size={12}>
-        <Grid container alignItems="center" spacing={2}>
+        <Grid container sx={{ alignItems: 'center' }} spacing={2}>
           <Grid size={11}>
             <TextField
               id={field.term}
@@ -28,13 +28,15 @@ const MetadataField = memo(
               variant="outlined"
               value={value}
               onChange={(e) => handleInputChange(field.term, e.target.value)}
-              inputProps={{
-                style: {
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
+              slotProps={{
+                htmlInput: {
+                  style: {
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  },
+                  maxLength: 255,
                 },
-                maxLength: 255,
               }}
             />
           </Grid>

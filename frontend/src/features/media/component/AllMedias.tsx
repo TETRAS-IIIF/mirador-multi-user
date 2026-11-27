@@ -369,12 +369,12 @@ export const AllMedias = ({
 
   return (
     <Box sx={{ padding: 2 }}>
-      <Grid container flexDirection="column" spacing={1}>
+      <Grid container sx={{ flexDirection: 'column' }} spacing={1}>
         <Grid
           container
-          alignItems="center"
-          justifyContent="space-between"
           sx={{
+            alignItems: 'center',
+            justifyContent: 'space-between',
             position: 'sticky',
             top: 0,
             zIndex: 1000,
@@ -406,9 +406,13 @@ export const AllMedias = ({
           <Grid
             container
             spacing={2}
-            sx={{ width: 'auto', paddingTop: 1, paddingBottom: 1 }}
-            alignItems="center"
-            justifyContent="flex-end"
+            sx={{
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              width: 'auto',
+              paddingTop: 1,
+              paddingBottom: 1,
+            }}
           >
             <Grid>
               <SearchBar
@@ -437,7 +441,7 @@ export const AllMedias = ({
           </Grid>
         </Grid>
         {!medias.length && (
-          <Grid container justifyContent={'center'}>
+          <Grid container sx={{ justifyContent: 'center' }}>
             <Typography variant="h6" component="h2">
               {t('noMediaYet')}
             </Typography>
@@ -446,10 +450,9 @@ export const AllMedias = ({
         <Grid
           container
           spacing={1}
-          flexDirection="column"
-          sx={{ marginBottom: '70px' }}
+          sx={{ flexDirection: 'column', marginBottom: '70px' }}
         >
-          <Grid container spacing={1} direction="column">
+          <Grid container spacing={1} sx={{ flexDirection: 'column' }}>
             {medias.length > 0 &&
               (currentPageData.length > 0 ? (
                 currentPageData.map((media: Media) => (
@@ -487,7 +490,7 @@ export const AllMedias = ({
                   </Grid>
                 ))
               ) : (
-                <Grid container justifyContent="center" alignItems="center">
+                <Grid container sx={{ justifyContent: 'center', alignItems: 'center' }}>
                   <Typography variant="h6" component="h2">
                     {t('noMatchingMediaFilter')}
                   </Typography>
@@ -516,7 +519,7 @@ export const AllMedias = ({
           <SpeedDialTooltipOpen actions={actions} />
         </Grid>
       </Grid>
-      <Grid width={'100%'} height={'100%'}>
+      <Grid sx={{ width: '100%', height: '100%' }}>
         <MediaFooter />
       </Grid>
     </Box>

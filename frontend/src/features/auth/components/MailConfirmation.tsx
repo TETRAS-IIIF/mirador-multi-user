@@ -62,9 +62,11 @@ export const MailConfirmation = () => {
         ) : (
           <Grid
             container
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
+            sx={{
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
           >
             <Grid>
               <FormControlLabel
