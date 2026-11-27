@@ -140,8 +140,10 @@ export const ProfileUpdateForm = () => {
       </Typography>
 
       <TextField
-        inputProps={{
+        slotProps={{
+          htmlInput: {
           maxLength: 255,
+        },
         }}
         label={t('name')}
         name="name"
@@ -154,8 +156,10 @@ export const ProfileUpdateForm = () => {
       />
 
       <TextField
-        inputProps={{
+        slotProps={{
+          htmlInput: {
           maxLength: 255,
+        },
         }}
         label={t('mail')}
         name="mail"
@@ -179,7 +183,8 @@ export const ProfileUpdateForm = () => {
             helperText={errors.oldPassword}
             fullWidth
             sx={{ mb: 2 }}
-            InputProps={{
+            slotProps={{
+              input: {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
@@ -194,8 +199,9 @@ export const ProfileUpdateForm = () => {
                   </IconButton>
                 </InputAdornment>
               ),
+            },
+              htmlInput: { maxLength: 255 },
             }}
-            inputProps={{ maxLength: 255 }}
           />
 
           <TextField
@@ -208,7 +214,8 @@ export const ProfileUpdateForm = () => {
             helperText={errors.newPassword}
             fullWidth
             sx={{ mb: 2 }}
-            InputProps={{
+            slotProps={{
+              input: {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
@@ -223,8 +230,9 @@ export const ProfileUpdateForm = () => {
                   </IconButton>
                 </InputAdornment>
               ),
+            },
+              htmlInput: { maxLength: 255 },
             }}
-            inputProps={{ maxLength: 255 }}
           />
 
           <TextField
@@ -237,7 +245,8 @@ export const ProfileUpdateForm = () => {
             helperText={errors.confirmPassword}
             fullWidth
             sx={{ mb: 2 }}
-            InputProps={{
+            slotProps={{
+              input: {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
@@ -252,8 +261,9 @@ export const ProfileUpdateForm = () => {
                   </IconButton>
                 </InputAdornment>
               ),
+            },
+              htmlInput: { maxLength: 255 },
             }}
-            inputProps={{ maxLength: 255 }}
           />
         </>
       )}

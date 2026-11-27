@@ -197,14 +197,14 @@ export const AllGroups = ({
         user={user}
         userPersonalGroup={userPersonalGroup!}
       >
-        <Grid container flexDirection="column">
+        <Grid container sx={{ flexDirection: 'column' }}>
           <Grid
             container
-            justifyContent="flex-end"
             direction="row"
             spacing={2}
-            alignItems="center"
             sx={{
+              justifyContent: 'flex-end',
+              alignItems: 'center',
               position: 'sticky',
               top: 0,
               zIndex: 1000,
@@ -237,14 +237,12 @@ export const AllGroups = ({
           <Grid
             container
             spacing={2}
-            flexDirection="column"
-            sx={{ marginBottom: '40px' }}
+            sx={{ flexDirection: 'column', marginBottom: '40px' }}
           >
             {!groups.length && (
               <Grid
                 container
-                justifyContent={'center'}
-                sx={{ marginTop: '10px' }}
+                sx={{ justifyContent: 'center', marginTop: '10px' }}
               >
                 <Typography variant="h6" component="h2">
                   {t('noGroupYet')}
@@ -294,7 +292,7 @@ export const AllGroups = ({
                   </Grid>
                 ))
               ) : (
-                <Grid container justifyContent="center" alignItems="center">
+                <Grid container sx={{ justifyContent: 'center', alignItems: 'center' }}>
                   <Typography variant="h6" component="h2">
                     {t('noMatchingGroupFilter')}
                   </Typography>

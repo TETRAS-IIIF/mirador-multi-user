@@ -47,7 +47,15 @@ export default defineConfig({
     mainFields: ['module', 'jsnext:main', 'browser', 'main'],
   },
   optimizeDeps: {
-    include: ['react-is', 'hoist-non-react-statics', 'scheduler', 'prop-types'],
+    // react-redux: mirador-annotation-editor (excluded below) imports it
+    // since MAEV 1.6.0; pre-bundle it so MAEV and Mirador share one copy.
+    include: [
+      'react-is',
+      'hoist-non-react-statics',
+      'scheduler',
+      'prop-types',
+      'react-redux',
+    ],
     esbuildOptions: {},
     exclude: ['mirador-annotation-editor'],
   },

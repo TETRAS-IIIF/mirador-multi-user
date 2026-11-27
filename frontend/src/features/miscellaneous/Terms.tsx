@@ -9,12 +9,12 @@ export const Terms = () => {
   return (
     <Grid
       container
-      direction="column"
-      justifyContent="center"
-      alignItems="center"
       spacing={10}
-      minHeight={'100vh'}
       sx={{
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
         backgroundImage: theme.palette.backgroundImage,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -24,9 +24,11 @@ export const Terms = () => {
     >
       <Grid
         container
-        sx={{ backgroundColor: 'rgba(255, 255, 255, 0.4)' }}
-        justifyContent="center"
-        alignItems="center"
+        sx={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(255, 255, 255, 0.4)',
+        }}
       >
         <Grid>
           <CustomTerms></CustomTerms>

@@ -171,8 +171,8 @@ export const SidePanel = ({
           variant="persistent"
           sx={{ position: 'relative', zIndex: 9999 }}
           ModalProps={{
-            BackdropProps: {
-              style: { backgroundColor: 'transparent' },
+            slotProps: {
+              backdrop: { style: { backgroundColor: 'transparent' } },
             },
           }}
         >
@@ -193,8 +193,8 @@ export const SidePanel = ({
           variant="persistent"
           sx={{ position: 'relative', zIndex: 9999 }}
           ModalProps={{
-            BackdropProps: {
-              style: { backgroundColor: 'transparent' },
+            slotProps: {
+              backdrop: { style: { backgroundColor: 'transparent' } },
             },
           }}
         >

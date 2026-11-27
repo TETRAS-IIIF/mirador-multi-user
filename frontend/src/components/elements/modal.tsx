@@ -45,7 +45,13 @@ export const MMUModal = ({
     >
       <Box sx={{ ...style, width: width }}>
         <DialogTitle id="id" sx={{ padding: 0 }}>
-          <Box display="flex" alignItems="center" justifyContent="flex-end">
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+            }}
+          >
             <Box>
               <IconButton
                 onClick={() => setOpenModal(false)}

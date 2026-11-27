@@ -33,7 +33,7 @@ export const LoginForm = () => {
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ width: "100%" }}>
-      <Grid container direction="column" spacing={{ xs: 2, sm: 2.5 }} sx={{ width: "100%" }}>
+      <Grid container spacing={{ xs: 2, sm: 2.5 }} sx={{ flexDirection: 'column', width: "100%" }}>
         <Grid size={12}>
           <FormField
             type="email"

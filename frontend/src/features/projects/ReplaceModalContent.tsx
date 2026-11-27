@@ -45,15 +45,17 @@ export const ReplaceModalContent = ({
   };
 
   return (
-    <Grid container direction="column" spacing={1}>
-      <Typography textAlign="center">{t('replaceWarning')}</Typography>
+    <Grid container sx={{ flexDirection: 'column' }} spacing={1}>
+      <Typography sx={{ textAlign: 'center' }}>
+        {t('replaceWarning')}
+      </Typography>
       <VisuallyHiddenInput
         id="hiddenFileInput"
         type="file"
         onChange={onFileSelect}
       />
 
-      <Grid container justifyContent="center">
+      <Grid container sx={{ justifyContent: 'center' }}>
         <Tooltip title={t('replaceTooltip')} color="primary">
           <IconButton
             onClick={() => document.getElementById('hiddenFileInput')?.click()}

@@ -4,9 +4,12 @@ export const Loading = () => {
   return (
     <Grid
       container
-      justifyContent="center"
-      alignItems="center"
-      sx={{ height: '100vh', width: '100vw' }}
+      sx={{
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        width: '100vw',
+      }}
     >
       <CircularProgress />
     </Grid>

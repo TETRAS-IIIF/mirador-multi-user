@@ -99,7 +99,11 @@ export function AssistantUsageDashboard({
   return (
     <Stack spacing={2} sx={{ m: 1 }} data-testid="assistant-usage-dashboard">
       <Typography variant="h6">{t('assistantUsage.title')}</Typography>
-      <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{ alignItems: 'center', flexWrap: 'wrap' }}
+      >
         <ButtonGroup size="small" variant="outlined">
           {(['thisMonth', 'lastMonth', 'last30'] as const).map((preset) => (
             <Button key={preset} onClick={() => setRange(presetRange(preset))}>
@@ -376,9 +380,14 @@ function CostChart({
   return (
     <Box>
       {models.length > 1 && (
-        <Stack direction="row" spacing={2} sx={{ mb: 1 }} flexWrap="wrap">
+        <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap', mb: 1 }}>
           {models.map((m) => (
-            <Stack key={m} direction="row" spacing={0.5} alignItems="center">
+            <Stack
+              key={m}
+              direction="row"
+              spacing={0.5}
+              sx={{ alignItems: 'center' }}
+            >
               <Box
                 sx={{
                   width: 12,

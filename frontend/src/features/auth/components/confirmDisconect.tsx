@@ -11,7 +11,7 @@ export const ConfirmDisconnect = ({ handleDisconnect }: IConfirmDisconnect) => {
 
   return (
     <Grid container>
-      <Grid container spacing={1} justifyContent="center">
+      <Grid container spacing={1} sx={{ justifyContent: 'center' }}>
         <Grid>
           <Typography>{t('messageDisconnect')}</Typography>
         </Grid>

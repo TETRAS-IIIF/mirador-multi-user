@@ -301,12 +301,12 @@ export const AllProjects = ({
         fetchManifestForUser={fetchManifestForUser}
         display={!!openModalProjectId}
       >
-        <Grid container justifyContent="center" flexDirection="column">
+        <Grid container sx={{ justifyContent: 'center', flexDirection: 'column' }}>
           <Grid
             container
             direction="row-reverse"
-            alignItems="center"
             sx={{
+              alignItems: 'center',
               position: 'sticky',
               top: 0,
               zIndex: 1000,
@@ -317,9 +317,8 @@ export const AllProjects = ({
             {!selectedProjectId && (
               <Grid
                 container
-                justifyContent="flex-end"
                 spacing={2}
-                alignItems="center"
+                sx={{ justifyContent: 'flex-end', alignItems: 'center' }}
               >
                 <Grid>
                   <SearchBar
@@ -352,7 +351,7 @@ export const AllProjects = ({
           </Grid>
           <Grid container spacing={1}>
             {!userProjects.length && (
-              <Grid container justifyContent={'center'} size={12}>
+              <Grid container sx={{ justifyContent: 'center' }} size={12}>
                 <Typography variant="h6" component="h2">
                   {t('messageNoProject')}
                 </Typography>
@@ -362,9 +361,8 @@ export const AllProjects = ({
               <Grid
                 container
                 spacing={1}
-                flexDirection="column"
                 size={12}
-                sx={{ marginBottom: '70px' }}
+                sx={{ flexDirection: 'column', marginBottom: '70px' }}
               >
                 {userProjects.length > 0 &&
                   (currentPageData.length > 0 ? (
@@ -431,7 +429,7 @@ export const AllProjects = ({
                       </Grid>
                     ))
                   ) : (
-                    <Grid container justifyContent="center" alignItems="center">
+                    <Grid container sx={{ justifyContent: 'center', alignItems: 'center' }}>
                       <Typography variant="h6" component="h2">
                         {t('noProjectMatchFilter')}
                       </Typography>

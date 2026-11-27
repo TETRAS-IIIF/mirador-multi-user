@@ -26,10 +26,8 @@ export const ShareLink = ({
       <Grid container spacing={1} sx={{ width: '100%', padding: 0, margin: 0 }}>
         <Grid
           container
-          flexDirection="row"
-          alignItems="center"
           spacing={2}
-          sx={{ width: '100%' }}
+          sx={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}
         >
           <Grid sx={{ width: '100%' }}>
             <SnapShotList

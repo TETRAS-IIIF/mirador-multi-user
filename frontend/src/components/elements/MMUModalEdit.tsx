@@ -689,9 +689,12 @@ export const MMUModalEdit = <
       </Tabs>
       <Grid
         container
-        flexDirection="column"
-        justifyContent="space-between"
-        sx={{ height: '90%', width: '100%' }}
+        sx={{
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          height: '90%',
+          width: '100%',
+        }}
       >
         <CustomTabPanel value={tabValue} index={0}>
           <Grid
@@ -703,13 +706,13 @@ export const MMUModalEdit = <
           >
             <Grid
               sx={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
                 width: '100%',
                 marginTop: '10px',
               }}
               container
-              flexDirection="row"
-              justifyContent="space-between"
-              alignItems="center"
             >
               <TextField
                 slotProps={{
@@ -724,11 +727,14 @@ export const MMUModalEdit = <
               />
             </Grid>
             <Grid
-              sx={{ minHeight: '50px', width: '100%' }}
+              sx={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                minHeight: '50px',
+                width: '100%',
+              }}
               container
-              flexDirection="row"
-              justifyContent="space-between"
-              alignItems="center"
             >
               <TextField
                 slotProps={{
@@ -744,10 +750,13 @@ export const MMUModalEdit = <
               />
             </Grid>
             <Grid
-              sx={{ minHeight: '50px', width: '100%' }}
+              sx={{
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                minHeight: '50px',
+                width: '100%',
+              }}
               container
-              justifyContent="flex-end"
-              alignItems="center"
             >
               <TextField
                 slotProps={{
@@ -768,10 +777,13 @@ export const MMUModalEdit = <
               />
             </Grid>
             <Grid
-              sx={{ minHeight: '50px', width: '100%' }}
+              sx={{
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+                minHeight: '50px',
+                width: '100%',
+              }}
               container
-              justifyContent="flex-start"
-              alignItems="center"
             >
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
@@ -783,10 +795,13 @@ export const MMUModalEdit = <
               </LocalizationProvider>
             </Grid>
             <Grid
-              sx={{ minHeight: '50px', width: '100%' }}
+              sx={{
+                justifyContent: 'flex-end',
+                alignItems: 'center',
+                minHeight: '50px',
+                width: '100%',
+              }}
               container
-              justifyContent="flex-end"
-              alignItems="center"
             >
               <TextField
                 type="text"
@@ -915,8 +930,8 @@ export const MMUModalEdit = <
           <Grid
             container
             spacing={1}
-            flexDirection="column"
             sx={{
+              flexDirection: 'column',
               minHeight: '55px',
               height: '100%',
               overflowY: 'auto',
@@ -960,8 +975,7 @@ export const MMUModalEdit = <
               <Grid
                 container
                 spacing={2}
-                flexDirection="column"
-                sx={{ width: '100%', marginTop: 1 }}
+                sx={{ flexDirection: 'column', width: '100%', marginTop: 1 }}
               >
                 {objectTypes === OBJECT_TYPES.PROJECT && (
                   <SnapshotFactory fetchItems={fetchItems!} item={item} />
@@ -984,12 +998,16 @@ export const MMUModalEdit = <
         {(rights === ITEM_RIGHTS.ADMIN || rights === ITEM_RIGHTS.EDITOR) && (
           <Grid
             container
-            justifyContent="space-between"
-            alignItems="center"
-            flexDirection="row"
-            sx={{ height: '20px', padding: 0, margin: 0 }}
+            sx={{
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexDirection: 'row',
+              height: '20px',
+              padding: 0,
+              margin: 0,
+            }}
           >
-            <Grid container flexDirection="row" spacing={1} columns={4}>
+            <Grid container sx={{ flexDirection: 'row' }} spacing={1} columns={4}>
               <Grid>
                 {rights === ITEM_RIGHTS.ADMIN && tabValue === 0 && (
                   <Tooltip
@@ -1046,9 +1064,11 @@ export const MMUModalEdit = <
             {tabValue != 3 && (
               <Grid
                 container
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="flex-end"
+                sx={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                }}
                 spacing={1}
                 columns={6}
               >

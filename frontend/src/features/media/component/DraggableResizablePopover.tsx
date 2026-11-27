@@ -156,7 +156,8 @@ export const DraggableResizablePopover = ({
       anchorReference="anchorPosition"
       anchorPosition={{ top: Math.round(position.top), left: Math.round(position.left) }}
       sx={{ zIndex: 1300 }}
-      PaperProps={{
+      slotProps={{
+        paper: {
         sx: {
           width: `${size.width}px`,
           height: `${size.height}px`,
@@ -165,6 +166,7 @@ export const DraggableResizablePopover = ({
           borderRadius: 2,
           boxShadow: 6,
         },
+      },
       }}
     >
       <TitleBar onMouseDown={onTitleMouseDown}>

@@ -43,14 +43,22 @@ const ForgotPassword = () => {
       }
     >
       <Container maxWidth="sm">
-        <Box display="flex" justifyContent="center" alignItems="center">
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
           <Box sx={{ p: 4, width: '100%' }}>
-            <Typography variant="body2" alignItems="center" sx={{ mb: 2 }}>
+            <Typography variant="body2" sx={{ alignItems: 'center', mb: 2 }}>
               {t('explanationPasswordReset')}
             </Typography>
             <TextField
-              inputProps={{
-                maxLength: 255,
+              slotProps={{
+                htmlInput: {
+                  maxLength: 255,
+                },
               }}
               data-testid="email-input"
               label={t('mail')}

@@ -76,12 +76,12 @@ export const ResetPassword = () => {
     >
       <Container maxWidth="sm">
         <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3 }}>
-          <Typography variant="h5" alignItems="center" gutterBottom>
+          <Typography variant="h5" sx={{ alignItems: 'center' }} gutterBottom>
             {t('reset-password')}
           </Typography>
 
           <TextField
-            inputProps={{ maxLength: 255 }}
+            slotProps={{ htmlInput: { maxLength: 255 } }}
             label={t('new-password')}
             type="password"
             autoComplete="new-password"
@@ -94,7 +94,7 @@ export const ResetPassword = () => {
           />
 
           <TextField
-            inputProps={{ maxLength: 255 }}
+            slotProps={{ htmlInput: { maxLength: 255 } }}
             label={t('confirm-new-password')}
             type="password"
             autoComplete="new-password"

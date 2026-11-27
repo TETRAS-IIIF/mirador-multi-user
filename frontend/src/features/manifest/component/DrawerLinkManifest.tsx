@@ -1,7 +1,6 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography, } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, FormEvent, useCallback, useRef, useState } from 'react';
-import { LoadingButton } from '@mui/lab';
 import { useTranslation } from 'react-i18next';
 
 interface IDrawerCreateManifestProps {
@@ -82,7 +81,7 @@ export const DrawerLinkManifest = ({
           </Toolbar>
         </AppBar>
         <form onSubmit={handleLinkingManifest}>
-          <Grid container alignItems="center" spacing={2}>
+          <Grid container sx={{ alignItems: 'center' }} spacing={2}>
             <Grid>
               <label>{t('manifestLink')} :</label>
             </Grid>
@@ -98,7 +97,7 @@ export const DrawerLinkManifest = ({
               ></TextField>
             </Grid>
             <Grid>
-              <LoadingButton
+              <Button
                 size="large"
                 variant="contained"
                 onClick={handleLinkingManifest}
@@ -106,7 +105,7 @@ export const DrawerLinkManifest = ({
                 disabled={!manifestLink}
               >
                 {t('linkManifest')}
-              </LoadingButton>
+              </Button>
             </Grid>
           </Grid>
         </form>

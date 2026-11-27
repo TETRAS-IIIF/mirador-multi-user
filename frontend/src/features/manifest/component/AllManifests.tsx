@@ -387,15 +387,14 @@ export const AllManifests = ({
       >
         <Grid
           container
-          flexDirection="column"
           spacing={1}
-          sx={{ paddingTop: 0 }}
+          sx={{ flexDirection: 'column', paddingTop: 0 }}
         >
           <Grid
             container
             direction="row-reverse"
-            alignItems="center"
             sx={{
+              alignItems: 'center',
               position: 'sticky',
               top: 0,
               zIndex: 1000,
@@ -407,9 +406,8 @@ export const AllManifests = ({
             {!createManifestIsOpen && (
               <Grid
                 container
-                justifyContent="flex-end"
                 spacing={2}
-                alignItems="center"
+                sx={{ justifyContent: 'flex-end', alignItems: 'center' }}
               >
                 <Grid>
                   <SearchBar
@@ -462,7 +460,7 @@ export const AllManifests = ({
             </Grid>
           </Grid>
           {!manifests.length && !createManifestIsOpen && (
-            <Grid container justifyContent={'center'}>
+            <Grid container sx={{ justifyContent: 'center' }}>
               <Typography variant="h6" component="h2">
                 {t('no_manifest_yet')}
               </Typography>
@@ -474,8 +472,7 @@ export const AllManifests = ({
               <Grid
                 container
                 spacing={1}
-                flexDirection="column"
-                sx={{ marginBottom: '70px' }}
+                sx={{ flexDirection: 'column', marginBottom: '70px' }}
               >
                 {currentPageData.map((manifest: Manifest) => (
                   <Grid key={manifest.id}>
@@ -486,8 +483,7 @@ export const AllManifests = ({
                       DefaultButton={
                         <Grid
                           container
-                          spacing={1}
-                          flexDirection={'row'}
+                          spacing={1} sx={{ flexDirection: 'row' }}
                           wrap="nowrap"
                         >
                           <Grid>
@@ -566,7 +562,7 @@ export const AllManifests = ({
                 ))}
               </Grid>
             ) : (
-              <Grid container justifyContent="center" alignItems="center">
+              <Grid container sx={{ justifyContent: 'center', alignItems: 'center' }}>
                 <Typography variant="h6" component="h2">
                   {t('noMatchingManifestFilter')}
                 </Typography>
@@ -576,8 +572,11 @@ export const AllManifests = ({
             <Grid
               container
               spacing={2}
-              flexDirection="column"
-              sx={{ marginBottom: '70px', width: '100%' }}
+              sx={{
+                flexDirection: 'column',
+                marginBottom: '70px',
+                width: '100%',
+              }}
             >
               <SidePanel
                 medias={medias}

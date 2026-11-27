@@ -12,9 +12,9 @@ export const CloseButton = ({ text, isSelected }: CloseButtonProps) => {
   return (
     <Grid
       container
-      justifyContent="center"
-      alignItems="center"
       sx={{
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: isSelected
           ? theme.palette.selectedBackground
           : theme.palette.background.paper,

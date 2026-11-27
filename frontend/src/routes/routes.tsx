@@ -24,5 +24,5 @@ export function AppRoutes() {
 
   const content = useRoutes(routes);
 
-  return <Grid minHeight="100vh">{content}</Grid>;
+  return <Grid sx={{ minHeight: '100vh' }}>{content}</Grid>;
 }

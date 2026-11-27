@@ -31,7 +31,7 @@ export function AdminExpandableContent({
   }
 
   return (
-    <Grid container spacing={2} flexDirection="row" sx={{ padding: 1 }}>
+    <Grid container spacing={2} sx={{ flexDirection: 'row', padding: 1 }}>
       <Grid>
         <Button variant="contained" color="primary" onClick={impersonateUser}>
           {t('impersonate')}

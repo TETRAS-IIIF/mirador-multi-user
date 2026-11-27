@@ -34,12 +34,14 @@ export const RenderInput = ({ setting, handleChange }: IRenderInputProps) => {
           label={label}
           value={setting.value}
           onChange={(e) => handleChange(setting.id, e.target.value)}
-          InputProps={{
+          slotProps={{
+            input: {
             endAdornment: (
               <InputAdornment position="end">{t('mb')}</InputAdornment>
             ),
+          },
+            htmlInput: { min: 1 },
           }}
-          inputProps={{ min: 1 }}
         />
       </Tooltip>
     );

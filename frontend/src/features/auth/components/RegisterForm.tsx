@@ -64,10 +64,12 @@ export const RegisterForm = () => {
 
           <Grid
             container
-            direction="column"
-            justifyContent="center"
             spacing={2}
-            maxWidth="1000px"
+            sx={{
+              flexDirection: 'column',
+              justifyContent: 'center',
+              maxWidth: '1000px',
+            }}
           >
             <Grid>
               <FormField

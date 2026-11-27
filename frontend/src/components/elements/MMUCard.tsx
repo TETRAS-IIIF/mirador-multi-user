@@ -208,15 +208,12 @@ const MMUCard = <
 
   return (
     <Card>
-      <Grid container wrap="nowrap" alignItems="center" sx={{ height: 100 }}>
+      <Grid container wrap="nowrap" sx={{ alignItems: 'center', height: 100 }}>
         <Grid
           container
-          alignItems="center"
           wrap="nowrap"
           spacing={1}
-          sx={{
-            width: '100%',
-          }}
+          sx={{ alignItems: 'center', width: '100%' }}
         >
           <Grid size={{ xs: 2, sm: 1 }} sx={{ flexShrink: 0 }}>
             {isLoading ? (
@@ -240,10 +237,12 @@ const MMUCard = <
           </Grid>
 
           <Grid
-            display="flex"
-            alignItems="center"
-            gap={0.5}
-            sx={{ flexShrink: 0 }}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+              flexShrink: 0,
+            }}
           >
             <MMUCardIcon item={item} objectTypes={objectTypes} />
           </Grid>
@@ -316,8 +315,8 @@ const MMUCard = <
         </Grid>
 
         <Grid
-          alignSelf="center"
           sx={{
+            alignSelf: 'center',
             ml: 1,
             flexShrink: 0,
             flexBasis: 300,
@@ -327,9 +326,9 @@ const MMUCard = <
           }}
         >
           <CardActions sx={{ p: 2 }}>
-            <Grid container wrap="nowrap" spacing={1} alignItems="center">
+            <Grid container wrap="nowrap" spacing={1} sx={{ alignItems: 'center' }}>
               {Boolean(id) && (
-                <Grid display="flex" alignItems="center">
+                <Grid sx={{ display: 'flex', alignItems: 'center' }}>
                   {rights === ITEM_RIGHTS.READER ? (
                     <ModalButton
                       tooltipButton={t('removeProjectFromList')}
@@ -353,7 +352,7 @@ const MMUCard = <
                 </Grid>
               )}
               {DefaultButton && (
-                <Grid display="flex" alignItems="center">
+                <Grid sx={{ display: 'flex', alignItems: 'center' }}>
                   {DefaultButton}
                 </Grid>
               )}

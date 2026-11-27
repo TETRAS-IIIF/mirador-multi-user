@@ -36,7 +36,7 @@ const FormField: React.FC<FormFieldProps> = ({
         variant="outlined"
         required={required}
         fullWidth={fullWidth}
-        inputProps={{ maxLength: 255 }}
+        slotProps={{ htmlInput: { maxLength: 255 } }}
         {...register(name, { valueAsNumber })}
         error={!!error}
       />

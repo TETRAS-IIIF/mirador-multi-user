@@ -82,7 +82,7 @@ export const EditorToolbar = ({
       <Typography variant={dense ? 'subtitle2' : 'h6'} sx={{ flex: 1, minWidth: 120 }}>
         {title}
       </Typography>
-      <Stack direction="row" spacing={0.5} alignItems="center">
+      <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
         <IconButton size="small" onClick={onUndo} title={t('undo')}>
           <UndoIcon fontSize="small" />
         </IconButton>

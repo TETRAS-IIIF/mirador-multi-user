@@ -117,7 +117,7 @@ export const MetadataForm = <T extends { id: number }>({
       }}
     >
       {loading ? (
-        <Grid container alignItems="center" justifyContent="center">
+        <Grid container sx={{ alignItems: 'center', justifyContent: 'center' }}>
           <CircularProgress />
         </Grid>
       ) : (
@@ -171,7 +171,10 @@ export const MetadataForm = <T extends { id: number }>({
           {selectedMetadataData && selectedMetadataFormat ? (
             <form style={{ width: '100%' }}>
               {generatingFields ? (
-                <Grid container alignItems="center" justifyContent="center">
+                <Grid
+                  container
+                  sx={{ alignItems: 'center', justifyContent: 'center' }}
+                >
                   <CircularProgress />
                 </Grid>
               ) : (
