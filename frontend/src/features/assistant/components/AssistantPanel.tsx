@@ -45,7 +45,10 @@ import {
   acceptAnnotation,
   countAnnotations,
   deleteAnnotation,
+  updateAnnotation,
 } from '../../mirador/api/annotationApi.ts';
+import { DraftEditForm } from './DraftEditForm.tsx';
+import { withEditedContent } from '../draftEdit.ts';
 import { DraftReviewDialog } from './DraftReviewDialog.tsx';
 import { getShowDrafts } from '../draftsState.ts';
 import { draftTags, draftText } from '../draftContent.ts';
@@ -404,6 +407,44 @@ export function AssistantPanel({
     }
   };
 
+  /** Draft being edited in its card, and whether it's being saved. */
+  const [editingDraft, setEditingDraft] = useState<string | null>(null);
+  const [savingDraft, setSavingDraft] = useState(false);
+
+  /** Saves the text and tags edited in the card; optionally accepts. */
+  const saveDraftEdit = async (
+    draft: DraftEvent,
+    text: string,
+    tags: string[],
+    accept: boolean,
+  ) => {
+    setSavingDraft(true);
+    try {
+      const row = await updateAnnotation(projectId, draft.annotationId, {
+        content: withEditedContent(draft.annotation, text, tags),
+      });
+      const edited = { ...draft, annotation: row.content };
+      setItems((prev) =>
+        prev.map((i) =>
+          i.kind === 'draft' && i.draft.annotationId === draft.annotationId
+            ? { ...i, draft: edited }
+            : i,
+        ),
+      );
+      setEditingDraft(null);
+      if (accept) await decideDraft(edited, true);
+      else await refreshCanvas(viewer, projectId, draft.canvasId, showDrafts);
+    } catch (error) {
+      console.error(error);
+      setItems((prev) => [
+        ...prev,
+        { kind: 'error', message: t('assistant.actionFailed') },
+      ]);
+    } finally {
+      setSavingDraft(false);
+    }
+  };
+
   const editDraft = (draft: DraftEvent) => {
     const window = activeWindow(viewer);
     if (!window) return;
@@ -589,83 +630,122 @@ export function AssistantPanel({
                     data-testid="draft-card"
                   >
                     <Stack spacing={1}>
-                      <ButtonBase
-                        aria-label={t('assistant.showOnImage')}
-                        title={t('assistant.showOnImage')}
-                        data-testid="draft-show"
-                        onClick={() =>
-                          showAnnotation(viewer, {
-                            id: draft.annotationId,
-                            canvasId: draft.canvasId,
-                            target: draft.annotation.target,
-                          })
-                        }
-                        sx={{
-                          alignItems: 'stretch',
-                          borderRadius: 1,
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: 1,
-                          textAlign: 'left',
-                          '&:hover': { bgcolor: 'action.hover' },
-                        }}
-                      >
-                        {draft.cropUrl && (
-                          <img
-                            src={draft.cropUrl}
-                            alt=""
-                            style={{
-                              maxWidth: '100%',
-                              maxHeight: 160,
-                              objectFit: 'contain',
+                      {editingDraft === draft.annotationId &&
+                      item.state === 'pending' ? (
+                        <>
+                          {draft.cropUrl && (
+                            <img
+                              src={draft.cropUrl}
+                              alt=""
+                              style={{
+                                maxWidth: '100%',
+                                maxHeight: 160,
+                                objectFit: 'contain',
+                              }}
+                            />
+                          )}
+                          <DraftEditForm
+                            content={draft.annotation}
+                            busy={savingDraft}
+                            onCancel={() => setEditingDraft(null)}
+                            onSave={(text, tags, accept) =>
+                              saveDraftEdit(draft, text, tags, accept)
+                            }
+                            onOpenEditor={() => {
+                              setEditingDraft(null);
+                              editDraft(draft);
                             }}
                           />
-                        )}
-                        <Typography variant="body2">
-                          {draftText(draft.annotation)}
-                        </Typography>
-                      </ButtonBase>
-                      <Stack direction="row" spacing={0.5} flexWrap="wrap">
-                        <Chip
-                          size="small"
-                          color="warning"
-                          variant="outlined"
-                          label={t('assistant.draft')}
-                        />
-                        {draftTags(draft.annotation).map((tag) => (
-                          <Chip key={tag} size="small" label={tag} />
-                        ))}
-                      </Stack>
-                      {item.state === 'pending' ? (
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          justifyContent="flex-end"
-                        >
-                          <Button
-                            size="small"
-                            color="inherit"
-                            onClick={() => decideDraft(draft, false)}
-                          >
-                            {t('assistant.reject')}
-                          </Button>
-                          <Button size="small" onClick={() => editDraft(draft)}>
-                            {t('assistant.edit')}
-                          </Button>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            onClick={() => decideDraft(draft, true)}
-                          >
-                            {t('assistant.accept')}
-                          </Button>
-                        </Stack>
+                        </>
                       ) : (
-                        <Typography variant="caption" color="text.secondary">
-                          {item.state === 'accepted'
-                            ? t('assistant.accepted')
-                            : t('assistant.rejected')}
-                        </Typography>
+                        <>
+                          <ButtonBase
+                            aria-label={t('assistant.showOnImage')}
+                            title={t('assistant.showOnImage')}
+                            data-testid="draft-show"
+                            onClick={() =>
+                              showAnnotation(viewer, {
+                                id: draft.annotationId,
+                                canvasId: draft.canvasId,
+                                target: draft.annotation.target,
+                              })
+                            }
+                            sx={{
+                              alignItems: 'stretch',
+                              borderRadius: 1,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 1,
+                              textAlign: 'left',
+                              '&:hover': { bgcolor: 'action.hover' },
+                            }}
+                          >
+                            {draft.cropUrl && (
+                              <img
+                                src={draft.cropUrl}
+                                alt=""
+                                style={{
+                                  maxWidth: '100%',
+                                  maxHeight: 160,
+                                  objectFit: 'contain',
+                                }}
+                              />
+                            )}
+                            <Typography variant="body2">
+                              {draftText(draft.annotation)}
+                            </Typography>
+                          </ButtonBase>
+                          <Stack direction="row" spacing={0.5} flexWrap="wrap">
+                            <Chip
+                              size="small"
+                              color="warning"
+                              variant="outlined"
+                              label={t('assistant.draft')}
+                            />
+                            {draftTags(draft.annotation).map((tag) => (
+                              <Chip key={tag} size="small" label={tag} />
+                            ))}
+                          </Stack>
+                          {item.state === 'pending' ? (
+                            <Stack
+                              direction="row"
+                              spacing={1}
+                              justifyContent="flex-end"
+                            >
+                              <Button
+                                size="small"
+                                color="inherit"
+                                onClick={() => decideDraft(draft, false)}
+                              >
+                                {t('assistant.reject')}
+                              </Button>
+                              <Button
+                                size="small"
+                                onClick={() =>
+                                  setEditingDraft(draft.annotationId)
+                                }
+                              >
+                                {t('assistant.edit')}
+                              </Button>
+                              <Button
+                                size="small"
+                                variant="contained"
+                                onClick={() => decideDraft(draft, true)}
+                              >
+                                {t('assistant.accept')}
+                              </Button>
+                            </Stack>
+                          ) : (
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                            >
+                              {item.state === 'accepted'
+                                ? t('assistant.accepted')
+                                : t('assistant.rejected')}
+                            </Typography>
+                          )}
+                        </>
                       )}
                     </Stack>
                   </Paper>

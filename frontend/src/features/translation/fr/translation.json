@@ -464,7 +464,14 @@
     "selectRegion": "Poser une question sur une zone : tracer sur l'image",
     "selectingRegion": "Tracez un rectangle sur l'image (Échap pour annuler)",
     "region": "Zone {{x}},{{y}} · {{w}}×{{h}}",
-    "showOnImage": "Voir sur l'image"
+    "showOnImage": "Voir sur l'image",
+    "editText": "Texte",
+    "editTags": "Tags",
+    "editTagsHelp": "Tapez un tag puis Entrée.",
+    "editFormatting": "La mise en forme (gras, listes, liens) est réduite à des paragraphes si vous enregistrez ici. Utilisez l'éditeur d'annotation pour la garder.",
+    "openEditor": "Éditeur d'annotation",
+    "save": "Enregistrer",
+    "saveAndAccept": "Enregistrer et accepter"
   },
   "assistantUsage": {
     "title": "Utilisation de l'assistant",
