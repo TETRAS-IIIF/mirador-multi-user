@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
+  Badge,
   Box,
   Button,
+  ButtonBase,
   Chip,
   CircularProgress,
   Divider,
   IconButton,
+  LinearProgress,
   MenuItem,
   Paper,
   Select,
@@ -20,6 +23,9 @@ import StopIcon from '@mui/icons-material/Stop';
 import CloseIcon from '@mui/icons-material/Close';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import PlaylistPlayIcon from '@mui/icons-material/PlaylistPlay';
+import toast from 'react-hot-toast';
+import RateReviewIcon from '@mui/icons-material/RateReview';
 import CropFreeIcon from '@mui/icons-material/CropFree';
 import { addCompanionWindow } from 'mirador';
 import { useTranslation } from 'react-i18next';
@@ -30,9 +36,11 @@ import {
   type AssistantEvent,
   type Region,
   type AssistantModel,
+  followRun,
   getHistory,
   getModels,
   getMyUsage,
+  listRuns,
   resetHistory,
   stopRun,
   streamChat,
@@ -40,9 +48,17 @@ import {
 } from '../api.ts';
 import {
   acceptAnnotation,
+  countAnnotations,
   deleteAnnotation,
+  updateAnnotation,
 } from '../../mirador/api/annotationApi.ts';
+import { DraftEditForm } from './DraftEditForm.tsx';
+import { withEditedContent } from '../draftEdit.ts';
+import { DraftReviewDialog } from './DraftReviewDialog.tsx';
 import { getShowDrafts } from '../draftsState.ts';
+import { applyJobEvent, type JobState, newJob } from '../jobs.ts';
+import { JobDialog } from './JobDialog.tsx';
+import { draftTags, draftText } from '../draftContent.ts';
 import { uncertainty } from '../uncertainty.ts';
 import { AssistantMarkdown } from './AssistantMarkdown.tsx';
 import { pickModel, saveModel, savedModel } from '../modelChoice.ts';
@@ -51,6 +67,7 @@ import {
   clearRegionOverlay,
   refreshCanvas,
   runViewerAction,
+  showAnnotation,
   selectRegion,
   viewerContext,
 } from '../viewerBridge.ts';
@@ -79,29 +96,6 @@ type Item =
       diff: Extract<AssistantEvent, { type: 'manifest_diff' }>;
     }
   | { kind: 'error'; message: string };
-
-type Body = { purpose?: string; value?: unknown };
-
-/** Bodies of a W3C annotation, as an array. */
-const bodiesOf = (annotation: Record<string, unknown>): Body[] => {
-  const body = annotation.body as Body | Body[] | undefined;
-  if (Array.isArray(body)) return body;
-  return body ? [body] : [];
-};
-
-/** Text of a W3C annotation's describing body, without HTML. */
-function draftText(annotation: Record<string, unknown>) {
-  const describing = bodiesOf(annotation).find((b) => b?.purpose !== 'tagging');
-  const html = String(describing?.value ?? '');
-  return (
-    new DOMParser().parseFromString(html, 'text/html').body.textContent ?? ''
-  );
-}
-
-const draftTags = (annotation: Record<string, unknown>) =>
-  bodiesOf(annotation)
-    .filter((b) => b?.purpose === 'tagging')
-    .map((b) => String(b.value));
 
 interface AssistantPanelProps {
   projectId: number;
@@ -136,6 +130,10 @@ export function AssistantPanel({
   const [selectingRegion, setSelectingRegion] = useState(false);
   const stopSelectingRef = useRef<(() => void) | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  // Background jobs of the project, followed while the panel is open.
+  const [jobs, setJobs] = useState<JobState[]>([]);
+  const [jobDialogOpen, setJobDialogOpen] = useState(false);
+  const jobFollowers = useRef(new Map<string, AbortController>());
   const runIdRef = useRef<string | null>(null);
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
@@ -160,7 +158,8 @@ export function AssistantPanel({
     let cancelled = false;
     getModels()
       .then((list) => {
-        if (cancelled || !list) return;
+        // An unexpected answer (older or misconfigured assistant) must not break the panel.
+        if (cancelled || !list || !Array.isArray(list.models)) return;
         setModels(list.models);
         setModel(pickModel(savedModel(), list.models, list.default));
       })
@@ -194,6 +193,17 @@ export function AssistantPanel({
   }, [items]);
 
   const showDrafts = useCallback(() => getShowDrafts(projectId), [projectId]);
+  const [draftCount, setDraftCount] = useState(0);
+  const [reviewOpen, setReviewOpen] = useState(false);
+  /** Drafts of the project waiting for review (header badge). */
+  const updateDraftCount = useCallback(() => {
+    countAnnotations({ projectId, status: 'draft' })
+      .then(({ count }) => setDraftCount(count))
+      .catch(() => undefined);
+  }, [projectId]);
+  useEffect(() => {
+    if (!running) updateDraftCount();
+  }, [running, updateDraftCount]);
 
   const onEvent = useCallback(
     (event: AssistantEvent) => {
@@ -364,6 +374,103 @@ export function AssistantPanel({
     }
   };
 
+  /** Follows a background job: progress, drafts, a notification at the end. */
+  const followJob = (runId: string, title: string) => {
+    if (jobFollowers.current.has(runId)) return;
+    const controller = new AbortController();
+    jobFollowers.current.set(runId, controller);
+    setJobs((prev) => [...prev, newJob(runId, title)]);
+    const update = (event: AssistantEvent) =>
+      setJobs((prev) =>
+        prev.map((job) =>
+          job.runId === runId ? applyJobEvent(job, event) : job,
+        ),
+      );
+    let drafts = 0;
+    followRun(
+      runId,
+      0,
+      (event) => {
+        update(event);
+        if (event.type === 'draft') {
+          drafts += 1;
+          // Show the job's drafts on the open canvas as they come.
+          if (viewerContext(viewer).canvasId === event.canvasId) {
+            refreshCanvas(viewer, projectId, event.canvasId, showDrafts).catch(
+              console.error,
+            );
+          }
+        }
+        if (event.type === 'done') {
+          const message = t(
+            event.stopReason === 'cancelled'
+              ? 'assistantJob.stopped'
+              : event.stopReason === 'end_turn'
+                ? 'assistantJob.finished'
+                : 'assistantJob.failed',
+            { title, count: drafts },
+          );
+          if (event.stopReason === 'end_turn') toast.success(message);
+          else toast(message);
+        }
+      },
+      controller.signal,
+    )
+      .catch((error) => {
+        if (!controller.signal.aborted) console.error(error);
+      })
+      .finally(() => jobFollowers.current.delete(runId));
+  };
+
+  /** Takes over an answer still running (e.g. the panel was closed meanwhile). */
+  const resume = async (resumedRunId: string) => {
+    setRunning(true);
+    setRunId(resumedRunId);
+    runIdRef.current = resumedRunId;
+    setItems((prev) => [
+      ...prev,
+      {
+        kind: 'step',
+        id: `resumed-${resumedRunId}`,
+        label: t('assistant.resumed'),
+        status: 'done',
+      },
+    ]);
+    const controller = new AbortController();
+    abortRef.current = controller;
+    try {
+      await followRun(resumedRunId, 0, onEvent, controller.signal);
+    } catch (error) {
+      if (!controller.signal.aborted) console.error(error);
+    } finally {
+      setRunning(false);
+      setRunId(null);
+      runIdRef.current = null;
+    }
+  };
+
+  // On open: follow the project's running jobs, and an answer still running.
+  useEffect(() => {
+    let cancelled = false;
+    const followers = jobFollowers.current;
+    listRuns(projectId)
+      .then((runs) => {
+        if (cancelled) return;
+        runs
+          .filter((run) => run.kind === 'job' && !run.finished)
+          .forEach((run) => followJob(run.runId, run.title));
+        const answer = runs.find((run) => run.kind === 'chat' && !run.finished);
+        if (answer) resume(answer.runId);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+      followers.forEach((controller) => controller.abort());
+      followers.clear();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per project; the functions only use refs and setters
+  }, [projectId]);
+
   const stop = () => {
     if (runId) stopRun(runId).catch(() => abortRef.current?.abort());
     else abortRef.current?.abort();
@@ -399,12 +506,51 @@ export function AssistantPanel({
       else await deleteAnnotation(projectId, draft.annotationId);
       setDraftState(draft.annotationId, accept ? 'accepted' : 'rejected');
       await refreshCanvas(viewer, projectId, draft.canvasId, showDrafts);
+      updateDraftCount();
     } catch (error) {
       console.error(error);
       setItems((prev) => [
         ...prev,
         { kind: 'error', message: t('assistant.actionFailed') },
       ]);
+    }
+  };
+
+  /** Draft being edited in its card, and whether it's being saved. */
+  const [editingDraft, setEditingDraft] = useState<string | null>(null);
+  const [savingDraft, setSavingDraft] = useState(false);
+
+  /** Saves the text and tags edited in the card; optionally accepts. */
+  const saveDraftEdit = async (
+    draft: DraftEvent,
+    text: string,
+    tags: string[],
+    accept: boolean,
+  ) => {
+    setSavingDraft(true);
+    try {
+      const row = await updateAnnotation(projectId, draft.annotationId, {
+        content: withEditedContent(draft.annotation, text, tags),
+      });
+      const edited = { ...draft, annotation: row.content };
+      setItems((prev) =>
+        prev.map((i) =>
+          i.kind === 'draft' && i.draft.annotationId === draft.annotationId
+            ? { ...i, draft: edited }
+            : i,
+        ),
+      );
+      setEditingDraft(null);
+      if (accept) await decideDraft(edited, true);
+      else await refreshCanvas(viewer, projectId, draft.canvasId, showDrafts);
+    } catch (error) {
+      console.error(error);
+      setItems((prev) => [
+        ...prev,
+        { kind: 'error', message: t('assistant.actionFailed') },
+      ]);
+    } finally {
+      setSavingDraft(false);
     }
   };
 
@@ -491,6 +637,24 @@ export function AssistantPanel({
             </IconButton>
           </span>
         </Tooltip>
+        <Tooltip title={t('assistantJob.open')}>
+          <IconButton
+            aria-label={t('assistantJob.open')}
+            onClick={() => setJobDialogOpen(true)}
+          >
+            <PlaylistPlayIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={t('reviewQueue.open')}>
+          <IconButton
+            aria-label={t('reviewQueue.open')}
+            onClick={() => setReviewOpen(true)}
+          >
+            <Badge badgeContent={draftCount} color="warning" max={999}>
+              <RateReviewIcon />
+            </Badge>
+          </IconButton>
+        </Tooltip>
         <Tooltip title={t('assistant.newChat')}>
           <span>
             <IconButton
@@ -507,6 +671,67 @@ export function AssistantPanel({
         </IconButton>
       </Stack>
       <Divider />
+      {jobs.length > 0 && (
+        <Stack spacing={1} sx={{ px: 1.5, py: 1 }} data-testid="assistant-jobs">
+          {jobs.map((job) => (
+            <Paper
+              key={job.runId}
+              variant="outlined"
+              sx={{ p: 1 }}
+              data-testid="assistant-job"
+            >
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <Typography variant="body2" sx={{ flexGrow: 1 }} noWrap>
+                  {job.title}
+                </Typography>
+                {job.finished ? (
+                  <IconButton
+                    size="small"
+                    aria-label={t('assistantJob.dismiss')}
+                    onClick={() =>
+                      setJobs((prev) =>
+                        prev.filter((j) => j.runId !== job.runId),
+                      )
+                    }
+                  >
+                    <CloseIcon fontSize="small" />
+                  </IconButton>
+                ) : (
+                  <Button
+                    size="small"
+                    color="error"
+                    onClick={() => stopRun(job.runId).catch(console.error)}
+                  >
+                    {t('assistant.stop')}
+                  </Button>
+                )}
+              </Stack>
+              <LinearProgress
+                variant={job.total ? 'determinate' : 'indeterminate'}
+                value={job.total ? (100 * job.done) / job.total : 0}
+                sx={{ my: 0.5 }}
+              />
+              <Typography variant="caption" color="text.secondary">
+                {job.finished
+                  ? t(
+                      job.stopReason === 'cancelled'
+                        ? 'assistantJob.stoppedShort'
+                        : job.stopReason === 'end_turn'
+                          ? 'assistantJob.finishedShort'
+                          : 'assistantJob.failedShort',
+                      { count: job.drafts },
+                    )
+                  : t('assistantJob.progress', {
+                      done: job.done,
+                      total: job.total || '…',
+                      label: job.label ?? '',
+                      count: job.drafts,
+                    })}
+              </Typography>
+            </Paper>
+          ))}
+        </Stack>
+      )}
       <Box
         ref={messagesRef}
         data-testid="assistant-messages"
@@ -583,72 +808,133 @@ export function AssistantPanel({
                     data-testid="draft-card"
                   >
                     <Stack spacing={1}>
-                      {draft.cropUrl && (
-                        <img
-                          src={draft.cropUrl}
-                          alt=""
-                          style={{
-                            maxWidth: '100%',
-                            maxHeight: 160,
-                            objectFit: 'contain',
-                          }}
-                        />
-                      )}
-                      <Typography variant="body2">
-                        {draftText(draft.annotation)}
-                      </Typography>
-                      <Stack direction="row" spacing={0.5} flexWrap="wrap">
-                        <Chip
-                          size="small"
-                          color="warning"
-                          variant="outlined"
-                          label={t('assistant.draft')}
-                        />
-                        {uncertainty(draft.annotation) && (
-                          <Tooltip title={uncertainty(draft.annotation)}>
+                      {editingDraft === draft.annotationId &&
+                      item.state === 'pending' ? (
+                        <>
+                          {draft.cropUrl && (
+                            <img
+                              src={draft.cropUrl}
+                              alt=""
+                              style={{
+                                maxWidth: '100%',
+                                maxHeight: 160,
+                                objectFit: 'contain',
+                              }}
+                            />
+                          )}
+                          <DraftEditForm
+                            content={draft.annotation}
+                            busy={savingDraft}
+                            onCancel={() => setEditingDraft(null)}
+                            onSave={(text, tags, accept) =>
+                              saveDraftEdit(draft, text, tags, accept)
+                            }
+                            onOpenEditor={() => {
+                              setEditingDraft(null);
+                              editDraft(draft);
+                            }}
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <ButtonBase
+                            aria-label={t('assistant.showOnImage')}
+                            title={t('assistant.showOnImage')}
+                            data-testid="draft-show"
+                            onClick={() =>
+                              showAnnotation(viewer, {
+                                id: draft.annotationId,
+                                canvasId: draft.canvasId,
+                                target: draft.annotation.target,
+                              })
+                            }
+                            sx={{
+                              alignItems: 'stretch',
+                              borderRadius: 1,
+                              display: 'flex',
+                              flexDirection: 'column',
+                              gap: 1,
+                              textAlign: 'left',
+                              '&:hover': { bgcolor: 'action.hover' },
+                            }}
+                          >
+                            {draft.cropUrl && (
+                              <img
+                                src={draft.cropUrl}
+                                alt=""
+                                style={{
+                                  maxWidth: '100%',
+                                  maxHeight: 160,
+                                  objectFit: 'contain',
+                                }}
+                              />
+                            )}
+                            <Typography variant="body2">
+                              {draftText(draft.annotation)}
+                            </Typography>
+                          </ButtonBase>
+                          <Stack direction="row" spacing={0.5} flexWrap="wrap">
                             <Chip
                               size="small"
-                              color="error"
+                              color="warning"
                               variant="outlined"
-                              data-testid="draft-uncertain"
-                              label={t('assistant.uncertain')}
+                              label={t('assistant.draft')}
                             />
-                          </Tooltip>
-                        )}
-                        {draftTags(draft.annotation).map((tag) => (
-                          <Chip key={tag} size="small" label={tag} />
-                        ))}
-                      </Stack>
-                      {item.state === 'pending' ? (
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          justifyContent="flex-end"
-                        >
-                          <Button
-                            size="small"
-                            color="inherit"
-                            onClick={() => decideDraft(draft, false)}
-                          >
-                            {t('assistant.reject')}
-                          </Button>
-                          <Button size="small" onClick={() => editDraft(draft)}>
-                            {t('assistant.edit')}
-                          </Button>
-                          <Button
-                            size="small"
-                            variant="contained"
-                            onClick={() => decideDraft(draft, true)}
-                          >
-                            {t('assistant.accept')}
-                          </Button>
-                        </Stack>
-                      ) : (
-                        <Typography variant="caption" color="text.secondary">
-                          {item.state === 'accepted'
-                            ? t('assistant.accepted')
-                            : t('assistant.rejected')}
-                        </Typography>
+                            {uncertainty(draft.annotation) && (
+                              <Tooltip title={uncertainty(draft.annotation)}>
+                                <Chip
+                                  size="small"
+                                  color="error"
+                                  variant="outlined"
+                                  data-testid="draft-uncertain"
+                                  label={t('assistant.uncertain')}
+                                />
+                              </Tooltip>
+                            )}
+                            {draftTags(draft.annotation).map((tag) => (
+                              <Chip key={tag} size="small" label={tag} />
+                            ))}
+                          </Stack>
+                          {item.state === 'pending' ? (
+                            <Stack
+                              direction="row"
+                              spacing={1}
+                              justifyContent="flex-end"
+                            >
+                              <Button
+                                size="small"
+                                color="inherit"
+                                onClick={() => decideDraft(draft, false)}
+                              >
+                                {t('assistant.reject')}
+                              </Button>
+                              <Button
+                                size="small"
+                                onClick={() =>
+                                  setEditingDraft(draft.annotationId)
+                                }
+                              >
+                                {t('assistant.edit')}
+                              </Button>
+                              <Button
+                                size="small"
+                                variant="contained"
+                                onClick={() => decideDraft(draft, true)}
+                              >
+                                {t('assistant.accept')}
+                              </Button>
+                            </Stack>
+                          ) : (
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                            >
+                              {item.state === 'accepted'
+                                ? t('assistant.accepted')
+                                : t('assistant.rejected')}
+                            </Typography>
+                          )}
+                        </>
                       )}
                     </Stack>
                   </Paper>
@@ -860,6 +1146,26 @@ export function AssistantPanel({
         </Typography>
       )}
       {usage && <UsageLine usage={usage} />}
+      <JobDialog
+        open={jobDialogOpen}
+        onClose={() => setJobDialogOpen(false)}
+        projectId={projectId}
+        viewer={viewer}
+        model={model}
+        language={language}
+        onStarted={(startedRunId, title) => {
+          followJob(startedRunId, title);
+          toast(t('assistantJob.started', { title }));
+        }}
+      />
+      <DraftReviewDialog
+        open={reviewOpen}
+        onClose={() => setReviewOpen(false)}
+        projectId={projectId}
+        viewer={viewer}
+        showDrafts={showDrafts}
+        onChanged={updateDraftCount}
+      />
     </Paper>
   );
 }
