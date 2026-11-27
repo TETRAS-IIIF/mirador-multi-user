@@ -10,7 +10,8 @@ We provide suitable dev config in `.env.dev.sample` and production config in `.e
 
 - Copy one of the sample files (`.env.dev.sample` or `.env.prod.sample`) to `.env` and edit values.
 - Ensure secrets (JWT, DB password, OIDC client secret, SMTP password) are set in `.env` and never committed.
-- For production, make sure `JWT_SECRET`, `JWT_EMAIL_VERIFICATION_TOKEN_SECRET`, and `DB_PASS` are set and strong.
+- For production, make sure `JWT_SECRET`, `JWT_EMAIL_VERIFICATION_TOKEN_SECRET`, and `DB_PASS` are set and strong. `just new-instance` generates them; `just check-env` checks them.
+- At startup the backend refuses to start without `DB_HOST`, `DB_USER`, `DB_PASS`, `DB_DATABASE` or `JWT_SECRET`, and warns about missing settings that would break a feature later (e-mail, OpenID Connect).
 
 ---
 
