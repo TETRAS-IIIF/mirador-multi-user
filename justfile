@@ -32,6 +32,16 @@ new-instance:
 check-env file=".env":
     @scripts/check-env.sh {{ file }}
 
+# Check a deployed instance from outside with curl (URLs from the env file). SMOKE_MAIL/SMOKE_PASSWORD: log in too
+[group('deploy')]
+smoke file=".env":
+    @scripts/smoke.sh {{ file }}
+
+# Check a deployed instance in a real browser (needs the frontend's npm packages and Playwright's Firefox)
+[group('deploy')]
+smoke-browser url:
+    cd frontend && SMOKE_DEPLOY=1 PLAYWRIGHT_BASE_URL={{ url }} npx playwright test tests/e2e/deploy --project=firefox
+
 # Start Docker services
 [group('deploy')]
 up *args:

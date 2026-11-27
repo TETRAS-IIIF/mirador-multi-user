@@ -102,6 +102,18 @@ Migrations are committed in `backend/src/migrations` and run when the backend st
 - `just migration check` shows what differs between the database and the code; the backend also logs a warning at startup when they differ.
 - **Existing instance, once, when upgrading to this version** (it had its own uncommitted migrations): after `just up --build -d`, run `just migration check`. If it lists changes, make a dump (`just mysql_dump`), then `just migration sync`: it shows the SQL, warns about anything dropped, and applies it after confirmation.
 
+### Check that the instance works
+
+Once `docker compose ps` shows every service healthy:
+
+- `just smoke` checks the instance from outside with curl, using the URLs of `.env`:
+  - every service answers, over valid HTTPS;
+  - the frontend was built with this backend's, files' and assistant's URLs (`VITE_*` values are fixed at build time);
+  - the backend reaches its database;
+  - CORS is set up.
+  With `SMOKE_MAIL=... SMOKE_PASSWORD=... just smoke` it also logs in with that account. It exits non-zero when a check fails.
+- `just smoke-browser https://mmu.example.org` does the same in Firefox with Playwright: the app loads without errors, a login method is shown, and, with `SMOKE_MAIL`/`SMOKE_PASSWORD`, the account logs in and sees its projects. It is read-only.
+
 ### Check if you're installation is ready to use :
 
 See wiki page there : https://github.com/TETRAS-IIIF/mirador-multi-user/wiki/Admin-manual#post-deployment-checks

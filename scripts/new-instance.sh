@@ -141,5 +141,6 @@ cat <<EOF
 Next steps:
   1. DNS: point $host, $backend_host and $caddy_host to this server.
   2. Start: just up --build -d   (the database schema is created on the first start)
-  3. Check: docker compose ps   (every service should become healthy)
+  3. Wait until every service is healthy: docker compose ps
+  4. Check it from outside: just smoke   (SMOKE_MAIL=... SMOKE_PASSWORD=... just smoke also logs in)
 EOF
