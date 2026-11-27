@@ -153,6 +153,7 @@ The repository dev `.env` contains a test Keycloak issuer and client id for loca
 | `DB_DATABASE` | Database name | `multiUsers` |
 | `DB_HOST` | Hostname of the database container | `db` |
 | `DB_EXPOSE_PORT` | Exposed DB port (for DBeaver, etc.) | `3306` |
+| `DB_MIGRATIONS_RUN` | Apply pending migrations when the backend starts | `true` |
 
 ---
 

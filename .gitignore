@@ -13,5 +13,5 @@ frontend/customAssets/*
 /dumps/*
 ./stripe-validation-app/
 deploy-history.md
-migrations
+/migrations
 ./logs

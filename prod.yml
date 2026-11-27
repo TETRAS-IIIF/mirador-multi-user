@@ -6,4 +6,3 @@ services:
     volumes:
       - ${HTTP_FOLDER}:/app/upload
       - ${LOG_FOLDER}:/app/logs
-      - ./migrations:/app/migrations

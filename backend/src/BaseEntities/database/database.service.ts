@@ -1,9 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 
 @Injectable()
-export class DatabaseService {
+export class DatabaseService implements OnApplicationBootstrap {
+  private readonly logger = new Logger(DatabaseService.name);
+
   constructor(private readonly dataSource: DataSource) {}
+
+  /**
+   * After the migrations ran (at startup), warns when the database still
+   * differs from the code: an existing instance that was not synced, or a
+   * schema change committed without its migration.
+   */
+  async onApplicationBootstrap() {
+    if (process.env.NODE_ENV === 'test') return;
+    try {
+      const differences = await this.schemaDifferences();
+      if (differences.length > 0) {
+        this.logger.warn(
+          `The database schema differs from the code (${differences.length} change(s) needed). ` +
+            'Run `just migration check` to see them, and `just migration sync` on an existing instance.',
+        );
+      }
+    } catch (error) {
+      this.logger.warn(`Could not compare the database schema: ${error}`);
+    }
+  }
+
+  /** SQL TypeORM would run to make the database match the entities. */
+  async schemaDifferences(): Promise<string[]> {
+    const sql = await this.dataSource.driver.createSchemaBuilder().log();
+    return sql.upQueries.map((q) => q.query);
+  }
 
   async getLastMigrationDate(): Promise<Date | null> {
     const result = await this.dataSource.query(

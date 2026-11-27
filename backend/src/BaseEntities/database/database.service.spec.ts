@@ -77,4 +77,39 @@ describe('DatabaseService', () => {
 
     expect(result).toBeNull();
   });
+
+  it('warns at startup when the schema differs from the code, not when it matches', async () => {
+    const env = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+    const log = jest.fn();
+    (dataSource as any).driver = {
+      createSchemaBuilder: () => ({ log }),
+    };
+    const warn = jest
+      .spyOn((service as any).logger, 'warn')
+      .mockImplementation(() => undefined);
+    try {
+      log.mockResolvedValue({ upQueries: [], downQueries: [] });
+      await service.onApplicationBootstrap();
+      expect(warn).not.toHaveBeenCalled();
+
+      log.mockResolvedValue({
+        upQueries: [{ query: 'ALTER TABLE `annotation` ADD `version` int' }],
+        downQueries: [],
+      });
+      await expect(service.schemaDifferences()).resolves.toEqual([
+        'ALTER TABLE `annotation` ADD `version` int',
+      ]);
+      await service.onApplicationBootstrap();
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('just migration check'),
+      );
+
+      // A failing comparison never stops the backend.
+      log.mockRejectedValue(new Error('no connection'));
+      await expect(service.onApplicationBootstrap()).resolves.toBeUndefined();
+    } finally {
+      process.env.NODE_ENV = env;
+    }
+  });
 });

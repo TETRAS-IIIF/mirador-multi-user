@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { registerAs } from '@nestjs/config';
 import { UserSubscriber } from '../utils/subscribers/user.subscriber';
 import { MARIA_DB_PORT } from '../utils/constants';
@@ -15,11 +16,11 @@ export default registerAs('database', () => {
     autoLoadEntities: true,
     cache: false,
     subscribers: [UserSubscriber],
-    migrations: ['dist/db/migrations/*.{js,ts}'],
-    migrationsRun: isTest,
+    // Committed migrations (src/migrations), applied when the backend
+    // starts. DB_MIGRATIONS_RUN=false turns that off.
+    migrations: [join(__dirname, '..', 'migrations', '*.{js,ts}')],
+    migrationsRun: isTest || process.env.DB_MIGRATIONS_RUN !== 'false',
+    migrationsTransactionMode: 'each',
     synchronize: false,
-    cli: {
-      migrationsDir: 'src/migrations',
-    },
   };
 });

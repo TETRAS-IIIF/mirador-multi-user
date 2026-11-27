@@ -117,13 +117,11 @@ update_prod:
     fi
     log "Update process completed."
 
-    if ask "Try to generate and run migrations if needed?"; then
-      echo "Generating migrations..."
-      {{ compose }} exec {{ backend_service }} npm run typeorm:generate-migration --name="auto-migration-$(date +%Y%m%d-%H%M%S)"
-      log "Migrations generated."
-      echo "Running migrations..."
-      {{ compose }} exec {{ backend_service }} npm run typeorm migration:run -- -d ./src/config/dataSource.ts
-      log "Migrations run."
+    # Migrations run when the backend starts; this only reports leftovers.
+    if {{ compose }} exec -T {{ backend_service }} npm run --silent typeorm:check-migrations >/dev/null 2>&1; then
+      log "Database schema matches the code."
+    else
+      log "WARNING: the database schema differs from the code. See 'just migration check'."
     fi
 
 # ─── Shell access and logs ───────────────────────────────────────────────────
@@ -160,7 +158,11 @@ db_bash:
 db_logs *args:
     {{ compose }} logs {{ args }} {{ db_service }}
 
-# TypeORM migrations: `just migration create [name]` or `just migration run`
+# Migrations live in backend/src/migrations and run when the backend starts.
+#   create <name>  new migration from the entity changes (commit it with them)
+#   run            apply pending migrations now (the backend also does it at startup)
+#   check          show what differs between the database and the code (exit 1 if anything)
+#   sync           existing instance only, once: apply that difference, after confirmation
 [group('db')]
 migration action name="":
     #!/usr/bin/env bash
@@ -168,14 +170,35 @@ migration action name="":
     case "{{ action }}" in
       create)
         name="{{ name }}"
-        [[ -z "$name" ]] && name="migrate-$(date +%Y%m%d-%H%M%S)"
+        [[ -z "$name" ]] && { echo "Usage: just migration create <name>" >&2; exit 1; }
         {{ compose }} exec {{ backend_service }} npm run typeorm:generate-migration --name="$name"
+        echo "Review the file in backend/src/migrations and commit it with the entity change."
         ;;
       run)
-        {{ compose }} exec {{ backend_service }} npm run typeorm migration:run -- -d ./src/config/dataSource.ts
+        {{ compose }} exec {{ backend_service }} npm run typeorm:run-migrations
+        ;;
+      check)
+        {{ compose }} exec -T {{ backend_service }} npm run --silent typeorm:check-migrations
+        ;;
+      sync)
+        out=$({{ compose }} exec -T {{ backend_service }} npm run --silent typeorm:check-migrations 2>&1) && {
+          echo "The database already matches the code."; exit 0; }
+        # Only the "up" part: what would run (the "down" part always drops).
+        up=$(echo "$out" | sed -n '/async up(/,/async down(/p' | grep 'queryRunner.query')
+        echo "SQL needed to match the code:"
+        echo "$up"
+        echo
+        if echo "$up" | grep -qiE 'DROP (TABLE|COLUMN|INDEX|FOREIGN KEY)'; then
+          echo "WARNING: the SQL above drops something: tables or columns lose their data."
+          echo "Make a dump first (just mysql_dump) and check that this is intended."
+        fi
+        read -r -p "Apply these changes to the database? (y/n) " yn
+        [[ "$yn" =~ ^[Yy] ]] || exit 1
+        {{ compose }} exec {{ backend_service }} npm run typeorm -- -d ./src/config/dataSource.ts schema:sync
+        {{ compose }} exec -T {{ backend_service }} npm run --silent typeorm:check-migrations
         ;;
       *)
-        echo "Unknown migration command: {{ action }} (expected: create [name] | run)" >&2
+        echo "Unknown migration command: {{ action }} (expected: create <name> | run | check | sync)" >&2
         exit 1
         ;;
     esac
